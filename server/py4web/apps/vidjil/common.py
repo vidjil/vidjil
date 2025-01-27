@@ -1,21 +1,18 @@
-# -*- coding: utf-8 -*-
 """
 This file defines cache, session, and translator T object for the app
 These are fixtures that every app needs so probably you will not be editing this file
 """
-from ast import Try
 import os
 import sys
 import logging
-from . import defs
-from py4web import Session, Cache, Translator, Flash, DAL, Field, action
+from py4web import Session, Cache, Translator, Flash, DAL, action
 from py4web.utils.mailer import Mailer
-from py4web.utils.auth import Auth
 from py4web.utils.downloader import downloader
 from pydal.tools.tags import Tags
 from py4web.utils.factories import ActionFactory
 from . import settings
 from .VidjilAuth import VidjilAuth
+from .modules import single_task_loader
 
 from py4web.core import HTTP, Fixture, request, response
 
@@ -52,7 +49,7 @@ cors = CORS(origin='https://localhost:8000/vidjil', headers="Content-Type")
 
 
 # #######################################################
-# implement custom loggers form settings.LOGGERS
+# implement custom loggers from settings.LOGGERS
 # #######################################################
 logger = logging.getLogger("py4web:" + settings.APP_NAME)
 formatter = logging.Formatter(
@@ -132,29 +129,33 @@ logging.addLevelName(logging.ADMIN, 'ADMIN')
 
 class MsgUserAdapter(logging.LoggerAdapter):
 
-    def process(self, msg, kwargs):
+    def process(self, msg, kwargs):        
         if type(msg) is dict:
             if 'message' in msg:
                 msg = msg['message']
             else:
                 msg = '?'
         
-        ip = "N/A"
-        user_id = "N/A"
-        if request is not None:
-            ip = request.remote_addr
-            if ip:
-                for ip_prefix in ips:
-                    if ip.startswith(ip_prefix):
-                        ip = "%s/%s" % (ip, ips[ip_prefix])
+        ip = request.remote_addr
+        if ip:
+            for ip_prefix in ips:
+                if ip.startswith(ip_prefix):
+                    ip = "%s/%s" % (ip, ips[ip_prefix])
+        else:
+            ip = "N/A"
 
-            try:
-                user_id = (str(auth.user_id)) if auth.user else ''
-                user_id = user_id.replace(' ','-')
-                if auth.is_impersonating():
-                    user_id = 'team!' + user_id
-            except:
-                pass
+        try:
+            # Set level of default logger to ERROR to prevent messages from py4web
+            previous_level = logging.getLogger().getEffectiveLevel()
+            logging.getLogger().setLevel(logging.ERROR)
+            user_id = (str(auth.user_id)) if auth.user else "N/A"
+            logging.getLogger().setLevel(previous_level)
+            user_id = user_id.replace(' ','-')
+            if auth.is_impersonating():
+                user_id = 'team!' + user_id
+        except Exception:
+            # Ignore exception, this may occur when logging from worker or client
+            pass
         
         new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % user_id), msg)
         return new_msg, kwargs
@@ -190,13 +191,11 @@ def _init_log():
     adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
     """
 
-    import logging
-    import sys
-
     def create_handler(filename, level):
         try:
             handler = logging.FileHandler(filename)
-        except:
+        except Exception as exception:
+            print(f"Error when trying to create logger to {filename}: {exception=}")
             handler = logging.StreamHandler(sys.stderr)
         else:
             handler.setLevel(level)
@@ -208,11 +207,9 @@ def _init_log():
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
 
-        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
-        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
+        logger.addHandler(create_handler(settings.LOG_DEBUG, logging.DEBUG))
+        logger.addHandler(create_handler(settings.LOG_INFO, logging.INFO))
         logger.addHandler(UserLogHandler())
-
-        logger.debug("Creating logger")
     return MsgUserAdapter(logger, {})
 
 log = _init_log()
@@ -235,13 +232,13 @@ auth.define_tables()
 # #######################################################
 # Configure email sender for auth
 # #######################################################
-if defs.SMTP_SERVER:
+if settings.SMTP_SERVER:
     auth.sender = Mailer(
-        server=defs.SMTP_SERVER,
-        sender=defs.FROM_EMAIL,
-        login=defs.SMTP_CREDENTIALS,
-        #tls=defs.SMTP_TLS,
-        #ssl=defs.SMTP_SSL,
+        server=settings.SMTP_SERVER,
+        sender=settings.SMTP_FROM_EMAIL,
+        login=settings.SMTP_CREDENTIALS,
+        #tls=settings.SMTP_SMTP_TLS,
+        #ssl=settings.SMTP_SMTP_SSL,
     )
 
 # #######################################################
@@ -319,10 +316,16 @@ if settings.USE_CELERY:
     # to use "from .common import scheduler" and then use it according
     # to celery docs
     scheduler = Celery(
-        "apps.%s.tasks" % settings.APP_NAME, broker=settings.CELERY_BROKER,
-        backend='redis://redis' 
+        "apps.%s.tasks" % settings.APP_NAME, 
+        broker=settings.CELERY_BROKER,
+        backend='redis://redis',
+        loader=single_task_loader.SingleTaskLoader,
     )
     
+    scheduler.conf.update(
+        broker_connection_retry_on_startup=True,
+        worker_send_task_event=False
+    )
 
 # #######################################################
 # Enable authentication
@@ -343,7 +346,7 @@ authenticated = ActionFactory(cors, db, session, T, flash, auth.user)
 ips = {}
 
 try:
-    for l in open(defs.REVERSE_IP):
+    for l in open(settings.REVERSE_IP):
         ip, kw = l.split()
         ips[ip] = kw
 except:
@@ -353,21 +356,25 @@ except:
 # Configure mail
 # #######################################################
 mail = Mailer(
-        server=defs.SMTP_SERVER,
-        sender=defs.FROM_EMAIL,
-        login=defs.SMTP_CREDENTIALS
-        #tls=defs.SMTP_TLS,
-        #ssl=defs.SMTP_SSL
+        server=settings.SMTP_SERVER,
+        sender=settings.SMTP_FROM_EMAIL,
+        login=settings.SMTP_CREDENTIALS
+        #tls=settings.SMTP_SMTP_TLS,
+        #ssl=settings.SMTP_SMTP_SSL
     )
 
 # #######################################################
-# try to create an index on these un-indexed columns, if it fails, we assume they already exist
+# try to create an index on these un-indexed columns
 # #######################################################
-try:
-    db.executesql('CREATE INDEX table_name_index ON tag_ref (table_name);')
-    db.executesql('CREATE INDEX record_id_index ON tag_ref (record_id);')
-    db.executesql('CREATE INDEX name_index ON auth_permission (name);')
-    db.executesql('CREATE INDEX record_id_index ON auth_permission (record_id);')
-    log.info("rebuild indexes")
-except:
+def try_create_index(index_sql: str):
+    try:
+        db.executesql(index_sql)
+    except Exception:
+        # If problem occurs, assume it is already created
         pass
+
+try_create_index("CREATE INDEX table_name_index ON tag_ref (table_name);")
+try_create_index("CREATE INDEX record_id_index ON tag_ref (record_id);")
+try_create_index("CREATE INDEX name_index ON auth_permission (name);")
+try_create_index("CREATE INDEX record_id_index ON auth_permission (record_id);")
+try_create_index("CREATE INDEX scheduler_task_status_index ON scheduler_task (status);")

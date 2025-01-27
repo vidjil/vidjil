@@ -49,6 +49,9 @@ Cypress.Commands.add('goToLogsPage', () => {
   cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
 })
 
+Cypress.Commands.add('goToLogsPage', () => {
+  cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
+})
 
 /////////////////
 // Admin db page

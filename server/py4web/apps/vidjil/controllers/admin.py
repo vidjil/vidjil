@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-
 import subprocess
-from .. import defs
-from ..modules import vidjil_utils
+import redis
 import json
 import os
 import re
-from py4web import action, request, URL
-from .. import tasks
+import ast
+from py4web import action, request
+
+from .. import settings, tasks
+from ..modules import vidjil_utils
 from ..common import db, auth, log, scheduler
 
 
@@ -50,7 +51,7 @@ def index():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     
@@ -82,12 +83,12 @@ def showlog():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
          
     lines = []
-    file = open(defs.DIR_LOG+request.query["file"])
+    file = open(settings.DIR_LOG+request.query["file"])
     log_format = request.query['format'] if 'format' in request.query else ''
 
     if log_format == 'raw':
@@ -153,7 +154,7 @@ def repair_missing_files():
         
         flist = ""
         for row in db(db.sequence_file.id>0 and db.sequence_file.data_file != None).select() : 
-            seq_file = defs.DIR_SEQUENCES+row.data_file
+            seq_file = settings.DIR_SEQUENCES+row.data_file
             
             if not os.path.exists(seq_file) :
                 db.sequence_file[row.id].update_record(data_file = None)
@@ -173,16 +174,16 @@ def _backup_database(stream):
 def make_backup():
     if auth.is_admin():
         
-        _backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
+        _backup_database(open(settings.DB_BACKUP_FILE, 'wb'))
                 
-        res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
+        res = {"success" : "true", "message" : "DB backup -> %s" % settings.DB_BACKUP_FILE}
         log.admin(res)
         return json.dumps(res, separators=(',',':'))
     
     
 def load_backup():
     if auth.is_admin():
-        db.import_from_csv_file(open(defs.DB_BACKUP_FILE,'rb'))
+        db.import_from_csv_file(open(settings.DB_BACKUP_FILE,'rb'))
     
 def repair():
     if auth.is_admin():
@@ -241,12 +242,23 @@ def clean_workers_status():
     if not auth.is_admin():
         res = {"success" : "false",
                "message" : ACCESS_DENIED,
-               "redirect" : URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT, 'page': 0}, scheme=True)}
+               "redirect" : vidjil_utils.get_patient_redirect_url()}
         log.info(res)
         return json.dumps(res, separators=(',',':'))
     
-    # Get tasks in progress in scheduler
     current_task_ids=[]
+    
+    # Get tasks from redis
+    my_redis = redis.Redis(host="redis")
+    redis_tasks = my_redis.lrange("short", 0, -1) + my_redis.lrange("long", 0, -1)
+    log.debug(f"{redis_tasks=}")
+    for redis_task in redis_tasks:
+        redis_task = json.loads(redis_task)
+        if "headers" in redis_task and "argsrepr" in redis_task["headers"]:
+            args = ast.literal_eval(redis_task["headers"]["argsrepr"])
+            current_task_ids.append(args[0])
+    
+    # Get tasks from celery
     inspect = scheduler.control.inspect()
     inspect_task_lists = [inspect.scheduled(), inspect.active(), inspect.reserved()]
     for inspect_task_list in inspect_task_lists:
@@ -258,10 +270,9 @@ def clean_workers_status():
                               (db.scheduler_task.status != tasks.STATUS_COMPLETED)).select(db.scheduler_task.id)
     
     # Set not corresponding tasks status to FAILED in DB
+    log.debug(f"{current_task_ids=}, {in_progress_task_ids.as_list()=}")
     dangling_task_ids = [in_progress_task.id for in_progress_task in in_progress_task_ids if in_progress_task.id not in current_task_ids]
-    log.debug(f"{current_task_ids=}, {in_progress_task_ids=}")
-    for dangling_task_id in dangling_task_ids:
-        db.scheduler_task[dangling_task_id].update_record(status=tasks.STATUS_FAILED)
+    db(db.scheduler_task.id.belongs(dangling_task_ids)).update(status=tasks.STATUS_FAILED)
     
     res = {"redirect": "reload", "success": "true", "message": f"Dangling tasks set to failed: {dangling_task_ids}"}
     log.info(res)

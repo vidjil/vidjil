@@ -1,19 +1,13 @@
-setuptools
-setuptools-rust
-wheel
-renoir==1.5.2 
 markdown 
 flower
 uwsgi
 py4web == 1.20240428.1
+pydal == 20241111.2
 pymysql
 celery
 celery[redis]
 
-
-requests==2.20.0
-ijson==2.3
+requests
+ijson
 beautifulsoup4
-pandas
-tabulate==0.8.10
-
+tabulate

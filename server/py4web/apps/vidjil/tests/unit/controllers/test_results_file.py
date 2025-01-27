@@ -2,16 +2,15 @@ import os
 import json
 import pathlib
 import shutil
-from typing import TextIO
 import pytest
+
 from ..utils.omboddle import Omboddle
 from ..utils import db_manipulation_utils, test_utils
 from ...functional.db_initialiser import DBInitialiser
 from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth
-from .... import defs
+from .... import settings
 from ....modules.permission_enum import PermissionEnum
-
 from ....controllers import results_file as results_file_controller
 
 
@@ -140,12 +139,11 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 
@@ -167,12 +165,11 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 
@@ -212,14 +209,13 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
             user_group_id, PermissionEnum.read.value, 'sample_set', sample_set_id)
         auth.del_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
 
@@ -241,22 +237,21 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id)
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
-        save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
+            sample_set_id, user_id)
+        save_dir_out_vidjil_id = settings.DIR_OUT_VIDJIL_ID
         try:
             results_file_id = db_manipulation_utils.add_results_file(
                 sequence_file_id=sequence_file_id)
-            defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
-                test_utils.get_results_path(), f"out-{defs.BASENAME_OUT_VIDJIL_ID}")) + os.sep
+            settings.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
+                test_utils.get_results_path(), f"out-{settings.BASENAME_OUT_VIDJIL_ID}")) + os.sep
             results_file_directory = pathlib.Path(
-                defs.DIR_OUT_VIDJIL_ID % results_file_id)
+                settings.DIR_OUT_VIDJIL_ID % results_file_id)
             results_file_directory.mkdir(parents=True, exist_ok=True)
             results_filename = "test_result_file.res"
             results_content = "test_content"
@@ -277,7 +272,7 @@ class TestResultsFileController():
             assert files[0]["filename"] == results_filename
             assert files[0]["size"] == f"{len(results_content)} B"
         finally:
-            defs.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
+            settings.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
             shutil.rmtree(results_file_directory)
 
     ##################################
@@ -310,14 +305,14 @@ class TestResultsFileController():
     #         user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
     #     sequence_file_id = db_manipulation_utils.add_sequence_file(
     #         patient_id, user_id)
-    #     save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
+    #     save_dir_out_vidjil_id = settings.DIR_OUT_VIDJIL_ID
     #     try:
     #         results_file_id = db_manipulation_utils.add_results_file(
     #             sequence_file_id=sequence_file_id)
-    #         defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
-    #             test_utils.get_results_path(), f"out-{defs.BASENAME_OUT_VIDJIL_ID}")) + os.sep
+    #         settings.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
+    #             test_utils.get_results_path(), f"out-{settings.BASENAME_OUT_VIDJIL_ID}")) + os.sep
     #         results_file_directory = pathlib.Path(
-    #             defs.DIR_OUT_VIDJIL_ID % results_file_id)
+    #             settings.DIR_OUT_VIDJIL_ID % results_file_id)
     #         results_file_directory.mkdir(parents=True, exist_ok=True)
     #         results_filename = "test_result_file.res"
     #         results_content = "test_content"
@@ -333,7 +328,7 @@ class TestResultsFileController():
     #         assert result == "Response from mock"
     #         assert TestResultsFileController.stream_log != None
     #     finally:
-    #         defs.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
+    #         settings.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
     #         shutil.rmtree(results_file_directory)
 
     ##################################
@@ -440,8 +435,7 @@ class TestResultsFileController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         auth.add_permission(
@@ -449,10 +443,10 @@ class TestResultsFileController():
         auth.add_permission(
             user_group_id, PermissionEnum.run.value, db.sample_set, 0)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         results_file_id = db_manipulation_utils.add_results_file(
             sequence_file_id=sequence_file_id)
-        assert db.results_file[results_file_id] != None
+        assert db.results_file[results_file_id] is not None
 
         # When : Calling delete
         with Omboddle(self.session, keep_session=True,
@@ -463,6 +457,7 @@ class TestResultsFileController():
         result = json.loads(json_result)
         assert result["success"] == "true"
         assert result["redirect"] == "sample_set/index"
-        assert result["message"] == f"[{results_file_id}] ({sample_set_id}) c1: process deleted"
+        assert result["message"] == f"[{
+            results_file_id}] ({sample_set_id}) c1: process deleted"
         assert result["args"]["id"] == str(sample_set_id)
         assert db.results_file[results_file_id] == None

@@ -1,6 +1,9 @@
 [[extend 'db_layout.html']]
 
-[[from apps.vidjil import defs]]
+[[
+    from apps.vidjil import settings
+    from apps.vidjil.modules import sampleSet
+]]
 
 [[ if isEditing: ]]
 <h3>Edit patient, run, or set</h3>
@@ -17,8 +20,7 @@
         [[pass]]
         </select>
     </div>
-[[ if isEditing: ]]
-[[ else: ]]
+[[ if not isEditing: ]]
     <div class="buttons_add_elements">
       Patients, runs and sets are different ways to group samples.
       You can <a target='_blank' href="http://www.vidjil.org/doc/#batch-creation">create at once</a> several of them:
@@ -26,7 +28,7 @@
             onclick="addPatientForm()"
             id="patient_button"
             title="add patient input row to the form"
-            data-index="[[=len(sets[defs.SET_TYPE_PATIENT])]]">add patient</span>
+            data-index="[[=len(sets[sampleSet.SET_TYPE_PATIENT])]]">add patient</span>
       <span class="button2 clipboard-button"
             onclick="readClipBoard('patient'); antiSpam(this,1000)"
             id="patient_clipboard"
@@ -35,7 +37,7 @@
       <span class="button2"
             onclick="addRunForm()"
             id="run_button"
-            data-index="[[=len(sets[defs.SET_TYPE_RUN])]]">add run</span>
+            data-index="[[=len(sets[sampleSet.SET_TYPE_RUN])]]">add run</span>
       <span class="button2 clipboard-button"
             onclick="readClipBoard('run'); antiSpam(this,1000)"
             id="run_clipboard"
@@ -44,7 +46,7 @@
       <span class="button2"
             onclick="addSetForm()"
             id="generic_button"
-            data-index="[[=len(sets[defs.SET_TYPE_GENERIC])]]">add set</span>
+            data-index="[[=len(sets[sampleSet.SET_TYPE_GENERIC])]]">add set</span>
       <span class="button2 clipboard-button"
             onclick="readClipBoard('generic'); antiSpam(this,1000)"
             id="set_clipboard"
@@ -53,7 +55,7 @@
       <div class="clear"></div>
     </div>
 [[ pass ]]
-[[ if not hasattr(defs, 'HEALTHCARE_COMPLIANCE') or not defs.HEALTHCARE_COMPLIANCE: ]]
+[[ if not settings.HEALTHCARE_COMPLIANCE: ]]
     <div>
       <p>
         <span class='warn'><b>⚠️ Research Use Only.</b></span>
@@ -65,11 +67,11 @@
     <div id="fieldset_container">
         [[ for set_type in sets: ]]
             [[ for i, set in enumerate(sets[set_type]): ]]
-                [[ if set_type == defs.SET_TYPE_PATIENT: ]]
+                [[ if set_type == sampleSet.SET_TYPE_PATIENT: ]]
                     [[ include 'partial/patient/form.html' ]]
-                [[ elif set_type == defs.SET_TYPE_RUN: ]]
+                [[ elif set_type == sampleSet.SET_TYPE_RUN: ]]
                     [[ include 'partial/run/form.html' ]]
-                [[ elif set_type == defs.SET_TYPE_GENERIC: ]]
+                [[ elif set_type == sampleSet.SET_TYPE_GENERIC: ]]
                     [[ include 'partial/generic/form.html' ]]
                 [[pass]]
             [[ pass ]]

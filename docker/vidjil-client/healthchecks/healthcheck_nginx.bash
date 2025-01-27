@@ -4,12 +4,12 @@ CONF_FILE="/usr/share/vidjil/browser/js/conf.js"
 
 echo "conf file : $CONF_FILE"
 
-if [[ ! -f $CONF_FILE ]]; then echo "Conf.js file NOT found" && exit 1; fi
+if [[ ! -f $CONF_FILE ]]; then echo "Conf file NOT found" && exit 1; fi
 
 server=`grep db_address $CONF_FILE | cut -f4 -d '"'`
 usage=`grep use_database $CONF_FILE | cut -f2 -d ':'`
 
-echo -e "Conf.js found;"
+echo -e "Conf found;"
 echo -e "\tServer: $server"
 echo -e "\tUsage: $usage"
 echo "=== Cat conf.js"

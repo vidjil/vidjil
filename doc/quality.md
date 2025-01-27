@@ -2,8 +2,8 @@
 Quality relies both on **software engineering methods** (agile development, systematic testing, continuous integration and delivery) and on **human and team processes**. We plan to be as efficient as possible while keeping a friendly and open attitude.
 
 This document details our current quality assurance policy.
-The Vidjil user manual and more technical information for the developers are found on <http://www.vidjil.org/doc>.
-Moreover, within the [VidjilNet](http://www.vidjil.net) consortium,
+The Vidjil user manual and more technical information for the developers are found on <https://www.vidjil.org/doc>.
+Moreover, within the [VidjilNet](https://www.vidjil.net) consortium,
 we offer additional support and documents for certification processes.
 
 We develop Vidjil with *systematic testing and continuous integration*.
@@ -25,11 +25,11 @@ The original algorithm was published in [BMC Genomics 2014], and extension to se
 
 Each new feature or release is carefully tested and goes through the following tests:
 
-- *Unit tests.* [150+ tests](http://gitlab.vidjil.org/-/tree/dev/algo/tests/unit-tests) on the behaviour of minimal algorithmic bricks.
-- *Functional tests.* 850+ tests in [100+ tests sets](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-get-tests) with [should-test](https://www.should-test.net/). We check that the command-line vidjil-algo has the expected behaviour in various conditions and options.
-- *Functional tests on curated sequences.* [500+ sequences](http://gitlab.vidjil.org/-/tree/dev/algo/tests/should-vdj-tests) with curated V(D)J designations. We check that the algorithm gives an expected result. Specific complex sequences that are known to fail are tagged in the dataset.
+- *Unit tests.* [150+ tests](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/algo/tests/unit-tests) on the behavior of minimal algorithmic bricks.
+- *Functional tests.* 850+ tests in [100+ tests sets](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/algo/tests/should-get-tests) with [should-test](https://gitlab.inria.fr/vidjil/should). We check that the command-line vidjil-algo has the expected behavior in various conditions and options.
+- *Functional tests on curated sequences.* [500+ sequences](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/algo/tests/should-vdj-tests) with curated V(D)J designations. We check that the algorithm gives an expected result. Specific complex sequences that are known to fail are tagged in the dataset.
 - *Functional tests on full datasets.*
-      We run tests on datasets we distribute on <http://www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse) 
+      We run tests on datasets we distribute on <https://www.vidjil.org/data> (LIL-L3, LIL-L4, T-ALL diagnosis and relapse)
       as well as on other public datasets (Stanford S22).
       Some of these last tests are currently manual. There will be always some human control on these tests,
       but we will nevertheless soon add a part of automation to check more things.
@@ -40,20 +40,20 @@ Each new feature or release is carefully tested and goes through the following t
 
 We develop the web application (both client and server) to wrap or to link several software to pre-process, process, or post-process RepSeq data.
 
-Developed in Javascript with jQuery and d3.js, the web client is made for the visualization, inspection and analysis of clonotypes and their tracking along the time in a MRD setup or in a immunological study. It visualizes data processed by vidjil-algo or any RepSeq clonotype gathering software as soon as they output a compliant JSON format (documented on <http://vidjil.org/doc/vidjil-format>). This gives some modularity to users if they need to combine Vidjil-algo results with other data, coming from either personal an analysis or other software or scripts.
+Developed in Javascript with jQuery and d3.js, the web client is made for the visualization, inspection and analysis of clonotypes and their tracking along the time in a MRD setup or in a immunological study. It visualizes data processed by vidjil-algo or any RepSeq clonotype gathering software as soon as they output a compliant JSON format (See [documentation](vidjil-format.md)). This gives some modularity to users if they need to combine Vidjil-algo results with other data, coming from either personal an analysis or other software or scripts.
 
-A sample database links the web application and the algorithmic part, allowing users to upload sequence files and manage their jobs directly from the web application. When uploading files, the user can choose some predefined preprocess to be launch on her data. A server, implemented in Python with the py4web framework (<https://py4web.com/>), queues the job requests, allowing many jobs to be scheduled without overloading the server.
+A sample database links the web application and the algorithmic part, allowing users to upload sequence files and manage their jobs directly from the web application. When uploading files, the user can choose some predefined preprocess to be launch on her data. A server, implemented in Python with the [py4web framework](https://py4web.com/), queues the job requests, allowing many jobs to be scheduled without overloading the server.
 
 ### Web application tests
 
-- *Web client unit tests.*. [700+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/QUnit/testFiles) on atomic functions of the web application
-- *Web client functional tests.* [350+ tests](http://gitlab.vidjil.org/-/tree/dev/browser/tests/functional) web automation with [Cypress](https://www.cypress.io/).
+- *Web client unit tests.*. [700+ tests](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/browser/test/QUnit/testFiles) on atomic functions of the web application
+- *Web client functional tests.* [350+ tests](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/browser/tests/functional) web automation with [Cypress](https://www.cypress.io/).
 We test several [supported versions](user.md#supported-browsers) of Firefox and Chrome, and possibly legacy versions
 (see the [Dockerfile](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/ci/Dockerfile)).
 The tests are launched on the web application, loading data and testing common features (clustering, renaming, tagging, sending to other sites, generating reports, etc.).
-- *Web server unit tests* [230+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/unit) on atomic functions of the web server
-- *Web server functional tests* [30+ tests](http://gitlab.vidjil.org/-/tree/dev/server/py4web/apps/vidjil/tests/functional) simulating actual data exchange and queries to the web server using the web client with [Cypress](https://www.cypress.io/).
-- *Web server API tests* [15+ tests](http://gitlab.vidjil.org/-/tree/dev/tools/tests) simulating actual data exchange and queries to the web server using the API
+- *Web server unit tests* [230+ tests](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/server/py4web/apps/vidjil/tests/unit) on atomic functions of the web server
+- *Web server functional tests* [30+ tests](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/server/py4web/apps/vidjil/tests/functional) simulating actual data exchange and queries to the web server using the web client with [Cypress](https://www.cypress.io/).
+- *Web server API tests* [15+ tests](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/tools/tests) simulating actual data exchange and queries to the web server using the API
 - *Hosting monitoring.*  We monitor our public server as well as remote maintained servers.
 
 ## Software engineering methods
@@ -68,7 +68,7 @@ However, on production servers used in routine analysis, we do not use CD but ra
 
 ### Tracking issues
 
-Both bug reports and feature requests are followed on our public bug-tracker, <http://gitlab.vidjil.org>.
+Both bug reports and feature requests are followed on our public [bug-tracker](https://gitlab.inria.fr/vidjil/vidjil/-/issues).
 
 - Most issues are public. Issues with confidential content, including support for the members, are limited to the core developer team.
 - Most of the discussion takes place in the issue. To better track code history, we do not rely on e-mail discussions but rather put the content on the issue tracker.
@@ -82,7 +82,7 @@ Both bug reports and feature requests are followed on our public bug-tracker, <h
 - We answer to each request: Even if we cannot solve the request, we acknowledge the request and create issues when needed.
 
 - We have quarterly audio meetings with active members of our community.
-- We organize every 18 months meetings with our users (March 2015, November 2017, March 2019, September 2020, see <http://www.vidjil.org>).
+- We organize every 18 months meetings with our users (March 2015, November 2017, March 2019, September 2020, see <https://www.vidjil.org>).
 
 Members of the VidjilNet consortium have access to the support with guaranteed response time.
 
@@ -104,7 +104,7 @@ We contribute to open formats to exchange RepSeq data.
 
 ## Maintenance and hosting
 
-We maintain a public test server, <http://app.vidjil.org>, open to everyone and free to use.
+We maintain a public test server, <https://app.vidjil.org>, open to everyone and free to use.
 This server is only for test and should not be used for clinical purposes.
 
 Throughout the VidjilNet consortium, we propose two options for production servers with clinical and patient data:

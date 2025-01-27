@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from .. import defs
-from ..modules import vidjil_utils
-from ..modules.stats_decorator import *
+from py4web import action, request
+from ombott import static_file
+
+from .. import settings
+from ..modules import vidjil_utils, sampleSet
 from ..modules.sampleSet import get_sample_set_id_from_results_file
 from ..modules.controller_utils import error_message
 from ..tasks import schedule_run, schedule_fuse
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from ombott import static_file
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log, scheduler
+from ..common import db, T, auth, log
 
 
 ACCESS_DENIED = "access denied"
@@ -79,7 +79,7 @@ def run_all_patients():
         return error_message(ACCESS_DENIED)
     
     query = db(
-            (db.sample_set.sample_type == defs.SET_TYPE_PATIENT)
+            (db.sample_set.sample_type == sampleSet.SET_TYPE_PATIENT)
             & (db.sample_set_membership.sample_set_id == db.sample_set.id)
             & (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id)
             ).select(db.sample_set.id, db.results_file.sequence_file_id, db.results_file.id)
@@ -102,8 +102,8 @@ def info():
     if not auth.can_modify_sample_set(int(sample_set_id)):
         return error_message(ACCESS_DENIED)
     
-    out_folder = defs.DIR_OUT_VIDJIL_ID % int(request.query["results_file_id"])
-    output_filename = defs.BASENAME_OUT_VIDJIL_ID % int(request.query["results_file_id"])
+    out_folder = settings.DIR_OUT_VIDJIL_ID % int(request.query["results_file_id"])
+    output_filename = settings.BASENAME_OUT_VIDJIL_ID % int(request.query["results_file_id"])
 
     if os.path.exists(f"{out_folder}/{output_filename}.vidjil.log"):
         with open(f"{out_folder}/{output_filename}.vidjil.log", 'r', encoding='utf-8') as f: 
@@ -123,7 +123,7 @@ def output():
     sample_set_id = get_sample_set_id_from_results_file(request.query["results_file_id"])
     if auth.can_view_sample_set(int(sample_set_id)):
         results_id = int(request.query["results_file_id"])
-        output_directory = defs.DIR_OUT_VIDJIL_ID % results_id
+        output_directory = settings.DIR_OUT_VIDJIL_ID % results_id
         
         if not os.path.exists(output_directory):
             log.error(f"Output path {output_directory} does not exist for {results_id=} in {sample_set_id=}")
@@ -152,7 +152,7 @@ def download():
     sample_set_id = get_sample_set_id_from_results_file(request.query["results_file_id"])
     if auth.can_view_sample_set(int(sample_set_id)) and not '..' in request.query['filename']:
         results_id = int(request.query["results_file_id"])
-        directory = defs.DIR_OUT_VIDJIL_ID % results_id
+        directory = settings.DIR_OUT_VIDJIL_ID % results_id
         try:
             log.info("Downloaded results file", extra={'user_id': auth.user_id,
                 'record_id': request.query["results_file_id"],

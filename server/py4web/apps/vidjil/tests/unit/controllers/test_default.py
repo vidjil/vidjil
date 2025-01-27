@@ -5,13 +5,14 @@ import pathlib
 import tempfile
 import pytest
 from pathlib import Path
-from ..utils.omboddle import Omboddle
 from py4web import URL, request
 from py4web.core import _before_request, Session, HTTP
+
+from ..utils.omboddle import Omboddle
 from ...functional.db_initialiser import DBInitialiser
 from ..utils import db_manipulation_utils, test_utils
 from ....common import db, auth
-from .... import defs
+from .... import settings
 from ....modules.permission_enum import PermissionEnum
 from ....controllers import default as default_controller
 
@@ -216,15 +217,14 @@ class TestDefaultController():
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         config_id = db_manipulation_utils.add_config()
-        saved_dir_results = defs.DIR_RESULTS
+        saved_dir_results = settings.DIR_RESULTS
 
         try:
-            defs.DIR_RESULTS = test_utils.get_resources_path()
+            settings.DIR_RESULTS = test_utils.get_resources_path()
 
             # When : Calling run_request
             with Omboddle(self.session, keep_session=True,
@@ -238,7 +238,7 @@ class TestDefaultController():
             assert result[
                 "message"] == f"default/run_request  : permission needed, you do not have permission to launch process for this sample_set ({sample_set_id}), you do not have permission to launch process for this config ({config_id})"
         finally:
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
 
     def test_run_request(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
@@ -259,16 +259,16 @@ class TestDefaultController():
         auth.add_permission(
             user_group_id, PermissionEnum.run.value, db.patient, patient_id)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         config_id = db_manipulation_utils.add_config()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.config, config_id)
-        saved_dir_results = defs.DIR_RESULTS
-        defs.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
+        saved_dir_results = settings.DIR_RESULTS
+        settings.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
                                     "..",
                                     "resources"))
         mocked_run_process = mocker.patch(
-            "apps.vidjil.tasks.run_process.delay", return_value="SUCCESS")
+            "apps.vidjil.tasks.run_process.apply_async", return_value="SUCCESS")
 
         # When : Calling run_request
         try:
@@ -281,10 +281,11 @@ class TestDefaultController():
             result = json.loads(json_result)
             assert result["redirect"] == "reload"
             results_file_id = result["results_file_id"]
-            assert result["message"] == f"[{results_file_id}] c{config_id}: process requested - None {db.sequence_file[sequence_file_id].filename}"
+            assert result["message"] == f"[{results_file_id}] c{
+                config_id}: process requested - None {db.sequence_file[sequence_file_id].filename}"
             mocked_run_process.assert_called_once()
         finally:
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
 
     ##################################
     # Tests on default_controller.run_all_request()
@@ -321,18 +322,18 @@ class TestDefaultController():
         auth.add_permission(
             user_group_id, PermissionEnum.run.value, db.patient, patient_id)
         sequence_file_id_1 = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         sequence_file_id_2 = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         config_id = db_manipulation_utils.add_config()
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.config, config_id)
-        saved_dir_results = defs.DIR_RESULTS
-        defs.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
+        saved_dir_results = settings.DIR_RESULTS
+        settings.DIR_RESULTS = str(Path(Path(__file__).parent.absolute(),
                                     "..",
                                     "resources"))
         mocked_run_process = mocker.patch(
-            "apps.vidjil.tasks.run_process.delay", return_value="SUCCESS")
+            "apps.vidjil.tasks.run_process.apply_async", return_value="SUCCESS")
 
         # When : Calling run_all_request
         try:
@@ -350,7 +351,7 @@ class TestDefaultController():
             assert result["redirect"] == "reload"
             assert mocked_run_process.call_count == 2
         finally:
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
 
     ##################################
     # Tests on default_controller.get_data()
@@ -382,13 +383,13 @@ class TestDefaultController():
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         config_id = db_manipulation_utils.add_config()
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
-        saved_dir_results = defs.DIR_RESULTS
+            sample_set_id, user_id)
+        saved_dir_results = settings.DIR_RESULTS
         save_upload_folder = db.fused_file.fused_file.uploadfolder
         fused_file_id = -1
 
         try:
-            defs.DIR_RESULTS = str(test_utils.get_results_path())
+            settings.DIR_RESULTS = str(test_utils.get_results_path())
             db.fused_file.fused_file.uploadfolder = test_utils.get_results_path()
             fused_file_id = db_manipulation_utils.add_fused_file(
                 sample_set_id, sequence_file_id, config_id, use_real_file=True)
@@ -409,9 +410,9 @@ class TestDefaultController():
         finally:
             if fused_file_id != -1:
                 fused_file = pathlib.Path(
-                    defs.DIR_RESULTS, db.fused_file[fused_file_id].fused_file)
+                    settings.DIR_RESULTS, db.fused_file[fused_file_id].fused_file)
                 fused_file.unlink(missing_ok=True)
-            defs.DIR_RESULTS = saved_dir_results
+            settings.DIR_RESULTS = saved_dir_results
             db.fused_file.fused_file.uploadfolder = save_upload_folder
 
     ##################################
@@ -468,7 +469,7 @@ class TestDefaultController():
     #     resp = gluon.contrib.simplejson.loads(get_custom_data())
     #     print(resp)
     #     if resp.has_key('success') and resp['success'] == 'false':
-    #        self.assertTrue(defs.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
+    #        self.assertTrue(settings.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
     #     else:
     #         self.assertEqual(resp['reads']['segmented'][0], resp['reads']['segmented'][2], "get_custom_data doesn't return a valid json")
     #         self.assertEqual(resp['sample_name'], 'Compare samples')
@@ -495,7 +496,7 @@ class TestDefaultController():
         patient_id, sample_set_id = db_manipulation_utils.add_patient(
             1, user_id, auth)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            patient_id, user_id)
+            sample_set_id, user_id)
         json_content_to_upload = '{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}'
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as analysis:
             analysis.write(json_content_to_upload)
@@ -519,7 +520,8 @@ class TestDefaultController():
                 # Then : Check result
                 result = json.loads(json_result)
                 assert result["success"] == "true"
-                assert result["message"] == f"({sample_set_id}): analysis saved"
+                assert result["message"] == f"({
+                    sample_set_id}): analysis saved"
                 analysis_file = db(
                     db.analysis_file.sample_set_id == sample_set_id).select().first()
                 result_file = Path(test_utils.get_results_path(),

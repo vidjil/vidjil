@@ -1,18 +1,24 @@
+#!/bin/bash
+
+if [[ -n $1 ]]
+then
+    INSTANCE_TYPE=$1
+else
+    INSTANCE_TYPE="all"
+fi
+
 echo -e "\n\e[34m=========================\e[0m"
-echo -e "\e[34m=== Start service workers\e[0m"
-echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m"; echo
+echo -e "\e[34m=== Start service workers for $INSTANCE_TYPE\e[0m"
+echo -e "\e[34m=== `date +'%Y/%m/%d; %H:%M'`\e[0m\n"
 
-cd usr/share/vidjil/server/py4web
-
-pip install pandas
-
-# Change value of pool
+# Set value of workers pool
 DEFAULT_POOL=$(($(nproc) - 1))
-if [[ -v WORKERS_POOL ]]; then
+if [[ -v WORKERS_POOL ]]
+then
     POOL="$WORKERS_POOL"
-    echo "Pool of worker setted: $POOL"
     # Check if not greater than number of available threads.
-    if [ "$POOL" -gt $(($(nproc) - 1)) ]; then
+    if [[ $POOL -gt $DEFAULT_POOL ]]
+    then
         POOL=$DEFAULT_POOL
         echo -e "\033[31mPool value is not valid because it is greater than the number of available threads\033[0m.\nSet value to default computed pool value."
     fi
@@ -21,6 +27,42 @@ else
     echo "No pool value. Set value to default computed pool value."
 fi
 
+user=33
+echo "user : `id -nu $user` (id $user)"
 
-echo "==== Pool of workers: $POOL"
-celery -b redis://redis:6379/0 -A apps.vidjil.tasks worker --loglevel=info --concurrency=$POOL  
+# Check if some workers should be dedicated to short jobs
+if [[ -v SHORT_JOBS_WORKERS_POOL ]]
+then
+    # Check if not greater than number of workers -1
+    if [[ $SHORT_JOBS_WORKERS_POOL -ge $POOL ]]
+    then
+        SHORT_JOBS_WORKERS_POOL=$POOL - 1
+    fi
+else
+    # No dedicated workers
+    SHORT_JOBS_WORKERS_POOL=0
+fi
+echo "POOL : $POOL - SHORT_JOBS_WORKERS_POOL : $SHORT_JOBS_WORKERS_POOL - NB_WORKERS : $NB_WORKERS"
+# Display limit (100000000 if not set)
+if [[ -z "${CELERY_SIZE_LIMIT_FOR_LONG_JOB+set}" ]]
+then
+    CELERY_SIZE_LIMIT_FOR_LONG_JOB=100000000
+fi
+echo "Size limit to be considered as a long job: `numfmt --to=iec $CELERY_SIZE_LIMIT_FOR_LONG_JOB`"
+if [[ "$INSTANCE_TYPE" == "short" ]]
+then
+    NB_WORKERS=$SHORT_JOBS_WORKERS_POOL
+    QUEUES="short"
+else
+    NB_WORKERS=$(($POOL - $SHORT_JOBS_WORKERS_POOL))
+    QUEUES="short,long"
+fi
+
+if [[ NB_WORKERS -gt 0 ]]
+then
+    echo "==== Pool of workers: $NB_WORKERS for queues $QUEUES"
+    gosu $user bash -c "source /usr/share/vidjil/venv/bin/activate && \
+        cd /usr/share/vidjil/server/py4web && celery -b redis://redis:6379/0 -A apps.vidjil.tasks worker -Q $QUEUES --concurrency=$NB_WORKERS --prefetch-multiplier -1"
+else
+    echo "No workers to start, exiting"
+fi

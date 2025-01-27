@@ -1,10 +1,9 @@
-.PHONY : up down clean_deploy reset_database set_rights restart backup_mysql restore_mysql_data backup_volume restore_volume build_server deploy_web2py
+.PHONY : up down clean_deploy reset_database set_rights restart backup_mysql restore_mysql_data backup_volume restore_volume build_server
 
-include .env-default
-include .env
-	
+VOLUME_PATH := $(if $(VOLUME_PATH),$(VOLUME_PATH),"./volumes/vidjil")
+
 up:
-	COMPOSE_PROFILES=minimal docker-compose up -d
+	docker compose up -d
 
 up_with_times:
 	date +%H:%M:%S > times.log
@@ -12,30 +11,49 @@ up_with_times:
 	date +%H:%M:%S >> times.log
 
 down:
-	docker-compose down
+	docker compose down
 
-clean_deploy:
-	# Erase old container data and strat a fresh deploy; fix rights on volumes
-	sudo echo "Make a clean and fresh deploy of server (minimal profile) - path : ${VOLUME_PATH}"
-	docker-compose down || true
-	sudo rm -r ${VOLUME_PATH} || true
-	docker-compose up -d mysql uwsgi
-	sudo chmod 777 -R ${VOLUME_PATH}
-	docker-compose up -d
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" vidjil-uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" vidjil-uwsgi python3 init_test_db.py
-	docker ps
-	
-reset_database:
-	# Make a call to truncate db and refill with example/testing data
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts" vidjil-uwsgi python3 load-sql.py -i /usr/share/vidjil/docker/ci/ci_erase.sql
-	docker exec -it -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" vidjil-uwsgi python3 init_test_db.py
+restart:
+	docker compose restart
 
 set_rights:
 	sudo chmod 777 -R ${VOLUME_PATH}
 
-restart:
-	docker-compose restart
+build-server:
+	docker build --progress=plain -t vidjil/server:dev -f ./vidjil-server/Dockerfile ../
+
+build-server-alpine:
+	docker build --progress=plain -t vidjil/server:dev -f ./vidjil-server/Dockerfile-alpine ../
+
+build-client:
+	docker build --progress=plain -t vidjil/client:dev -f ./vidjil-client/Dockerfile ../
+
+build-cypress:
+	docker build --progress=plain -t vidjil/cypress:dev ./ci
+
+reset_database:
+	# Make a call to truncate db and refill with example/testing data
+	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ci_erase.sql"
+	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
+
+clean_deploy:
+	# Erase old container data and start a fresh deploy; fix rights on volumes
+	sudo echo "Make a clean and fresh deploy of server - path : ${VOLUME_PATH}"
+	$(MAKE) down
+	sudo rm -r ${VOLUME_PATH} || true
+	docker compose up -d mysql uwsgi
+	$(MAKE) set_rights
+	$(MAKE) up
+	$(MAKE) reset_database
+	docker ps
+
+build_and_run_dev:
+	ln -s docker-compose-dev.yml docker-compose.override.yml
+	$(MAKE) build-server build-client
+	docker compose up -d mysql uwsgi
+	$(MAKE) set_rights
+	$(MAKE) up
+	docker ps
 
 ###############################
 ### Backup/restore MYSQL volume
@@ -54,12 +72,8 @@ backup_volume:
 	sudo cp -R ./${VOLUME_PATH} ./${VOLUME_PATH}_backup 
 
 restore_volume:
-	[ -d ./${VOLUME_PATH}_backup  ] && sudo rm -r ./${VOLUME_PATH}  && sudo cp -R ./${VOLUME_PATH}_backup   ./${VOLUME_PATH}  && echo 'Restored volume backup (${VOLUME_PATH})' || echo "No available volume backup (${VOLUME_PATH})"
+	[ -d ./${VOLUME_PATH}_backup  ] && sudo rm -r ./${VOLUME_PATH} && sudo cp -R ./${VOLUME_PATH}_backup ./${VOLUME_PATH} && echo 'Restored volume backup (${VOLUME_PATH})' || echo "No available volume backup (${VOLUME_PATH})"
 	docker-compose restart uwsgi mysql workers fuse
-
-
-build-server:
-	docker build -t vidjil/server:py4web ./vidjil-server/
 
 deploy_web2py:
 	# Make a deploy with old fashion web2py server

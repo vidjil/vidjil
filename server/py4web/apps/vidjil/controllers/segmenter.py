@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
-from sys import modules
-from .. import defs
-from ..modules.stats_decorator import *
-from ..modules import vidjil_utils
-from ..VidjilAuth import VidjilAuth
-from io import StringIO
+
 import json
 import os
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
 from contextlib import contextmanager
 import tempfile
 import shutil
+from py4web import action
 
-from ..common import cors, log
+from .. import settings
+from ..modules import vidjil_utils
+from ..common import cors, log, request
 
 
 ##################################
@@ -42,34 +37,29 @@ def segment_sequences(sequences):
     text_result = "{}"
     
     check = check_sequences(sequences)
-    if check != None:
+    if check is not None:
         text_result = '{"error": "%s"}' % check
     else:
         with TemporaryDirectory() as folder_path:
             
-            #store sequences in a tmp file
+            # Store sequences in a tmp file
             file_path = folder_path + "/sequences.txt"
-            fasta = open(file_path, 'w')
-            fasta.write(sequences)
-            fasta.close()
-            
-            #store result in a tmp file
-            result_path = folder_path + "/sequences.vidjil"
-            
-            ## les chemins d'acces a vidjil / aux fichiers de sequences
-            germline_folder = defs.DIR_VIDJIL + '/germline/'
+            with open(file_path, 'w') as fasta:
+                fasta.write(sequences)
 
-            ## config de vidjil
-            config = '-c designations -3 -g germline'
-            config = config.replace( ' germline' ,germline_folder)
+            ## vidjil config
+            config = f"-c designations -3 -g {settings.DIR_GERMLINE}"
 
-            ## commande complete
-            cmd = defs.DIR_VIDJIL + '/vidjil-algo ' + ' -o  ' + folder_path 
+            ## complete command
+            cmd = settings.DIR_VIDJIL + '/vidjil-algo ' + ' -o  ' + folder_path 
             cmd += ' ' + config + ' ' + file_path
 
-            ## execute la commande vidjil
+            ## execute vidjil command
             os.system(cmd)
-
+            
+            # Get result in a tmp file
+            result_path = folder_path + "/sequences.vidjil"
+            
             if os.path.isfile(result_path):
                 with open(result_path, 'r') as myfile:
                     text_result = myfile.read()
@@ -82,17 +72,17 @@ def segment_sequences(sequences):
     return text_result
 
 def check_sequences(sequences):
-    #fasta format ?
+    # fasta format ?
     if sequences[0] == '>':
         if len(sequences.split('>')) > limit_max+1 :
             return "too many sequences (limit : " + str(limit_max) + ")"
 
-    #fastq format ?
+    # fastq format ?
     elif sequences[0] == '@':
         if len(sequences.split('\n')) > 4*(limit_max+1) :
             return "too many sequences (limit : " + str(limit_max) + ")"
 
-    #unknow format ?
+    # unknown format ?
     else :
         return "invalid sequences, please use fasta or fastq format"
     return None

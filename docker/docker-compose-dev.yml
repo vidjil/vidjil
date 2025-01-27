@@ -1,20 +1,16 @@
 services:
     mysql:
         ports:
-            # Forward ports to be able to edit DB outside the containers
             - "4306:3306"
-            - "43060:33060"
+        env_file:
+            - '.env.dev'
 
     uwsgi:
-        image: vidjil/server:py4web
+        image: vidjil/server:dev
         command: bash /entrypoints/uwsgi-entrypoint.sh
+        env_file:
+            - '.env.dev'
         volumes:
-            # Local volume path
-            - $VOLUME_PATH/results:/mnt/result
-            - $VOLUME_PATH/results/results:/mnt/result/results
-            - $VOLUME_PATH/tmp:/mnt/result/tmp
-            - $VOLUME_PATH/uploads:/mnt/upload/uploads
-            - $VOLUME_PATH/databases:/usr/share/vidjil/server/py4web/apps/vidjil/databases
             # Use local vidjil repository
             - ../algo:/usr/share/vidjil/algo
             - ../browser:/usr/share/vidjil/browser
@@ -22,20 +18,72 @@ services:
             - ../demo:/mnt/data/src
             - ../doc:/usr/share/vidjil/doc
             - ./:/usr/share/vidjil/docker
-            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
+            - ../server/py4web/apps:/usr/share/vidjil/server/py4web/apps
             - ../tools:/usr/share/vidjil/tools
+            # Use contrib folder
+            - ../../contrib:/usr/share/vidjil/tools/scripts
 
     nginx:
+        image: vidjil/client:dev
+        env_file:
+            - '.env.dev'
         volumes:
+            # Use local vidjil repository
             - ../browser:/usr/share/vidjil/browser
             - ./:/usr/share/vidjil/docker
             - ./vidjil-client/conf/conf.js:/usr/share/vidjil/browser/js/conf.js
+            - ../germline:/usr/share/vidjil/germline
 
     fuse:
-        image: vidjil/server:py4web
+        image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
 
-    workers:
-        image: vidjil/server:py4web
+    workers-all:
+        image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
+
+    workers-short:
+        image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
 
     flower:
-        image: vidjil/server:py4web
+        image: vidjil/server:dev
+        env_file:
+            - '.env.dev'
+
+    restic:
+        container_name: vidjil-restic
+        image: mazzolino/restic
+        hostname: docker
+        env_file:
+            - '.env.default'
+            - '.env.dev'
+        environment:
+            RUN_ON_STARTUP: "true"
+            BACKUP_CRON: "0 0 2 * * *"
+            PRE_COMMANDS: "sh /root/scripts/export_db.sh"
+            RESTIC_REPOSITORY: /mnt/backup
+            RESTIC_COMPRESSION: max
+            RESTIC_BACKUP_SOURCES: /mnt/volumes
+            RESTIC_BACKUP_ARGS: >-
+                --tag health-data --exclude='*.tmp' --limit-download 10000 --limit-upload 10000 --verbose
+            RESTIC_FORGET_ARGS: >-
+                --keep-last 50 --keep-daily 30 --keep-weekly 15 --keep-monthly 36 --keep-yearly 10
+            RESTIC_READ_CONCURRENCY: 1
+            GOMAXPROCS: 1
+            TZ: Europe/Paris
+        volumes:
+            - ./backup/scripts/:/root/scripts/
+            - ${VOLUME_PATH:-./volumes/vidjil/}/backup/sql:/mnt/volumes/sql
+            - ${VOLUME_PATH:-./volumes/vidjil/}/databases:/mnt/volumes/database:ro
+            - ${VOLUME_PATH:-./volumes/vidjil/}/result/results:/mnt/volumes/result/results:ro
+            - ${VOLUME_PATH:-./volumes/vidjil/}/result/tmp:/mnt/volumes/result/tmp:ro
+            - ./volumes/backup:/mnt/backup
+            - /var/run/docker.sock:/var/run/docker.sock
+        links:
+            - mysql:mysql
+        networks:
+            - vidjil

@@ -3,7 +3,7 @@
     Here are aggregated notes forming a part of the developer documentation on the vidjil-algo.  
     These notes are a work-in-progress, they are not as polished as the user documentation.  
     Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md),
-    at the [issues](http://gitlab.vidjil.org), at the commit messages, and at the source code.
+    at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
 
 # Development notes -- Vidjil-algo
 
@@ -29,9 +29,9 @@ The algorithm follows roughly those steps:
 
 Unit tests are managed using an internal lightweight poorly-designed
 library that outputs a TAP file. They are organized in the directory
-[algo/tests](../algo/tests).
+[algo/tests](https://gitlab.inria.fr/vidjil/vidjil/-/tree/dev/algo/tests).
 
-All the tests are defined in the [tests.cpp](../algo/tests/tests.cpp) file. But, for the sake of
+All the tests are defined in the [tests.cpp](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/algo/tests/unit-tests/tests.cpp) file. But, for the sake of
 clarity, this file includes other `cpp` files that incorporate all the
 tests. A call to `make` compiles and launches the `tests.cpp` file, which
 outputs a TAP file (in case of total success) and creates a `tests.cpp.tap`
@@ -39,9 +39,9 @@ file (in every case).
 
 1. Tap test library
 
-The library is defined in the [testing.h](../algo/tests/testing.h) file.
+The library is defined in the [testing.h](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/algo/tests/unit-tests/testing.h) file.
 
-Tests must be declared in the [tests.h](../algo/tests/tests.h) file:
+Tests must be declared in the [tests.h](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/algo/tests/unit-tests/tests.h) file:
     1. Define a new macro (in the enum) corresponding to the test name
     2. In `declare_tests()` use `RECORD_TAP_TEST` to associate the macro with a
         description (that will be displayed in the TAP output file).

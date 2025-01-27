@@ -2,16 +2,16 @@
 import json
 import pathlib
 from typing import Any
+from py4web.core import Session
 
 from . import test_utils
 from .omboddle import Omboddle
 from ....controllers import auth as auth_controller
 from ....common import db
 from ....modules.permission_enum import PermissionEnum
-from .... import defs
+from ....modules import sampleSet
 from .... import tasks
 from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
-from py4web.core import Session
 
 
 # User management
@@ -158,7 +158,7 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
         user_id = db(db.auth_user).select().first().id
 
     sample_set_id = db.sample_set.insert(
-        creator=user_id, sample_type=defs.SET_TYPE_PATIENT)
+        creator=user_id, sample_type=sampleSet.SET_TYPE_PATIENT)
     patient_id = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
                                    info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
     if (auth != None):
@@ -170,26 +170,40 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
 
     return patient_id, sample_set_id
 
+# Group management
+
+def add_group(group_name : str, user_id : int = -1) -> int : 
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+
+    group_id = db.auth_group.insert(id="", role=group_name, description="")
+    return group_id
+
+
+def add_user_to_group(group_id : int, user_id : int) : 
+    db.auth_membership.insert(id="", group_id=group_id, user_id=user_id)
+
+def remove_user_from_group(group_id : int, user_id : int):
+    db((db.auth_membership.group_id==group_id) & (db.auth_membership.user_id==user_id)).delete()
+
+
+
 # Sequence file management
 
 
-def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1) -> int:
+def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1) -> int:
     """Add a fake sequence file to a patient
 
     Args:
-        patient_id (int, optional): patient id. Defaults to -1.
+        sample_set_id (int): sample set id.
         user_id (int, optional): user id. Defaults to -1.
         use_real_file (bool, optional): If set to false, use a simple string value. If set to True, really load a file in db. Default to False
-        preprocess (bool, optional): Swtich preprocess status. If set to False, don't fill preprocess fields of db. If set to True, fill them with values given (preprocess conf and task id; load 2 file instead of one. Default to False
-        preprocess_conf_id (int, optional): Preprocess conf id. if not set, don't used
+        preprocess (bool, optional): Switch preprocess status. If set to False, don't fill preprocess fields of db. If set to True, fill them with values given (preprocess conf and task id; load 2 file instead of one. Default to False
+        preprocess_conf_id (int, optional): Preprocess conf id. if not set, not used
 
     Returns:
         int: corresponding sequence file id
     """
-
-    if patient_id == -1:
-        patient_id = db(db.patient).select().first().id
-    sample_set_id = db.patient[patient_id].sample_set_id
 
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
@@ -208,7 +222,7 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bo
         data_file2 = "/test/sequence/test_file2.fasta" if preprocess else None
         preprocess_file = "/test/sequence/preprocess_test_file.fasta" if preprocess else None
 
-    sequence_file_id = db.sequence_file.insert(patient_id=patient_id,
+    sequence_file_id = db.sequence_file.insert(patient_id=None,
                                                sampling_date="2010-10-10",
                                                info="testf",
                                                filename=filename,
@@ -231,14 +245,74 @@ def add_sequence_file(patient_id: int = -1, user_id: int = -1, use_real_file: bo
 TEST_CONFIG_NAME = "test_config_plapipou"
 
 
-def add_config():
-    config_id = db.config.insert(name=TEST_CONFIG_NAME,
+def add_config(name : int = TEST_CONFIG_NAME) -> int:
+    config_id = db.config.insert(name=name,
                                  info="plop_info",
                                  command="plop_command",
                                  fuse_command="plop_fuse_command",
                                  program="none",
                                  classification=None)
     return config_id
+
+# def add_run(run_id : int = -1):
+    
+def add_run(run_number: int = -1, user_id: int = -1, auth=None):
+    """Add a run set to a user
+
+    Args:
+        run_number_id (int): run number (for unique naming purpose)
+        user_id (int, optional): user id - if -1, takes the first user. Defaults to -1.
+        auth (VidjilAuth, optional): auth to add rights, if None, do not set rights. Defaults to None.
+
+    Returns:
+        tuple[int, int]: corresponding patient id and sample set id
+    """
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+
+    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=sampleSet.SET_TYPE_RUN)
+    run_id = db.run.insert(name=f"run_{run_number}", info=f"test run {run_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
+    if (auth != None):
+        user_group_id = auth.user_group(user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'run', run_id)
+
+    return run_id, sample_set_id
+    
+def add_generic(generic_number: int = -1, user_id: int = -1, auth=None):
+    """Add a generic set to a user
+
+    Args:
+        generic_number_id (int): generic number (for unique naming purpose)
+        user_id (int, optional): user id - if -1, takes the first user. Defaults to -1.
+        auth (VidjilAuth, optional): auth to add rights, if None, do not set rights. Defaults to None.
+
+    Returns:
+        tuple[int, int]: corresponding patient id and sample set id
+    """
+    if user_id == -1:
+        user_id = db(db.auth_user).select().first().id
+
+    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=sampleSet.SET_TYPE_GENERIC)
+    generic_id = db.generic.insert(name=f"generic_{generic_number}", info=f"test generic {generic_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
+    if (auth is not None):
+        user_group_id = auth.user_group(user_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, 'generic', generic_id)
+
+    return generic_id, sample_set_id
+
+
+# def add_generic(generic_id : int = -1):
+#     if generic_id == -1:
+#         generic_id = db(db.generic).select().first().id
+#     sample_set_id = db.generic[generic_id].sample_set_id
+#     new_generic_id = db.generic.insert(id="", name="add_generic_test", info= "",creator= 1, sample_set_id = sample_set_id)
+#     return new_generic_id 
 
 # Results file management
 
@@ -261,7 +335,9 @@ def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_
         config_id = db(db.config).select().first().id
 
     if scheduler_task_id == -1:
-        scheduler_task_id = db(db.scheduler_task).select().first().id
+        first_scheduler_task = db(db.scheduler_task).select().first()
+        if first_scheduler_task is not None:
+            scheduler_task_id = first_scheduler_task.id
 
     if use_real_file:
         filename = "analysis-example.vidjil"

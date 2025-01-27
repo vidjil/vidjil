@@ -1,22 +1,14 @@
 '''
-Returns messages previouly logged within the 'user_log' table.
+Returns messages previously logged within the 'user_log' table.
 See UserLogHandler() in models/db.py.
 '''
 
-# -*- coding: utf-8 -*-
-from sys import modules
-from .. import defs
-from ..modules import vidjil_utils
-from ..modules import tag
-from ..modules.stats_decorator import *
-from ..modules.permission_enum import PermissionEnum
-from ..VidjilAuth import VidjilAuth
-from io import StringIO
 import json
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
+from py4web import action, request, URL
 
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..modules import vidjil_utils
+from ..modules.permission_enum import PermissionEnum
+from ..common import db, auth
 
 
 ##################################

@@ -11,11 +11,11 @@ import getpass
 import errno
 from collections import defaultdict
 from warnings import warn
+from datetime import datetime
 
 ### Particular module to load
 import subprocess
 import pkg_resources
-
 required  = {'requests', 'bs4', 'tabulate', 'requests-toolbelt', 'urllib3'}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing   = required - installed
@@ -45,6 +45,23 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 TAGS = []
 TAGS_UNDEFINED = []
 url  = "https://localhost/vidjil/"
+
+def is_valid_date(date_str):
+    """ Test string of date to check if it is a correct value
+    Think about test before launching pipeline to not create twice run, patient or sample if need to relaunch after a fail in script
+    
+    Args:
+        date_str (str): date in string format (YYYY-MM-DD)
+
+    Returns:
+        bool: True if date is in correct format
+    """
+    try:
+        # Try to convert string value in date object
+        datetime.strptime(date_str, "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
 
 def prettyUrl(string: str):
     """Transform a string to use url compatible character
@@ -86,7 +103,7 @@ class Vidjil:
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
 
-    def __init__(self, url_server:str, url_client:str=None, ssl:str=True):
+    def __init__(self, url_server:str, url_client:str=None, ssl:str=True, silent=False):
         """_summary_
 
         Args:
@@ -97,7 +114,9 @@ class Vidjil:
         self.url_server = url_server
         self.url_client = url_client if url_client != None else url_server
         self.ssl = ssl
-        print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
+        self.silent = silent
+        if not self.silent:
+            print( "Vidjil(url_server:%s, url_client=%s, ssl=%s)" % (self.url_server, self.url_client, self.ssl) )
         self.last_request = {} # Will store results of request; for api tests
         self.session = requests.Session()
         self.auth_deletion = False
@@ -126,8 +145,9 @@ class Vidjil:
             Exception: Error of server that return an incorect exit code
 
         """
-        print()
-        print('### %s (%s)' % (self.url_server, email))
+        if not self.silent:
+            print()
+            print('### %s (%s)' % (self.url_server, email))
         response = self.session.get(self.url_server + '/auth/login', verify=self.ssl)
 
         if not "auth_user_email__row" in str(response.content) and not "login__label" in str(response.content):
@@ -135,7 +155,8 @@ class Vidjil:
             raise Exception( "Login; server don't return a correct login form.\nPlease verify your url and certificate parameters and that you point to py4web server.")
 
 
-        print(f"Communication with server etablish...")
+        if not self.silent:
+            print(f"Communication with server etablish...")
         # data include email (web2py) and lgin (py4web)
         data = { "login":email,  "email":email, "password":password, 'remember_me':"on" }
         BS   = BeautifulSoup(response.text, 'html.parser')
@@ -158,17 +179,20 @@ class Vidjil:
             self.user_id    = whoami["id"]
             self.user_email = whoami["email"]
             self.is_admin   = whoami["admin"]
-            print( "Successful login as %s (%sadmin)" % (email, "not " if not whoami["admin"] else "") )
-            print()
+            if not self.silent:
+                print( "Successful login as %s (%sadmin)" % (email, "not " if not whoami["admin"] else "") )
+                print()
 
             self.groups     = whoami["groups"] if "groups" in whoami.keys() else None
             if self.groups == None: # old verison of server, previous 2023/10
                 warn('You use old version of server that not return list of avaialble user.\nThis will be deprecate.\nPlease update your server.', DeprecationWarning, stacklevel=2)
             elif len(self.groups) == 1:
-                print(f"Only one group available. Automatic set ({self.groups[0]})")
+                if not self.silent:
+                    print(f"Only one group available. Automatic set ({self.groups[0]})")
                 self.setGroup(self.groups[0]["id"])
             elif len(self.groups) > 1:
-                print(f"Multiple groups available. No automatic set.\nPlease call `vidjil.setGroup` with corresponding id (needed for sets creation).")
+                if not self.silent:
+                    print(f"Multiple groups available. No automatic set.\nPlease call `vidjil.setGroup` with corresponding id (needed for sets creation).")
                 self.getGroups()
 
 
@@ -354,6 +378,9 @@ class Vidjil:
         Returns:
             dict: ???
         """
+        if (birth_date and not is_valid_date(birth_date)):
+            raise Exception(f"Patient creation: bad value for birth_date ({birth_date})")
+
         data = {"group":group if group else self.group,
                 "patient":[{
                     'id': id if id else "",
@@ -385,6 +412,9 @@ class Vidjil:
         Returns:
             dict: ???
         """
+        if (run_date and not is_valid_date(run_date)):
+            raise Exception(f"Run creation: bad value for run_date ({run_date})")
+
         data = {"group":group if group else self.group,
                 "run":[{
                     'id': id if id else "",
@@ -611,7 +641,7 @@ class Vidjil:
 
         return
 
-    def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
+    def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str=None, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
         """Create a sample on the server, link it to various sets, and upload dat aas last part
 
         Args:
@@ -633,6 +663,10 @@ class Vidjil:
         head_f1, tail_f1 = os.path.split(file_filename)
         head_f2, tail_f2 = os.path.split(file_filename2)
 
+        if (file_sampling_date and not is_valid_date(file_sampling_date)):
+            raise Exception(f"Sampling creation: bad value for sampling date ({file_sampling_date})")
+
+
         data = {
             "source":source,
             "pre_process":pre_process,
@@ -642,7 +676,7 @@ class Vidjil:
                     "filename":tail_f1,
                     "filename2":tail_f2,
                     "id":file_id,
-                    "sampling_date":file_sampling_date,
+                    "sampling_date":file_sampling_date if file_sampling_date else "",
                     "info": prettyUrl(file_info if file_info else ""),         # ex: "test+#age=25+#cat=val",
                     "set_ids": prettyUrl(file_set_ids if file_set_ids else "") # ex: ":p+tes+(2)"
                 }
@@ -751,6 +785,32 @@ class Vidjil:
         print(tabulate(d, showindex=False, headers=headers))
         print()
         return
+
+    def metrics(self, metrics_list:str = "fast"):
+        """ 
+        Ask data to server; if user is in group metrics, return some metrics of server instance to be interpreted by metrics/grafana side project 
+        A specific metrics can be asked if a key is provided
+        format: Choose between long, fast or all
+        """
+        list_available = ["fast", "long", "all"]
+        if metrics_list not in list_available:
+            raise Exception(f"metrics_list value not available: {metrics_list} not in {list_available}")
+        new_url  = f"{self.url_server}metrics_{metrics_list}" 
+        response = self.request(new_url, "get")
+        return response
+
+    def metricsByName(self, keys_metrics:list):
+        """ 
+        Ask data to server; if user is in group metrics, return some metrics of server instance to be interpreted by metrics/grafana side project 
+        A specific metrics can be asked if a key is provided
+        """
+        if not keys_metrics or not isinstance(keys_metrics, list):
+            raise Exception("MEtrics asked not in correct format")
+        formated_keys = ",".join(keys_metrics)
+        print( f"{formated_keys=}" )
+        new_url  = self.url_server + "metrics_by_name" + f"?metric={formated_keys}"
+        response = self.request(new_url, "get")
+        return response
 
 #########################
 ### Some utils functions

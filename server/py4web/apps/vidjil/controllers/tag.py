@@ -1,16 +1,9 @@
-# -*- coding: utf-8 -*-
-from sys import modules
-from .. import defs
-from ..modules import vidjil_utils
-from ..modules import tag
-from ..modules.stats_decorator import *
-from ..modules.controller_utils import error_message
 import json
-from py4web import action, request, abort, redirect, URL, Field, HTTP, response
-from collections import defaultdict
+from py4web import action, request
 
-
-from ..common import db, session, T, flash, cache, authenticated, unauthenticated, auth, log
+from ..modules import tag
+from ..modules.controller_utils import error_message
+from ..common import db, auth
 
 
 ##################################
@@ -25,7 +18,6 @@ def auto_complete():
     if "keys" not in request.params:
         return error_message("missing group ids")
 
-    prefix = tag.get_tag_prefix()
     group_ids = json.loads(request.params["keys"])
 
     if not isinstance(group_ids, list):

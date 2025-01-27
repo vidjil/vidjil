@@ -8,8 +8,7 @@ from ...functional.db_initialiser import DBInitialiser
 from py4web.core import _before_request, Session, HTTP
 from ....common import db, auth
 from ....modules.permission_enum import PermissionEnum
-from .... import defs
-from .... import tasks
+from .... import settings, tasks
 from ....controllers import pre_process as pre_process_controller
 
 
@@ -63,12 +62,6 @@ class TestPreProcessController(unittest.TestCase):
         assert collections.Counter(
             names) == collections.Counter(expected_names)
         assert result["isAdmin"] == True
-
-    ##################################
-    # Tests on pre_process_controller.task_test2()
-    ##################################
-
-    # TODO : remove the controller method ? or test it...
 
     ##################################
     # Tests on pre_process_controller.add()
@@ -392,51 +385,48 @@ class TestPreProcessController(unittest.TestCase):
         assert result["message"] == "access denied"
 
     def test_info_ok(self):
-        # Given : Logged as admin
+        # Given : Logged as user
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        sequence_file_id = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        task_id = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
-
-        defs.DIR_PRE_VIDJIL_ID = str(test_utils.get_resources_path()) + '/results/tmp/pre/out-%06d/'
-        directory1 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(sample_set_id, use_real_file=False, preprocess=True, preprocess_conf_id=1)
+        db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
+        settings.DIR_PRE_VIDJIL_ID = str(test_utils.get_resources_path()) + '/results/tmp/pre/out-%06d/'
+        directory1 = settings.DIR_PRE_VIDJIL_ID % sequence_file_id
         os.makedirs(directory1, exist_ok=True)
-
         
         #### When : Calling info
         ## Case 1; no log for this preprocess
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": 1, "sequence_file_id":sequence_file_id}):
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": sample_set_id, "sequence_file_id":sequence_file_id}):
             json_result = pre_process_controller.info()
 
-        # Then : authorized
+        # Then : results with no log
         result = json.loads(json_result)
         assert result["message"] == "result info"
-        assert result["content_log"] == None # no log file exist
+        assert result["content_log"] is None # no log file exist
         os.rmdir(directory1)
 
-
+        # Given
         ## Case 1; Log exist for this preprocess, should return raw content of the log
-        sequence_file_id2 = db_manipulation_utils.add_sequence_file(use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        task_id2 = db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
-        directory2 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id2
+        sequence_file_id2 = db_manipulation_utils.add_sequence_file(sample_set_id, use_real_file=False, preprocess=True, preprocess_conf_id=1)
+        db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
+        directory2 = settings.DIR_PRE_VIDJIL_ID % sequence_file_id2
         file_log  = directory2 + "/file.pre.log"
         os.makedirs(directory2, exist_ok=True)
-
         with open(file_log, "w") as f_log:
             f_log.write( "some log values")
 
-
+        #### When : Calling info
         with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": 1, "sequence_file_id":sequence_file_id2}):
             json_result = pre_process_controller.info()
 
+        # Then : results with log
         result = json.loads(json_result)
         assert result["message"] == "result info"
-        assert result["content_log"] != None # log file exist
+        assert result["content_log"] is not None # log file exist
         assert result["content_log"] == "some log values" # log file exist
         os.remove(file_log)
         os.rmdir(directory2)
-
-        return
-
 
     ##################################
     # Tests on pre_process_controller.permission()
@@ -479,7 +469,7 @@ class TestPreProcessController(unittest.TestCase):
         # Then : check result
         result = json.loads(json_result)
         query = result["query"]
-        assert len(query) == 6
+        assert len(query) == 7
         # only read access is for public groups
         read_permissions = [row["role"] for row in query if row["read"]]
         assert len(read_permissions) == 1
@@ -499,7 +489,7 @@ class TestPreProcessController(unittest.TestCase):
         # Then : check result
         result = json.loads(json_result)
         query = result["query"]
-        assert len(query) == 6
+        assert len(query) == 7
         # no access
         read_permissions = [row["role"] for row in query if row["read"]]
         assert len(read_permissions) == 0
@@ -521,7 +511,7 @@ class TestPreProcessController(unittest.TestCase):
         # Then : check result
         result = json.loads(json_result)
         query = result["query"]
-        assert len(query) == 6
+        assert len(query) == 7
         # no access
         read_permissions = [row["role"] for row in query if row["read"]]
         assert len(read_permissions) == 1

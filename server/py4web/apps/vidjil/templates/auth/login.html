@@ -50,7 +50,7 @@
     <div id="login_messages" class="message_container"></div>
     
     
-    [[ if not hasattr(defs, 'HEALTHCARE_COMPLIANCE') or not defs.HEALTHCARE_COMPLIANCE: ]]
+    [[ if not hasattr(settings, 'HEALTHCARE_COMPLIANCE') or not settings.HEALTHCARE_COMPLIANCE: ]]
     <p>
       <span class='warn'><b>⚠️ Research Use Only.</b></span>
       This server is not compliant for clinical use and comes with no warranty.

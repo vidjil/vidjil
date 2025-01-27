@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os.path
 import sys
-import defs
+import settings
 import argparse
 
 
@@ -33,10 +33,10 @@ def print_fuse_files(fused_files):
         if len(result_filenames) == 0:
             print("# No result for fused file: %s)" % (fused))
         else:
-            results = ' '.join([defs.DIR_RESULTS+'{0}'.format(f) for f in result_filenames])
+            results = ' '.join([settings.DIR_RESULTS+'{0}'.format(f) for f in result_filenames])
             comments = ' '.join(sequence_filenames)
             print ("python %s/fuse.py -o %s/%s -t 100 %s # %s http://app.vidjil.org/browser/index.html?sample_set_id=%d&config=%d"
-                   % (os.path.abspath(defs.DIR_FUSE), defs.DIR_RESULTS,
+                   % (os.path.abspath(settings.DIR_FUSE), settings.DIR_RESULTS,
                       fused.fused_file, results, comments,
                       fused.sample_set_id, fused.config_id))
 

@@ -1,4 +1,4 @@
-import defs
+import settings
 import os
 import os.path
 
@@ -62,30 +62,30 @@ def print_orphan_files(directory, prefix_filename, db_field):
 
 print("** Missing sequences **")
 for res in db(db.sequence_file).select():
-    if res.data_file and not os.path.isfile(defs.DIR_SEQUENCES+res.data_file):
+    if res.data_file and not os.path.isfile(settings.DIR_SEQUENCES+res.data_file):
         print_sequence_file(res)
 
 print("** Orphan sequence files **")
-print_orphan_files(defs.DIR_SEQUENCES, "sequence_file.data_file", db.sequence_file.data_file)
+print_orphan_files(settings.DIR_SEQUENCES, "sequence_file.data_file", db.sequence_file.data_file)
 
 print("** Orphan result files **")
-print_orphan_files(defs.DIR_RESULTS, "results_file.data_file", db.results_file.data_file)
+print_orphan_files(settings.DIR_RESULTS, "results_file.data_file", db.results_file.data_file)
 
 print("** Orphan fused files **")
-print_orphan_files(defs.DIR_RESULTS, "fused_file.fused_file", db.fused_file.fused_file)
+print_orphan_files(settings.DIR_RESULTS, "fused_file.fused_file", db.fused_file.fused_file)
 
 print("** Missing results **")
 for res in db(db.results_file).select():
-    if res.data_file is not None and not os.path.isfile(defs.DIR_RESULTS+res.data_file):
+    if res.data_file is not None and not os.path.isfile(settings.DIR_RESULTS+res.data_file):
         print_results_file(res)
 
 print("** Missing fused **")
 for res in db(db.fused_file).select():
-    if res.fused_file is not None  and not os.path.isfile(defs.DIR_RESULTS+res.fused_file):
+    if res.fused_file is not None  and not os.path.isfile(settings.DIR_RESULTS+res.fused_file):
         print_fused_file(res)
 
 print("** Missing analysis **")
 for res in db(db.analysis_file).select():
-    if res.analysis_file is not None and not os.path.isfile(defs.DIR_RESULTS+res.analysis_file):
+    if res.analysis_file is not None and not os.path.isfile(settings.DIR_RESULTS+res.analysis_file):
         print_analysis_file(res)
         

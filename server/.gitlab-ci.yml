@@ -4,14 +4,12 @@
   extends:
     - .test_server_base_dind
   script: &test_cypress_server_script
-    - docker exec vidjil-uwsgi  chmod a+w /usr/share/vidjil/server/py4web/apps/vidjil/errors
-    - docker exec vidjil-uwsgi  chown www-data -R /mnt/upload/uploads/ /mnt/result/results
-    - mkdir -p logs/before; for service in mysql fuse uwsgi workers flower nginx; do docker logs vidjil-${service} > logs/before/${service}.log 2>&1; done
+    - mkdir -p logs/before; cd docker; for service in `docker compose config | yq '.services[]|key'`; do docker logs vidjil-${service} > ../logs/before/${service}.log 2>&1; done; cd ..
     - echo "TIME $(date) - Before pulling cypress docker image" >> time.log
-    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9"
+    - docker pull "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION"
     - echo "TIME $(date) - After pulling cypress docker image" >> time.log
     - >
-      docker run
+      docker run --rm
       -v $PWD/$CYPRESS_PATH:/app/cypress
       -v $PWD/browser:/app/browser
       -v $PWD/doc:/app/doc
@@ -26,19 +24,19 @@
       --env URL=$URL
       --env TEST_FILES_PATTERN=$TEST_FILES_PATTERN
       --env CI_PASSWORD_TEST=$CI_PASSWORD_TEST
-      --shm-size=1GB
+      --shm-size=2GB
       --network="host"
-      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9" bash script.bash $TEST_FILES_PATTERN
+      "registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION" bash script.bash $TEST_FILES_PATTERN
   artifacts:
     reports:
       junit: $CYPRESS_PATH/reports/report_*.xml
     paths:
       - $CYPRESS_PATH
+      - docker/.env*
       - docker/*.yml
       - docker/vidjil-*
       - browser/js/conf.js
       - browser/test/cypress
-      - server/py4web/apps/vidjil/errors/*
       - time.log
       - logs
       - docker/volumes/vidjil/log

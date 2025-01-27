@@ -1,9 +1,14 @@
-# -*- coding: utf-8 -*-
+
 import datetime
 import pathlib
-from .. import defs
-from ..modules import vidjil_utils
-from ..modules import tag
+import json
+import os
+from collections import defaultdict
+from ombott import static_file
+from py4web import action, request, URL
+
+from .. import settings
+from ..modules import vidjil_utils, tag
 from ..modules.sampleSet import get_set_group
 from ..modules.sampleSets import SampleSets
 from ..modules.sampleSetList import SampleSetList, filter_by_tags
@@ -11,15 +16,8 @@ from ..modules.sequenceFile import get_associated_sample_sets, get_sequence_file
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.zmodel_factory import ModelFactory
-from ..modules import stats_qc_utils
+from ..modules import stats_qc_utils, sampleSet
 from ..user_groups import get_default_creation_group, get_involved_groups
-import json
-import time
-import os
-from py4web import action, request, URL
-from collections import defaultdict
-from ombott import static_file
-
 from ..common import db, session, T, auth, log
 
 
@@ -196,7 +194,7 @@ def index():
         scheduler_ids[s.id].status = s.status
     
 
-    tag_decorator = tag.TagDecorator(tag.get_tag_prefix())
+    tag_decorator = tag.TagDecorator(settings.TAG_PREFIX)
     query_pre_process = db( db.pre_process.id >0 ).select()
     pre_process_list = {}
     for row in query_pre_process:
@@ -239,11 +237,10 @@ def index():
 @action.uses("sample_set/all.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def all():
-    start = time.time()
     if request.query.get('type'):
         type = request.query.get('type')
     else :
-        type = defs.SET_TYPE_GENERIC
+        type = sampleSet.SET_TYPE_GENERIC
 
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,
@@ -269,18 +266,11 @@ def all():
     factory = ModelFactory()
     helper = factory.get_instance(type)
 
-    f = time.time()
     sample_set_list = SampleSetList(helper, page, step, tags, search)
-
-    log.debug("list loaded (%.3fs)" % (time.time() - f))
-
-    mid = time.time()
 
     set_ids = set([s.sample_set_id for s in sample_set_list.result])
     admin_permissions = [s.id for s in db(auth.vidjil_accessible_query(PermissionEnum.admin.value, db.sample_set) &  (db.sample_set.id.belongs(set_ids))).select(db.sample_set.id)]
     admin_permissions = list(set(admin_permissions))
-
-    log.debug("permission load (%.3fs)" % (time.time() - mid))
 
     # failsafe if filtered display all results
     step = len(sample_set_list) if step is None else step
@@ -304,7 +294,6 @@ def all():
     log.info("%s list %s" % (type, search), extra={'user_id': auth.user_id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("sample_set list (%.3fs)" % (time.time()-start))
 
     return dict(query= result,
                 fields= fields,
@@ -356,9 +345,9 @@ def form():
         return json.dumps(res, separators=(',',':'))
 
     message = '%s %s' % (action, set_type)
-    sets = {defs.SET_TYPE_PATIENT: [],
-            defs.SET_TYPE_RUN: [],
-            defs.SET_TYPE_GENERIC: []}
+    sets = {sampleSet.SET_TYPE_PATIENT: [],
+            sampleSet.SET_TYPE_RUN: [],
+            sampleSet.SET_TYPE_GENERIC: []}
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sample_set)
     log.info("load form " + message, extra=extra)
@@ -433,7 +422,7 @@ def submit():
                 # add
                 elif (auth.can_create_sample_set_in_group(int(data["group"]))):
                     group_id = int(data["group"])
-                    id_sample_set = db.sample_set.insert(sample_type=set_type)
+                    id_sample_set = db.sample_set.insert(sample_type=set_type, creator=auth.user_id)
 
                     p['creator'] = auth.user_id
                     p['sample_set_id'] = id_sample_set
@@ -446,8 +435,8 @@ def submit():
                     action = "add"
 
                     #if (p['id'] % 100) == 0:
-                    #    mail.send(to=defs.ADMIN_EMAILS,
-                    #    subject=defs.EMAIL_SUBJECT_START+" %d" % p['id'],
+                    #    mail.send(to=settings.ADMIN_EMAILS,
+                    #    subject=settings.EMAIL_SUBJECT_START+" %d" % p['id'],
                     #    message="The %dth %s has just been created." % (p['id'], set_type))
 
                 else :
@@ -519,8 +508,6 @@ def custom():
         res = {"success": "false", "message": "Missing field id"}
         log.error(res)
         return json.dumps(res, separators=(',',':'))
-    
-    start = time.time()
 
     if "config_id" in request.query and request.query["config_id"] != "-1" :
         config_id = int(request.query["config_id"])
@@ -623,9 +610,8 @@ def custom():
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.query["custom_list"])) )
     
-    tag_decorator = tag.TagDecorator(tag.get_tag_prefix())
+    tag_decorator = tag.TagDecorator(settings.TAG_PREFIX)
     log.info("load compare list", extra={'user_id': auth.user_id, 'record_id': None, 'table_name': "results_file"})
-    log.debug("sample_set/custom (%.3fs) %s" % (time.time()-start, search))
 
     classification = get_configs_by_classification()
 
@@ -938,7 +924,7 @@ def auto_complete():
         return error_message("missing group ids")
 
     query = json.loads(request.params["keys"])[0]
-    sample_types = [defs.SET_TYPE_PATIENT, defs.SET_TYPE_RUN, defs.SET_TYPE_GENERIC]
+    sample_types = [sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSet.SET_TYPE_GENERIC]
     result = []
     for sample_type in sample_types:
         result += get_sample_set_list(sample_type, query)
@@ -969,7 +955,7 @@ def samplesetById():
     API: Get a specific sample based on the set id
     Take two parameters: set id and set type
     '''
-    type = (request.query['type'] if ("type" in request.query.keys()) else defs.SET_TYPE_GENERIC )
+    type = (request.query['type'] if ("type" in request.query.keys()) else sampleSet.SET_TYPE_GENERIC )
     set_id =  request.query['id']
 
     factory = ModelFactory()
@@ -982,17 +968,15 @@ def samplesetById():
 @action("/vidjil/sample_set/stats", method=["POST", "GET"])
 @action.uses("sample_set/stats.html", db, auth.user)
 def stats():
-    start = time.time()
     if not auth.user :
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True,
-                                vars=dict(_next=URL('sample_set', 'all', vars={'type': defs.SET_TYPE_PATIENT}, scheme=True)))}
+        res = {"redirect" : vidjil_utils.get_patient_redirect_url()}
         return json.dumps(res, separators=(',',':'))
 
     isAdmin = auth.is_admin()
     if request.query['type']:
         type = request.query['type']
     else :
-        type = defs.SET_TYPE_GENERIC
+        type = sampleSet.SET_TYPE_GENERIC
 
     ## filter
     if "filter" not in request.query :
@@ -1024,7 +1008,6 @@ def stats():
     log.info("%s stat list %s" % (request.query["type"], search), extra={'user_id': auth.user_id,
         'record_id': None,
         'table_name': "sample_set"})
-    log.debug("stat list (%.3f s)" % (time.time()-start))
 
     return dict(query = result,
                 fields = fields,
@@ -1086,7 +1069,7 @@ def result_files():
         helpers[t] = mf.get_instance(type=t)
 
     filename = "export_%s_%s.zip" % ('-'.join(sample_set_ids), str(datetime.date.today()))
-    full_path_file = pathlib.Path(defs.DIR_SEQUENCES, filename)
+    full_path_file = pathlib.Path(settings.DIR_SEQUENCES, filename)
     try:
         with ZipFile(full_path_file, 'w') as zipfile:
             metadata = []
@@ -1097,7 +1080,7 @@ def result_files():
                     'set_info': res[res.sample_set.sample_type].info,
                     'sample_info': res.sequence_file.info,
                     'sequence_file': res.sequence_file.filename})
-                path = defs.DIR_RESULTS + res.results_file.data_file
+                path = settings.DIR_RESULTS + res.results_file.data_file
                 zipfile.writestr(res.results_file.data_file, open(path, 'rb').read())
             zipfile.writestr('metadata.json', json.dumps(metadata))
             zipfile.close()
@@ -1105,7 +1088,7 @@ def result_files():
         log.info("extract results files (%s)" % sample_set_ids, extra={'user_id': auth.user_id,
             'record_id': None,
             'table_name': "sample_set"})
-        return static_file(filename, defs.DIR_SEQUENCES, download=True)
+        return static_file(filename, settings.DIR_SEQUENCES, download=True)
     except Exception as exception:
         res = {"message": "an error occurred"}
         log.error(f"An error occurred when creating archive of sample_sets {sample_set_ids} : {exception}")
@@ -1119,5 +1102,5 @@ def result_files():
 @action("/vidjil/sample_set/download_sequence_file/<filename>", method=["POST", "GET"])
 @action.uses(db, session, auth.user)
 def download(filename=None):
-    return static_file(filename, root=defs.DIR_SEQUENCES, download=True)
+    return static_file(filename, root=settings.DIR_SEQUENCES, download=True)
     

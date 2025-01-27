@@ -1,6 +1,6 @@
 
 .test_cypress_base:
-  image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:12.9
+  image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION
   stage: test_cypress_client
   # extends:
     # - .need_for_staged_client
@@ -23,7 +23,7 @@
     TEST_FILES_PATTERN: "/app/cypress/e2e/test_*.js"
   artifacts:
     reports:
-      junit: $CYPRESS_PATH/reports/test-cypress-*.xml
+      junit: $CYPRESS_PATH/reports/report_test_*.xml
     paths:
       - $CYPRESS_PATH
       - docker/volumes/vidjil/log

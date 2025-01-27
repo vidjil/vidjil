@@ -19,25 +19,33 @@ EOF
 wget --no-check-certificate -nc -q https://www.vidjil.org/seqs/Stanford_S22.tar.gz
 tar xvzf Stanford_S22.tar.gz
 
-echo "Retrieving demo dataset, please be patient…"
-wget  --no-check-certificate -nc -q https://www.vidjil.org/seqs/LIL-L4.fastq.gz
+if [ -z "$1" ] || [ "$1" != "--light" ]
+then
+  echo "Retrieving demo dataset, please be patient…"
+  wget  --no-check-certificate -nc -q https://www.vidjil.org/seqs/LIL-L4.fastq.gz
+fi
 
 
 status=$?
 # wget -nc -O exits with 1 when file already exists but thit is is not an
 # error and should not fail the Makefile!
-if [ $status -le 1 ]; then
+if [ $status -le 1 ]
+then
     true
 else
     exit $status
 fi
 
 
-echo "Retrieving demo analysis file, please be patient…"
-wget  --no-check-certificate -nc -q https://www.vidjil.org/data/demo_lil_l3_tutorial.vidjil -O ../browser/test/data/demo_lil_l3_tutorial.vidjil
+if [ -z "$1" ] || [ "$1" != "--light" ]
+then
+  echo "Retrieving demo analysis file, please be patient…"
+  wget  --no-check-certificate -nc -q https://www.vidjil.org/data/demo_lil_l3_tutorial.vidjil -O ../browser/test/data/demo_lil_l3_tutorial.vidjil
+fi
 
 status=$?
-if [ $status -le 1 ]; then
+if [ $status -le 1 ]
+then
     true
 else
     exit $status
