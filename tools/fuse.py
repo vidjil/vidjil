@@ -509,13 +509,8 @@ class Samples:
     def __add__(self, other):
         obj=Samples()
 
-<<<<<<< HEAD
-        concatenate_with_padding(obj.d,
-                                 self.d, self.d['number'],
-=======
-        utils.concatenate_with_padding(obj.d, 
+        utils.concatenate_with_padding(obj.d,
                                  self.d, self.d['number'], 
->>>>>>> dev
                                  other.d, other.d['number'],
                                  ['number', 'pre_process'],
                                  recursive=True)
@@ -526,10 +521,6 @@ class Samples:
             if "pre_process" not in other.d.keys():
                 other.d["pre_process"] = {}
             obj.d["pre_process"] = {}
-<<<<<<< HEAD
-            concatenate_with_padding(obj.d["pre_process"],
-                                     self.d["pre_process"], self.d['number'],
-=======
 
             # Error of release 2024.12 and new preprocess pipeline, some file have wrong format of seqkit value
             if "seqkit" in self.d["pre_process"] and not isinstance(self.d["pre_process"]["seqkit"]["avg_len"]["raw_files"], list)\
@@ -540,7 +531,6 @@ class Samples:
 
             utils.concatenate_with_padding(obj.d["pre_process"], 
                                      self.d["pre_process"], self.d['number'], 
->>>>>>> dev
                                      other.d["pre_process"], other.d['number'],
                                      hidden_keys,
                                      recursive=True,
@@ -562,13 +552,8 @@ class MRD:
     def __add__(self, other):
         obj=MRD()
 
-<<<<<<< HEAD
-        concatenate_with_padding(obj.d,
-                                 self.d, self.d['number'],
-=======
-        utils.concatenate_with_padding(obj.d, 
+        utils.concatenate_with_padding(obj.d,
                                  self.d, self.d['number'], 
->>>>>>> dev
                                  other.d, other.d['number'],
                                  ['number'])
 
@@ -615,11 +600,7 @@ class Reads:
     def __add__(self, other):
         obj=Reads()
 
-<<<<<<< HEAD
-        concatenate_with_padding(obj.d['germline'],
-=======
-        utils.concatenate_with_padding(obj.d['germline'], 
->>>>>>> dev
+        utils.concatenate_with_padding(obj.d['germline'],
                                  self.d['germline'], len(self.d['total']),
                                  other.d['germline'], len(other.d['total']),
                                  ['total'])
@@ -689,17 +670,10 @@ class OtherWindows:
 
             print('  --[others]-->', w)
             yield w
-<<<<<<< HEAD
 
-class ListWindows(VidjilJson):
-    '''storage class for sequences informations
-
-=======
-        
 class ListWindows(utils.VidjilJson):
     '''storage class for sequences informations 
     
->>>>>>> dev
     >>> lw1.info()
     <ListWindows: [25] 2>
     <window : [5] 3 aaa>
@@ -736,13 +710,8 @@ class ListWindows(utils.VidjilJson):
         self.d["clones"] = []
         self.d["clusters"] = []
         self.d["germlines"] = {}
-<<<<<<< HEAD
 
-        self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
-=======
-        
         self.d["vidjil_json_version"] = defs.VIDJIL_JSON_VERSION
->>>>>>> dev
         self.d["producer"] = FUSE_VERSION
         self.d["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.limit_per_locus = 0
@@ -929,11 +898,7 @@ class ListWindows(utils.VidjilJson):
         l1 = len(self.d["reads"].d['segmented'])
         l2 = len(other.d["reads"].d['segmented'])
 
-<<<<<<< HEAD
-        concatenate_with_padding(obj.d,
-=======
-        utils.concatenate_with_padding(obj.d, 
->>>>>>> dev
+        utils.concatenate_with_padding(obj.d,
                                  self.d, l1,
                                  other.d, l2,
                                  ["clones", "links", "germlines", "warn",
@@ -997,13 +962,8 @@ class ListWindows(utils.VidjilJson):
             self.d["reads_segmented"][i] += other.d["reads_segmented"][i]
 
         self.d["clones"] += other.d["clones"]
-<<<<<<< HEAD
-        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-
-=======
         self.d["vidjil_json_version"] = [defs.VIDJIL_JSON_VERSION]
         
->>>>>>> dev
         self.d["system_segmented"].update(other.d["system_segmented"])
 
         return self
@@ -1882,13 +1842,8 @@ def main():
                 jlist_fused = jlist_fused * jlist
 
             print('\t==> merge to', jlist_fused)
-<<<<<<< HEAD
-        jlist_fused.d["system_segmented"] = ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
-
-=======
         jlist_fused.d["system_segmented"] = utils.ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
         
->>>>>>> dev
     else:
         print("### Read and merge input files")
         for path_name in files:
