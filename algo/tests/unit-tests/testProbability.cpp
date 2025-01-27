@@ -1,6 +1,11 @@
 #include "tests.h"
 #include <core/proba.h>
 #include <chrono>
+#if __has_include(<valgrind/valgrind.h>)
+#  include<valgrind/valgrind.h>
+#else
+#define RUNNING_ON_VALGRIND 0
+#endif
 
 void testProba1() {
   ProbaPrecomputer p;
@@ -60,9 +65,11 @@ void testProba1() {
   TAP_TEST_APPROX(p.getProba(0.4, 10, 1000), 1, 1e-3, TEST_PROBA_PRECOMPUTER, "");
   uint64_t duration_not_precomputed = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count();
 
-  TAP_TEST(duration_precomputation > duration_precomputed * 3, TEST_PROBA_PRECOMPUTER, "Make sure that a precomputation is performed");
-  TAP_TEST(duration_precomputed*50 < duration_not_precomputed, TEST_PROBA_PRECOMPUTER, "Make sure that precomputation is much faster than no precomputation");
-  PRINT_VAR(duration_not_precomputed);
+  if(! RUNNING_ON_VALGRIND) {
+    TAP_TEST(duration_precomputation > duration_precomputed * 3, TEST_PROBA_PRECOMPUTER, "Make sure that a precomputation is performed");
+    TAP_TEST(duration_precomputed*50 < duration_not_precomputed, TEST_PROBA_PRECOMPUTER, "Make sure that precomputation is much faster than no precomputation");
+    PRINT_VAR(duration_not_precomputed);
+  }
 }
 
 void testProba() {
