@@ -1347,10 +1347,7 @@ int main(int argc, char **argv) {
         }
 
         // Exit after CMD_GERMLINES
-        if (__only_on_exit__clean_memory) {
-            delete multigermline;
-        }
-        return 0;
+        if (__only_on_exit__clean_memory) {delete multigermline;} return 0;
     }
 
     ////////////////////////////////////////
@@ -2175,11 +2172,7 @@ int main(int argc, char **argv) {
     delete out_json;
 
     //$$ Clean
-    if (__only_on_exit__clean_memory) {
-        delete multigermline;
-        delete reads;
-    }
-    return 0;
+    if (__only_on_exit__clean_memory) {delete multigermline; delete reads;} return 0;
 }
 
 //$$ end
