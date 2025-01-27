@@ -7,7 +7,7 @@ f1: found 0 windows in 0 reads
 $ The proper unsegmentation cause is given
 f1: UNSEG too short   -> .* 1
 f1: UNSEG strand      -> .* 1
-f1: UNSEG too few V/J -> .* 3
+1: UNSEG too few V/J -> .* 3
 f1: UNSEG only V/5'   -> .* 1
 1: UNSEG only J/3'   -> .* 1
 1: UNSEG ambiguous   -> .* 1
@@ -29,7 +29,7 @@ f3: >too_few_vj-..* UNSEG too few V/J
 $ The proper unsegmentation cause is given
 f1: UNSEG too short   -> .* 1
 f1: UNSEG strand      -> .* 1
-f1: UNSEG too few V/J -> .* 3
+1: UNSEG too few V/J -> .* 3
 f1: UNSEG only V/5'   -> .* 1
 1: UNSEG only J/3'   -> .* 1
 1: UNSEG ambiguous   -> .* 1
