@@ -40,6 +40,7 @@ private:
   json config;
   std::map<std::string, std::set<GermlineElement<Affect>*>> germline_elements; // bind segment code (as in .g file) to germline element
   GermlineElementRepository<Affect> *repository;
+  bool repository_allocated;
   Tshortcut shortcut;
   std::string code;
   int max_indexing;

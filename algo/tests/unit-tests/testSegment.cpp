@@ -382,6 +382,7 @@ void testExtractor(IndexTypes index) {
   TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
   TAP_TEST(out_unseg.tellp() > 0, TEST_EXTRACTOR_OUT_UNSEG, "");
 
+  delete germline;
   delete ws;
 }
 

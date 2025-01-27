@@ -24,7 +24,7 @@ void testBitSet1() {
   TAP_TEST_EQUAL(b.count(), nb_set_bits, TEST_BITSET_SET, "");
   uint j = 0;
   for (uint i = 0; i < size; i++) {
-    if (i == pos_set_bits[j]) {
+    if (j < nb_set_bits && i == pos_set_bits[j]) {
       TAP_TEST_EQUAL(b.get(i), 1, TEST_BITSET_SET, "pos " << i);
       j++;
     } else {
@@ -36,7 +36,7 @@ void testBitSet1() {
   TAP_TEST_EQUAL(b.count(), size - nb_set_bits, TEST_BITSET_FLIP, "");
   j = 0;
   for (uint i = 0; i < size; i++) {
-    if (i == pos_set_bits[j]) {
+    if (j < nb_set_bits && i == pos_set_bits[j]) {
       TAP_TEST_EQUAL(b.get(i), 0, TEST_BITSET_FLIP, "pos " << i);
       j++;
     } else {
@@ -48,7 +48,7 @@ void testBitSet1() {
   TAP_TEST_EQUAL(b.count(), nb_set_bits, TEST_BITSET_FLIP, "");
   j = 0;
   for (uint i = 0; i < size; i++) {
-    if (i == pos_set_bits[j]) {
+    if (j < nb_set_bits && i == pos_set_bits[j]) {
       TAP_TEST_EQUAL(b.get(i), 1, TEST_BITSET_FLIP, "");
       j++;
     } else {
@@ -70,10 +70,10 @@ void testBitSet1() {
   j = 0;
   uint k = 0;
   for (uint i = 0; i < size; i++) {
-    if (i == pos_set_bits[j]) {
+    if (j < nb_set_bits && i == pos_set_bits[j]) {
       TAP_TEST_EQUAL(b.get(i), 1, TEST_BITSET_CONSECUTIVE_SET, "");
       j++;
-    } else if (i >= consecutive_sets[k].first &&
+    } else if (k < nb_consecutive_sets && i >= consecutive_sets[k].first &&
                i < consecutive_sets[k].first + consecutive_sets[k].second) {
       TAP_TEST_EQUAL(b.get(i), 1, TEST_BITSET_CONSECUTIVE_SET, "");
       if (i == consecutive_sets[k].first + consecutive_sets[k].second - 1)

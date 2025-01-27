@@ -18,6 +18,7 @@ Germline<Affect>::Germline() {
   shortcut = PSEUDO_UNEXPECTED_CODE;
   code = PSEUDO_UNEXPECTED;
   repository = nullptr;
+  repository_allocated = false;
   multi = nullptr;
   index = nullptr;
 }
@@ -28,15 +29,17 @@ Germline<Affect>::Germline(std::string code, Tshortcut shortcut,
                                       json &jconfig,
                                       GermlineElementRepository<Affect> *repo,
                                       int max_indexing)
-  : segments(jconfig["order"].get<std::list<std::string>>()), config(jconfig["segments"]), repository(repo), shortcut(shortcut), code(code),
-                                                             max_indexing(max_indexing),
-                                                             multi(nullptr), index(nullptr) {
+  : segments(jconfig["order"].get<std::list<std::string>>()), config(jconfig["segments"]), repository(repo), repository_allocated(false),
+    shortcut(shortcut), code(code),
+    max_indexing(max_indexing),
+    multi(nullptr), index(nullptr) {
 
   if (filenames[0].size() != config.size())
     throw runtime_error("config and filenames list differ in size");
   
   if (!repository) {
     this->repository = new GermlineElementRepository<Affect>();
+    repository_allocated = true;
   }
 
   std::map<std::string, BioReader> readers;
@@ -88,6 +91,8 @@ Germline<Affect>::~Germline() {
     if (key_val.second)
       delete key_val.first;
   }
+  if (repository_allocated)
+    delete repository;
 }
 
 template <typename Affect>
