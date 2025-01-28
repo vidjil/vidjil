@@ -1,39 +1,24 @@
 /// <reference types="cypress" />
-
-
-describe('Creation of users and groups', function () {
-    before(function () {
-        cy.login(Cypress.env('host'))
-        cy.close_tips()
-    })
-    beforeEach(function () {
-        cy.login(Cypress.env('host'))
-        cy.visitpage(Cypress.env('host'))
-        cy.closeFlashAll()
-    })
-    afterEach(function () {
-    })
-    after(function () {
-    })
-
-
-    it('00-visibility of panels',  function() {
+// Should we keep these tests ? 
+describe('Visibility of panels', function () {
+    it('01-visibility of panels',  function() {
         // Test visibility of some panel and z-index
         cy.goToPatientPage()
         cy.get('.db_div').should("be.visible")
         cy.newSet('patient')
         cy.get('.db_div').should("be.visible")
         cy.get('#patient_clipboard > .icon-newspaper').click()
+        cy.wait("@getActivities");
         cy.get('.popup_container').should("be.visible")
 
-        cy.get('.popup_container > .closeButton > .icon-cancel').click() // close db panel
+        cy.get('.popup_container > .closeButton > .icon-cancel').click()
+        cy.wait("@getActivities");
         cy.get('.popup_container').should("not.be.visible")
         cy.get('.db_div > .closeButton > .icon-cancel').click()
         cy.get('.db_div').should("not.be.visible")
 
         cy.get('#file_menu').should("not.be.visible")
         cy.get('#import_data_anchor').click({force:true})
-
         cy.get('#file_menu').should("be.visible")
 
         cy.openAnalysis("browser/test/data/demo_lil_l3_0.vidjil", undefined, 90000)
@@ -46,11 +31,9 @@ describe('Creation of users and groups', function () {
         cy.openDBPage()
         cy.get('.db_div').should("be.visible")
         cy.get('.info-container').should("not.be.visible")
-        return
     })
 
-    it('4494 - title in db table',  function() {
-        // Test visibility of some panel and z-index
+    it('02-title in db table (#4494)',  function() {
         cy.goToPatientPage()
         
         cy.get('#sample_set_open_22_config_id_-1 > :nth-child(2) > .set_token')
@@ -65,14 +48,12 @@ describe('Creation of users and groups', function () {
           .should("have.attr", "title")
           .and("equal", "Display results for config default + extract reads")
 
-
         cy.openSet(22) // patient 
 
         cy.get('#sequence_file_48')
           .should("have.attr", "title").and("equal", "test_file.fasta")
 
         cy.get('[title="#set_assoc_2"]') // if getter work
-
 
         cy.goToConfigsPage()
         cy.get('#config_classification_7')
@@ -84,7 +65,6 @@ describe('Creation of users and groups', function () {
         cy.get('#config_info_7')
           .should("have.attr", "title").and("equal", "incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality")
 
-
         cy.goToPreprocessPage()
         cy.get('#preprocess_name_4')
           .should("have.attr", "title").and("equal", "test pre-process 2")
@@ -92,6 +72,5 @@ describe('Creation of users and groups', function () {
           .should("have.attr", "title").and("equal", "dummy &file1& &file2& > &result&")
         cy.get('#preprocess_info_4')
           .should("have.attr", "title").and("equal", "test 2")
-        return
     })
 })

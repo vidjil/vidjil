@@ -1,17 +1,14 @@
 /// <reference types="cypress" />
 
 var localhost = true
-var url = "./browser/index.html"
+console.log( Cypress.env('workdir') )
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
-
-
-
 
 describe('Test menu', function () {
     beforeEach(function () {
         cy.setBrowser(url)
     })
-
 
   it('00-normalization_none',  function() {
     // test_00_normalization_none

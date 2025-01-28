@@ -1,17 +1,10 @@
 
-
-Cypress.Commands.add('waitForUpdates', () => { 
-  cy.wait(1000)
-})
-
-
-
 Cypress.Commands.add("text", { prevSubject: true }, (subject, options) => {
   return subject.text();
 });
 
-Cypress.Commands.add("getTableLength", (datatable) => {
-  return cy.get(datatable).find('tbody').find('tr').then(elm => elm.length)
+Cypress.Commands.add("getTableLength", (dataTable) => {
+  return cy.get(dataTable).find('tbody').find('tr').then(elm => elm.length)
 });
 
 
@@ -21,7 +14,25 @@ Cypress.Commands.add("getFormLineLength", () => {
 
 
 Cypress.Commands.add("getExternalData", (id) => {
-    return cy.get("#data_"+id)
+  return cy.get("#data_"+id)
+});
+
+Cypress.Commands.add("getBiggestId", (dataTable) => {
+  const getTexts = (els) => Cypress._.map(els, "innerText");
+  const toInt = (els) => Cypress._.map(els, (el) => parseInt(el));
+
+  cy.get(dataTable + " > tbody > tr td:nth-child(1)")
+  .then(getTexts)
+  .then(toInt)
+  .then((ids) => {
+    var config_id = 0;
+    ids.forEach((id) => {
+      if (id > config_id) {
+        config_id = id;
+      }
+    });
+    return cy.wrap(config_id);
+  })
 });
 
 

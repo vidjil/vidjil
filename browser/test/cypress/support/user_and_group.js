@@ -1,104 +1,28 @@
 // ***********************************************
 
 
-
-
-/**
- * Allow to openDBpage if needed and to go to the correct token (patient/run/set)
- * Use an intercept on GET method to fire event after recept of request
- * Allow to not get error if db table is render again between multiple call
- * @param  {[type]} 'goToTokenPage' Name of function
- * @param  {[type]} (token)         Token to call (patient, run or set)
- * @return {[type]}
- */
-Cypress.Commands.add('goToDbPage', (dbpage, page, page_header) => {
-  cy.openDBPage().then(() => {
-    cy.intercept({
-        method: 'GET', // Route all GET requests
-        url: 'get_active_notifications*', // that have a URL that matches '/users/*'
-      }).as('getActivities')
-
-    cy.get(dbpage)
-      .should('be.visible')
-      .click( { force: true} )
-
-    cy.wait(['@getActivities'])
-    cy.update_icon()
-
-    cy.get(page)
-      .should('exist')
-      .should('contain', page_header)
-  })
-})
-
-/**
- * Go to db patient page; open db if needed and call patient page
- */
-
-Cypress.Commands.add('goToUsagePage', () => {
-  cy.goToDbPage("#db_page_usage", "#page_usage", "Usage")
-})
-Cypress.Commands.add('goToProcessPage', () => {
-  cy.goToDbPage("#db_page_processes", "#page_jobs", "")
-})
-
-Cypress.Commands.add('goToNewsPage', () => {
-  cy.goToDbPage("#db_page_news", "#page_news", "News")
-})
-Cypress.Commands.add('goToLogsPage', () => {
-  cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
-})
-
-Cypress.Commands.add('goToLogsPage', () => {
-  cy.goToDbPage("#db_page_logs", "#page_user_logs", "Logs")
-})
-
-/////////////////
-// Admin db page
-/////////////////
-
-Cypress.Commands.add('goToPreprocessPage', () => {
-  cy.goToDbPage("#db_page_preprocess", "#page_preprocess", "Pre-process list")
-})
-Cypress.Commands.add('goToConfigsPage', () => {
-  cy.goToDbPage("#db_page_configs", "#page_process", "Configs")
-})
-
-Cypress.Commands.add('goToGroupsPage', () => {
-  cy.goToDbPage("#db_page_groups", "#page_group", "Groups")
-})
-Cypress.Commands.add('goToUsersPage', () => {
-  cy.goToDbPage("#db_page_users", "#page_user", "Users")
-})
-Cypress.Commands.add('goToAdminPage', () => {
-  cy.goToDbPage("#db_page_admin", "#page_admin", "Admin")
-})
-
-
-
 Cypress.Commands.add('createUser', (first_name, last_name, email, password) => {
   cy.goToUsersPage()
 
   cy.get('#create_user_button')
     .click()
-
-  cy.update_icon()
+  cy.wait("@getActivities")
   
   cy.get('#register_user')
     .should('exist')
     .should("contain", "Register new user")
-  cy.update_icon()  
 
   cy.fillUser(first_name, last_name, email, password)
 
   cy.get('#sign_up')
     .should("contain", "Sign up")
     .click()
+  cy.wait("@getActivities")
 
-  cy.update_icon()  
   cy.get('#table_users')
-    .should('exist')
     .should("contain", `${first_name} ${last_name}`)
+
+  return cy.getBiggestId("#table_users")
 })
 
 
@@ -108,11 +32,39 @@ Cypress.Commands.add('fillUser', (first_name, last_name, email, password) => {
   cy.get('#email').type(email)
   cy.get('#password').type(password)
   cy.get('#confirm_password').type(password)
-  return
+})
+
+Cypress.Commands.add("goToCorrespondingUserGroup", (user_id) => {
+  // Double click on corresponding group
+  cy.get("#table_users")
+    .contains("tr td:nth-child(1)", user_id)
+    .parent()
+    .contains("td:nth-child(5) > a", "user_")
+    .dblclick()
+  cy.wait("@getActivities")
+
+  // Get id from title
+  cy.get("#db_content")
+    .contains("h3", "group : ")
+    .then(($title) => { 
+      const titleText = $title.text();
+      var regExp = /\(([^)]+)\)$/;
+      var matches = regExp.exec(titleText);
+      var group_id = parseInt(matches[1])
+      return cy.wrap(group_id)
+    })
+})
+
+Cypress.Commands.add('goToGroupPage', (grp_id) => {
+    cy.goToGroupsPage()
+
+    cy.get('#row_group_'+grp_id)
+      .click()
+    cy.wait("@getActivities")
 })
 
 
-Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
+Cypress.Commands.add('setGroupRightInPage', (grp_id, rights, value) => {
     // Control given values
     if (typeof value != "boolean") {
       throw new Error(`setGroupRight, error; '${value}' is not a boolean value`)
@@ -120,18 +72,6 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
     if (!Array.isArray(rights)) {
       throw new Error(`setGroupRight, error; '${rights}' is not an array of rights`)
     }
-
-    cy.goToGroupsPage()
-    cy.intercept({
-        method: 'GET', // Route all GET requests
-        url: 'get_active_notifications*',
-      }).as('getActivities')
-
-    cy.get('#row_group_'+grp_id)
-      .click()
-
-    cy.wait(['@getActivities'])
-    cy.update_icon(100)
 
     var rights_list = ["create", "read", "admin", "upload", "run", "save", "anon"]
     for (var i = rights.length - 1; i >= 0; i--) {
@@ -147,5 +87,4 @@ Cypress.Commands.add('setGroupRight', (grp_id, rights, value) => {
         cy.request('POST','/vidjil/group/rights?value=false&name=sample_set&right='+right+'&id='+grp_id+'4&=')
       }
     }
-
 })

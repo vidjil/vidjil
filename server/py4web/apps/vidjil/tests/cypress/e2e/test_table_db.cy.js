@@ -1,289 +1,366 @@
 /// <reference types="cypress" />
 
+describe("Manipulate patient, sample and launch analysis", function () {
+  it("01-Open db; access to various page of the bd", function () {
+    cy.isDbPageVisible().should("equal", true);
 
-describe('Manipulate patient, sample and launch analysis', function () {
-    before(function () {
-        cy.login(Cypress.env('host'))
-        cy.close_tips()
-    })
-    beforeEach(function () {
-      cy.login(Cypress.env('host'))
-      cy.visitpage(Cypress.env('host'))
-      cy.closeFlashAll()
-    })
-    afterEach(function () {
-    })
-    after(function () {
-        cy.clearCookies()
-    })
+    // Try to access to all page of the db (except patient/run/set)
+    // Each call to function goTo use a should test to make automatic verification
+    cy.goToUsagePage();
+    cy.goToProcessPage();
+    cy.goToNewsPage();
+    cy.goToPreprocessPage();
+    cy.goToConfigsPage();
+    cy.goToGroupsPage();
+    cy.goToUsersPage();
+    cy.goToAdminPage();
+  });
 
+  it("02-Launch, open, delete analysis and check logs", function () {
+    cy.createPatient("", "fn", "ln", "", "c", "public").as(
+      "patient_id"
+    );
 
+    var preprocess = undefined;
+    var filename1 = "Demo-X5.fa";
+    var filename2 = undefined;
+    var sampling_date = "2021-01-01";
+    var sample_information = "c #cy";
+    cy.addSample(
+      preprocess,
+      "nfs",
+      filename1,
+      filename2,
+      sampling_date,
+      sample_information
+    ).then((sample_id) => {
+      cy.log("added sample " + sample_id);
 
-    it('00-Launch analysis and check logs',  function() {
-        var id          = ""
-        var firstname   = "first name"
-        var lastname    = "last name"
-        var birthday    = "2000-01-01"
-        var informations= "a patient created by cypress"
-        cy.createPatient(id, firstname, lastname, birthday, informations, "public")
-        var sample_set_id = 26
+      // Launch process and wait for result
+      cy.launchProcess("2", sample_id);
+      cy.waitAnalysisCompleted("2", sample_id);
 
-        var preprocess   = undefined
-        var filename1    = "Demo-X5.fa"
-        var filename2    = undefined
-        var samplingdate = "2021-01-01"
-        var informations = "un set d'information; #tag_sample"
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations)
+      // Open result
+      cy.openSampleResult(sample_id);
+      // Check number of clones found
+      cy.get("#list_clones").children().should("have.length", 26);
 
-        var sample_id = 50
-        cy.launchProcess("2", sample_id)
-        cy.waitAnalysisCompleted("2", sample_id)
+      // Delete process
+      cy.get("@patient_id").then((patient_id) => {
+        cy.openDBPage();
+        cy.openSet(patient_id);
+        cy.deleteProcess("2", sample_id);
+      });
 
-        cy.goToLogsPage()
-
-        // Log are tested in reverse order as last is shown first
+      // Check logs
+      cy.goToLogsPage()
+      // Log are tested in reverse order as last is shown first
+      cy.get('#db_table_container')
+      .should("contain", "process deleted")
+      cy.get('#db_table_container')
+        .should("contain", "run requested with config multi+inc+xxx")
+      cy.get('#db_table_container')
+        .should("contain", "file (" + sample_id + ") //Demo-X5.fa added")
+      cy.get("@patient_id").then((patient_id) => {
         cy.get('#db_table_container')
-          .should("contain", "run requested with config multi+inc+xxx")
-        cy.get('#db_table_container')
-          .should("contain", "file (" + sample_id + ") //Demo-X5.fa added")
-        cy.get('#db_table_container')
-          .should("contain", "patient (" + sample_set_id + ") las added")
-    })
+          .should("contain", "patient (" + patient_id + ") ln added")
+      });
+    });
+  });
 
-    it('01-Delete analysis',  function() {
-        cy.goToPatientPage()
-        var uid = 26; // TODO; reuse previous uid // async
-        var sample_id = 50
+  it("03-Sets and samples creations, associations, deletions", function () {
+    // Create, edit patients
+    var id = "";
+    var first_name = "fn";
+    var last_name = "ln";
+    var birthday = "";
+    var patient_information = "cy";
+    var group = "public";
+    cy.createPatient(
+      id,
+      first_name + "1",
+      last_name + "1",
+      birthday,
+      patient_information + "1",
+      group
+    ).as("patient1");
+    const patient1_display_name = last_name + "1" + " " + first_name + "1";
+    cy.createPatient(
+      id,
+      first_name + "2",
+      last_name + "2",
+      birthday,
+      patient_information + "2",
+      group
+    );
+    cy.createPatient(
+      id,
+      first_name + "3",
+      last_name + "3",
+      birthday,
+      patient_information + "3",
+      group
+    ).then((uid) => {
+      cy.editPatient(
+        uid,
+        id,
+        first_name + "4",
+        last_name + "4",
+        birthday,
+        patient_information + "4"
+      );
+    });
 
-        cy.openSet(uid)
-        cy.deleteProcess("2", sample_id)
+    // Filter patients
+    cy.goToPatientPage();
+    cy.dbPageFilter(first_name + "1");
+    cy.getTableLength("#db_table_container").should("eq", 1);
+    cy.dbPageFilter("patient");
+    cy.getTableLength("#db_table_container").should("eq", 8);
 
-        cy.launchProcess("2", sample_id) // suppl for later tests
-    })
+    // Create run
+    cy.createRun(id, "run", "2023-01-01", "cy", group);
 
+    // Add samples and multi-samples with association
+    var preprocess = undefined;
+    var filename1 = "Demo-X5.fa";
+    var filename2 = undefined;
+    var sampling_date = "2024-01-01";
+    var sample_information = "cy";
+    cy.addSample(
+      preprocess,
+      "nfs",
+      filename1,
+      filename2,
+      sampling_date,
+      sample_information + "1 #cy",
+      first_name + "1"
+    ).as("sample_1");
+    var sample_to_add_2 = [
+      preprocess,
+      "nfs",
+      filename1,
+      filename2,
+      sampling_date,
+      patient_information + "2",
+      first_name + "2",
+    ];
+    var sample_to_add_3 = [
+      preprocess,
+      "nfs",
+      filename1,
+      filename2,
+      sampling_date,
+      patient_information + "3",
+      first_name + "4",
+    ];
+    cy.multiSamplesAdd([sample_to_add_2, sample_to_add_3]);
 
-    it('02-Use search field',  function() {
-        cy.goToPatientPage()
+    cy.get("@sample_1").then((sample_id1) => {
+      // Jump
+      cy.get(
+        `#row_sequence_file_${sample_id1} > :nth-child(5) > .patient_token`
+      )
+        .should("exist")
+        .click({ force: true });
+      cy.wait("@getActivities");
 
-        var value_filter = "airr"
-        cy.dbPageFilter(value_filter)
+      cy.get(".set_token").should("contain", patient1_display_name);
 
-        cy.get('#db_table_container')
-          .find('tbody')
-          .find('tr').each(($el, index, $list) => {// $el is a wrapped jQuery element
-              // wrap this element so we can use cypress commands on it
-              cy.wrap($el).should("contain", value_filter)
-        })
-    })
+      // Delete association between sets
+      cy.removeCommonSet(sample_id1, "patient", "run link");
+    });
 
+    // Delete set
+    cy.goToPatientPage();
+    cy.get("@patient1").then((patient_id1) => {
+      cy.deleteSet("patient", patient_id1, patient1_display_name);
+    });
+  });
 
-    it('03-Association between sets',  function() {
-        cy.goToPatientPage()
-        
-        var id          = ""
-        var firstname   = "first name"
-        var lastname    = "last name"
-        var birthday    = "2000-01-01"
-        var informations= "a patient created by cypress"
-        cy.createPatient(id, firstname+"_1", lastname+"_1", birthday, informations + " (iter 1)", "public")
-        cy.createPatient(id, firstname+"_2", lastname+"_2", birthday, informations + " (iter 2)", "public")
-        cy.createPatient(id, firstname+"_3", lastname+"_3", birthday, informations + " (iter 3)", "public")
-        cy.createRun(id, "run with samples linked to some patients", "2023-01-01", "A run created by cypress", "public")
+  it("04-Sets and samples with tags", function () {
+    cy.goToPatientPage();
 
-        cy.goToTokenPage("run")
-        cy.openSet(30)
+    // Add a patient with some with tags
+    const id = "";
+    const first_name = "ft";
+    const last_name = "lt";
+    const birthday = "";
+    const patient_information = "C";
+    const group = "public";
+    let initialFilterNumber_return;
+    cy.createPatient(
+      id,
+      first_name + "4",
+      last_name + "4",
+      birthday,
+      patient_information + "4 #t1 #t2",
+      group
+    ).then((patient_id) => {
+      // Get initial number
+      cy.goToPatientPage();
+      cy.get(
+        `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(4) > span > a`
+      )
+        .should("exist")
+        .should("have.attr", "data-linkable-name", "#t1")
+        .should("contain", "#t1")
+        .first()
+        .click({ force: true });
+      cy.wait(["@postAllSampleSets", "@getActivities"]);
+      initialFilterNumber_return = cy.getTableLength("#db_table_container");
+    });
 
-        var preprocess   = undefined
-        var filename1    = "Demo-X5.fa"
-        var filename2    = undefined
-        var samplingdate = "2021-01-01"
-        var informations = "Sample from a fictive patient"
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations+" (1) #tag_sample", firstname+"_1")
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations+" (2)", firstname+"_2")
-        cy.addSample(preprocess, "nfs", filename1, filename2, samplingdate, informations+" (3)")
-    })
+    cy.createPatient(
+      id,
+      first_name + "5",
+      last_name + "5",
+      birthday,
+      patient_information + "5 #t1 #t2",
+      group
+    );
+    cy.createPatient(
+      id,
+      first_name + "6",
+      last_name + "6",
+      birthday,
+      patient_information + "6 #t1",
+      group
+    ).then((patient_id) => {
+      initialFilterNumber_return.then((initialFilterNumber) => {
+        // From inside the patient
+        cy.get(".tag-link") // works only if one tag available
+          .should("contain", "#t1")
+          .click();
+        cy.wait(["@postAllSampleSets", "@getActivities"]);
+        cy.getTableLength("#db_table_container").should(
+          "eq",
+          initialFilterNumber + 2
+        );
 
-
-    it('04-Association between sets; jump',  function() {
-        cy.goToPatientPage()
-        
-        var uid = 27
-        var sample_id = 51
-
-        cy.openSet(uid)
-        cy.get(`#row_sequence_file_${sample_id} > :nth-child(5) > .run_token`)
+        // From the patients page
+        cy.goToPatientPage();
+        cy.get(
+          `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(4) > span > a`
+        )
           .should("exist")
-          .click({force: true})
+          .should("have.attr", "data-linkable-name", "#t1")
+          .should("contain", "#t1")
+          .click({ force: true });
+        cy.wait(["@postAllSampleSets", "@getActivities"]);
+        cy.getTableLength("#db_table_container").should(
+          "eq",
+          initialFilterNumber + 2
+        );
+      });
+    });
+  });
 
-        var run_name="run with samples linked to some patients"
-        cy.get('h3 > .set_token')
-          .should("contain", run_name)
-    })
+  it("05-Page usage", function () {
+    // Get initial numbers
+    cy.goToUsagePage();
+    cy.get("#public_info")
+      .find(".patient_num_sets")
+      .then(($title) => cy.log("text : " + $title.text()));
+    let initialPatientPublicNumber;
+    let initialRunPublicNumber;
+    let initialSetPublicNumber;
+    cy.get("#public_info")
+      .find(".patient_num_sets")
+      .then(
+        ($number) => (initialPatientPublicNumber = parseInt($number.text()))
+      );
+    cy.get("#public_info")
+      .find(".run_num_sets")
+      .then(($number) => (initialRunPublicNumber = parseInt($number.text())));
+    cy.get("#public_info")
+      .find(".set_num_sets")
+      .then(($number) => (initialSetPublicNumber = parseInt($number.text())));
 
+    // Add a user
+    cy.createPatient("", "ft", "lt", "", "C", "public");
+    cy.goToUsagePage();
+    cy.then(() => {
+      cy.get("#public_info")
+        .find(".patient_num_sets")
+        .should("have.text", initialPatientPublicNumber + 1);
+      cy.get("#public_info")
+        .find(".run_num_sets")
+        .should("have.text", initialRunPublicNumber);
+      cy.get("#public_info")
+        .find(".set_num_sets")
+        .should("have.text", initialSetPublicNumber);
+    });
 
-    it('05-Delete association between sets',  function() {
-        cy.goToPatientPage()
-        
-        var uid = 27
-        var sample_id = 51
+    // Add a run
+    cy.createRun("", "r", "2024-01-01", "cy", "public");
+    cy.goToUsagePage();
+    cy.then(() => {
+      cy.get("#public_info")
+        .find(".patient_num_sets")
+        .should("have.text", initialPatientPublicNumber + 1);
+      cy.get("#public_info")
+        .find(".run_num_sets")
+        .should("have.text", initialRunPublicNumber + 1);
+      cy.get("#public_info")
+        .find(".set_num_sets")
+        .should("have.text", initialSetPublicNumber);
+    });
 
-        cy.openSet(uid)
-        cy.removeCommonSet(sample_id, "patient", "run with samples linked")
-    })
+    cy.intercept({
+      method: "POST",
+      url: "index*",
+    }).as("postIndexMyAccount");
 
+    // Click on a tag
+    cy.get(
+      '#public_info > .set_data.margined-bottom > [data-linkable-name="#test0"]'
+    )
+      .should("contain", "test0")
+      .click();
+    cy.wait(["@postIndexMyAccount", "@getActivities"]);
 
-    it('06-Delete a set',  function() {
-        cy.goToPatientPage()
+    // 5 patients, 5 runs, 5 sets
+    cy.get(".patient_num_sets").should("have.text", "5");
+    cy.get(".run_num_sets").should("have.text", "5");
+    cy.get(".set_num_sets").should("have.text", "5");
 
-        var firstname = "first name"
-        cy.deleteSet("patient", 27, firstname+"_1")
-    })
+    // Click on another tag
+    cy.get(
+      '#public_info > .set_data.margined-bottom > [data-linkable-name="#set_assoc_1"]'
+    )
+      .should("contain", "set_assoc_1")
+      .click();
+    cy.wait(["@postIndexMyAccount", "@getActivities"]);
 
+    // 1 patient, 1 run, 1 set
+    cy.get(".patient_num_sets").should("have.text", "1");
+    cy.get(".run_num_sets").should("have.text", "1");
+    cy.get(".set_num_sets").should("have.text", "1");
+  });
 
-    it('07-Set and samples with tags',  function() {
-        cy.goToPatientPage()
-        var previous_length=12
-        cy.getTableLength('#db_table_container').should('eq', previous_length)
-        
-        var id          = ""
-        var firstname   = "first_tagged"
-        var lastname    = "last_tagged"
-        var birthday    = "2000-01-01"
-        var informations= "Cypress; patient with tags"
+  it("06-Page process", function () {
+    cy.goToProcessPage();
+    var initialProcessNumberReturn = cy.getTableLength("#table_process");
 
-        // Some with tag
-        cy.createPatient(id, firstname+"_4", lastname+"_4", birthday, informations + " (iter 4) #tagXXX #tagYYY", "public")
-        cy.createPatient(id, firstname+"_5", lastname+"_5", birthday, informations + " (iter 5) #tagXXX #tagZZZ", "public")
-        cy.createPatient(id, firstname+"_6", lastname+"_6", birthday, informations + " (iter 6) #tagXXX", "public")
+    cy.intercept({
+      method: "POST",
+      url: "jobs*",
+    }).as("postJobs");
 
-        cy.goToPatientPage()
-        cy.getTableLength('#db_table_container').should('eq', previous_length+3)
+    cy.get('[data-linkable-name="#test0"]')
+      .first()
+      .should("contain", "#test0")
+      .click();
+    cy.wait(["@postJobs", "@getActivities"]);
+    cy.get("#db_filter_input").should("have.value", "#test0");
+    cy.getTableLength("#table_process").should("eq", 15);
 
-        var uid = 33 // last created patient, with only one tag
-        cy.get(`#sample_set_open_${uid}_config_id_-1 > :nth-child(4) > span > a`)
-          .should("exist")
-          .should("have.attr", "data-linkable-name", "#tagXXX")
-          .should("contain", "#tagXXX")
-          .click({force: true})
-          
-        cy.wait(['@getActivities'])
-        cy.wait(500)
-        cy.getTableLength('#db_table_container').should('eq', 3)
-
-
-        // from inside a patient
-        cy.openSet(uid)
-        cy.get('.tag-link') // work only if one tag available
-          .should("contain", "#tagXXX")
-          .click()
-
-        cy.wait(['@getActivities'])
-        cy.wait(500)
-        cy.getTableLength('#db_table_container').should('eq', 3)
-    })
-
-
-    it('08-Page usage',  function() {
-        cy.goToUsagePage()
-
-        // Start ; 2 sample present, only first with tag
-        cy.get('#public_info > :nth-child(6) > :nth-child(2) > .button > a')
-          .should("contain", "test config_airr")
-        cy.get('#public_info > :nth-child(6) > :nth-child(3) > .button > a')
-          .should("contain", "name first")
-          .should("exist")
-
-        // Click on a tag 
-        cy.get('#public_info > .set_data.margined-bottom > [data-linkable-name="#tag_sample"]')
-          .should("contain", "tag_sample")
-          .click()
-
-        // only one sample still present
-        cy.get('#public_info > :nth-child(6) > :nth-child(2) > .button > a')
-          .should("contain", "test config_airr")
-        cy.get('#public_info > :nth-child(6) > :nth-child(3) > .button > a')
-          .should("not.exist")
-    })
-
-
-    it('09-Page process',  function() {
-        cy.goToProcessPage()
-        var previous_length=47
-        cy.getTableLength('#table_process').should('eq', previous_length)
-
-        var sequence_id = 26
-        cy.get(`[onclick="db.call(\'sample_set/index\', {\'id\': ${sequence_id}, \'config_id\': 2})"] > :nth-child(4) > .tag-link`)
-          .should("contain", "tag_sample")
-          .click()
-
-        cy.get('#db_filter_input')
-          .should('have.value', "#tag_sample")
-
-        cy.getTableLength('#table_process').should('eq', 1)
-
-        cy.get('#db_filter_input')
-          .type("{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{rightArrow}{enter}") // 11 calls to del + 1 space
-        cy.wait(['@getActivities'])
-        cy.get('#db_filter_input')
-          .click({force: true})
-
-        cy.wait(['@getActivities'])
-        cy.wait(500)
-        cy.getTableLength('#table_process').should('eq', previous_length)
-    })
-
-
-    it('10-Edit patient',  function() {
-        var id          = ""
-        var firstname   = "first_tagged"
-        var lastname    = "last_tagged"
-        var birthday    = "2000-01-01"
-        var informations= "patient with tags"
-
-        var uid = 31
-        cy.editPatient(uid, id, firstname+"_4", lastname+"_4", birthday, informations + " (iter 4) MODIFY")
-    })
-
-
-    it('11-Configs list inside set/sample',  function() {
-        cy.goToPatientPage()        
-        var uid = 1
-        cy.openSet(uid)
-
-        cy.get('#choose_config')
-          // TODO; check html content
-          // .should('contain', 'Human V(D)J recombinations') // A prefilled optgroup (initial database)
-    })
-
-
-
-    it('12-Create multiple samples',  function() {
-        cy.goToTokenPage("run")
-        var uid = 30
-        cy.openSet(uid)
-
-        var preprocess   = undefined
-        var filename1    = "Demo-X5.fa"
-        var filename2    = undefined
-        var informations = " from tutorial server tests #functional #tutorial"
-
-
-        cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Solo; Sample 1"+informations)
-
-        var sample_to_add_2 = [preprocess, "nfs", filename1, filename2, "2011-01-01", "Batch; Sample 2x #functional #tutorial; multiple add", "last name_2"]
-        var sample_to_add_3 = [preprocess, "nfs", filename1, filename2, "2012-01-01", "Batch; Sample 3x #functional #tutorial; multiple add", "last name_3"]
-        cy.multiSamplesAdd([sample_to_add_2, sample_to_add_3])
-    })
-
-    it('13-Call custom fuse', function() {
-        cy.goToPatientPage()
-        var uid = 26
-        var sample_id = 50
-
-        cy.openSet(uid)
-        cy.openSampleResult(sample_id)
-
-        // Check number of clones found
-        cy.get('#list_clones').children().should('have.length', 26)
-    })
-})
+    cy.get("#db_filter_input").clear();
+    cy.get("#db_filter_input").type("{enter}");
+    cy.wait(["@postJobs", "@getActivities"]);
+    initialProcessNumberReturn.then((initialProcessNumber) =>
+      cy.getTableLength("#table_process").should("eq", initialProcessNumber)
+    );
+  });
+});

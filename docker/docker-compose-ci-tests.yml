@@ -1,12 +1,23 @@
+volumes:
+  mysql-data:
+
 services:
     mysql:
         env_file:
             - '.env.ci-tests'
+        volumes:
+            - mysql-data:/var/lib/mysql
+            - ./ci/mysql-logs/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+            - ${VOLUME_PATH:-./volumes/vidjil/}/log/mysql:/var/log/mysql
 
     uwsgi:
         image: vidjil/server:test
         env_file:
             - '.env.ci-tests'
+        volumes:
+            # Test
+            - ./ci/test_controller/test_controller.py:/usr/share/vidjil/server/py4web/apps/vidjil/controllers/test_controller.py
+            - ./ci/test_controller/__init__.py:/usr/share/vidjil/server/py4web/apps/vidjil/__init__.py
 
     nginx:
         image: vidjil/client:test
