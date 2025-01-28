@@ -10,7 +10,6 @@ from .. import settings, tasks
 from ..modules import vidjil_utils
 from ..common import db, auth, log, scheduler
 
-
 ##################################
 # HELPERS
 ##################################

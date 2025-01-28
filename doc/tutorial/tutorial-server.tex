@@ -97,20 +97,12 @@ upper left corner.
   optionally, the other fields.}
 \begin{verbatim}
   ////////////////////////////
-  cy.log("// test_004_fill_new_patient")
+  cy.log("// test_004_prepare_new_patients_and_run")
     // Add 2 new patients + run lines
     cy.get('#run_button').click()
     cy.get('#group_select')
       .select("public")
       .trigger("change")
-
-
-    // Fill forms
-    cy.fillPatient(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "")
-    cy.fillPatient(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "")
-    cy.fillPatient(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "")
-    cy.fillRun(0, "id_r1", "run_name 1", "2010-01-01", "run informations #tagtest")
- 
 
 \end{verbatim}
 
@@ -132,11 +124,12 @@ Your custom tags will also be saved and will be suggested later on.
 \question{Enter information for the three patients, such as \texttt{\#diagnosis \#B-ALL} for a patient, \texttt{\#blood \#CLL}
 for another one, and \texttt{bone \#marrow \#B-ALL} for the last one.}
 \begin{verbatim}
-  cy.log("// test_005_change_description")
+  cy.log("// test_005_fill_patients")
     // Fill forms
     cy.fillPatient(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "#diagnosis of patient with #B-ALL")
     cy.fillPatient(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "#blood sample #CLL")
     cy.fillPatient(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "bone #marrow #B-ALL")
+    cy.fillRun(0, "id_r1", "run_name 1", "2010-01-01", "run informations #tagtest")
 
     cy.get('#object_form > .btn')
       .should("have.value", "save")
@@ -270,16 +263,11 @@ you can visualize the clonotype populations on Vidjil
 \begin{verbatim}
   cy.log("// test_013_patient_page_and_filter")
     cy.goToPatientPage()
-  
+
     var value_filter = "#B-ALL"
     cy.dbPageFilter(value_filter)
 
-    cy.get('#db_table_container')
-      .find('tbody')
-      .find('tr').each(($el, index, $list) => {// $el is a wrapped jQuery element
-          // wrap this element so we can use cypress commands on it
-          cy.wrap($el).should("contain", value_filter)
-    })
+    cy.getTableLength("#db_table_container").should('eq', 2)
     
     var uid_sample2 = 33
     cy.get(`#sample_set_open_${uid_sample2}_config_id_-1`)

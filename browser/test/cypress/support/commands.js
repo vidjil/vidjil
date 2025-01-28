@@ -4,7 +4,7 @@ var lil_l3 = {"app": {"id":61, "config":2}, "localhost": {"id":3241, "config":25
 
 
 
-Cypress.Commands.add('close_disclamer', () => { 
+Cypress.Commands.add('close_disclaimer', () => { 
   cy.get("div.popup_container", { timeout: 10000 })
     .should('be.visible')
     .and('contain', 'The Vidjil Team')
@@ -36,9 +36,9 @@ Cypress.Commands.add('closeFlash', (flash_class) => {
 Cypress.Commands.add('setBrowser', (url) => {
   cy.visit(url)
 
-  // close disclamer only for direct opening of the index.html file
+  // close disclaimer only for direct opening of the index.html file
   if (url.indexOf("index.html") != -1){
-    cy.close_disclamer()
+    cy.close_disclaimer()
     cy.close_tips()
     cy.closeFlashAll()
   }
@@ -64,7 +64,11 @@ Cypress.Commands.add("openAnalysis", (file_vidjil, file_analysis, timeout) => {
   //cy.open_menu("demo_file_menu")
   cy.get('#import_data_anchor').click({force: true})
   //cy.close_menu("demo_file_menu")
+  file_vidjil = "./" + Cypress.env('workdir') + "/" + `${file_vidjil}`
   cy.log(`file_vidjil: ${file_vidjil}`)
+  if (file_analysis != undefined) {
+    file_analysis = "./"+ Cypress.env('workdir') + "/" + `${file_analysis}`
+  }
   cy.log(`file_analysis: ${file_analysis}`)
   // Upload vidjil file
   cy.get("#upload_json")
@@ -93,22 +97,16 @@ Cypress.Commands.add('save_analysis', () => {
  * Allow to wait for update icon to be not visible
  */
 Cypress.Commands.add("update_icon", (delay=0, timeout=undefined) => {
-  let visible_icon = false;
-  cy.get('#updateIcon')
-    .then( ($icon) => {
-      if ($icon.is(":visible")) { 
-        // cy.log( "wait icon already visible")
-        delay = 0 // Don't use delay if icon already visible
+  if (delay) {
+    cy.get("#updateIcon").then(($icon) => {
+      if ($icon.is(":hidden")) {
+        cy.wait(delay);
       }
-      if (delay){
-        cy.wait(delay)
-      }
-    }
-  )
+    });
+  }
   timeout = (timeout!=undefined) ? timeout : 6000
   cy.get('#updateIcon', { timeout: timeout })
     .should("not.visible")
-
 })
 
 Cypress.Commands.add('getById', (input) => {
@@ -127,5 +125,5 @@ Cypress.Commands.add('changePreset', (sp_id, value) => {
   cy.get(`#${sp_id}_select_preset`)
     .select(value, {force: true})
     .trigger('change', {force: true})
-  cy.update_icon(10000)
+  cy.update_icon(0, 10000)
 })

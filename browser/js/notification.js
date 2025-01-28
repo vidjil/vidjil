@@ -12,7 +12,7 @@ Notification.prototype = {
 	parse_notification: function (result) {
 		var messages;
 
-		console.log("Notification : " + result);
+		// console.log("Notification : " + result);
 
 		try {
 			messages = JSON.parse(result);

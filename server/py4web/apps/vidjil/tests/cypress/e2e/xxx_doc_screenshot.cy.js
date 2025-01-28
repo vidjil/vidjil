@@ -17,7 +17,6 @@ describe('Screenshot on server', function () {
 
     it('01-screenshot_on_db',  function() {
 
-        cy.logout()
         cy.fillLogin("user4@email.org", "OnePassword123")
 
         cy.get('.db_msg')

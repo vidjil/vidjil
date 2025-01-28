@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 sys.path.append("../../../../")
-from apps.vidjil import settings, tasks
+from apps.vidjil import tasks
 from apps.vidjil.modules import vidjil_utils, sampleSet
 from apps.vidjil.common import auth
 from apps.vidjil.modules.permission_enum import PermissionEnum
@@ -31,7 +31,6 @@ class DBInitialiser(object):
         self._init_results_files()
         self._init_notifications()
         self._init_set_association_data()
-
 
     def _needs_init(func):
         def check_init(self):
@@ -64,7 +63,7 @@ class DBInitialiser(object):
         return d
 
     def _init_users(self):
-        vidjil_utils.init_db_helper(self.db, auth, force=True, admin_email=TEST_ADMIN_EMAIL, admin_password=TEST_ADMIN_PASSWORD)
+        vidjil_utils.init_db_helper(self.db, auth, admin_email=TEST_ADMIN_EMAIL, admin_password=TEST_ADMIN_PASSWORD, force=True)
         self.initialised = True
 
     @_needs_init
@@ -118,7 +117,7 @@ class DBInitialiser(object):
         timestamp = time.time()
         for sf in sequence_files:
             membership = self.db(self.db.sample_set_membership.sequence_file_id == sf.id).select(limitby=(0,1)).first()
-            stid = self.db.scheduler_task.insert(
+            scheduler_task_id = self.db.scheduler_task.insert(
                 application_name="vidjil",
                 status=tasks.STATUS_COMPLETED,
                 start_time=datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
@@ -127,7 +126,7 @@ class DBInitialiser(object):
                 sequence_file_id=sf.id,
                 config_id=config.id,
                 run_date="2010-10-10 10:10:10",
-                scheduler_task_id=stid,
+                scheduler_task_id=scheduler_task_id,
                 data_file="test_results_file"
             )
             self.db.fused_file.insert(
@@ -153,10 +152,16 @@ class DBInitialiser(object):
 
     @_needs_init
     def _init_groups(self):
+        # Insert some groups with parents and children
         parent = self.db.auth_group.insert(role="test parent")
         for i in range(3):
             c = self.db.auth_group.insert(role="test child %d" % i)
             self.db.group_assoc.insert(first_group_id=parent, second_group_id=c)
+            
+        # Set public group as anon for tests
+        public_group = self.db(self.db.auth_group.role == "public").select().first()
+        auth.add_permission(public_group.id, "anon", "sample_set", 0)
+        
         self.db.commit()
 
     @_needs_init
@@ -166,7 +171,7 @@ class DBInitialiser(object):
         for i in range(3):
             tag_id = self.db.tag.insert(name="set_assoc_%d" % i)
             self.db.group_tag.insert(group_id=public_group.id, tag_id=tag_id)
-            sfid = self.db.sequence_file.insert(
+            sequence_file_id = self.db.sequence_file.insert(
                 sampling_date="2010-10-10",
                 info="#set_assoc_%d" % i,
                 filename="test_file.fasta",
@@ -174,7 +179,7 @@ class DBInitialiser(object):
                 network=False,
                 data_file="test_sequence_file"
             )
-            self.db.tag_ref.insert(tag_id=tag_id, table_name=self.db.sequence_file, record_id=sfid)
+            self.db.tag_ref.insert(tag_id=tag_id, table_name=self.db.sequence_file, record_id=sequence_file_id)
 
             for t in types:
                 ssid = self.db.sample_set.insert(sample_type=t)
@@ -183,5 +188,5 @@ class DBInitialiser(object):
                 sid = self.db[t].insert(**d)
                 auth.add_permission(public_group.id, PermissionEnum.access.value, self.db.sample_set, ssid)
                 self.db.tag_ref.insert(tag_id=tag_id, table_name=t, record_id=sid)
-                self.db.sample_set_membership.insert(sample_set_id=ssid, sequence_file_id=sfid)
+                self.db.sample_set_membership.insert(sample_set_id=ssid, sequence_file_id=sequence_file_id)
         self.db.commit()
