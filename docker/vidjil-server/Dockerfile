@@ -2,7 +2,7 @@ FROM python:3.12-slim AS builder
 
 # Install system requirements for build
 RUN apt-get update && \
-    apt-get install --no-install-recommends --no-install-suggests -y wget make gcc build-essential bowtie2
+    apt-get install --no-install-recommends --no-install-suggests -y wget make gcc build-essential
 
 # Prepare install directories
 RUN mkdir -p /usr/share/vidjil/ /var/www/ && chown www-data:www-data -R /usr/share/vidjil/ /var/www/
@@ -41,7 +41,7 @@ LABEL description="A Python 3.12-slim based docker image which comes \
 
 # Install requirements and clean-up
 RUN apt-get update && \
-    apt-get install --no-install-recommends --no-install-suggests -y gosu procps && \ 
+    apt-get install --no-install-recommends --no-install-suggests -y gosu procps bowtie2 && \ 
     apt-get autoremove -y && apt-get autoclean -y && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 # Prepare install directories and prompt
