@@ -390,39 +390,64 @@ Report.prototype = {
 
     },
 
+    /**
+     * Change the sample status after a click on one sample tile
+     * Take into account the shift press status to modify the behavior of selection
+     * Menu is rerendered after modification
+     */
+    changeSamples: function(sampleDom, shiftKey) {
+        const sample = $(sampleDom).attr("value")
+
+        if (!shiftKey) {
+            // switch only this sample
+            if (this.settings.samples.indexOf(sample) != -1) {
+                this.settings.samples.splice(this.settings.samples.indexOf(sample),1)
+            } else {
+                this.settings.samples.push(sample)
+            }
+        } else {
+            // Switch all sample action
+            if (this.settings.samples.indexOf(sample) == -1) {
+                // case 0; sample not present, hide all other, and show only this one
+                this.settings.samples = [sample]
+            } else if (this.settings.samples.length > 1 && this.settings.samples.indexOf(sample) != -1) {
+                // case 1; some/all samples present, hide all other samples
+                this.settings.samples = [sample]
+            } else if (this.settings.samples.length == 1 && this.m.system_selected.length > 1) { 
+                // only one active samples, show all samples
+                this.showAllSamples();
+            }
+        }
+            
+        // rerender content
+        this.initSamples()
+    },
+
+    showAllSamples: function(){
+        this.settings.samples = []
+        for (i=0; i<this.m.samples.order.length; i++) {
+            this.settings.samples.push(this.m.getStrTime(this.m.samples.order[i], "original_name"))
+        }
+    },
+
     initSamples: function(){
         var self = this;
-        var sample_select = $("#report-settings-sample-select")
-        var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(sample_select);
         var i;
 
-        // use displayed samples as default 
         if (this.settings.samples == undefined){
-            this.settings.samples = []
-            for (i=0; i<this.m.samples.order.length; i++)
-                this.settings.samples.push(this.m.getStrTime(this.m.samples.order[i], "original_name"))
+            this.showAllSamples();
         } 
 
         // add/remove sample to list on click
-        var handle = function(){
-            if ($(this).hasClass("rs-selected"))
-                self.settings.samples.splice(self.settings.samples.indexOf($(this).attr("value")),1)
-            else
-                self.settings.samples.push($(this).attr("value"))
-                
-            var count = 0
-            for (var j=0; j < self.m.samples.order.length; j++){
-                var timeId = self.m.samples.order[j]
-                if (self.settings.samples.indexOf(self.m.getStrTime(timeId, "original_name")) != -1)
-                    count++;
-            }
-            $("#rs-selected-sample-count").html("["+count+" selected]")
-
-            $(this).toggleClass("rs-selected");
-            $(this).toggleClass("rs-unselected");
+        var handle = function(e){
+            self.changeSamples(this, e.shiftKey)
         }
 
         var count = 0;
+        // remove all previous dom element if rerender
+        $("#report-settings-sample-select .rs-flex-parent-v").remove() 
+        var sample_select = $("#report-settings-sample-select")
+        var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(sample_select);
         for (i=0; i < this.m.samples.order.length; i++){
             var timeId = this.m.samples.order[i]
 
@@ -467,13 +492,17 @@ Report.prototype = {
                 this.settings.locus = [locus]
             } else if (this.settings.locus.length == 1 && this.m.system_selected.length > 1){ // only one active locus
                 // Show all locus
-                this.settings.locus = []
-                for (var i=0; i<this.m.system_selected.length; i++){
-                    this.settings.locus.push(this.m.system_selected[i])
-                }
+                this.showAllLocus()
             }
         }
         this.initLocus() // rerender content
+    },
+
+    showAllLocus: function(){
+        this.settings.locus = []
+        for (var i=0; i<this.m.system_selected.length; i++) {
+            this.settings.locus.push(this.m.system_selected[i])
+        }
     },
 
     initLocus: function(){
@@ -481,9 +510,7 @@ Report.prototype = {
 
         // use displayed locus as default 
         if (typeof this.settings.locus == "undefined"){
-            this.settings.locus = []
-            for (var i=0; i<this.m.system_selected.length; i++)
-                this.settings.locus.push(this.m.system_selected[i])
+            this.showAllLocus()
         }
 
         var handle = function(e){

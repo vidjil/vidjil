@@ -424,8 +424,8 @@ Then select `export report` inside the menu `import/export`.
 The report menu allows to select a *template* and to load a previously saved *report*,
 and to customize the report by:
 
-- Showing or hiding any *sample*
-- Showing or hiding any *locus*
+- Showing or hiding any *sample* (NB: use shift key to invert selection)
+- Showing or hiding any *locus* (NB: use shift key to invert selection)
 - Selecting the *colors* for all clonotypes and for selected clonotypes
 - Updating the *clonotypes* you previously selected (with “★”),  possibly removing them for the report
 - Adding, moving, or deleting *reports sections*, including plots you previously selected (within the “plot“ menu)
