@@ -1101,7 +1101,7 @@ Report.prototype = {
 
         if (typeof this.m.db_key != "undefined" &&
             typeof this.m.db_key.sample_set_id != "undefined"){
-            content.push({'label': "Hosting server:"  , 'value' : window.location.hostname});
+            content.push({'label': "Server:"  , 'value' : window.location.hostname});
             }
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
