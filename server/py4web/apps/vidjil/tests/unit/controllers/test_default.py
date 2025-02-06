@@ -379,13 +379,20 @@ class TestDefaultController():
             db_manipulation_utils.get_indexed_user_password(1))
         patient_id, sample_set_id = db_manipulation_utils.add_patient(
             1, user_id)
+        sample_set2_id = db_manipulation_utils.add_patient(
+            2, user_id)[1]
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
         config_id = db_manipulation_utils.add_config()
+        # Use helloworld name to try and get coherent values with fused file
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, 
+            user_id, 
+            force_filename="helloworld",
+            other_sample_sets_ids=[sample_set2_id])
+        results_file_id = db_manipulation_utils.add_results_file(sequence_file_id, config_id)
         saved_dir_results = settings.DIR_RESULTS
-        save_upload_folder = db.fused_file.fused_file.uploadfolder
+        save_fuse_upload_folder = db.fused_file.fused_file.uploadfolder
         fused_file_id = -1
 
         try:
@@ -407,13 +414,21 @@ class TestDefaultController():
             assert result["config_name"] == db.config[config_id].name
             assert result["reads"]["segmented"] == [742377, 0]
             assert result["reads"]["total"] == [786861, 200]
+            assert result["samples"]["number"] == 2
+            assert result["samples"]["original_names"][0] == "helloworld"
+            assert result["samples"]["sequence_file_id"][0] == sequence_file_id
+            assert result["samples"]["results_file_id"][0] == results_file_id
+            assert len(result["samples"]["other_sample_sets_names"][0]) == 1
+            # patient name anon
+            assert result["samples"]["other_sample_sets_names"][0][0] == "2" 
+            
         finally:
             if fused_file_id != -1:
                 fused_file = pathlib.Path(
                     settings.DIR_RESULTS, db.fused_file[fused_file_id].fused_file)
                 fused_file.unlink(missing_ok=True)
             settings.DIR_RESULTS = saved_dir_results
-            db.fused_file.fused_file.uploadfolder = save_upload_folder
+            db.fused_file.fused_file.uploadfolder = save_fuse_upload_folder
 
     ##################################
     # Tests on default_controller.get_custom_data()

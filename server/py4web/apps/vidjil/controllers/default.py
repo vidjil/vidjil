@@ -392,9 +392,14 @@ def get_data():
         name = helpers[sample_set.sample_type].get_name(sample_set_specific_data)
         data["dataFileName"] = name + " (" + config_name + ")"
         data["info"] = sample_set_specific_data.info
-        data["generic_id"] = sample_set_specific_data.id
         data["sample_name"] = name
         data["group_id"] = get_set_group(request.query["sample_set_id"])
+        specific_id = "patient_id"
+        if sample_set.sample_type == sampleSet.SET_TYPE_GENERIC:
+            specific_id = "generic_id"
+        elif sample_set.sample_type == sampleSet.SET_TYPE_RUN:
+            specific_id = "run_id"
+        data[specific_id] = sample_set_specific_data.id
 
         log_query = db(  ( db.user_log.record_id == log_reference_id )
                        & ( db.user_log.table_name == sample_set.sample_type )
@@ -497,12 +502,16 @@ def get_data():
                 data["samples"]["other_sample_sets_names"].append(other_samples_names)
                 
             else :
+                data["samples"]["names"].append("deleted")
+                data["samples"]["sample_name"].append("deleted")
+                data["samples"]["results_file_id"].append("")
                 data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
                 data["samples"]["timestamp"].append("None")
                 data["samples"]["sequence_file_id"].append("")
-                data["samples"]["results_file_id"].append("")
-                data["samples"]["names"].append("deleted")
                 data["samples"]["id"].append("")
+                data["samples"]["patient_id"].append("")
+                data["samples"]["run_id"].append("")
+                data["samples"]["other_sample_sets_names"].append([])
 
         log.debug("get_data (%s) c%s -> %s (%s)" % (request.query["sample_set_id"], request.query["config"], fused_file, "downloaded" if download else "streamed"))
         log.info("load sample", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
