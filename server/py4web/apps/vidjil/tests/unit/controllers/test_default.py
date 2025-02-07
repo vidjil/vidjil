@@ -418,9 +418,9 @@ class TestDefaultController():
             assert result["samples"]["original_names"][0] == "helloworld"
             assert result["samples"]["sequence_file_id"][0] == sequence_file_id
             assert result["samples"]["results_file_id"][0] == results_file_id
-            assert len(result["samples"]["other_sample_sets_names"][0]) == 1
+            assert len(result["samples"]["associated_sets_names"][0]) == 1
             # patient name anon
-            assert result["samples"]["other_sample_sets_names"][0][0] == "2" 
+            assert result["samples"]["associated_sets_names"][0][0] == "2" 
             
         finally:
             if fused_file_id != -1:

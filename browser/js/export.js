@@ -1138,7 +1138,8 @@ Report.prototype = {
         var content = [
             {'label': "Filename:" , value : this.m.samples.names[time]},
             {'label': "Sample date:" , value : this.m.getSampleTime(time)},
-            {'label': "Analysis date:" , value : this.m.getTimestampTime(time)}
+            {'label': "Analysis date:" , value : this.m.getTimestampTime(time)},
+            {'label': "Associated sets:", value : this.m.getStrTime(time, "associated_sets_names")}
         ]
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);

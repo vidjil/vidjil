@@ -439,7 +439,7 @@ def get_data():
         data["samples"]["sample_name"] = []
         data["samples"]["run_id"] = []
         data["samples"]["commandline"] = []
-        data["samples"]["other_sample_sets_names"] = []
+        data["samples"]["associated_sets_names"] = []
 
         for i in range(len(data["samples"]["original_names"])) :
             original_name = data["samples"]["original_names"][i].split('/')[-1]
@@ -489,17 +489,17 @@ def get_data():
                 data["samples"]["run_id"].append(row.sequence_file.id)
                 
                 # Get other samples names
-                other_samples_names = []
-                other_samples = db((db.sample_set_membership.sequence_file_id == row.sequence_file.id) &
+                associated_sets_names = []
+                other_sets = db((db.sample_set_membership.sequence_file_id == row.sequence_file.id) &
                                    (db.sample_set_membership.sample_set_id != request.query["sample_set_id"]) &
                                    (db.sample_set_membership.sample_set_id == db.sample_set.id)
                                    ).select(db.sample_set_membership.sample_set_id.with_alias("sample_set_id"), 
                                             db.sample_set.sample_type.with_alias("sample_type"))
-                for other_sample in other_samples:
-                    sample_set_specific_data = helpers[other_sample.sample_type].get_data(other_sample.sample_set_id)
-                    name = helpers[other_sample.sample_type].get_name(sample_set_specific_data)
-                    other_samples_names.append(name)
-                data["samples"]["other_sample_sets_names"].append(other_samples_names)
+                for other_set in other_sets:
+                    sample_set_specific_data = helpers[other_set.sample_type].get_data(other_set.sample_set_id)
+                    name = helpers[other_set.sample_type].get_name(sample_set_specific_data)
+                    associated_sets_names.append(name)
+                data["samples"]["associated_sets_names"].append(associated_sets_names)
                 
             else :
                 data["samples"]["names"].append("deleted")
@@ -511,7 +511,7 @@ def get_data():
                 data["samples"]["id"].append("")
                 data["samples"]["patient_id"].append("")
                 data["samples"]["run_id"].append("")
-                data["samples"]["other_sample_sets_names"].append([])
+                data["samples"]["associated_sets_names"].append([])
 
         log.debug("get_data (%s) c%s -> %s (%s)" % (request.query["sample_set_id"], request.query["config"], fused_file, "downloaded" if download else "streamed"))
         log.info("load sample", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})
