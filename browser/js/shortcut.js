@@ -267,6 +267,21 @@ Shortcut.prototype = {
                     m.filter.add("Clonotype", "hide", self.m.getSelected())
             }
             break;
+
+        // Add to report
+        case 'r':
+        case 'R':
+            e.preventDefault()
+            if (!e.shiftKey) {
+                // no shift, add selected clonotypes to report
+                if (m.getSelected().length !== 0) {
+                    report.addClones(self.m.getSelected())
+                }
+            } else {
+                // remove all clonotype from report
+                report.removeAllClones()
+            }
+            break;
             
             // Scatterplot
         case '#':   // switch grid/bar mode

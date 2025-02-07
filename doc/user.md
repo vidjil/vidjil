@@ -1131,22 +1131,24 @@ This panel is available at the bottom of settings menu under "manage settings" e
 
 Note that some shortcuts may not work on some systems or on on some web browsers.
 
-|                         |                                                     |
-| ----------------------- | --------------------------------------------------- |
-| `←` and `→`             | navigate between samples                            |
+|                         |                                                         |
+| ----------------------- | ------------------------------------------------------- |
+| `←` and `→`             | navigate between samples                                |
 | `Shift-←` and `Shift-→` | decrease or increase the number of displayed clonotypes |
-| numeric keypad, `0-9`   | switch between available plot presets               |
-| `#`                     | switch between grid and bar modes                   |
+| numeric keypad, `0-9`   | switch between available plot presets                   |
+| `#`                     | switch between grid and bar modes                       |
 
-|                                         |                               |
-| --------------------------------------- | ----------------------------- |
-| `z`                                     | zoom/focus on selected clonotypes |
-| `Shift-z`                               | hide the selected clonotypes      |
-| `z` or `Shift-z` with no clonotype selected | reset the zoom/focus          |
+|                                             |                                     |
+| ------------------------------------------- | ----------------------------------- |
+| `z`                                         | zoom/focus on selected clonotypes   |
+| `Shift-z`                                   | hide the selected clonotypes        |
+| `z` or `Shift-z` with no clonotype selected | reset the zoom/focus                |
+| `r`                                         | add selected clonotype(s) to report |
+| `Shift-r`                                   | remove all clonotypes from report   |
 
 |             |                             |
 | ----------- | --------------------------- |
-| `+`         | cluster selected clonotypes     |
+| `+`         | cluster selected clonotypes |
 | `Backspace` | revert to previous clusters |
 
 |                |                                    |
@@ -1163,10 +1165,10 @@ Note that some shortcuts may not work on some systems or on on some web browsers
 Note: You can select just one locus by holding the `Shift` key while pressing
 the letter corresponding to the locus of interest.
 
-|           |                                                          |
-| --------- | -------------------------------------------------------- |
-| `Ctrl-s`  | save the analysis (when connected to a database)         |
-| `Shift-p` | open the database panel (when connected to a database)   |
+|           |                                                        |
+| --------- | ------------------------------------------------------ |
+| `Ctrl-s`  | save the analysis (when connected to a database)       |
+| `Shift-p` | open the database panel (when connected to a database) |
 
 ### Configurations
 
@@ -1175,11 +1177,11 @@ the letter corresponding to the locus of interest.
 A list of mainstream configurations is given below.  
 These description include vidjil-algo and fuse parameters if you want to recreate them locally or on your own server.
 
-|   |   |
-| :------|:-----------------------------------------|
-| Program| The selection to do in process creation on server interface|
-| Command| Parameters given to vidjil-algo|
-| Fuse command| Parameter given to fuse script|
+|              |                                                             |
+| :----------- | :---------------------------------------------------------- |
+| Program      | The selection to do in process creation on server interface |
+| Command      | Parameters given to vidjil-algo                             |
+| Fuse command | Parameter given to fuse script                              |
 
 If you want have access to configuration listed below,
 or ask for a specific configuration fitting your need,

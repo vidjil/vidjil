@@ -1333,7 +1333,28 @@ Report.prototype = {
     // remove a clone from settings by clone id 
     removeClone : function(id) {
         var index = this.clones.indexOf(id)
-        if ( index != -1) this.clones.splice(index, 1)
+        if ( index != -1) {
+            this.clones.splice(index, 1)
+
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+        }
+    },
+
+    // remove all clones from settings
+    removeAllClones : function() {
+        if (this.clones.length > 0) {
+            this.clones = []
+
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+        }
     },
 
     // print a block in the report using given conf
