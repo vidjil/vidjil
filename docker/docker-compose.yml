@@ -6,6 +6,7 @@ services:
     mysql:
         container_name: vidjil-mysql
         image: mysql:8.4
+        restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} MYSQL
         env_file:
@@ -24,12 +25,14 @@ services:
     redis:
         container_name: vidjil-redis
         image: redis
+        restart: unless-stopped
         networks:
             - vidjil
 
     uwsgi:
         container_name: vidjil-uwsgi
         image: vidjil/server:latest
+        restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} UWSGI
         env_file:
@@ -67,6 +70,7 @@ services:
     fuse:
         container_name: vidjil-fuse
         image: vidjil/server:latest
+        restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} FUSE
         command: bash /entrypoints/fuse-entrypoint.sh
@@ -88,6 +92,7 @@ services:
     nginx:
         container_name: vidjil-nginx
         image: vidjil/client:latest
+        restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} NGINX
         env_file:
@@ -109,6 +114,7 @@ services:
     workers-all:
         container_name: vidjil-workers-all
         image: vidjil/server:latest
+        restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS ALL
         env_file:
@@ -132,6 +138,7 @@ services:
     workers-short:
         container_name: vidjil-workers-short
         image: vidjil/server:latest
+        restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS SHORT
         env_file:
@@ -155,6 +162,7 @@ services:
     flower:
         container_name: vidjil-flower
         image: vidjil/server:latest
+        restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} FLOWER
         env_file:
