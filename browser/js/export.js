@@ -391,6 +391,18 @@ Report.prototype = {
     },
 
     /**
+     * Set selection of samples to the current sample and only this.
+     * @param {int} sampleId Sample id to set
+     */
+    selectSample: function(sampleId) {
+        const sampleName = this.m.getStrTime(sampleId, "original_name")
+        this.settings.samples = [sampleName]
+
+        // rerender content
+        this.initSamples()
+    },
+
+    /**
      * Change the sample status after a click on one sample tile
      * Take into account the shift press status to modify the behavior of selection
      * Menu is rerendered after modification
@@ -418,7 +430,7 @@ Report.prototype = {
                 this.showAllSamples();
             }
         }
-            
+        
         // rerender content
         this.initSamples()
     },

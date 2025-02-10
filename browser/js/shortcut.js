@@ -272,14 +272,23 @@ Shortcut.prototype = {
         case 'r':
         case 'R':
             e.preventDefault()
-            if (!e.shiftKey) {
-                // no shift, add selected clonotypes to report
+            if (e.ctrlKey || e.metakey) {
+                // Ctrl+r : Open export report menu with current selection of sample and clones
+                report.selectSample(m.t)
+                if (m.getSelected().length !== 0) {
+                    report.removeAllClones()
+                    report.addClones(self.m.getSelected())
+                }
+                report.menu()
+            }
+            else if (e.shiftKey) {
+                // Shift+r : remove all clonotype from report
+                report.removeAllClones()
+            } else {
+                // no ctrl, no shift : add selected clonotypes to report
                 if (m.getSelected().length !== 0) {
                     report.addClones(self.m.getSelected())
                 }
-            } else {
-                // remove all clonotype from report
-                report.removeAllClones()
             }
             break;
             

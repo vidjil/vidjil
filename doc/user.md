@@ -1138,13 +1138,14 @@ Note that some shortcuts may not work on some systems or on on some web browsers
 | numeric keypad, `0-9`   | switch between available plot presets                   |
 | `#`                     | switch between grid and bar modes                       |
 
-|                                             |                                     |
-| ------------------------------------------- | ----------------------------------- |
-| `z`                                         | zoom/focus on selected clonotypes   |
-| `Shift-z`                                   | hide the selected clonotypes        |
-| `z` or `Shift-z` with no clonotype selected | reset the zoom/focus                |
-| `r`                                         | add selected clonotype(s) to report |
-| `Shift-r`                                   | remove all clonotypes from report   |
+|                                             |                                                              |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| `z`                                         | zoom/focus on selected clonotypes                            |
+| `Shift-z`                                   | hide the selected clonotypes                                 |
+| `z` or `Shift-z` with no clonotype selected | reset the zoom/focus                                         |
+| `r`                                         | add selected clonotype(s) to report                          |
+| `Shift-r`                                   | remove all clonotypes from report                            |
+| `Ctrl-r`                                    | open report menu with current selected sample and clonotypes |
 
 |             |                             |
 | ----------- | --------------------------- |
