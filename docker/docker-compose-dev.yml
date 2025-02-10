@@ -57,6 +57,7 @@ services:
     restic:
         container_name: vidjil-restic
         image: mazzolino/restic
+        restart: unless-stopped
         hostname: docker
         env_file:
             - '.env.default'
