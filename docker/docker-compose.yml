@@ -37,6 +37,8 @@ services:
         command: bash /entrypoints/uwsgi-entrypoint.sh
         stdin_open: true
         tty: true
+        sysctls:
+            net.core.somaxconn: 1024
         healthcheck:
             test: "bash /healthchecks/healthcheck_uwsgi.bash"
             timeout: 2s
