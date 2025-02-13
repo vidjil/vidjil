@@ -34,7 +34,7 @@ def proxy_request(url, headers={}, handler=None):
             del forms['Session']
 
         try:
-            response = requests.post(url, headers=headers, data=forms, timeout=(3, 57))
+            response = requests.post(url, headers=headers, data=forms, timeout=(3, 180))
         except requests.exceptions.Timeout:
             return json.dumps("Timeout when trying to contact the website")
         if response.status_code == requests.codes.ok:
