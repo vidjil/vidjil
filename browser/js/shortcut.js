@@ -297,7 +297,14 @@ Shortcut.prototype = {
             e.preventDefault()
             m.sp.switchMode()
             break;
+
+        case '?':
+            // Display keyboard shortcuts help
+            // To trick browser to prevent popup detection, emulate a click on a button
+            document.getElementById("help_shortcuts").click();
+            break;
         }
     }
 }
+
 Shortcut.prototype = $.extend(Object.create(View.prototype), Shortcut.prototype)
