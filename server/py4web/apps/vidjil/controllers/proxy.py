@@ -33,15 +33,18 @@ def proxy_request(url, headers={}, handler=None):
         if 'Session' in forms.keys():
             del forms['Session']
 
-        response = requests.post(url, headers=headers, data=forms)
+        try:
+            response = requests.post(url, headers=headers, data=forms, timeout=(3, 180))
+        except requests.exceptions.Timeout:
+            return json.dumps("Timeout when trying to contact the website")
         if response.status_code == requests.codes.ok:
             if handler:
                 return handler(response)
             return response
         else:
-            return json.dumps("the site returned an invalid response")
+            return json.dumps("The website returned an invalid response")
     else:
-        return json.dumps("improper method")
+        return json.dumps("Improper method, only POST can be used")
 
 
 ##################################

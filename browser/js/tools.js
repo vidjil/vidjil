@@ -392,27 +392,42 @@ function processCloneDBContents(results,model) {
 }
 
 /**
- * extract information from htlm page
+ * extract information from html page
  *
  * @param HTML code for a complete webpage
  */
-function processImgtContents(IMGTresponse,tag) {
-
-    var impl = document.implementation;
-    //var htmlDoc = (new DOMParser).parseFromString(IMGTresponse, "text/html");
+function processImgtContents(IMGTresponse, tag) {
     var htmlDoc = document.implementation.createHTMLDocument("example");
-    htmlDoc.documentElement.innerHTML= IMGTresponse;
+    htmlDoc.documentElement.innerHTML = IMGTresponse;
 
-    if (htmlDoc.length<10){
-        console.log({
-            "type": "log",
-            "msg": "Error, Javascript engine does not supprt the parseFromString method..."});
+    const tagElements = htmlDoc.getElementsByTagName(tag);
+    if (tagElements.length > 0) {
+        // we found at least one element
+        var allpretext = (tagElements[0]).innerHTML;
+        var idxFirst = allpretext.indexOf('Sequence number');
+        var textlikecsv = allpretext.substr(idxFirst);
+        var imgArray = tsvToArray(textlikecsv);
+        return imgArray;
+    } else {
+        // we found no element
+        // Try and read result as JSON
+        try {
+            res = jQuery.parseJSON(IMGTresponse);
+            console.log({
+                "type": "flash",
+                "msg": "Error when trying to get IMGT content: " + res,
+                "priority": 2});
+        }
+        catch (err)
+        {
+            // Was not JSON, display a generic error
+            console.log({
+                "type": "flash",
+                "msg": "Error when trying to get IMGT content",
+                "priority": 2});
+        }
+        return [];
     }
-    var allpretext = ((htmlDoc.getElementsByTagName(tag))[0]).innerHTML;
-    var idxFirst = allpretext.indexOf('Sequence number');
-    var textlikecsv = allpretext.substr(idxFirst);
-    var imgArray = tsvToArray(textlikecsv);
-    return imgArray;
 }
 
 /**
@@ -420,7 +435,7 @@ function processImgtContents(IMGTresponse,tag) {
  * clone's sequence.
  * Used in IMGT/V-QUEST post-processing.
  *
- * @param seuence
+ * @param sequence
  * @param arrayToProcess
  * @returns {object}
  */
