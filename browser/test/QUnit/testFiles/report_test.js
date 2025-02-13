@@ -107,31 +107,31 @@ QUnit.test("Report: delete report/template", function(assert) {
     // Delete saved user template
     assert.equal(report.settings.name, "new_template_1", "loaded report should be named 'new_template_1', got " + report.settings.name);
     report.delete(skipConfirm=false)
-    assert.notEqual(report.local_settings.new_template_1, undefined, "Report still present as deletion not confimred")
+    assert.notEqual(report.local_settings.new_template_1, undefined, "Report still present as deletion not confirmed")
     report.delete(skipConfirm=true)
-    assert.equal(report.local_settings.new_template_1, undefined, "Report removed as deletion COMFIRMED")
+    assert.equal(report.local_settings.new_template_1, undefined, "Report removed as deletion CONFIRMED")
 
 
     // Delete saved report
     report.load("new_save_1", source="analysis")
     assert.equal(report.settings.name, "new_save_1", "loaded report should be named 'new_save_1', got " + report.settings.name);
     report.delete(skipConfirm=false)
-    assert.notEqual(report.m.report_save.new_save_1, undefined, "Report still present as deletion not confimred")
+    assert.notEqual(report.m.report_save.new_save_1, undefined, "Report still present as deletion not confirmed")
     report.delete(skipConfirm=true)
-    assert.equal(report.m.report_save.new_save_1, undefined, "Report removed as deletion COMFIRMED")
+    assert.equal(report.m.report_save.new_save_1, undefined, "Report removed as deletion CONFIRMED")
 
 
-    // Try delete defualt template
+    // Try delete default template
     report.load("Full report")
     assert.equal(report.settings.name, "Full report", "loaded report should be named 'new_template_1', got " + report.settings.name);
     report.delete(skipConfirm=false)
-    assert.notEqual(report.default_settings["Full report"], undefined, "Default template still present as deletion not confimred")
+    assert.notEqual(report.default_settings["Full report"], undefined, "Default template still present as deletion not confirmed")
     report.delete(skipConfirm=true)
-    assert.notEqual(report.default_settings["Full report"], undefined, "Default template still present even if deletion IS confimred")
+    assert.notEqual(report.default_settings["Full report"], undefined, "Default template still present even if deletion IS confirmed")
 })
 
 
-QUnit.test("Report: savestate", function(assert) {
+QUnit.test("Report: saveState", function(assert) {
     
     var m = new Model(m);
     var report = new Report(m)
@@ -145,16 +145,16 @@ QUnit.test("Report: savestate", function(assert) {
     var axis_color = m.color.axis.name
 
     // save current model state
-    report.savestate()
+    report.saveState()
 
     //change model state
-    report.switchstate(["IGH"], [0,1], "Size")
+    report.switchState(["IGH"], [0,1], "Size")
     assert.notEqual(system_selected, JSON.stringify(m.system_selected.slice()))
     assert.notEqual(samples_order, JSON.stringify(m.samples.order.slice()))
     assert.notEqual(axis_color, m.color.axis.name)
 
     //restore
-    report.restorestate()
+    report.restoreState()
     assert.equal(system_selected, JSON.stringify(m.system_selected.slice()))
     assert.equal(samples_order, JSON.stringify(m.samples.order.slice()))
     // assert.equal(axis_color, m.color.axis.name)// Failed after a model.update call
@@ -258,16 +258,16 @@ QUnit.test("Report: locus", function(assert) {
     assert.equal( locusTRG().classList[0], "rs-unselected", "locus TRG, correct class after switch (unselected)")
     assert.equal( locusIGH().classList[0], "rs-selected", "locus IGH, correct class after TRG switch (selected)")
 
-    // simple call to switch fucntion, unselect -> select
+    // simple call to switch function, unselect -> select
     report.changeLocus(locusTRG())
     assert.equal( locusTRG().classList[0], "rs-selected", "locus TRG, correct class after function switch (selected)")
 
-    // call to switch fucntion + shift, still select, hide other locus
+    // call to switch function + shift, still select, hide other locus
     report.changeLocus(locusTRG(), true)
     assert.equal( locusTRG().classList[0], "rs-selected", "locus TRG, correct class after function switch (selected)")
     assert.equal( locusIGH().classList[0], "rs-unselected", "locus IGH, correct class after function switch + shift (unselected)")
 
-    // call to switch fucntion + shift if already last active locus, still select, restore other locus
+    // call to switch function + shift if already last active locus, still select, restore other locus
     report.changeLocus(locusTRG(), true)
     assert.equal( locusIGH().classList[0], "rs-selected", "locus IGH, correct class after function switch + shift if all locus already hidden (selected)")
 

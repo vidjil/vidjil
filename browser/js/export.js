@@ -145,13 +145,13 @@ Report.prototype = {
         // if settings does not contain a name -> retry
         if (typeof savename == "undefined" || savename == ""){
             console.log({ msg: "you must set a name to your report before saving it", type: "flash", priority: 2 });
-            this.saveas();
+            this.saveAs();
             return;
         }
 
         // we are on a template settings, save as a new report instead
         if(typeof this.default_settings[savename] != "undefined"){
-            this.saveas()
+            this.saveAs()
             return;
         }
         
@@ -208,7 +208,7 @@ Report.prototype = {
 
     /**
      * Apply in local settings values present in localStorage
-     * Usefull when a new template is added by settings import
+     * Useful when a new template is added by settings import
      */
     updateLocalStorage: function(){
         if (localStorage && localStorage.getItem('report_templates')){
@@ -227,9 +227,9 @@ Report.prototype = {
 
     /**
      * Open confirmBox to ask user to fill a name for report/template
-     * Close confirmBox only if save succesed
+     * Close confirmBox only if save succeeded
      */
-    saveas: function(overwrite, as_template){
+    saveAs: function(overwrite, as_template){
         var self = this;
 
         var savename = true;
@@ -333,13 +333,13 @@ Report.prototype = {
         }
 
         var save_select = $("#report-settings-save")
-        $("#rs-save-select").empty() // Erase previous values to not create ducplication of select list
+        $("#rs-save-select").empty() // Erase previous values to not create duplication of select list
         var div = $('<div/>',   {}).appendTo(save_select);
 
         var select = $('<select/>', { name: 'rs-save-select',
                                       id:   'rs-save-select' }).appendTo(div).change(handle);
 
-        var optgrp_default = $('<optgroup/>',  { id: "optgroup_default_template", label: "Report templates", title: "Default reports; can be use as template"})
+        var optgroup_default = $('<optgroup/>',  { id: "optgroup_default_template", label: "Report templates", title: "Default reports; can be use as template"})
 
         var keys = Object.keys(this.default_settings);
         for (var i = 0; i < keys.length; i++){
@@ -347,12 +347,12 @@ Report.prototype = {
             $('<option/>',  { text: name,
                             selected: (self.settings.name == name),
                             source: "default",
-                            value: name}).appendTo(optgrp_default);
+                            value: name}).appendTo(optgroup_default);
         }
-        optgrp_default.appendTo(select);
+        optgroup_default.appendTo(select);
  
 
-        var optgrp_local_template = $('<optgroup/>',  { id: "optgroup_user_template", label: "Own templates", title: "User created reports templates"})
+        var optgroup_local_template = $('<optgroup/>',  { id: "optgroup_user_template", label: "Own templates", title: "User created reports templates"})
 
         keys = Object.keys(this.local_settings);
         for (var t = 0; t < keys.length; t++){
@@ -360,12 +360,12 @@ Report.prototype = {
             $('<option/>',  { text: template_name,
                             selected: (self.settings.name == template_name),
                             source: "template",
-                            value: template_name}).appendTo(optgrp_local_template);
+                            value: template_name}).appendTo(optgroup_local_template);
         }
-        optgrp_local_template.appendTo(select);
+        optgroup_local_template.appendTo(select);
 
 
-        var optgrp_users = $('<optgroup/>',  { id: "optgroup_report_saved", label: "Saved reports", title: "User report; stored locally"})
+        var optgroup_users = $('<optgroup/>',  { id: "optgroup_report_saved", label: "Saved reports", title: "User report; stored locally"})
 
         keys = Object.keys(this.m.report_save);
         for (var j = 0; j < keys.length; j++){
@@ -373,9 +373,9 @@ Report.prototype = {
             $('<option/>',  { text: savename,
                               selected: (self.settings.name == savename),
                               source: "analysis",
-                              value: savename}).appendTo(optgrp_users);
+                              value: savename}).appendTo(optgroup_users);
         }
-        optgrp_users.appendTo(select);
+        optgroup_users.appendTo(select);
 /*
         if(typeof this.default_settings[this.settings.name] != "undefined")
             $("#rs-save-button").addClass("disabledClass")
@@ -390,39 +390,64 @@ Report.prototype = {
 
     },
 
+    /**
+     * Change the sample status after a click on one sample tile
+     * Take into account the shift press status to modify the behavior of selection
+     * Menu is rerendered after modification
+     */
+    changeSamples: function(sampleDom, shiftKey) {
+        const sample = $(sampleDom).attr("value")
+
+        if (!shiftKey) {
+            // switch only this sample
+            if (this.settings.samples.indexOf(sample) != -1) {
+                this.settings.samples.splice(this.settings.samples.indexOf(sample),1)
+            } else {
+                this.settings.samples.push(sample)
+            }
+        } else {
+            // Switch all sample action
+            if (this.settings.samples.indexOf(sample) == -1) {
+                // case 0; sample not present, hide all other, and show only this one
+                this.settings.samples = [sample]
+            } else if (this.settings.samples.length > 1 && this.settings.samples.indexOf(sample) != -1) {
+                // case 1; some/all samples present, hide all other samples
+                this.settings.samples = [sample]
+            } else if (this.settings.samples.length == 1 && this.m.system_selected.length > 1) { 
+                // only one active samples, show all samples
+                this.showAllSamples();
+            }
+        }
+            
+        // rerender content
+        this.initSamples()
+    },
+
+    showAllSamples: function(){
+        this.settings.samples = []
+        for (i=0; i<this.m.samples.order.length; i++) {
+            this.settings.samples.push(this.m.getStrTime(this.m.samples.order[i], "original_name"))
+        }
+    },
+
     initSamples: function(){
         var self = this;
-        var sample_select = $("#report-settings-sample-select")
-        var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(sample_select);
         var i;
 
-        // use displayed samples as default 
         if (this.settings.samples == undefined){
-            this.settings.samples = []
-            for (i=0; i<this.m.samples.order.length; i++)
-                this.settings.samples.push(this.m.getStrTime(this.m.samples.order[i], "original_name"))
+            this.showAllSamples();
         } 
 
         // add/remove sample to list on click
-        var handle = function(){
-            if ($(this).hasClass("rs-selected"))
-                self.settings.samples.splice(self.settings.samples.indexOf($(this).attr("value")),1)
-            else
-                self.settings.samples.push($(this).attr("value"))
-                
-            var count = 0
-            for (var j=0; j < self.m.samples.order.length; j++){
-                var timeId = self.m.samples.order[j]
-                if (self.settings.samples.indexOf(self.m.getStrTime(timeId, "original_name")) != -1)
-                    count++;
-            }
-            $("#rs-selected-sample-count").html("["+count+" selected]")
-
-            $(this).toggleClass("rs-selected");
-            $(this).toggleClass("rs-unselected");
+        var handle = function(e){
+            self.changeSamples(this, e.shiftKey)
         }
 
         var count = 0;
+        // remove all previous dom element if rerender
+        $("#report-settings-sample-select .rs-flex-parent-v").remove() 
+        var sample_select = $("#report-settings-sample-select")
+        var parent = $('<div/>', { class: "rs-flex-parent-v"}).appendTo(sample_select);
         for (i=0; i < this.m.samples.order.length; i++){
             var timeId = this.m.samples.order[i]
 
@@ -448,12 +473,12 @@ Report.prototype = {
 
     /**
      * Change the locus status after a click on one locus tile
-     * Take into account the shift press status to modifiy the behavior of seleciton
+     * Take into account the shift press status to modify the behavior of selection
      * Menu is rerender after modification
      */
-    changeLocus: function(locusDom, shiftkey){
+    changeLocus: function(locusDom, shiftKey){
         var locus = $(locusDom).attr("value")
-        if (!shiftkey){ // swich only this locus
+        if (!shiftKey){ // switch only this locus
             if (this.settings.locus.indexOf(locus) != -1){
                 this.settings.locus.splice(this.settings.locus.indexOf(locus),1)
             } else {
@@ -467,13 +492,17 @@ Report.prototype = {
                 this.settings.locus = [locus]
             } else if (this.settings.locus.length == 1 && this.m.system_selected.length > 1){ // only one active locus
                 // Show all locus
-                this.settings.locus = []
-                for (var i=0; i<this.m.system_selected.length; i++){
-                    this.settings.locus.push(this.m.system_selected[i])
-                }
+                this.showAllLocus()
             }
         }
         this.initLocus() // rerender content
+    },
+
+    showAllLocus: function(){
+        this.settings.locus = []
+        for (var i=0; i<this.m.system_selected.length; i++) {
+            this.settings.locus.push(this.m.system_selected[i])
+        }
     },
 
     initLocus: function(){
@@ -481,9 +510,7 @@ Report.prototype = {
 
         // use displayed locus as default 
         if (typeof this.settings.locus == "undefined"){
-            this.settings.locus = []
-            for (var i=0; i<this.m.system_selected.length; i++)
-                this.settings.locus.push(this.m.system_selected[i])
+            this.showAllLocus()
         }
 
         var handle = function(e){
@@ -797,12 +824,12 @@ Report.prototype = {
                 try {
                     text = this.available_blocks[conf.blockType].name(conf)
                 } catch (e) {
-                    console.error("failed to generate report blockname for "+conf.blockType+" block")
+                    console.error("failed to generate report block name for "+conf.blockType+" block")
                     text = conf.blockType
                 }
                 break;
             default:
-                text = "unknow block"
+                text = "unknown block"
                 break;
             }
 
@@ -836,7 +863,7 @@ Report.prototype = {
         var color; 
         if (this.settings.default_color != "default") 
             color = this.settings.default_color
-        this.switchstate(this.settings.locus, array_sample_ids, color);
+        this.switchState(this.settings.locus, array_sample_ids, color);
 
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
@@ -875,7 +902,7 @@ Report.prototype = {
                     
                 });
             
-            self.restorestate()    
+            self.restoreState()    
             self.m.resize()
             self.m.resume()
             self.m.update()
@@ -883,7 +910,7 @@ Report.prototype = {
         
     },
     
-    savestate: function(){
+    saveState: function(){
         this.save_state = {};
 
         this.save_state.system_selected = this.m.system_selected.slice()
@@ -899,8 +926,8 @@ Report.prototype = {
         return this;
     },
     
-    switchstate: function(system_list, sample_list, color){
-        this.savestate();
+    switchState: function(system_list, sample_list, color){
+        this.saveState();
         this.m.system_selected = system_list;
         if (typeof color != "undefined")
             this.m.color.set(color)
@@ -908,7 +935,7 @@ Report.prototype = {
         return this;
     },
     
-    restorestate: function(){
+    restoreState: function(){
         this.m.system_selected = this.save_state.system_selected.slice()
         this.m.changeTimeOrder(this.save_state.samples_order)
         this.m.color.set(this.save_state.axis_color)
@@ -957,7 +984,7 @@ Report.prototype = {
                 'text': title
             }).appendTo(content_header);
 
-            // Action icons, move, indert, delete
+            // Action icons, move, insert, delete
             var icons = $('<div/>', {'class': 'container_content',"style": "display: flex;font-size:100%;"})
 
 
@@ -1105,8 +1132,8 @@ Report.prototype = {
         if (typeof time == "undefined" || time == -1)
             return this
 
-        var sinfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")", block)
-        var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
+        var sampleInfo = this.container("Sample information ("+this.m.getStrTime(time, "short_name")+")", block)
+        var left = $('<div/>', {'class': 'flex'}).appendTo(sampleInfo);
         
         var content = [
             {'label': "Filename:" , value : this.m.samples.names[time]},
@@ -1135,8 +1162,8 @@ Report.prototype = {
 
     // TODO: make it use block 
     softwareInfo : function(time) {
-        var sinfo = this.container("Software information ("+this.m.getStrTime(time, "short_name")+")");
-         var div = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
+        var sampleInfo = this.container("Software information ("+this.m.getStrTime(time, "short_name")+")");
+         var div = $('<div/>', {'class': 'flex'}).appendTo(sampleInfo);
          var content = [
             {'label': "Analysis software:" , value : this.m.getSoftVersionTime(time)},
             {'label': "Parameters:" , value : this.m.getCommandTime(time)}
@@ -1279,9 +1306,9 @@ Report.prototype = {
         if (index != -1) return index
 
         // check if a similar block object already exist
-        var strblock = JSON.stringify(block);  
+        var blockString = JSON.stringify(block);  
         for (var i=0; i< this.settings.blocks.length; i++){
-            if (JSON.stringify(this.settings.blocks[i]) == strblock){
+            if (JSON.stringify(this.settings.blocks[i]) == blockString){
                 return i;
             }
         }
@@ -1296,7 +1323,7 @@ Report.prototype = {
                 this.clones.push(clone_id)
         }
         // If menu is already open, update it
-        // Usefull when user already selected clonotype, but don't add them
+        // Useful when user already selected clonotype, but don't add them
         if ($("#report-menu").is(":visible")){
             this.menu()
         }
@@ -1316,7 +1343,7 @@ Report.prototype = {
         // missing blocktype ?
         if (typeof conf.blockType == "undefined") return;
 
-        // use correponding printer for blocktype 
+        // use corresponding printer for blocktype 
         switch (conf.blockType) {
             case "scatterplot":
                 this.scatterplot(conf)
@@ -1456,7 +1483,7 @@ Report.prototype = {
         
         var svg_sp = document.getElementById(sp_export.id+"_svg").cloneNode(true);
         
-        //set viewbox (same as resize)
+        //set viewBox (same as resize)
         svg_sp.setAttribute("viewBox","0 0 791 250");
         
         for (var i = 0; i < this.m.clones.length; i++) {
@@ -1613,7 +1640,7 @@ Report.prototype = {
             }
     
 
-        // Fill more information depending of the settings for clone informations (productivity, hypermutation, ...)
+        // Fill more information depending of the settings for clone information (productivity, hypermutation, ...)
         var fields = {
             'productivity':  function(c){ return {'text': c.getProductivityNameDetailed()+'\u00a0', 'class': 'clone_value'} },
             'hypermutation': function(c){ return c.getVIdentityIMGT(t) == "unknown" ? undefined : {'text': "V-REGION Identity: "+ c.getVIdentityIMGT(t)+'%\u00a0', 'class': 'clone_value'} },
