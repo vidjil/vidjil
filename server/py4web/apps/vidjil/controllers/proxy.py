@@ -36,7 +36,7 @@ def proxy_request(url, headers={}, handler=None):
         try:
             response = requests.post(url, headers=headers, data=forms, timeout=(3, 57))
         except requests.exceptions.Timeout:
-            return json.dumps("Timeout when tying to contact the website")
+            return json.dumps("Timeout when trying to contact the website")
         if response.status_code == requests.codes.ok:
             if handler:
                 return handler(response)
