@@ -396,7 +396,7 @@ function processCloneDBContents(results,model) {
  *
  * @param HTML code for a complete webpage
  */
-function processImgtContents(IMGTresponse,tag) {
+function processImgtContents(IMGTresponse, tag) {
     var htmlDoc = document.implementation.createHTMLDocument("example");
     htmlDoc.documentElement.innerHTML = IMGTresponse;
 
@@ -410,10 +410,22 @@ function processImgtContents(IMGTresponse,tag) {
         return imgArray;
     } else {
         // we found no element
-        console.log({
-            "type": "flash",
-            "msg": "Error when trying to pget IMGT content",
-            "priority": 2});
+        // Try and read result as JSON
+        try {
+            res = jQuery.parseJSON(IMGTresponse);
+            console.log({
+                "type": "flash",
+                "msg": "Error when trying to get IMGT content: " + res,
+                "priority": 2});
+        }
+        catch (err)
+        {
+            // Was not JSON, display a generic error
+            console.log({
+                "type": "flash",
+                "msg": "Error when trying to get IMGT content",
+                "priority": 2});
+        }
         return [];
     }
 }
