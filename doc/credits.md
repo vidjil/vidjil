@@ -85,14 +85,19 @@ The development of Vidjil is funded by:
 - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2017
 - Inria Lille, 2015-2018
 - InCA, 2016-2019
-- VidjilNet consortium at Inria, 2018-2024  
+- VidjilNet consortium at Inria, 2018-2025  
 
 ## References
 
-If you use vidjil-algo, please cite [Giraud, Salson 2014].
+If you use vidjil-algo, please cite [Borée 2025].
 If you use the web platform, please cite [Duez 2016].
 Reference for protocols are [Villarese 2022] (marker identification in ALL)
 and [Septenville 2022] (assessment of mutational status in CLL).
+
+Cyprien Borée et al.,
+*Alignment-free detection and seed-based identification of multi-loci V(D)J recombinations in Vidjil-algo*,
+2025, in revision for PCI Math Comp Bio,
+<https://hal.science/hal-04361907>
 
 Marc Duez et al.,
 *Vidjil: A web platform for analysis of high-throughput repertoire sequencing*,

@@ -246,7 +246,7 @@ int main(int argc, char **argv) {
          << "# No lymphocyte was harmed in the making of this software," << endl
          << "# however this software is for research use only and comes with no warranty." << endl
          << endl
-         << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use " << PROGNAME << "."
+         << "# Please cite <https://hal.science/hal-04361907> if you use " << PROGNAME << "."
          << endl
          << endl;
 
