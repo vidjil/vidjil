@@ -1,7 +1,7 @@
 CXX?=g++
 INCLUDE=-I ..
 ifeq ($(CXXFLAGS), )
-  CXXFLAGS := -W -Wall -std=c++11 -O2
+  CXXFLAGS := -W -Wall -std=c++11 -O2 -g
 endif
 CXXFLAGS := $(filter-out -DNDEBUG,$(CXXFLAGS))
 export CXXFLAGS

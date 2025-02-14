@@ -7,16 +7,16 @@ $ Detect the Ig recombinations
 1:IGL SEG
 
 $ Do not detect the TR recombinations
-4:TR.* UNSEG
+f4:TR.* UNSEG
 
 $ Report the undetected sequences in the json output
-1: "germline": "not analyzed", "id": "000001", "name": "TRA
-1: "germline": "not analyzed", "id": "000002", "name": "TRB
-1: "germline": "not analyzed", "id": "000003", "name": "TRG
-1: "germline": "not analyzed", "id": "000004", "name": "TRD
+f1: "germline": "not analyzed", "id": "000001", "name": "TRA
+f1: "germline": "not analyzed", "id": "000002", "name": "TRB
+f1: "germline": "not analyzed", "id": "000003", "name": "TRG
+f1: "germline": "not analyzed", "id": "000004", "name": "TRD
 
 $ Count the undetected sequences in the json output
-1: "not analyzed": .4.
+f1: "not analyzed": .4.
 
 $ Count the detected sequences in the json output
 1: "segmented": .3.

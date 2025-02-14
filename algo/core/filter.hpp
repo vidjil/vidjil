@@ -3,6 +3,7 @@
 #include <iostream>
 #include "bioreader.hpp"
 #include "automaton.hpp"
+#include "math.hpp"
 
 class FilterWithACAutomaton {
 
@@ -26,9 +27,9 @@ class FilterWithACAutomaton {
     /**
     This function will filter a BioReader
     @param idxAho:  A pointer to a pair containing an int vector pointer and
-                    an AbstractACAutomaton pointer parametrized by KmerStringAffect.
+                    an AbstractACAutomaton pointer parametrized by KmerAffect.
                     The int vector represents indexes of a BioReader and the
-                    automaton is build with single char labels put in KmerStringAffect.
+                    automaton is build with single char labels put in KmerAffect.
                     To know more about them, read doc of
                     buildACAutomatonToFilterBioReader function.
 
@@ -125,4 +126,6 @@ class FilterWithACAutomaton {
    */
   int getSizeLongestTransferredSequence(const BioReader &reader, KmerStringAffect k) const;
 };
+
+
 #endif

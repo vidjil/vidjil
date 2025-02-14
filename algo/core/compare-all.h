@@ -15,6 +15,7 @@ SimilarityMatrix compare_all(list <Sequence> sequences,
 @param windowsStorage: The object which contains windows
 @param theCost: The cost to add for the dynamic programming
 @param nb_clones: The number of clones to take on board to build the matrix*/
-SimilarityMatrix compare_windows(WindowsStorage &windowsStorage, const Cost theCost, int nb_clones);
+template <typename A>
+SimilarityMatrix compare_windows(WindowsStorage<A> &windowsStorage, const Cost theCost, int nb_clones);
 
 // bool compare_all(list <Sequence> sequences, bool min_size=false, std::ostream out=std::cout);

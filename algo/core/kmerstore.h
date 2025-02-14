@@ -7,9 +7,14 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <math.h>
+#include <set>
+#include "BitSet.hpp"
 #include "bioreader.hpp"
 #include "tools.h"
 #include "proba.h"
+
+template <typename T>
+class GermlineElement;
 
 using namespace std;
 
@@ -58,6 +63,8 @@ public:
    */
   bool isAmbiguous() const;
 
+  static uint getMaxHashValue();
+  
   /**
    * @return 1 (only there for compatibility reasons with KmerAffect)
    */
@@ -70,6 +77,15 @@ bool operator>(const Kmer &k1, const Kmer &k2);
 bool operator<=(const Kmer &k1, const Kmer &k2);
 bool operator>=(const Kmer &k1, const Kmer &k2);
 bool operator!=(const Kmer &k1, const Kmer &k2);
+
+namespace std {
+  template <>
+  struct hash<Kmer> {
+    size_t operator()(const Kmer &kmer) const {
+      return kmer.count;
+    }
+  };
+}
 
 
 
@@ -94,9 +110,8 @@ public:
   static int last_id;
   int id; // id of this index
   int refs; // number of germlines using this index
-  bool multiple_in_one;
 
-  list< pair <T, BioReader> > labels;
+  map<T, set<GermlineElement<T> *> > labels;
 
   IKmerStore();
 
@@ -106,7 +121,7 @@ public:
    * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(BioReader& input, const string& label="", int keep_only = 0, string seed = "");
+  void insert(BioReader& input, const string& label="", GermlineElement<T> *germline=NULL, int keep_only = 0, string seed = "");
 
   /**
    * @param input: A list of FASTA files
@@ -114,7 +129,7 @@ public:
    * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(list<BioReader>& input, const string& label="", int keep_only = 0, string seed = "");
+  void insert(list<BioReader>& input, const string& label="", GermlineElement<T> *germline=NULL, int keep_only = 0, string seed = "");
   
   /**
    * @param input: A sequence to be cut in k-mers
@@ -182,7 +197,7 @@ public:
    * @param kmer: a kmer
    * @return one label associated with the kmer
    */
-  BioReader getLabel(T kmer) const;
+  set<GermlineElement<T> *> getLabel(T kmer) const;
 
   /**
    * @return whether the index differentiate kmer types
@@ -199,6 +214,17 @@ public:
    */
   virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="") = 0;
 
+  /**
+   * @param seq: a sequence
+   * @param no_revcomp: force not to revcomp the sequence, even if
+   *                    the index was built with revcomp.
+   * @return a map which contains all the affectations found at all positions of 
+   * the sequence. The keys are affectations and values are BitSets whose length is
+   * the same as the sequence. A 1 is used to tell that the affectation exists at 
+   * that position.
+   * The function doesn't give the positions of UNKNOWN affectation.
+   */
+  virtual map<T, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="") = 0;
   /**
    * @return true iff the revcomp is indexed
    */
@@ -217,17 +243,16 @@ public:
   void precompute_proba(float index_load);
 };
 
-template<class T>
+template <class T>
 IKmerStore<T>::IKmerStore() {
   id = ++last_id;
   refs = 0;
   finished_building = false;
-  multiple_in_one = false;
 }
 
-template<class T> int IKmerStore<T>::last_id = 0;
+template <class T> int IKmerStore<T>::last_id = 0;
 
-template <class T> 
+template <class T>
 class MapKmerStore : public IKmerStore<T>
 {
 public:	
@@ -241,14 +266,20 @@ public:
   MapKmerStore(int k, bool=false);
 
   vector<T> getResults(const seqtype &seq, bool no_revcomp=false, string seed="");
+  map<T, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="");
+
   T& get(seqtype &word);
   T& operator[](seqtype & word);
 
+  /**
+   * @inherited from IKMerStore
+   */
+  void finish_building();
  private:
   void init();
 };
 
-template <class T> 
+template <class T>
 class ArrayKmerStore : public IKmerStore<T>
 {
   T* store;
@@ -272,44 +303,53 @@ public:
   ~ArrayKmerStore();
 
   vector<T> getResults(const seqtype &seq, bool no_revcomp=false, const string seed="");
+  map<T, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="");
   T& get(seqtype &word);
   T& operator[](seqtype & word);
   T& operator[](int word);
+  
+  /**
+   * @inherited from IKMerStore
+   */
+  void finish_building();
 };
 
 
 // IKmerStore
 
-template<class T>
+template <class T>
 IKmerStore<T>::~IKmerStore(){}
 
-template<class T> 
+template <class T>
 void IKmerStore<T>::insert(list<BioReader>& input,
                            const string &label,
+                           GermlineElement<T> *germline,
                            int keep_only,
                            string seed){
   for(list<BioReader>::iterator it = input.begin() ; it != input.end() ; it++){
-    insert(*it, label, keep_only, seed);
+    insert(*it, label, germline, keep_only, seed);
   }
 }
 
-template<class T> 
+template <class T>
 void IKmerStore<T>::insert(BioReader& input,
                            const string &label,
+                           GermlineElement<T> *germline,
                            int keep_only,
                            string seed){
   for (int r = 0; r < input.size(); r++) {
     insert(input.sequence(r), label, true, keep_only, seed);
   }
 
-  labels.push_back(make_pair(T(label, 1, seed.size()), input)) ;
+  T current_label = T(label, 1, seed.size());
+  labels[current_label].insert(germline);
 
   if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
-    labels.push_back(make_pair(T(label, -1, seed.size()), input)) ;
+    labels[T(label, -1, seed.size())].insert(germline) ;
   }
 }
 
-template<class T> 
+template <class T>
 void IKmerStore<T>::insert(const seqtype &sequence,
                            const string &label,
                            bool ignore_extended_nucleotides,
@@ -362,18 +402,16 @@ void IKmerStore<T>::insert(const seqtype &sequence,
   }
 }
 
-template<class T>
-void IKmerStore<T>::finish_building() {
-  finished_building = true;
-}
+template <class T>
+void IKmerStore<T>::finish_building() {}
 
-template<class T>
+template <class T>
 float IKmerStore<T>::getIndexLoad(const T kmer) const {
   float index_load = nb_kmers_inserted / pow(4.0, k);
   return (kmer.isUnknown()) ? 1 - index_load : index_load;
 }
 
-template<class T>
+template <class T>
 int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
   if (!max_size_indexing || n < max_size_indexing)
     return n ;
@@ -381,56 +419,50 @@ int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
   return max_size_indexing ;
 }
 
-template<class T>
+template <class T>
 double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length)  {
+  // n: number of kmers in the sequence
+  int n = length - getS() + 1;
   float index_load = getIndexLoad(kmer) ;
-  int kmer_length = kmer.getLength();
-  if (kmer.isUnknown() || kmer.isAmbiguous() || kmer == AFFECT_NOT_UNKNOWN
-      || kmer.getLength() == ~0)
-    kmer_length = getS();
-    
-  int n = max(0, length - kmer_length + 1);
-  at_least = min(at_least, n);
 
   return proba.getProba(index_load, at_least, n);
 }
 
-template<class T>
+template <class T>
 int IKmerStore<T>::getK() const {
   return k;
 }
 
-template<class T>
+template <class T>
 int IKmerStore<T>::getS() const {
   return s;
 }
 
-template<class T>
+template <class T>
 string IKmerStore<T>::getSeed() const {
   return seed;
 }
 
-template<class T>
-BioReader IKmerStore<T>::getLabel(T kmer) const {
-  for (typename list< pair<T, BioReader> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
-    if (it->first == kmer)
-      return it->second ;
+template <class T>
+set<GermlineElement<T> *> IKmerStore<T>::getLabel(T kmer) const {
+  if (labels.count(kmer) > 0)
+    return labels.at(kmer);
   // Nothing interesting found
   // Try by ignoring length if the index is not able to deal with different lengths
   if (! hasDifferentKmerTypes() && kmer.getLength() != (unsigned char)~0) {
     kmer.setLength(~0);
     return getLabel(kmer);
   }
-  return BIOREADER_AMBIGUOUS ;
+  return set<GermlineElement<T> *>() ;
 }
 
-template<class T>
+template <class T>
 bool IKmerStore<T>::hasDifferentKmerTypes() const {
   return false;
 }
 
 // .getResults()
-template<class T>
+template <class T>
 vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
 
   string local_seed = seed;
@@ -455,7 +487,7 @@ vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, strin
   return result;
 }
 
-template<class T>
+template <class T>
 vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, string seed) {
 
   string local_seed = seed;
@@ -492,8 +524,27 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp, str
   return result;
 }
 
+template <class T>
+map<T, BitSet> ArrayKmerStore<T>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
+  UNUSED(seq);
+  UNUSED(no_revcomp);
+  UNUSED(seed);
+  return map<T, BitSet>();
+}
+template <class T>
+map<T, BitSet> MapKmerStore<T>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
+  UNUSED(seq);
+  UNUSED(no_revcomp);
+  UNUSED(seed);
+  return map<T, BitSet> ();
+}
 
-template<class T>
+template <class T>
+void ArrayKmerStore<T>::finish_building() {
+  IKmerStore<T>::finished_building = true;
+}
+
+template <class T>
 bool IKmerStore<T>::isRevcomp() const {
   return revcomp_indexed;
 }
@@ -525,12 +576,12 @@ void MapKmerStore<T>::init() {
   this->max_size_indexing = 0;
 }
 
-template <class T> 
+template <class T>
 T& MapKmerStore<T>::get(seqtype& word){
   return store[word];
 }
 
-template <class T> 
+template <class T>
 T& MapKmerStore<T>::operator[](seqtype& word){
   if (this->isRevcomp() && T::hasRevcompSymetry()) {
     seqtype rc_kmer = revcomp(word);
@@ -540,9 +591,14 @@ T& MapKmerStore<T>::operator[](seqtype& word){
   return store[word];
 }
 
+template <class T>
+void MapKmerStore<T>::finish_building() {
+  IKmerStore<T>::finished_building = true;
+}
+
 // ArrayKmerStore
 
-template <class T> 
+template <class T>
 ArrayKmerStore<T>::ArrayKmerStore(int k, bool revcomp):IKmerStore<T>() {
   this->seed = seed_contiguous(k);
   this->k = k;
@@ -552,7 +608,7 @@ ArrayKmerStore<T>::ArrayKmerStore(int k, bool revcomp):IKmerStore<T>() {
 }
 
 
-template <class T> 
+template <class T>
 ArrayKmerStore<T>::ArrayKmerStore(string seed, bool revcomp):IKmerStore<T>(){
   this->seed = seed; 
   int k = seed_weight(seed);
@@ -573,7 +629,7 @@ void ArrayKmerStore<T>::init() {
     throw std::bad_alloc();
 }
 
-template <class T> 
+template <class T>
 ArrayKmerStore<T>::~ArrayKmerStore(){
   delete [] store;
 }
@@ -582,22 +638,22 @@ ArrayKmerStore<T>::~ArrayKmerStore(){
 	Considering B(A) = 0, B(C) = 1, B(T) = 2, B(G) = 3
 	index_word = \sum_{i=0}^{k-1}B(word[i])*4^(k-i-1)
 **/
-template <class T> 
+template <class T>
 int ArrayKmerStore<T>::index(const seqtype& word) const{
   return dna_to_int(word, this->k);
 }
 
-template <class T> 
+template <class T>
 T& ArrayKmerStore<T>::get(seqtype& word){
   return store[index(word)];
 }
 
-template <class T> 
+template <class T>
 T& ArrayKmerStore<T>::operator[](seqtype& word){
   return (*this)[index(word)];
 }
 
-template <class T> 
+template <class T>
 T& ArrayKmerStore<T>::operator[](int word){
   if (this->isRevcomp() && T::hasRevcompSymetry()) {
     int rc_kmer = revcomp_int(word, IKmerStore<T>::k);

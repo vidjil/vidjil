@@ -196,7 +196,7 @@ def write_fuse_to_fasta(data, outfile, used_names, current_filename, options, me
 
     for clone in data:
         if 'sequence' in clone.d.keys() and \
-           (isinstance(clone.d['sequence'], str) or isinstance(clone.d['sequence'], utils.unicode))\
+           (isinstance(clone.d['sequence'], str))\
             and len(clone.d['sequence']) > 0 and 'seg' in clone.d.keys():
             recombination = get_recombination_type(clone)
             name = recombination+spacer

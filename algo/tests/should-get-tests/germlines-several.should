@@ -7,7 +7,7 @@ $ Segment the three reads
 1: junction detected in 3 reads
 
 $ Segment one read on IGH (first -g option)
-1: IGH .* -> .* 1 
+f1: IGH .* -> .* 1
 
 $ Segment two reads on IgVC/IgJC (second -g option)
 1: IgVC .* -> .* 1
@@ -33,4 +33,4 @@ $ Detect two reads on IgVC/IgJC (-g)
 1: IgJC .* -> .* 1
 
 $ Detect one read on IGH (-V/-J, named as 'custom')
-1: custom .* -> .* 1
+f1: custom .* -> .* 1

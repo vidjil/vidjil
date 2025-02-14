@@ -499,8 +499,8 @@ void DynProg::backtrack()
   while (1) {
 
 
-    if ((!reverse_y && (j == marked_pos_j))
-        || (reverse_y && (n-j+1 == marked_pos_j)))
+    if (marked_pos_j > 0 && ((!reverse_y && (j == marked_pos_j))
+        || (reverse_y && (n-j+1 == marked_pos_j))))
       {
         marked_pos_i = reverse_x ? m-i+1 : i ;
       }

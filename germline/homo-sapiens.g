@@ -15,9 +15,13 @@
             "recombinations": [ {
                 "5": ["TRAV.fa"],
                 "3": ["TRAJ+down.fa"]
+            }, {
+                "5": ["TRADV.fa"],
+                "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "13s"
+                "seed": "13s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -31,7 +35,8 @@
                 "3": ["TRBJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRB+": {
@@ -44,7 +49,8 @@
                 "3": ["TRBJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -57,7 +63,8 @@
                 "3": ["TRGJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -69,9 +76,14 @@
                 "5": ["TRDV.fa"],
                 "4": ["TRDD.fa"],
                 "3": ["TRDJ+down.fa"]
-            } ],
+            }, {
+                "5": ["TRADV.fa"],
+                "4": ["TRDD.fa"],
+                "3": ["TRDJ+down.fa"]
+            }],
             "parameters": {
-                "seed": "10s"
+                "seed": "13s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRA+D": {
@@ -87,7 +99,8 @@
                 "3": ["TRAJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "13s"
+                "seed": "13s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "TRD+": {
@@ -99,6 +112,9 @@
                 "5": ["TRDV.fa"],
                 "3": ["TRDD3+down.fa"]
             }, {
+                "5": ["TRADV.fa"],
+                "3": ["TRDD3+down.fa"]
+            }, {
                 "5": ["TRDD2+up.fa"],
                 "4": ["TRDD.fa"],
                 "3": ["TRDJ+down.fa"]
@@ -107,7 +123,8 @@
                 "3": ["TRDD3+down.fa"]
             } ],
             "parameters": {
-                "seed": "9c"
+                "seed": "13s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -121,7 +138,8 @@
                 "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "IGH+": {
@@ -134,7 +152,8 @@
                 "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -147,7 +166,8 @@
                 "3": ["IGKJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
         "IGK+": {
@@ -156,11 +176,15 @@
             "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE recombinations",
             "follows": "IGK",
             "recombinations": [ {
-                "5": ["IGKV.fa", "IGK-INTRON.fa"],
+                "5": ["IGKV.fa"],
                 "3": ["IGK-KDE.fa"]
-            } ],
+            }, {
+                "5": ["IGK-INTRON.fa"],
+                "3": ["IGK-KDE.fa"]
+            }],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -173,7 +197,8 @@
                 "3": ["IGLJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         }
     }

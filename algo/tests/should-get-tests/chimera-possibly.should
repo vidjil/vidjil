@@ -6,7 +6,7 @@ $ The two reads are detected by the KmerSegmenter as TRG
 
 $ However, after FineSegmenter, one of the reads is not designated
 1: >clone.* TRG SEG
-1: >clone.* Possibly TRG .* UNSEG
+1: >clone.* Possibly TRG.* UNSEG
 
 $ The first read is designated as V1-J1
 1:TRGV1.*/NNNN/.*TRGJ1

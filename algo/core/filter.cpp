@@ -1,5 +1,4 @@
-#include "filter.h"
-#include "math.hpp"
+#include "filter.hpp"
 
 FilterWithACAutomaton::FilterWithACAutomaton(BioReader &origin, string seed, float keys_compress) : originalBioReader(origin){
   this->filtered_sequences_nb = 0;
@@ -88,11 +87,11 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
       previousLabel = currentLabel;
     }
   }
-  #endif  
+  #endif
 
   //All k-mers selected : iterate over all map
   if(kmer_threshold == ALL_KMERS_VALUE || kmer_threshold > (int)mapAho.size()){
-    for(auto const mx: mapAho){
+    for(auto const &mx: mapAho){
       if(mx.first.isGeneric()){
         transferBioReaderSequences(originalBioReader, result, mx.first);
       }
@@ -110,7 +109,7 @@ BioReader FilterWithACAutomaton::filterBioReaderWithACAutomaton(
     // Iterate over the pair and not the map
     int nbKmers = 0;
     int nb_kmers_limit = -1;    // Limit number of kmers, defined when the last gene of interest is reached
-    
+
     for(pair<KmerStringAffect, int> element : setOfWords){
       // Add corresponding sequences to the BioReader
         if(!element.first.isGeneric()){

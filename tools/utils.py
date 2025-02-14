@@ -15,8 +15,8 @@ def ordered(d, key=None):
     '''sorts a dictionary into an OrderedDict'''
     return collections.OrderedDict([(k, d[k]) for k in sorted(d, key=key)])
 
-def concatenate_with_padding(d, 
-                             d1, d1_size, 
+def concatenate_with_padding(d,
+                             d1, d1_size,
                              d2, d2_size,
                              ignore_keys=None,
                              recursive=False,
@@ -26,10 +26,10 @@ def concatenate_with_padding(d,
     and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
     Pads with lists [0, ... 0] data that appear in either only d1 or only d2.
     The values that are not lists are ignored (but this should not happen).
-    
+
     >>> d = {}
     >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
-    >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] } 
+    >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] }
     >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'])
     >>> d['a']
     [1, 2, 3, 4, 5]
@@ -39,7 +39,7 @@ def concatenate_with_padding(d,
     [0, 0, 333, 444, 555]
     >>> d = {}
     >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
-    >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] } 
+    >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] }
     >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'], none_init=True)
     >>> d['a']
     [1, 2, 3, 4, 5]
@@ -58,10 +58,10 @@ def concatenate_with_padding(d,
 
     for i in range(d1_size):
         t1.append(0)
-        
+
     for i in range(d2_size):
         t2.append(0)
-    
+
     for key in d1:
         if key in ignore_keys:
             continue
@@ -121,7 +121,7 @@ def concatenate_with_padding(d,
                                      recursive=True,
                                      none_init=none_init)
 
-                
+
 class AccessedDict(dict):
     '''Dictionary providing a .not_accessed_keys() method
     Note that access with .get(key) are not tracked.
@@ -151,7 +151,7 @@ class AccessedDict(dict):
 
 
 
-                
+
 ###### Utilities on strings
 
 
@@ -182,7 +182,7 @@ def common_substring(l):
 def get_common_suffpref(l, max_length, order):
     '''
     Get common prefixes or common suffixes.
-    
+
     Maximal length of the prefixes/suffixes is max_length.
     Order is either 1 (common prefix) or -1 (common suffix).
 
@@ -208,12 +208,12 @@ def get_common_suffpref(l, max_length, order):
         return l[0][:common_string]
     else:
         return l[0][-common_string:]
-    
-    
+
+
 def interesting_substrings(l, target_length=6, substring_replacement='-'):
     '''Return a list with intersting substrings.
-    Now it removes common prefixes and suffixes, and then the longest 
-    common substring. 
+    Now it removes common prefixes and suffixes, and then the longest
+    common substring.
     But it stops removing once all lengths are at most 'target_length'.
 
     >>> interesting_substrings(['ec-3--bla', 'ec-512-bla', 'ec-47-bla'], target_length=0)
@@ -247,35 +247,35 @@ def interesting_substrings(l, target_length=6, substring_replacement='-'):
 
     common_suffix = get_common_suffpref(l, min_length - len(common_prefix), -1)
 
-    substrings = [x[len(common_prefix):-len(common_suffix)] for x in l]            
+    substrings = [x[len(common_prefix):-len(common_suffix)] for x in l]
 
     if max(map (len, substrings)) <= target_length:
         return substrings
 
     ### Remove the longest common substring
-    
-    #Have to replace '' by '_' if the removal have place between 2 substrings 
+
+    #Have to replace '' by '_' if the removal have place between 2 substrings
 
     common = common_substring(substrings)
     if common:
         substrings = [s.replace(common, substring_replacement) for s in substrings]
 
     return substrings
-    
+
     # ### Build dict
     # substrings = {}
     # for x in l:
     #     substrings[x] = x[common_prefix:-(common_suffix+1)]
     # return substrings
 
- 
+
 
 
 
 #########
 
 class VidjilJson():
-    
+
     def check_version(self, filepath):
         '''Check vidjil_json_version'''
         if "vidjil_json_version" in self.d:
@@ -284,4 +284,3 @@ class VidjilJson():
             if self.d["vidjil_json_version"] >= defs.VIDJIL_JSON_VERSION_REQUIRED:
                 return
         raise IOError ("File '%s' is too old -- please regenerate it with a newer version of Vidjil" % filepath)
-    

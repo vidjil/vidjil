@@ -15,13 +15,13 @@ $ Check md5 in germline/, sequences split and processed from germline and other 
 1:af257e110cf1ec6c38457af82a8118aa homo-sapiens/IGLJ.fa
 1:ebbe9236648bb903e9fec44752227a8a homo-sapiens/IGLV.fa
 1:d50f2b2289fe2ca2e7139a47f6c68d3c homo-sapiens/TRAJ.fa
-1:e2545c70e6b16c4076581becac5147be homo-sapiens/TRAV.fa
+1:4c5c3f7934675aadf0748d4ae904550b homo-sapiens/TRAV.fa
 1:5b74170b9c45b9243558941bf07666ff homo-sapiens/TRBD.fa
 1:34015ed76474e4e5539ab4a76abee4c1 homo-sapiens/TRBJ.fa
 1:be0a91d9e0a571c1cef3cca3ebc38bd4 homo-sapiens/TRBV.fa
 1:7f9fe8eaf781cf87453c157a771d5aaf homo-sapiens/TRDD.fa
 1:e50fc3c2f786f0b5a2b6fb5834dd3814 homo-sapiens/TRDJ.fa
-1:bb5815c6edb747f593edd9414ed1deb6 homo-sapiens/TRDV.fa
+1:c329cabfb42e3bcac023f04e638b8b1e homo-sapiens/TRDV.fa
 1:62651e35ba6725757e30113647b5ab5f homo-sapiens/TRGJ.fa
 1:ee4053a508b3ed4820799135cc50e554 homo-sapiens/TRGV.fa
 1:b3bca64b9f9a9891b70590a32aed9baa mus-musculus/IGHD.fa

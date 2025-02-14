@@ -18,6 +18,7 @@
 #include "testReadStorage.cpp"
 #include "testAutomaton.cpp"
 #include "testMath.cpp"
+#include "testBitSet.cpp"
 #include "testProbability.cpp"
 
 int main(void) {
@@ -42,5 +43,6 @@ int main(void) {
   testAutomaton();
   testMath();
   testProba();
+  testBitSet();
   TAP_END_TEST_EXIT
 }

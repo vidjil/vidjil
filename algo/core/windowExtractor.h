@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 #include "segment.h"
-#include "germline.h"
+#include "germline.hpp"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "windows.h"
@@ -23,6 +23,7 @@ using namespace std;
  * This takes an OnlineBioReader reader as input and extract windows from the
  * sequences given in the input.
  */
+template <typename Affect>
 class WindowExtractor {
  private:
   size_t nb_reads;
@@ -38,10 +39,10 @@ class WindowExtractor {
   Stats stats[STATS_SIZE];
   size_t max_reads_per_window;
 
-  MultiGermline *multigermline;
  public:
+  MultiGermline<Affect> *multigermline;
 
-  WindowExtractor(MultiGermline *multigermline);
+  WindowExtractor(MultiGermline<Affect> *multigermline);
 
   /**
    * Extract windows from the collection of input reads.
@@ -60,7 +61,7 @@ class WindowExtractor {
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
    *       and getAverageSegmentationLength().
    */
-  WindowsStorage *extract(OnlineBioReader *reads,
+  WindowsStorage<Affect> *extract(OnlineBioReader *reads,
                           size_t w,
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           bool keep_unsegmented_as_clone=false,
@@ -181,7 +182,7 @@ class WindowExtractor {
   /*
    * Fill the stats_clone member of the different Germlines
    */
-  void fillStatsClones(WindowsStorage *storage);
+  void fillStatsClones(WindowsStorage<Affect> *storage);
 };
 
 #endif

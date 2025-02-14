@@ -1,19 +1,22 @@
+#ifndef GERMLINE_H_
+#define GERMLINE_H_
 
-#ifndef GERMLINE_H
-#define GERMLINE_H
-
+#include <memory>
+#include <tuple>
+#include <vector>
 #include <string>
-#include <list>
-#include "kmeraffect.h"
-#include "kmerstore.h"
-#include "automaton.hpp"
-#include "stats.h"
-#include "tools.h"
-#include "../lib/json_fwd.hpp"
-#include "kmerstorefactory.hpp"
 #include "bioreader.hpp"
-#include "filter.h"
-#include <climits>
+#include "filter.hpp"
+#include "germline_element.hpp"
+#include "germline_element_repository.hpp"
+#include "kmerstore.h"
+#include "../lib/json_fwd.hpp"
+#include "../lib/json.hpp"
+
+using json = nlohmann::json;
+
+#define PSEUDO_UNEXPECTED         "unexpected"
+#define PSEUDO_UNEXPECTED_CODE    'x'
 
 enum SEGMENTATION_METHODS {
   SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'
@@ -23,169 +26,164 @@ enum SEGMENTATION_METHODS {
   SEG_METHOD_ONE      // Map a read onto a genomic region, without recombination. Evil.
 } ;
 
+template <typename Affect>
+class MultiGermline;
 
-// JUNCTION/CDR3 extraction from gapped V/J sequences
-#define        CYS104_IN_GAPPED_V  310   // First nucleotide of Cys104
-#define PHE118_TRP118_IN_GAPPED_J   38   // Last nucleotide of Phe118/Trp118
-
-#define PSEUDO_UNEXPECTED         "unexpected"
-#define PSEUDO_UNEXPECTED_CODE    'x'
-#define PSEUDO_NOT_ANALYZED       "not analyzed"
-#define PSEUDO_NOT_ANALYZED_CODE  'z'
-
-using namespace std;
-using json = nlohmann::json;
-
+/**
+ * A germline should always be integrated in a MultiGermline
+ */
+template <typename Affect>
 class Germline {
- private:
-  FilterWithACAutomaton* filter_5;
-
+private:
+  std::map<GermlineElement<Affect>*, bool> allocated;
+  std::list<std::string> segments;
+  json config;
+  std::map<std::string, std::set<GermlineElement<Affect>*>> germline_elements; // bind segment code (as in .g file) to germline element
+  GermlineElementRepository<Affect> *repository;
+  bool repository_allocated;
+  Tshortcut shortcut;
+  std::string code;
   int max_indexing;
+  int seg_method;
+  MultiGermline<Affect> *multi;
+  std::map<Tshortcut, std::set<size_t>> shortcuts_to_identifier; // bind shortcuts to the recombinations in
+  // which they are used. The integers denote the number of the recombination
+  IKmerStore<Affect> *index;
+  std::vector<std::set<std::string>> segments_by_recomb; // Store for each recombination the set of segments it has
+public:
 
-  void init(string _code, char _shortcut,
-            string seed_5, string seed_4, string seed_3, int max_indexing, bool build_automaton=false);
-
- public:
-  /*
-   * @param max_indexing: maximal length of the sequence to be indexed (0: all)
+  /**
+   * @return an Unsegmented germline
    */
+  static Germline<Affect>* getUnseg();
 
-  Germline(string _code, char _shortcut,
-           list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
-           bool build_automaton=false);
+  /**
+   * Builds an unexpected germline
+   */
+  Germline();
 
-  Germline(string _code, char _shortcut,
-  	   string f_rep_5, string f_rep_4, string f_rep_3,
-	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
-           bool build_automaton=false);
-
-  Germline(string _code, char _shortcut,
-      BioReader _rep_5, BioReader _rep_4, BioReader _rep_3,
-	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
-           bool build_automaton=false);
-
-  Germline(string _code, char _shortcut,
-	   string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
-           bool build_automaton=false);
-
-  Germline(string _code, char shortcut, string path, json json_recom,
-           string seed_5="", string seed_4="", string seed_3="", int max_indexing=0,
-           bool build_automaton=false);
+  /**
+   * Build a germline provided:
+   * @param code: the code of the germline (eg. IGH)
+   * @param shortcut: the shortcut of the germline (eg. H). Beware the shortcut used by each element of the germline will differ
+   *                  from this shortcut.
+   * @param path: relative or absolute path used to get to the path given in the filenames parameter.
+   * @param filenames: a json object describing the repertoires, as in the germline file (in the key "recombinations")
+   * @param config: a json object. A key "order" describes the segment, in the order they should appear.
+   * An object "segments", for which each key correspond to each segment, this object describes some informations:
+   * - the seeds (key "seed")
+   * - the code (key "code", eg. "V")
+   * - whether or not to index this data (key "index", with values "0" or "1")
+   * - whether or not a filter should be build (key "build", with values "0" or "1").
+   * An example of the maps: {"order": ["5", "3"], "segments": {"5": {"seed": "10s", "code": "V", "build": "0", "index": "1"}, "3": {"seed": "12s", "code": "J", "build": "0", "index": "1"}}}
+   * @param repository: the repository of already used germline elements in order to not build them several times.
+   * if NULL, the repository will be created.
+   * @param max_indexing: the maximal number of bases to index (default: 0, everything).
+   */
+  Germline(std::string code, Tshortcut shortcut, std::string path, json filenames,
+           json &config, GermlineElementRepository<Affect> *repository = NULL,
+           int max_indexing = 0);
 
   ~Germline();
 
-	pair<vector<int>*, AbstractACAutomaton<KmerAffect>*>* automaton_5;
-  int seg_method ;
-  string code ;
-  char   shortcut ;
-
   /**
-   * The string used for indexing the germline.
+   * @return the locus of the germline
    */
-  string seed_5;
-  string seed_4;
-  string seed_3;
+  std::string getCode() const;
 
   /**
-   * Finishes the construction of the germline so that it can be used
+   * @return the segment of the recombination which has the provided shortcut or nullptr if no such segment exist
+   * @complexity access to a map
+   */
+  GermlineElement<Affect>* getGermlineElement(const Tshortcut &shortcut) const;
+
+  /**
+   * @return the germline elements associated to the segment (code as given in the .g file, eg. "5" or "3")
+   */
+  std::set<GermlineElement<Affect>*> getGermlineElements(const std::string &segment) const;
+
+  /**
+   * @return the index used on the germline
+   */
+  IKmerStore<Affect> *getIndex() const;
+
+  MultiGermline<Affect> *getMultiGermline() const;
+
+  /**
+   * @return a reader to all the elements that are stored in the Germline for the given segment
+   */
+  std::shared_ptr<BioReader> getReader(const std::string &segment) const;
+
+  /**
+   * @return the considered segmentation method
+   */
+  int getSegmentationMethod() const;
+
+  /**
+   * @return the segments of the recombination which are indexed. They are returned in the order they should be recombined.
+   */
+  std::list<std::string> getSegments() const;
+
+  GermlineElementRepository<Affect> *getRepository() const;
+
+  /**
+   * @return the seed for the given segment
+   */
+  std::string getSeed(const std::string &segment) const;
+
+  /**
+   * @return shortcut of the whole germline
+   */
+  Tshortcut getShortcut() const;
+
+  /**
+   * @return get all the shortcuts used for each segment
+   */
+  std::set<Tshortcut> getAllShortcuts() const;
+
+  /**
+   * @param segment: the segment to query
+   * @param shortcuts: will additionally require that the segment exists for a recombination involving
+   *        the provided shortcuts
+   * @return true iff the germline has a segment with this name
+  */
+  bool hasSegment(const std::string &segment,
+                  const std::set<Tshortcut> &shortcuts=std::set<Tshortcut>()) const;
+
+  /**
+   * @return whether a recombination with all the shortcuts provided in parameter correspond to an existing recombination in the
+   * current germline. At least nb_match shortcuts must correspond to the recombination.
+   */
+  bool hasRecombination(const std::set<Tshortcut> &shortcuts, size_t nb_match=2) const;
+
+  /**
+   * Update the index with the content of the germline
+   * (the germline elements which were not already added to the index)
+   * @post getIndex() == index (unless getCode() == PSEUDO_UNEXPECTED)
+   */
+  void addToIndex(IKmerStore<Affect> *index);
+  /**
+   * Finishes the construction of the index.
+   * @pre addToIndex() must have been called before
    */
   void finish();
-	
-	/* Return the max indexing of a germline */
-	int getMaxIndexing();
-  void new_index(IndexTypes type);
-  void set_index(IKmerStore<KmerAffect> *index);
 
-  void update_index(IKmerStore<KmerAffect> *_index = NULL);
-
-  void mark_as_ambiguous(Germline *other);
-    
-  /*
-   * This function sets the rep5/3 according to two KmerAffects.
-   * Quite useful for some pseudo-germlines.
-   * This should not be used for regular germlines that have and use some rep5/3.
-   * @param left, right: two KmerAffects
-   * @post  set rep_5 and rep_3 stored in the labels of the index
-   */
-  void override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right);
-
-  list <string> f_reps_5 ;
-  list <string> f_reps_4 ;
-  list <string> f_reps_3 ;
-
-  // KmerAffect affect_5 ;
-  // KmerAffect affect_3 ;
-  string affect_5 ;
-  string affect_4 ;
-  string affect_3 ;
-
-  BioReader  rep_5 ;
-  BioReader  rep_4 ;
-  BioReader  rep_3 ;
-  IKmerStore<KmerAffect> *index;
-
-  FilterWithACAutomaton* getFilter_5();
-};
-
-ostream &operator<<(ostream &out, const Germline &germline);
-
-
-/* Get a json .g from a path and filename */
-json parse_json_g(string path, string json_filename);
-
-/* Load a json .g
-   - into an existing json_germlins
-   - from a path and filename
-   - possibly filtering some systems
- */
-void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter);
-
-enum GERMLINES_FILTER { GERMLINES_ALL,
-                        GERMLINES_REGULAR,
-                        GERMLINES_INCOMPLETE } ;
-
-class MultiGermline {
- private:
-  IndexTypes indexType;
- public:
-  bool one_index_per_germline;
-  list <Germline*> germlines;
-
-  string ref;
-  string species;
-  int species_taxon_id;
-
-  // A unique index can be used
-  IKmerStore<KmerAffect> *index;
-
-  MultiGermline(IndexTypes indexType, bool one_index_per_germline = true);
-  ~MultiGermline();
-
-  void insert(Germline *germline);
-  void add_germline(Germline *germline);
+  void setMultiGermline(MultiGermline<Affect> *multi);
 
   /**
-   * Build from a json .g germline file
-   *   germlines: .g, possibly modified/updated with CLI options
-   *   filter: see GERMLINES_FILTER
-   *   max_indexing:
+   * Unset the index
+   * @post getIndex() == NULL. The memory occupied by the index is not freed
    */
-  void build_from_json(json germlines, int filter,
-                      string default_seed, int default_max_indexing, bool build_automaton);
+  void unsetIndex();
+  template <typename A>
+  friend ostream &operator<<(ostream &out, const Germline<A> &germline);
 
-  /**
-   * Finishes the construction of the multi germline so that it can be used
-   */
-  void finish();
-  // Creates and update an unique index for all the germlines
-  // If 'set_index' is set, set this index as the index for all germlines
-  void insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index);
-  void build_with_one_index(string seed, bool set_index);
-
-  void mark_cross_germlines_as_ambiguous();
+  private:
+    /**
+     * @return the recombination numbers that contain all the given shortcuts
+     */
+    std::set<size_t> getRecombinationsNb(const std::set<Tshortcut> &shortcuts) const;
 };
 
-ostream &operator<<(ostream &out, const MultiGermline &multigermline);
 
-#endif
+#endif // GERMLINE_H_

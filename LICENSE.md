@@ -35,9 +35,8 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 * @link             <https://www.cs.unc.edu/Research/compgeom/gzstream/>
 * @license          LGPL
 
-**json**                : JSON for Modern C++
-
-* @version          3.10.5 (2022-01-03)
+json                : JSON for Modern C++
+* @version          3.11.3
 * @author           Niels Lohmann
 * @link             <https://github.com/nlohmann/json>
 * @license          MIT

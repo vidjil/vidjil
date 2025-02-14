@@ -1,0 +1,31 @@
+
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/clones_simul.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/ikaros_debre.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/test_representatives.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/buggy-D.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/multi-complete.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/cd-19-trimmed.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/example_mouse.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/representative-few-reads.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/cd-4-19.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/segmentation-2.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/what-V.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/multi-short.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/erg_debre.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/chimera-fake-half.fa
+
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/gosh-igh.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/BRI_IGH.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/BRI_multi.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/BRI_IGK.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/prague-Vd2Ja29.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/BRI_TRB.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/2767-Debre-IGH.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/prague-TRB+.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/0000-nck-TRD+-VDDJ.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/0000-nck-TRB.should-vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../should-vdj-tests/0119-lil-IGK+-TRA+D-TRD+-TRG.should-vdj.fa
+
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../../../demo/LIL-L4.fastq.gz 
+!LAUNCH: $VIDJIL_DIR/$EXEC --filter-reads -g $VIDJIL_DIR/germline/homo-sapiens.g ../../../demo/Stanford_S22.fasta

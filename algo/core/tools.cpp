@@ -19,7 +19,7 @@ string seed_contiguous(int k)
 {
   string seed = "" ;
 
-  for (int i = 0; i < k; i++) 
+  for (int i = 0; i < k; i++)
     seed += SEED_YES;
 
   return seed ;
@@ -39,11 +39,11 @@ string expand_seed(const string &seed)
     {
       if (seedMap.find(seed) != seedMap.end())
         return seedMap[seed];
-  
+
       // Extract the last character
       char lastChar = seed.back();
       std::string remaining = seed.substr(0, seed.size() - 1);
-      
+
       if (lastChar == 'c' || lastChar == 's') {
         // Attempt to convert the remaining string to an integer
         try {
@@ -74,10 +74,10 @@ string spaced(const string &input, const string &seed) {
   // cout << input << endl << seed << endl ;
   assert(input.length() == seed.length());
 
-  for (size_t i = 0; i < input.length(); i++) 
+  for (size_t i = 0; i < input.length(); i++)
     if (seed[i] == SEED_YES)
       spaced_buf[j++] = input[i] ;
-  
+
   spaced_buf[j] = (char) 0;
 
 #ifdef DEBUG_SPACED
@@ -92,6 +92,77 @@ string path_join(string path1, string path2)
   if (path2[0]=='/')
     return path2;
   return path1 + (path1.empty() ? "" : "/") + path2 ;
+}
+
+json parse_json_g(string path, string json_filename)
+{
+  //open and parse .g file
+  json germlines ;
+  string json_path = path_join(path, json_filename);
+
+  try {
+    ifstream germline_data(json_path);
+
+    string content( (std::istreambuf_iterator<char>(germline_data) ),
+                    (std::istreambuf_iterator<char>()    ) );
+
+    germlines = json::parse(content);
+
+  } catch (const invalid_argument &e) {
+    cerr << ERROR_STRING << "Vidjil cannot open .g file " << path + "/" + json_filename << ": " << e.what() << endl;
+    exit(1);
+  }
+
+  // Prepend actual path
+  germlines["path"] = path + '/' + germlines["path"].get<std::string>();
+
+  return germlines;
+}
+
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter)
+{
+  bool some_system = false;
+
+  try {
+    json j = parse_json_g(path, json_filename);
+
+    if (json_germlines.empty())
+    {
+      // First .g, take everything
+      for (auto kv: j.items()) {
+        if (kv.key() != "systems")
+         json_germlines[kv.key()] = kv.value();
+      }
+      // TODO: species/... when several .g
+    }
+
+    // Copy the recombinations
+    for (auto system: j["systems"].items()) {
+      if (systems_filter.size())
+        {
+          // match 'TRG' inside 'IGH,TRG'
+          // TODO: code a more flexible match, regex ?
+          if (systems_filter.find("," + system.key() + ",") == string::npos)
+            continue;
+        }
+        some_system = true;
+        json_germlines["systems"][system.key()] = system.value();
+
+        // Store the path inside each system
+        json_germlines["systems"][system.key()]["parameters"]["path"] = j["path"].get<std::string>();
+      }
+
+    json_germlines["path"] = "";
+  } catch (std::exception& e) {
+    cerr << ERROR_STRING << "cannot properly read " << path << ": " << e.what() << endl;
+    exit(1);
+  }
+
+if (!some_system)
+  {
+    cerr << ERROR_STRING << "No matching germlines" << endl;
+    exit(2);
+  }
 }
 
 string string_of_int(int number, int w)
@@ -258,7 +329,7 @@ string extract_from_label(string str, int field, string separator)
 
   if (found2 == (int) string::npos)
     return str ;
-  
+
   return str.substr(found1+1, found2-found1-1);
 }
 
@@ -326,7 +397,7 @@ string subsequence(const string &seq, int start, int end) {
 }
 
 string revcomp(const string &dna, bool do_revcomp) {
-  
+
   if (!do_revcomp)
     return dna;
 
@@ -349,6 +420,23 @@ int revcomp_int(int word, int size) {
     size--;
   }
   return revcomp;
+}
+
+std::string to_string(char c) {
+  return std::string(1, c);
+}
+
+template<>
+char first_shortcut<char>() {
+  return 'A';
+}
+
+template<>
+char next_shortcut<char>(char c) {
+  c = c+1;
+  if (c > 'Z' && c < 'a')
+    return 'a';
+  return c;
 }
 
 bool hasInFrameStopCodon(const string &sequence, int frame) {
@@ -408,12 +496,12 @@ void trimSequence(string &sequence, size_t &start_pos, size_t &length,
 
     // prefix_score = PERCENT_TOO_MANY_N * |p| - 100 * (number of N in p),
     // where p = sequence[start_prefix..i]
-    
+
     if (sequence[i] == 'N') {
       prefix_score -= 100;
       suffix_score -= 100;
     }
-    
+
     prefix_score += PERCENT_TOO_MANY_N;
     suffix_score += PERCENT_TOO_MANY_N;
 
@@ -499,6 +587,14 @@ void sigintHandler(int sig_num)
 }
 #pragma GCC diagnostic pop
 
+
+/*
+	 Return the part of label before the star
+	 For example:
+	 IGHV5-51*01 -> IGHV5-51
+	 If there is no star in the name, the whole label is returned.
+	 IGHV10-40 -> IGHV10-40
+*/
 string extractGeneName(string label){
 	string result;
 
@@ -523,7 +619,7 @@ string extractGeneName(string label){
 */
 std::ostream* new_ofgzstream(string &f, bool gz, string message)
 {
-  
+
   if (gz)
   {
     f += GZ_SUFFIX;

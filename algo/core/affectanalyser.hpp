@@ -1,6 +1,10 @@
+#ifndef AFFECTANALYSER_HPP
+#define AFFECTANALYSER_HPP
+
 #include "affectanalyser.h"
 #include <algorithm>
 #include <unordered_map>
+#include <sstream>
 
 bool operator==(const affect_infos &ai1, const affect_infos &ai2) {
   return ai1.first_pos_max == ai2.first_pos_max
@@ -28,7 +32,7 @@ ostream &operator<<(ostream &out, const affect_infos &a)
 }
 
 
-KmerAffectAnalyser::KmerAffectAnalyser(IKmerStore<KmerAffect> &kms, 
+KmerAffectAnalyser::KmerAffectAnalyser(IKmerStore<KmerAffect> &kms,
                                        const string &seq)
   :kms(kms), seq(seq) {
   assert(seq.length() >=  (size_t)kms.getS());
@@ -124,7 +128,7 @@ IKmerStore<KmerAffect> &KmerAffectAnalyser::getIndex() const{
   return kms;
 }
 
-affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before, 
+affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
                                                const KmerAffect &after, 
                                                float ratioMin,
                                                int maxOverlap) {
@@ -220,16 +224,10 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
       results.nb_before_right++;
   }
 
-  KmerAffect left_affect = before;
-  KmerAffect right_affect = after;
-  if (kms.multiple_in_one) {
-    left_affect = AFFECT_NOT_UNKNOWN;
-    right_affect = AFFECT_NOT_UNKNOWN;
-  }
-  left_evalue = kms.getProbabilityAtLeastOrAbove(left_affect,
+  left_evalue = kms.getProbabilityAtLeastOrAbove(before,
                                                  results.nb_before_left,
                                                  1 + results.last_pos_max);
-  right_evalue = kms.getProbabilityAtLeastOrAbove(right_affect,
+  right_evalue = kms.getProbabilityAtLeastOrAbove(after,
                                                   results.nb_after_right,
                                                   seq.size() - 1 - results.first_pos_max);
 
@@ -253,11 +251,7 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
 
 
 double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const {
-  KmerAffect affect = kmer;
-  if (kms.multiple_in_one) {
-    affect = AFFECT_NOT_UNKNOWN;
-  }
-  return kms.getProbabilityAtLeastOrAbove(affect, at_least, seq.size());
+  return kms.getProbabilityAtLeastOrAbove(kmer, at_least, seq.size());
 }
 
 pair <double, double> KmerAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
@@ -317,7 +311,9 @@ int KmerAffectAnalyser::last(const KmerAffect &affect) const{
 pair <KmerAffect, KmerAffect> KmerAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
   pair<KmerAffect, int> max_counts[2] = {make_pair(KmerAffect::getUnknown(), -1),
                                          make_pair(KmerAffect::getUnknown(), -1)};
+  float proba_max[2] = {1, 1};  // Probabilities associated with the max_counts
   std::unordered_map<KmerAffect, int> counts;
+  size_t length = affectations.size();
 
   for (KmerAffect affect: affectations) {
     if (forbidden.count(affect) == 0) {
@@ -329,12 +325,17 @@ pair <KmerAffect, KmerAffect> KmerAffectAnalyser::max12(const set<KmerAffect> fo
   }
 
   for (auto it: counts) {
-    if (it.second > max_counts[1].second) {
-      if (it.second > max_counts[0].second) {
+    float proba = kms.getProbabilityAtLeastOrAbove(it.first, it.second, length);
+    if (proba < proba_max[1]) {
+      if (proba < proba_max[0]) {
+        // We found a better proba than the best yet
         max_counts[1] = max_counts[0];
         max_counts[0] = it;
+        proba_max[1] = proba_max[0];
+        proba_max[0] = proba;
       } else {
         max_counts[1] = it;
+        proba_max[1] = proba;
       }
     }
   }
@@ -431,13 +432,13 @@ int CountKmerAffectAnalyser::countAfter(const KmerAffect&affect, int pos) const 
 }  
 
 
-int CountKmerAffectAnalyser::firstMax(const KmerAffect&before, const KmerAffect&after, 
+int CountKmerAffectAnalyser::firstMax(const KmerAffect&before, const KmerAffect&after,
                                          int start, int min) const {
   return searchMax(before, after, start, KmerAffectAnalyser::count()-1,1, min);
 }
 
 
-int CountKmerAffectAnalyser::lastMax(const KmerAffect&before, const KmerAffect&after, 
+int CountKmerAffectAnalyser::lastMax(const KmerAffect&before, const KmerAffect&after,
                                         int end, int min) const {
   if (end == -1)
     end = KmerAffectAnalyser::count()-1;
@@ -502,3 +503,309 @@ void CountKmerAffectAnalyser::buildCounts() {
 
 }
 
+
+MultipleAffectAnalyser::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq)
+  :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)) 
+ {
+  assert(seq.length() >=  (size_t)kms.getS());
+ }
+
+int MultipleAffectAnalyser::countUnique() const {
+  return affectations.size();
+}
+
+int MultipleAffectAnalyser::count(const KmerAffect &affect) const{
+  auto it = affectations.find(affect);
+  if (it == affectations.end())
+    return 0;
+  return it->second.count();
+}
+
+set<KmerAffect> MultipleAffectAnalyser::getAffectations() const {
+  set<KmerAffect> affects;
+  for (auto it = affectations.begin(); it != affectations.end(); it++)
+    affects.insert(it->first);
+  return affects;
+}
+
+double MultipleAffectAnalyser::getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const {
+  // TODO: Same as KmerAffectAnalyser's → Factorization
+  return kms.getProbabilityAtLeastOrAbove(kmer, at_least, seq.size());
+}
+
+pair <double, double> MultipleAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
+  // TODO: Same as KmerAffectAnalyser's → Factorization
+  return make_pair(left_evalue, right_evalue);
+}
+
+const string &MultipleAffectAnalyser::getSequence() const{
+  // TODO: Same as KmerAffectAnalyser's → Factorization
+  return seq;
+}
+
+pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(const set<KmerAffect> &ka1_set, const set<KmerAffect> & ka2_set) const {
+
+  // We assume that even with several affectations, the affectations will be positioned similarly
+  KmerAffect ka1 = *(ka1_set.begin());
+  KmerAffect ka2 = *(ka2_set.begin());
+
+  int ka1_count = 0; int ka1_pos = 0;
+  int ka2_count = 0; int ka2_pos = 0;
+
+  const BitSet &b1 = affectations.find(ka1)->second;
+  for (size_t i = 0; i < b1.size(); i++) {
+    if (b1.get(i))
+      {
+        ka1_count++ ; ka1_pos += i ;
+      }
+  }
+  const BitSet &b2 = affectations.find(ka2)->second;
+  for (size_t i = 0; i < b2.size(); i++) {
+    if (b2.get(i))
+      {
+        ka2_count++ ; ka2_pos += i ;
+      }
+  }
+
+  // Is ka1 'more on the left' than ka2 ?
+  // We check for the average position in both cases,
+  // ie for (k1_pos / ka1_count > ka2_pos / ka2_count), but without floats
+  if (ka1_pos * ka2_count < ka2_pos * ka1_count)
+    return make_pair(ka1_set, ka2_set);
+  else
+    return make_pair(ka2_set, ka1_set);
+}
+
+std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
+  assert(affectations.size() >= 2);
+  set<KmerAffect> best_affect;
+  double best_proba = 2;
+
+  // Get the best affect first (with lowest proba)
+  for (KmerAffect affect: getAffectations()) {
+    if (forbidden.count(affect) == 0) {
+      uint64_t count = this->count(affect);
+      double proba = getProbabilityAtLeastOrAbove(affect, count);
+#ifdef DEBUG
+      cerr << "affect/proba: " << affect << " " << proba << endl;
+#endif
+      if (fabs(proba - best_proba) <= (proba+best_proba)/1e10) {
+#ifdef DEBUG
+        cerr << "proba = " << proba << ", best_proba = " << best_proba << ", fabs = " << fabs(proba - best_proba)
+             << ", threshold = " << (proba+best_proba)/1e10 << endl;
+#endif
+        // Test if values are (almost) equal
+        best_proba = min(proba, best_proba);
+        best_affect.insert(affect);
+      } else if (proba < best_proba) {
+        best_proba = proba;
+        best_affect.clear();
+        best_affect.insert(affect);
+      }
+    }
+  }
+
+#ifdef DEBUG
+  PRINT_VAR(best_proba);
+  for (auto best: best_affect)
+    PRINT_VAR(best);
+#endif
+  
+  // Now get the second best proba but removes positions that are common with the best (we can only take the first one
+  // as all should have the same bitset).
+  double second_best_proba = 2;
+  set<KmerAffect> second_best_affect;
+  BitSet best_bitset = (affectations.find(*(best_affect.begin()))->second);
+  uint64_t best_bitset_count = best_bitset.count();
+  for (auto it = best_affect.begin(); it != best_affect.end(); ) {
+    uint64_t count = (best_bitset & affectations.find(*it)->second).count();
+    if (llabs(count - best_bitset_count) > .1 * best_bitset_count)
+      it = best_affect.erase(it);
+    else
+      it++;
+  }
+#ifdef DEBUG
+  PRINT_VAR(best_bitset);
+  PRINT_VAR(best_bitset.size());
+#endif
+  best_bitset.flip();           // We will compute not(A) AND B to cancel all positions that were set with A
+#ifdef DEBUG
+  PRINT_VAR(best_bitset);
+#endif
+  for (KmerAffect affect: getAffectations()) {
+    if (forbidden.count(affect) == 0) {
+      if (best_affect.find(affect) == best_affect.end()) {
+        uint64_t count = (best_bitset & affectations.find(affect)->second).count();
+        double proba = getProbabilityAtLeastOrAbove(affect, count);
+#ifdef DEBUG
+        cerr << affect << "\t" << proba << "\t" << (best_bitset & affectations.find(affect)->second) << endl;
+#endif
+        if (fabs(proba - second_best_proba) <= max(sqrt(min(proba, second_best_proba)),(proba+second_best_proba)/1e10)) {
+          // Test if values are (almost) equal
+          second_best_proba = min(proba, second_best_proba);
+          second_best_affect.insert(affect);
+        } else if (proba < second_best_proba) {
+          second_best_proba = proba;
+          second_best_affect.clear();
+          second_best_affect.insert(affect);
+        }
+      }
+    }
+  }
+#ifdef DEBUG
+  PRINT_VAR(second_best_proba);
+  for (auto second_best: second_best_affect)
+    PRINT_VAR(second_best);
+#endif
+  if (best_proba == 2 || second_best_proba == 2) {
+    best_affect.clear();
+    best_affect.insert(KmerAffect::getAmbiguous());
+    second_best_affect.clear();
+    second_best_affect.insert(KmerAffect::getAmbiguous());
+  }
+  return std::tuple<std::set<KmerAffect>, std::set<KmerAffect>, double, double>(best_affect, second_best_affect, best_proba, second_best_proba);
+}
+
+affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,
+                                                const KmerAffect &after, 
+                                                float ratioMin,
+                                                int maxOverlap) {
+  // TODO: Duplicated code from KmerAffectAnalyser -> factorize?
+  
+  /* currentValue is the  { affectations[t] == before | t \in 1..i  } - | { affectations[i] == after | t \in 1..i }  */
+  int currentValue;
+  int span = before.getLength();
+  int length = seq.size();
+
+  if (maxOverlap > span)
+    maxOverlap = span;
+
+  /* Initialize results */
+  affect_infos results;
+  results.max_found = false;
+  results.max_value = 0;
+  results.first_pos_max = results.last_pos_max = 0;
+  results.nb_before_left = results.nb_before_right = results.nb_after_right = results.nb_after_left = 0;
+  currentValue = 0;
+  int nb_during_max = 0;
+  bool continue_max;
+
+  BitSet bs_before = affectations.find(before)->second;
+  BitSet not_bs_before = affectations.find(before)->second;
+  not_bs_before.flip();
+  BitSet bs_after = affectations.find(after)->second;
+  BitSet not_bs_after = affectations.find(after)->second;
+  not_bs_after.flip();
+
+  bs_before &= not_bs_after;
+  bs_after &= not_bs_before;
+  
+  for (int i = 0; i < min(length,span - maxOverlap); i++) {
+    if (bs_after.get(i)) {
+      currentValue--;
+      results.nb_after_right++;
+    }
+  }
+  for (int i = span - maxOverlap; i < length; i++) {
+    /* i - span + maxOverlap, to avoid overlapping k-mers */
+    
+    continue_max = false;
+    
+    /* Read the current affectations, and store them both in currentValue and at the right of the previous maximum.
+       The affectation of 'before' is interpreted relatively to span and maxOverlap */
+
+    if (bs_before.get(i - span + maxOverlap)) {
+      currentValue++;
+      results.nb_before_right++;
+    } 
+    if (bs_after.get(i)) {
+      currentValue--;
+      results.nb_after_right++;
+    }
+
+    /* Now currentValue = | { affectations[t - span + maxOverlap] == 'before' | t \in span-maxOverlap..i } | - | { affectations[i] == 'after' | t \in 0..i } | */
+
+    /* If we raise above the max, or if we continue a previous maximum (even from a distant position), store in results */
+    if (currentValue >= results.max_value) {
+      if (currentValue > results.max_value) {
+        results.first_pos_max = i;
+
+        // We are above the previous max. We reaffect the ignored affectations
+        // during the previous plateau.
+        results.nb_after_left += nb_during_max;
+        results.nb_before_left += nb_during_max;
+        nb_during_max = 0;
+      } else if (results.last_pos_max == i - 1) {
+        if (bs_after.get(i)) {
+          // because we are still on a maximum this means currentValue hasn't changed
+          assert(bs_before.get(i - span + maxOverlap));
+          nb_during_max++;
+          continue_max = true;
+        }
+      }
+      results.max_value = currentValue;
+      results.last_pos_max = i;
+
+      if (! continue_max) {
+        /* What was at the right of the previous maximum is now at the left of
+         * the current maximum.  But we only count them if we are not on a
+         * plateau. If we later reach a higher maximum they will be counted
+         * back (see above) */
+        results.nb_after_left += results.nb_after_right;
+        results.nb_before_left += results.nb_before_right;
+      }
+      results.nb_after_right = 0;
+      results.nb_before_right = 0;
+    }
+
+
+  }
+
+  for (int i = length - span + maxOverlap; i < length && i >= 0; i++) {
+    if (bs_before.get(i))
+      results.nb_before_right++;
+  }
+  
+  left_evalue = kms.getProbabilityAtLeastOrAbove(before,
+                                                 results.nb_before_left,
+                                                 1 + results.last_pos_max);
+  right_evalue = kms.getProbabilityAtLeastOrAbove(after,
+                                                  results.nb_after_right,
+                                                  seq.size() - 1 - results.first_pos_max);
+
+  /* Do we have enough affectations in good positions ('before' at the left and 'after' at the right) ?
+     We tolerate some of them in bad positions, but there must be more than 'ratioMin' more in good positions.
+     As the comparison is strict, passing this test implies that there is at least one 'before' kmer at the left
+     and one 'after' kmer at the right.
+   */
+
+  if ((results.nb_after_right > results.nb_after_left*ratioMin)
+      && (results.nb_before_left > results.nb_before_right*ratioMin)) {
+    results.max_found = true;
+  }
+
+  return results;
+}
+
+string MultipleAffectAnalyser::toString() const {
+  return toStringValues();
+}
+
+string MultipleAffectAnalyser::toStringValues() const {
+  std::stringstream result;
+  for (KmerAffect affect: getAffectations()) {
+    result << setw(6) << affect.toString();
+    result << setw(4) << right << count(affect);
+    result << setw(12) << getProbabilityAtLeastOrAbove(affect, count(affect)) << " ";
+    result << affectations.find(affect)->second;
+    result << std::endl;
+  }
+  return result.str();
+}
+
+string MultipleAffectAnalyser::toStringSigns() const {
+  // TODO
+  return "";
+}
+
+#endif
