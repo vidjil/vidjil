@@ -2,6 +2,11 @@
 !!! note
 	This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+## Algo 2025-02
+
+* Large refactor, one-pass Aho-Corasick automaton (!1527)
+* This brings up to 3-5x speed-ups on detecting mutliple loci
+
 ## Algo 2024-02-02
 
 * New option --top-by-locus, reporting a minimum number of clonotypes per recombination system !1335
