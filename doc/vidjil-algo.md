@@ -826,61 +826,10 @@ Contact us if a particular feature does interest you.
 The `.vdj.fa` format is compatible with the FASTA format.
 
 The FASTA header of each sequence gives some details on the V(D)J recombinations.
-The format of these headers is described below, but is considered as deprecated and may be removed in future releases in Q3 2021.
-For post-processing tools needing some of that information, it is thus not recommended to parse these headers,
-but rather to use either the `.vidjil` file that contains more information in a structured way, or the AIRR `.tsv` output.
+This format is deprecated in 2021 and should not be used.
+For post-processing tools needing some of that information, it is thus strongly advised 
+to use either the `.vidjil` file that contains more information in a structured way, or the AIRR `.tsv` output.
 
-In a `.vdj.fa` format, a line starting with a \> is of the following form:
-
-``` diff
->name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene   comments
-
-        name          sequence name (include the number of occurrences in the read set and possibly other information)
-        +             strand on which the sequence is mapped
-        VDJ           type of designation (can be "VJ", "VDJ", "VDDJ", "53"...
-                      or shorter tags such as "V" for incomplete sequences).    
-```
-The following lines are for VDJ recombinations:
-``` diff
-        startV endV   start and end position of the V gene in the sequence (start at 1)
-        startD endD                      ... of the D gene ...
-        startJ endJ                      ... of the J gene ...
-
-        Vgene         name of the V gene 
-
-        delV          number of deletions at the end (3') of the V
-        N1            nucleotide sequence inserted between the V and the D
-        delD5'        number of deletions at the start (5') of the D
-
-        Dgene         name of the D gene being rearranged
-
-        delD3'        number of deletions at the end (3') of the D
-        N2            nucleotide sequence inserted between the D and the J
-        delJ          number of deletions at the start (5') of the J
-
-        Jgene         name of the J gene being rearranged
-
-        comments      optional comments. In Vidjil, the following comments are now used:
-                      - "seed" when this comes for the first pass (.detected.vdj.fa). See the warning above.
-                      - "!ov x" when there is an overlap of x bases between last V seed and first J seed
-                      - the name of the locus (TRA, TRB, TRG, TRD, IGH, IGL, IGK, possibly followed
-                        by a + for incomplete/unusual recombinations)
-
-```
-
-Following such a line, the nucleotide sequence may be given, giving in
-this case a valid FASTA file.
-
-For VJ recombinations the output is similar, the fields that are not
-applicable being removed:
-
-``` diff
->name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  comments
-```
-In the `.detected.vdj.fa` file, the start/end positions of V and J genes are only an estimation,
-get from the k-mer heuristics, as the center of the window may be shifted up to 15 bases from the actual center.
-In the final `.vdj.fa` file, these values are the correct ones computed after dynamic programming comparison
-with germline genes.
 
 # Examples of use
 
