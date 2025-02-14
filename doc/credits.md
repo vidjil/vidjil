@@ -14,14 +14,14 @@ Contact: Clément Chesnin, Florian Thonier, [Mathieu Giraud and Mikaël Salson](
 
 ## Vidjil core authors/developers
 
-- Mathieu Giraud (CNRS), 2011-2024
-- Mikaël Salson (Univ. Lille), 2011-2024,
+- Mathieu Giraud (CNRS), 2011-2025
+- Mikaël Salson (Univ. Lille), 2011-2025
 - Marc Duez (Univ. Lille, CHU Lille, Inria), 2012-2016, 2019-2022
 - Tatiana Rocher (Univ. Lille), 2014-2017
-- Florian Thonier (CHU Necker, Inria), 2015-2024
+- Florian Thonier (CHU Necker, Inria), 2015-2025
 - Ryan Herbert (Inria), 2015-2020
 - Aurélien Béliard (CHU Lille), 2016-2017
-- Clément Chesnin (Inria), 2023-2024
+- Clément Chesnin (Inria), 2023-2025
 
 ## Other contributors
 
@@ -39,6 +39,8 @@ Contact: Clément Chesnin, Florian Thonier, [Mathieu Giraud and Mikaël Salson](
 - Guilherme Giusti, 2020-2024
 - Axel Mercier, 2021
 - Agathe Bancquart, 2023
+- Ilyès Benhalima, 2025
+- Abel Fresneau, 2025
 
 ## `.should-vdj.fa` tests with curated V(D)J designations
 
