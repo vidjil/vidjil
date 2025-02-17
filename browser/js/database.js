@@ -370,7 +370,7 @@ Database.prototype = {
 
         $.ajax({
             type: "POST",
-            url: self.db_address+"clonedb",
+            url: self.db_address+"clonedb/index",
             data: "sequences="+windows.join()+"&sample_set_id="+self.m.sample_set_id,
             xhrFields: {withCredentials: true},
             success: function (result) {
