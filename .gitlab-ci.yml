@@ -154,13 +154,16 @@ release_valgrind_functional:
 
 tgz_release:
   stage: tgz_release
-  script: make -C algo release RELEASE_TAG=`cat algo/release`
+  script:
+    - make -C algo release RELEASE_TAG=`cat algo/release`
+    - echo "RELEASE_NAME=$(cat algo/release)" >> $GITLAB_ENV
+    - echo "UNAME_M=$(uname -m)" >> $GITLAB_ENV
   only:
     - /^feature-.*a.*\/release$/
   artifacts:
     paths:
-    - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
-    - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+    - algo/releases/vidjil-algo-$RELEASE_NAME.tar.gz
+    - algo/releases/vidjil-algo-$RELEASE_NAME/vidjil-algo-${RELEASE_NAME}_${UNAME_M}
     expire_in: 10 years
   allow_failure: false
   tags:
