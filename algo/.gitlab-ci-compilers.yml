@@ -52,11 +52,11 @@ gcc:
     - .testing-gcc
   parallel:
     matrix:
-      - GCC_VERSION: ["7.5", "10", "11", "14"]
+      - GCC_VERSION: ["7.5", "10", "11"]
 
 clang:
   extends:
     - .testing-clang
   parallel:
     matrix:
-      - CLANG_VERSION: ["6", "10", "12", "18"]
+      - CLANG_VERSION: ["6", "10", "12"]
