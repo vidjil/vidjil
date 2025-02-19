@@ -3,12 +3,11 @@
 
 ### Documentation
 
-* [ ] New features are described in `doc/vidjil-algo.md`
+* [ ] New features are described in `doc/vidjil-algo.md`, with the proper release tag
 * [ ] Breaking changes (and needed configuration changes) are understood
  
-On the `feature-a/release` branch, the last commit is the release commit updating the three following files:
+On the `feature-a/release` branch, the last commit is the release commit updating the two following files:
  * [ ] CHANGELOG
- * [ ] `doc/vidjil-algo.md` with the proper release tag
  * [ ] `algo/release` with the proper release tag
 
 ### Pipelines
@@ -16,18 +15,18 @@ On the `feature-a/release` branch, the last commit is the release commit updatin
 https://gitlab.inria.fr/vidjil/vidjil/pipelines/XXXXX
 (if tests passed on different pipelines, indicate below the relevant pipelines)
 
-Usual tests should pass, but also:
-* [ ] valgrind_unit
-* [ ] valgrind_functional
-* [ ] multiple_tests
+Usual tests should pass
+* [ ] valgrind_unit: job XXX
+* [ ] valgrind_functional: job XXX
+* [ ] multiple_tests: job XXX
 
-Benchmarks
+Benchmarks: job XXX
 * [ ] almost no change...
 * [ ] ... or significant changes are understood
 
 When there are significant changes in the benchmarks, study the profiling
-* cpu: PointerACAutomaton.getResults, ~37% ?
-* mem: PointerACAutomaton.insert, ~73% ?
+* cpu: WindowExtractor.extract, ~60%, including ~45% from KmerSegmenter ?
+* mem: PointerACAutomaton.insert, ~75% ?
 * [ ] ... 
 
 ## The release, publish, tag and push

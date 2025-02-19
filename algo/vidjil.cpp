@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2024 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2025 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors:
   Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -236,7 +236,7 @@ string string_NO_LIMIT(string s) {
 
 int main(int argc, char **argv) {
     cout << "# " << PROGNAME << " -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-         << "# Copyright (C) 2011-2024 by the Vidjil team" << endl
+         << "# Copyright (C) 2011-2025 by the Vidjil team" << endl
          << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille"
          << endl
          << "# VidjilNet consortium" << endl
@@ -246,7 +246,7 @@ int main(int argc, char **argv) {
          << "# No lymphocyte was harmed in the making of this software," << endl
          << "# however this software is for research use only and comes with no warranty." << endl
          << endl
-         << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use " << PROGNAME << "."
+         << "# Please cite <https://hal.science/hal-04361907> if you use " << PROGNAME << "."
          << endl
          << endl;
 

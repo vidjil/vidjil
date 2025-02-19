@@ -52,10 +52,10 @@ Germline<Affect>::Germline(std::string code, Tshortcut shortcut,
       segments_by_recomb.push_back(std::set<std::string>());
 
       for (const std::string filenam : item.value()) {
-        std::string seed = (config[item.key()].count("seed") > 0) ? expand_seed(config[item.key()]["seed"].get<std::string>()) : "";
+        std::string seed = (config[item.key()].count("seed") > 0) ? expand_seed(config[item.key()]["seed"].template get<std::string>()) : "";
         segments_by_recomb[recombination_nb].insert(item.key());
         config[item.key()]["seed"] = seed;
-        std::string segment_code = (config[item.key()].count("code") > 0) ? config[item.key()]["code"].get<std::string>() : "";
+        std::string segment_code = (config[item.key()].count("code") > 0) ? config[item.key()]["code"].template get<std::string>() : "";
         Tshortcut current_shortcut = repository->getNextShortcut();
         std::string affect = to_string(current_shortcut)+"-"+code+segment_code;
         GermlineElement<Affect>* element;

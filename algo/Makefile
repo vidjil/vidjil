@@ -58,7 +58,7 @@ SIMILARITY_TOOL=$(TOOLDIR)similarity
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
-TEE = python ../tools/tee.py -v
+TEE = python3 ../tools/tee.py -v
 
 .PHONY: all core lib clean forcedep gcovr_reports
 
@@ -246,18 +246,18 @@ cppcheck:
 shouldvdj_generated_kmer: base
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Kmer"
-	-cd tests/data/gen ; python ../../should-vdj-to-tap.py -2q *.should-vdj.fa
+	-cd tests/data/gen ; python2 ../../should-vdj-to-tap.py -2q *.should-vdj.fa
 	@echo "*** Generated .should-vdj.fa tests finished -- Kmer"
-	python tests/tap-stats.py tests/data/gen/0-*.2.tap
+	python3 tests/tap-stats.py tests/data/gen/0-*.2.tap
 	python tests/tap-stats.py tests/data/gen/5-*.2.tap
 
 shouldvdj_generated_fine: base
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Fine"
-	-cd tests/data/gen ; python ../../should-vdj-to-tap.py *.should-vdj.fa
+	-cd tests/data/gen ; python2 ../../should-vdj-to-tap.py *.should-vdj.fa
 	@echo "*** Generated .should-vdj.fa tests finished -- Fine"
-	python tests/tap-stats.py tests/data/gen/0-*.1.tap
-	python tests/tap-stats.py tests/data/gen/5-*.1.tap
+	python3 tests/tap-stats.py tests/data/gen/0-*.1.tap
+	python3 tests/tap-stats.py tests/data/gen/5-*.1.tap
 
 
 
