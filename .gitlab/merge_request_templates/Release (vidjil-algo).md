@@ -25,8 +25,8 @@ Benchmarks: job XXX
 * [ ] ... or significant changes are understood
 
 When there are significant changes in the benchmarks, study the profiling
-* cpu: PointerACAutomaton.getResults, ~37% ?
-* mem: PointerACAutomaton.insert, ~73% ?
+* cpu: WindowExtractor.extract, ~60%, including ~45% from KmerSegmenter ?
+* mem: PointerACAutomaton.insert, ~75% ?
 * [ ] ... 
 
 ## The release, publish, tag and push
