@@ -60,6 +60,17 @@ string expand_seed(const string &seed)
   return seed;
 }
 
+std::string guess_sequence_format(std::string filename) {
+  std::map<string, string> suffixes = {{"fastq.gz", "fastq"}, {"fastq", "fastq"}, {"bam", "bam"},
+                                       {"fq", "fastq"}, {"fq.gz", "fastq"}};
+  for (auto item: suffixes) {
+    if (filename.size() > item.first.size()+1 &&
+        filename.substr(filename.size() - item.first.size()-1) == "."+item.first)
+      return item.second;
+  }
+  return "fasta";
+}
+
 
 char spaced_buf[MAX_SEED_SIZE+1];
 

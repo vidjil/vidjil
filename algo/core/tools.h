@@ -234,6 +234,13 @@ string extract_basename(string path, bool remove_ext = true);
 vector<string> generate_all_seeds(const string &str, const string &seed);
 
 /**
+ * Guess what is the format of the file whose name is filename.
+ * The guess is only based on the filename.
+ * @returns "fastq" or "fasta" or "bam"
+ */
+std::string guess_sequence_format(std::string filename);
+
+/**
  * remove_trailing_whitespaces removes the whitespaces (ie. ' ', '\t', '\r')
  * that may be at the end of the string
  * @param str: the string

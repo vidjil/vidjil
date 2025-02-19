@@ -25,6 +25,7 @@ enum {
   TEST_EXTRACT_GENE_NAME,
   TEST_CONVERSIONS,
   TEST_EXPAND_SEED,
+  TEST_GUESS_FORMAT,
 	
   /* Filter tests */
   TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
@@ -234,6 +235,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_NB_SEQUENCES, "Nb sequences in Fasta");
   RECORD_TAP_TEST(TEST_IS_STOP_CODON, "Check if is stop codon");
   RECORD_TAP_TEST(TEST_EXTRACT_GENE_NAME, "Return the gene name of an entire name");
+  RECORD_TAP_TEST(TEST_GUESS_FORMAT, "Guess read sequence format");
 	
   RECORD_TAP_TEST(TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER, 
     "Check the automaton and the index vector produced while filtering a BioReader");	
