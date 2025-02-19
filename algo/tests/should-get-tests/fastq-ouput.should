@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  --out-detected -uuu $VIDJIL_DATA/input.fastq; cat out/input.detected.vdj.fa out/input.undetected.vdj.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH  --out-detected -uuu $VIDJIL_DATA/input.fastq; cat out/input.detected.vdj.fastq out/input.undetected.vdj.fastq
 
 $ Find the first sequence segmented
 1:@seq1 .* VJ .*          IGH SEG_+
