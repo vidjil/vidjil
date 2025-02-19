@@ -281,9 +281,12 @@ template <typename Affect>
 Sequence Segmenter<Affect>::getSequence() const {
   Sequence s ;
   s.label_full = info ;
+  s.quality = quality;
   if (segmented) {
     s.label = label + " " + (reversed ? "-" : "+");
     s.sequence = revcomp(sequence, reversed);
+    if (reversed)
+      reverse(s.quality.begin(), s.quality.end());
   } else {
     s.sequence = sequence;
   }
@@ -489,14 +492,32 @@ string KmerSegmenter<Affect>::getInfoLineWithAffects() const
  return ss.str();
 }
 
+int fastq_flag = std::ios_base::xalloc();
+
+std::ostream& fasta(std::ostream& os) {
+  os.iword(fastq_flag) = 0;
+  return os;
+}
+
+std::ostream& fastq(std::ostream& os) {
+  os.iword(fastq_flag) = 1;
+  return os;
+}
+
 
 template <typename Affect>
 ostream &operator<<(ostream &out, const Segmenter<Affect> &s)
 {
-  out << ">" << s.label << " " ;
+  bool show_fastq = out.iword(fastq_flag) == 1 && s.getSequence().quality.size() > 0;
+  if (! show_fastq) {
+    out << ">";
+  } else {
+    out << "@";
+  }
+  out << s.label << " " ;
   out << s.getInfoLine() << endl;
 
-  if (s.segmented)
+  if (s.segmented && ! show_fastq)
   {
     out << s.seg_V << endl ;
     out << s.seg_N << endl ;
@@ -505,6 +526,10 @@ ostream &operator<<(ostream &out, const Segmenter<Affect> &s)
   else
   {
     out << s.getSequence().sequence << endl ;
+    if (show_fastq) {
+      out << "+" << endl
+          << s.getSequence().quality << endl;
+    }
   }
 
   return out ;
@@ -533,6 +558,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
 
   this->label = seq.label ;
   this->sequence = seq.sequence ;
+  this->quality = seq.quality;
   this->info = "" ;
   this->info_extra = "seed";
   this->segmented = false;

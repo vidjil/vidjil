@@ -557,6 +557,17 @@ void testConversions(){
   TAP_TEST_EQUAL(fixed_string_of_float(12.345, 1), "12.3", TEST_CONVERSIONS, "");
 }
 
+void testGuessFormat() {
+  TAP_TEST_EQUAL(guess_sequence_format("a"), "fasta", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fastq"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fq"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fq.gz"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fastq.gz"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fastq.toto"), "fasta", TEST_GUESS_FORMAT, ""); // Fallback to fasta
+  TAP_TEST_EQUAL(guess_sequence_format("a.bam"), "bam", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("abam"), "fasta", TEST_GUESS_FORMAT, "");
+}
+
 void testTools() {
   testOnlineBioReader1();
   testOnlineBioReaderMaxNth();
@@ -583,4 +594,5 @@ void testTools() {
 	testExtractGeneName();
   testConversions();
   testExpandSeed();
+  testGuessFormat();
 }

@@ -106,9 +106,8 @@ enum { CMD_DETECT, CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES };
 #define CLONE_DIR "seq/"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
-#define SEGMENTED_FILENAME ".detected.vdj.fa"
-#define UNSEGMENTED_FILENAME ".undetected.vdj.fa"
-#define UNSEGMENTED_DETAIL_FILENAME ".fa"
+#define SEGMENTED_FILENAME ".detected.vdj"
+#define UNSEGMENTED_FILENAME ".undetected.vdj"
 #define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
@@ -738,9 +737,9 @@ int main(int argc, char **argv) {
                output_unsegmented_detail = (n >= 1);      // -u
            },
            R"Z(
-        -u          output undetected reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME
+        -u          output undetected reads, gathered by cause, except for very short and 'too few V/J' reads (in *)Z"
            R"Z( files)
-        -uu         output undetected reads, gathered by cause, all reads (in *)Z" UNSEGMENTED_DETAIL_FILENAME
+        -uu         output undetected reads, gathered by cause, all reads (in *)Z"
            R"Z( files) (use only for debug)
         -uuu        output undetected reads, all reads, including a )Z" UNSEGMENTED_FILENAME
            R"Z( file (use only for debug))Z")
@@ -1262,6 +1261,12 @@ int main(int argc, char **argv) {
              << e.what() << endl;
         return 1;
     }
+    std::string seg_format = guess_sequence_format(f_reads);
+    if (seg_format == "bam")
+        seg_format = "fastq";
+    else if (seg_format == "fasta")
+        seg_format = "fa";
+
 
     out_dir += "/";
 
@@ -1376,13 +1381,13 @@ int main(int argc, char **argv) {
             we.setMaximalNbReadsPerWindow(max_auditionned);
 
         if (output_segmented) {
-            string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME;
+            string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME+"."+seg_format;
             out_segmented = new_ofgzstream(f_segmented, out_gz);
             we.setSegmentedOutput(out_segmented);
         }
 
         if (output_unsegmented) {
-            string f_unsegmented = out_dir + f_basename + UNSEGMENTED_FILENAME;
+            string f_unsegmented = out_dir + f_basename + UNSEGMENTED_FILENAME+"."+seg_format;
             out_unsegmented = new_ofgzstream(f_unsegmented, out_gz);
             we.setUnsegmentedOutput(out_unsegmented);
         }
@@ -1398,7 +1403,7 @@ int main(int argc, char **argv) {
                 replace(s.begin(), s.end(), '\'', '_');
 
                 string f_unsegmented_detail =
-                    out_dir + f_basename + "." + s + UNSEGMENTED_DETAIL_FILENAME;
+                    out_dir + f_basename + "." + s + "." + seg_format;
                 out_unsegmented_detail[i] = new_ofgzstream(f_unsegmented_detail, out_gz);
             }
 

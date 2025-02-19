@@ -101,7 +101,7 @@ WindowsStorage<Affect>* WindowExtractor<Affect>::extract(OnlineBioReader *reads,
       stats_reads[seg->segmented_germline->getCode()].addScore(read_length);
 
       if (out_segmented) {
-        *out_segmented << *seg; // KmerSegmenter output (V/N/J)
+        *out_segmented << fastq << *seg; // KmerSegmenter output (V/N/J)
       }
     } else {
       if (keep_unsegmented_as_clone && (reads->getSequence().sequence.length() >= w)) {
@@ -111,11 +111,11 @@ WindowsStorage<Affect>* WindowExtractor<Affect>::extract(OnlineBioReader *reads,
       }
 
       if (out_unsegmented) {
-        *out_unsegmented << *seg;
+        *out_unsegmented << fastq << *seg;
       }
       if (out_unsegmented_detail && (seg->getSegmentationStatus() >= STATS_FIRST_UNSEG)) {
         if (unsegmented_detail_full || (seg->getSegmentationStatus() != UNSEG_TOO_FEW_ZERO && seg->getSegmentationStatus() != UNSEG_TOO_SHORT))
-          *out_unsegmented_detail[seg->getSegmentationStatus()] << *seg;
+          *out_unsegmented_detail[seg->getSegmentationStatus()] << fastq << *seg;
       }
     }
 
