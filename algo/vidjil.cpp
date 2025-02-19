@@ -1403,7 +1403,7 @@ int main(int argc, char **argv) {
                 replace(s.begin(), s.end(), '\'', '_');
 
                 string f_unsegmented_detail =
-                    out_dir + f_basename + "." + s + seg_format;
+                    out_dir + f_basename + "." + s + "." + seg_format;
                 out_unsegmented_detail[i] = new_ofgzstream(f_unsegmented_detail, out_gz);
             }
 
