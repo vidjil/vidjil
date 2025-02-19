@@ -315,14 +315,16 @@ Let's look at the `IGH` entry in the `germline/homo-sapiens.g` preset:
                 "3": ["IGHJ+down.fa"]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         }
 ```
 
 The `shortcut` must be a unique 1-character string.
 The `color` and `description` fields are not used by `vidjil-algo`, but rather by the web application.
-The `parameters.seed` value of `12s` is equivalent to `-s 12s` advanced option on k-mer size described below.
+The `parameters.seed` value of `12s` is equivalent to `-s 12s` advanced option on k-mer size described below. A distinct value can be provided for each recombination with the keys `seed_5` and `seed_3`.
+The `parameters.search_recombinations` key tells what kind of recombination has to be searched by the heuristic and in which order. Here we need to find matches with the `"5"` part and, then, with the `"3"` part. 
 
 Here `recombinations` describes one sequence analysis mode, called `543`:
 a VJ junction is detected when there is a significant similarity (in terms of numbers of k-mers, see below) against sequences in `IGHV.fa` in the 5' region,
@@ -330,7 +332,7 @@ followed by a significant similarity in the 3' region against sequences in `IGHJ
 – here we take both J genes and downstream sequences to improve the detection.
 
 In a second pass (V(D)J designation), full alignment is done against these sequences.
-The optional `4` entry  (`IGHD.fa`) is taken only there into account.
+In this case, all the keys are taken into account, not only the one in the `search_recombinations` parameter. In the above example, the `4` entry  (`IGHD.fa`) is also considered for the alignment.
 However, if a D is not detected and designated, the read will be designated as VJ.
 
 
