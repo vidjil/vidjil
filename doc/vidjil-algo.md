@@ -359,6 +359,8 @@ as in `germline/homo-sapiens-cd.g`:
      "recombinations": [ { "1": ["CD-sorting.fa"] } ]
 ```
 
+Warning: As of release 2025.02, this experimental option is not working anymore.
+
 
 ## Main algorithm parameters
 
