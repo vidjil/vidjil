@@ -365,6 +365,15 @@ Database.prototype = {
                 var middle_pos = Math.round((clone.seg['5'].stop + clone.seg['3'].start)/2);
                 windows.push(clone.sequence.substr(middle_pos - Math.round(SEQ_LENGTH_CLONEDB/2), SEQ_LENGTH_CLONEDB));
                 kept_clones.push(clones[i]);
+            // envoi de l'id si ADN (possibly IGH)
+            } else if (clone.id && /^[ATCG]+$/.test(clone.id)) {
+                windows.push(clone.id);
+                kept_clones.push(clones[i]);
+            // sinon envoi de la séquence complète
+            // solution temporaire, trop stringent 
+            } else {
+                windows.push(clone.sequence);
+                kept_clones.push(clones[i]);
             }
         }
 
