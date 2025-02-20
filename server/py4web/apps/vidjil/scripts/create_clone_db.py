@@ -1,7 +1,31 @@
-import settings
-
 import os, sys
-import imp
+import importlib.util
+
+sys.path.append("../../../")
+
+from apps.vidjil import settings
+from apps.vidjil.common import db
+from apps.vidjil.modules import sampleSet
+from apps.vidjil.modules.sequenceFile import get_accessible_sequence_files_in_set_type
+
+
+def get_last_results(sequence_file, config_ids=None):
+    '''
+    Returns the last results files (one per config) for all
+    the configs (or the configs passed in parameters (list).
+    '''
+
+    select_on_config = True     # Get all of them
+
+    if config_ids is not None:
+        select_on_config = db.results_file.config_id.belongs(config_ids)
+    # First get the max run dates for the good result files
+    select_max_run = db((db.results_file.sequence_file_id == sequence_file)\
+                        & (db.results_file.hidden == False)\
+                        & (select_on_config))._select(db.results_file.run_date.max().with_alias('max'),
+                                                      groupby=db.results_file.config_id)
+
+    return db((db.results_file.sequence_file_id == sequence_file) & (db.results_file.run_date.belongs(select_max_run))).select()
 
 def create_clone_db_for_sequences(sequences, output_file):
     vidjil_to_fasta_path = os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -18,7 +42,10 @@ def create_clone_db_for_sequences(sequences, output_file):
                 vtf_metadata += ['-d', ' '.join(['sample_set='+str(s.sample_set_id) for s in sample_sets])+' '+'config_id='+str(result.config_id)]
                 vtf_result_files.append(settings.DIR_RESULTS+result.data_file)
 
-    vidjil2fasta = imp.load_source('vidjil_to_fasta', vidjil_to_fasta_path+os.path.sep+'vidjil-to-fasta.py')
+    spec = importlib.util.spec_from_file_location("vidjil_to_fasta", vidjil_to_fasta_path)
+    vidjil2fasta = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(vidjil2fasta)
+
     args = vidjil2fasta.parser.parse_args(vtf_metadata + ['-w', '-o', output_file] + vtf_result_files)
     vidjil2fasta.process_files(args)
 
