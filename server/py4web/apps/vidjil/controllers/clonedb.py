@@ -1,3 +1,4 @@
+import importlib.util
 import os
 import sys
 
@@ -55,9 +56,6 @@ def search_clonedb(sequences, sample_set_id):
         raise FileNotFoundError(f"The server directory {server_path} does not exist.")
 
     sys.path.insert(1, server_path)
-    # clonedb = stats_decorator.imp.load_source('clonedb', settings.DIR_CLONEDB+os.path.sep+'clonedb.py')
-    import importlib.util
-
     import grep_clones
 
     spec = importlib.util.spec_from_file_location(
@@ -73,9 +71,9 @@ def search_clonedb(sequences, sample_set_id):
     options = clonedb.build_grep_clones_options(
         {
             "sequence": sequences[0] + " -sample_set:%d" % sample_set_id,
-            "index": "output_index2",
+            "index": f"clonedb_{parent_group}",
         }
-    )  #'clonedb_{}'.format(parent_group)})
+    )
     options += sequences[1:]
     args = grep_clones.parser.parse_args(options)
     log.debug(
