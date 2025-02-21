@@ -60,6 +60,7 @@ INFOS = {
   '2018.10': '--analysis-filter 1',
   '2020.04': 'Report info only when not null #4287',
   '2021.04': 'Update germlines (~ +50% IGH) !885',
+  '2025.02': 'One-pass multi-loci heuristic !1527',
 }
 
 # Simple colored output

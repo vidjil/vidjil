@@ -79,13 +79,13 @@ Vidjil-algo is systematically tested with the following compilers :
   - gcc/g++ 7.5, 8.4, 9.3, 10.1, 11
   - clang 6.0, 7.0, 11.0, 12.0
 
-We aim to support all gcc/clang versions released in the last 3 years.
+We aim to support all GCC/Clang compilers whose major versions were first released in the last 5 years.
 These compilers are available on recent OS X and on the following Linux distributions:
 
-  - CentOS 8, CentOS Stream (installation possible on CentOS 7)
-  - Debian Stretch 9.0, Buster 10.0, Bullseye 11
-  - FreeBSD 12.2, 12.3, 13.0
-  - Ubuntu 18.04 LTS, 20.04 LTS
+  - CentOS 8, CentOS Stream
+  - Debian Buster 10, Bullseye 11, Bookworm 12, Trixie 13
+  - FreeBSD 12.2, 12.3, 13.0, 14.0
+  - Ubuntu 18.04 LTS, 20.04 LTS, 24.04 LTS
 
 Vidjil-algo is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [Gitlab CI](https://gitlab.inria.fr/vidjil/vidjil/-/pipelines) for that,
@@ -278,6 +278,7 @@ The following presets are provided:
   - Several presets can be loaded at the same time, as for instance `-g germline/homo-sapiens.g -g germline/germline/homo-sapiens-isotypes.g`.
 
   - Using `-2` further test unexpected recombinations (tagged as `xxx`), as in `-g germline/homo-sapiens.g -2`.
+    In release 2025.02, this test is limited to detection, not to designations.
 
 ## Custom reference sequences
 
@@ -289,6 +290,7 @@ given as `.fasta` files:
 
 - The `--find` option indicates reference sequences,
   for detection of similarities/alignment of sequences *without recombinations*.
+  This option works on release 2024.02 but not on release 2025.02.
 
 Several `-g`/ `-V/(-D)/-J` / `--find` options can be used at the same time,
 describing different systems of (non-)recombinations that will be detected.
@@ -887,6 +889,8 @@ Typical whole RNA-Seq or capture datasets may be huge (several GB) but with only
 Using Vidjil with `-U` will create a `out/reads.detected.vdj.fa` file
 that includes all reads where a V(D)J recombination (or an unexpected recombination, with `-2`) was found.
 This file will be relatively small (a few kB or MB) and can be taken again as an input for Vidjil-algo or for other programs.
+
+Note that for RNA-Seq or capture data, it is advised to stay on release 2024.02.
 
 ## Advanced usage
 
