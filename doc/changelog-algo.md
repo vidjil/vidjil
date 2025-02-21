@@ -5,7 +5,10 @@
 ## Algo 2025-02
 
 * Large refactor, one-pass Aho-Corasick automaton (!1527)
-* This brings up to 3-5x speed-ups on detecting mutliple loci
+* This brings up to 3-5x speed-ups on detecting multiple loci --filter
+* --filter outputs .fastq files, with sequence quality, when the input is .fastq
+* Note that -2 and --find options are not working in this release
+* For capture and RNA-Seq data, it is advised now to stay on release 2024.02 (except for --filter)
 
 ## Algo 2024-02-02
 
