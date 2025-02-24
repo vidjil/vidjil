@@ -7,7 +7,7 @@
 The supported way to install, run, and maintain a Vidjil server
 is to use **Docker containers**.
 We are developing and deploying them since 2018, and,
-as of 2024, these Docker containers are used on all our servers (healthcare, public)
+as of 2025, these Docker containers are used on all our servers (healthcare, public)
 as well as in some partner hospitals.
 See the [hosting options](https://wwW.vidjil.org/doc/healthcare/),
 including support and remote maintenance
@@ -55,15 +55,15 @@ For a single-team lab with one or two weekly sequencing runs, we advise
 a standard computer with **4 CPU/cores** (hence 3 workers + 1 client),
 at at least 1 GHz and **8GB RAM**.
 
-For reference, here are setups of our public servers 
+For reference, here are setups of our public servers
 as of 2023 (300+ users, including 50+ regular users).
 🌱 You probably don't need so much resources for your lab!
   
 <!-- - 2016-2017 Quad core Intel 2.4GHz, 3 workers, 16 GB
      - 2018-2020? 8vCPU, 6 workers, 28GB 
      -->
-- Health certified server: 12 vCPUs, 14GB RAM, with redundant backups
-- Public server <https://app.vidjil.org>: 16 vCPUs (11 workers), 120GB RAM
+- Health certified server: 8 cores/16 threads, 64 Go RAM, with redundant backups
+- [Public server](https://app.vidjil.org): 16 vCPUs (11 workers), 120GB RAM
 
 ### Storage
 
@@ -91,7 +91,7 @@ See `FILE_SOURCE` below.
 By default, accounts are local to the Vidjil server.
 
 An experimental integration to LDAP servers is now available (`LDAP` variable in defs.py).
-Contact us if you need help in setting such an authentication.
+Contact us if you need help in setting up such an authentication.
 
 ### Network
 
@@ -103,7 +103,7 @@ However, the following network access are recommended:
   - for server maintainers: upgrades and reports to a monitor server
 - inbound access
   - through the [VidjilNet consortium](https://www.vidjil.net),
-    the team in Lille may help local server maintainers in some monitoring, maintenance and upgrade tasks,
+    the team may help local server maintainers in some monitoring, maintenance and upgrade tasks,
     provided a SSH access can be arranged, possibly over VPN.
 
 ## Docker -- Installation
@@ -111,23 +111,21 @@ However, the following network access are recommended:
 All our images are hosted on DockerHub in the [vidjil](https://hub.docker.com/r/vidjil) repositories.
 The last images are tagged with `vidjil/server:latest` and `vidjil/client:latest`.
 
-Individual services are started by docker-compose  (<https://docs.docker.com/compose/>).
+Individual services are started by [docker-compose](https://docs.docker.com/compose/).
 
 ### Before installation
 
-Install `docker-compose`. See <https://docs.docker.com/compose/install/#install-compose>
+- Install [docker](https://docs.docker.com/engine/install/) and [docker compose](https://docs.docker.com/compose/install/#install-compose)
+  If it doesn't exist yet, you should create a `docker` group. The users needing to access docker (typically administrators) must belong to this group.
 
-If it doesn't exist yet, you should create a `docker` group.
-The users needing to access `docker` must belong to this group.
-
-Install `git`.
-Clone the [Vidjil git](https://gitlab.inria.fr/vidjil/vidjil) with `git clone https://gitlab.inria.fr/vidjil/vidjil.git`,
-and go to the directory [vidjil/docker](https://gitlab.inria.fr/vidjil/vidjil/tree/dev/docker).
-This contains both [docker-compose.yml](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/docker-compose.yml) as well as configuration files.
+- Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+  Clone the [Vidjil git](https://gitlab.inria.fr/vidjil/vidjil) with `git clone https://gitlab.inria.fr/vidjil/vidjil.git`,
+  and go to the directory [vidjil/docker](https://gitlab.inria.fr/vidjil/vidjil/tree/dev/docker).
+  It contains [docker-compose.yml](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/docker-compose.yml) as well as configuration files.
 
 ### Docker environment
 
-The vidjil Docker environment is managed by `docker-compose`, who launches the following services:
+The vidjil Docker environment is managed by `docker compose`, who launches the following services:
 
 From image `vidjil/client`
 
@@ -135,15 +133,16 @@ From image `vidjil/client`
 
 From image `vidjil/server`
 
-- `mysql` The database
 - `uwsgi` The Py4web backend server
-- `workers` The Py4web Scheduler workers in charge of executing vidjil users' samples
-- `redis` Allow to dispatch jobs to workers
-- `flowers` A server to monitoring workers status
+- `workers-all` and `workers-short`: py4web scheduler workers in charge of executing vidjil users' samples
+- `flowers` A server to monitor workers status
 - `fuse` The XmlRPCServer that handles queries for comparing samples
-- `restic` Starts a cron job to schedule regular backups
-- `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
-- `postfix` A mail relay to allow `uwsgi` to send error notifications
+
+From other images
+
+- `mysql` The database
+- `redis` Service that allows to dispatch jobs to workers
+- `restic` Service that schedules regular backups
 
 ### Network usage and SSL certificates
 
@@ -254,6 +253,28 @@ You can resolve it either by changing the port used by Vidjil in the `nginx.port
 section of the `docker-compose.yml` file or by stopping the service using port
 80.
 
+### Connect to docker containers
+
+Sometimes, in order to perform some maintenance operations, one may need to connect to a running docker container:
+
+```bash
+# Using docker and container name
+docker exec -it <container_name> bash
+# In docker folder using compose service name
+docker compose exec -it <service_name> bash
+```
+
+For example, to connect to uwsgi, if the default container name was not modified:
+
+```bash
+# Using docker and container name
+docker exec -it vidjil-uwsgi bash
+# In docker folder using compose service name
+docker compose exec -it uwsgi bash
+```
+
+NB: modifications done inside the container will be lost if container is destroyed (`docker compose down` or server restart), unless the modified files are stored in a mounted folder.
+
 ### Further configuration
 
 The following configuration files are found in the `vidjil/docker` directory:
@@ -317,11 +338,11 @@ Executable should be automatically detected inside your container.
 When the software has compatible inputs and outputs, it will be enough
 to configure then the appropriate `pre process` or `analysis config` (to be documented).
 In some cases, using the software may require development such as wrappers.
-Contact us (<mailto:contact@vidjil.org>) to have more information and help.
+[Contact us](mailto:contact@vidjil.org) to have more information and help.
 
 ### Troubleshooting
 
-## CORS header 'Access-Control-Allow-Origin' missing
+#### CORS header 'Access-Control-Allow-Origin' missing
 
 Sometime, you want to split the client and the server on different server.
 This type of configuration need to allow cross origin in nginx server.
@@ -340,29 +361,34 @@ You may relaunch the containers.
 If restarting the containers does not resolve the issue, there are a couple of things
 you can look into:
 
- - Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
- the mysql user: `vidjil`.
- If you are not sure, you can check with the following:
- ```sh
- docker exec -it vidjil-mysql bash
- mysql -u vidjil -p vidjil
- ```
- or reset it:
- ```sh
- docker exec -it vidjil-mysql bash
- mysql -u root -p
- SET PASSWORD FOR vidjil = PASSWORD('<new password>');
- ```
- 
- - Ensure the database was created correctly. This should have been done automatically,
- but just in case, you can check the console output, or check the database:
- ```sh
- docker exec -it vidjil-mysql bash
- mysql -u vidjil -p vidjil
- ```
- If the database does not exist, mysql will display an error after logging in.
+- Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
+  the mysql user: `vidjil`.
+  If you are not sure, you can check with the following:
 
-#### Launching manually the backup
+  ```sh
+  docker exec -it vidjil-mysql bash
+  mysql -u vidjil -p vidjil
+  ```
+
+  or reset it:
+
+  ```sh
+  docker exec -it vidjil-mysql bash
+  mysql -u root -p
+  SET PASSWORD FOR vidjil = PASSWORD('<new password>');
+  ```
+
+- Ensure the database was created correctly. This should have been done automatically,
+  but just in case, you can check the console output, or check the database:
+
+  ```sh
+  docker exec -it vidjil-mysql bash
+  mysql -u vidjil -p vidjil
+  ```
+
+  If the database does not exist, mysql will display an error after logging in.
+
+#### Launching the backup manually
 
 The backup should be handled by the backup container, see [*Making backups* below](#making-backups). Otherwise you can use the `backup.sh` script by connecting to the `backup` or `uwsgi` container (for a full backup, otherwise add the `-i` option when
 running `backup.sh`):
@@ -373,13 +399,9 @@ sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
 ```
 
 #### I can't connect to the py4web administration site
-The URL to this site is https://mywebsite/_dashboard.
+
+The URL to this site is <https://mywebsite/_dashboard>.
 The password should be given in the docker `.env` environment file.
-
-This password will not persist when the container will be restarted.
-For a persistent password, please use the environment variable.
-
-Each time you relaunch uwsgi server, the password is update to last value present in `.env`.
 
 ### Updating a Docker installation
 
@@ -464,7 +486,7 @@ As our latest image is always tagged `latest` you may have troubles to know
 what version is currently running on your server. To determine that, you can
 use the *digest* of the image. You can view it, for example with `docker image
 --digests vidjil/server`. Then you can compare it with the digests shown [on
-the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
+the Docker Hub page](https://hub.docker.com/r/vidjil/server/tags/).
 
 ## Plain server installation
 
@@ -498,13 +520,9 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
 
 #### Set backup service
 
-1. Modify user name and password
+1. Set backup user password
 
-    The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that
-    a backup user (read rights only required) can connect to the database.  
-    User name and password can be change.
-    These change should be include to modify also values used by restic service.
-    To do that, edit file `docker/backup/conf/backup.cnf`.
+  The password for the backup user is to be defined in your .env file (either `.env.default` or you specific .env.something file), setting the value of `MYSQL_BACKUP_PASSWORD`.
 
 1. Open a terminal, open mysql interface inside docker image
 
@@ -528,9 +546,9 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
 
 1. Set host availability to connection
 
-  Host value (ip) of newly created user should be set. 
+  Host value (ip) of newly created user should be set.
   Use '%' to allow access from everywhere.
-  A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regulary.
+  A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regularly.
 
   ```sql
   UPDATE mysql.user SET Host = "%" WHERE User = "backup";
@@ -550,13 +568,12 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
   SHOW GRANTS FOR backup;
   ```
 
-1. Restart restic service
+1. Restart restic service to force backup now
 
-  Backup is done by restic service.
-  It needs to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
+  If you want to save now, restart restic: `docker compose restart restic`. Check logs to verify that backup is OK. One can also check size and date of `dump.sql` file in the folder mounted on `/mnt/volumes/sql` in restic container.
 
 !!! note
-    Read docker logs for restic service to see if everything working well.
+    Read docker logs for restic service to see if everything is working as expected.
 
 #### Note on backup content
 
