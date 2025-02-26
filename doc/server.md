@@ -106,7 +106,7 @@ However, the following network access are recommended:
     the team may help local server maintainers in some monitoring, maintenance and upgrade tasks,
     provided a SSH access can be arranged, possibly over VPN.
 
-## Docker -- Installation
+## Installation with docker
 
 All our images are hosted on DockerHub in the [vidjil](https://hub.docker.com/r/vidjil) repositories.
 The last images are tagged with `vidjil/server:latest` and `vidjil/client:latest`.
@@ -381,7 +381,7 @@ you can look into:
 
 #### Launching the backup manually
 
-The backup should be handled by the restic container, see [*Making backups* below](#making-backups). Otherwise backup can be done manually, see [database doc](dev-server.md#database).
+The backup should be handled by the restic container, see [*Making backups* below](#making-backups). Otherwise backup can be done manually, see [database doc](server.md#database).
 
 #### I can't connect to the py4web administration site
 
@@ -402,13 +402,13 @@ The password should be given in the docker `.env` environment file.
 1. Check if server needs to be updated (for instance `sudo apt-get update && apt-get upgrade`), and may be restarted. This is a good time to do that !
 1. Check restic ran after the last modification. If need be, restart restic services: `docker compose up -d restic`. This should trigger an immediate save. After that, connect to restic service to see that an up-to-date snapshot exists.
 1. Check if there are uncommitted changes in vidjil repo in `vidjil` folder. The idea here is to prevent having specific element in the server. Check if specificity can be committed to vidjil, or if it can be in the specific config repo. If not, save the modifications before checkout.
-1. Backup database (!! Before update !!). The backup file may be found in the path mounted by restic. If need be, it can be done manually using [database export](dev-server.md#database-export)
+1. Backup database (!! Before update !!). The backup file may be found in the path mounted by restic. If need be, it can be done manually using [database export](#database-export)
 1. git checkout the new vidjil tag/branch.
 1. Re-apply local modifications if need be.
 1. Update specific config, either by running the corresponding [pipeline](https://gitlab.inria.fr/vidjil/config/-/pipelines) or by pulling the branch and applying config `./apply_targets.sh`
 1. Download new docker images: `docker pull vidjil/server` and `docker pull vidjil/client` (hopefully we should improve this to use defined versions of images and not `latest` sometimes...)
 1. If need be, update the `contrib` repo
-1. If need be, the database backup should be loaded from a fresh db, see [database import](dev-server.md#database-import)
+1. If need be, the database backup should be loaded from a fresh db, see [database import](#database-import)
 1. Start all services: `docker compose up -d`
 1. Tests modification directly in back-end website (do not forget to empty browser cache)
 1. Update front-end server if it is separated using the same procedure, then reactivate front-end: modify `conf.js` file back to its old value

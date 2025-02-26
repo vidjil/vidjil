@@ -1,6 +1,6 @@
 !!! note
     This CHANGELOG concerns the Docker images of vidjil.  
-    The generic way to update a vidjil server is described in [update vidjil server part](dev-server.md#update-vidjil-server). All steps between previously installed version and target version should be followed to adapt configuration correctly.
+    The generic way to update a vidjil server is described in [update vidjil server part](server.md#updating-a-docker-installation). All steps between previously installed version and target version should be followed to adapt configuration correctly.
     In this file, the specific migration parts are described.
 
 ## 2024.12 release
@@ -9,7 +9,7 @@
 
 We made plenty change on docker usage, allowing to be more efficient, more robust and easier to set-up.
 
-- We always fix rights inside docker to user www-data. See [migration 2024.12](dev-server.md#migrating-release-202405-to-release-202412). #5305
+- We always fix rights inside docker to user www-data. See [migration 2024.12 below](#migrating-release-202405-to-release-202412). #5305
 - We package `restic` backup tool in our docker-compose configuration #5347
 - We refactored docker image construction to be more efficient, with correct user, rights and minimized dependencies #5351
 - We refactor usage of `.env` files. It will be now easier to set up variables of your vidjil server instance in one place #5272, #5256, #5231
@@ -18,7 +18,7 @@ We made plenty change on docker usage, allowing to be more efficient, more robus
 !!! warning
     With the new version of mysql, it is required to migrate the database, ses below
 
-- Version of mysql was bumped to 8.4 (newest LTS version). In order to migrate to the new version, the easiest way to do this is to backup your sql data, start a fresh instance, and import the previously exported data (see [database export](dev-server.md#database-export) and [database export](dev-server.md#database-import))
+- Version of mysql was bumped to 8.4 (newest LTS version). In order to migrate to the new version, the easiest way to do this is to backup your sql data, start a fresh instance, and import the previously exported data (see [database export](server.md#database-export) and [database export](server.md#database-import))
 
 - Owner of volumes will be automatically set to `www-data` for right reasons. On an already existing instance, a `chown change` will be called on various directories (see file docker/vidjil-server/scripts/uwsgi-entrypoint.sh). A parameter `CHANGE_OWNER` is given in `.env.default` conf file, that can be set to `false` in this file or in a specific configuration file to prevent this behavior.
 
@@ -28,7 +28,7 @@ No changes in client image usage.
 
 ### Migrating release-2024.05 to release-2024.12
 
-The mysql version was bumped in this release. The easiest way to migrate the database is to follow [update vidjil server instructions](dev-server.md#update-vidjil-server) and apply the optional [re-import](dev-server.md#database-import) part.
+The mysql version was bumped in this release. The easiest way to migrate the database is to follow [update vidjil server instructions](server.md#updating-a-docker-installation) and apply the optional [re-import](server.md#database-import) part.
 
 Docker images, docker-compose files and env files have been modified in this release:
 
@@ -106,11 +106,11 @@ Since release 2024.01, we migrated to a new python back-end framework: [py4web](
 We also made a major refactoring of [docker compose](https://docs.docker.com/compose/) organization.  
 We tried to make it the most transparent but some major changes in volumes and docker declaration were still needed.
 
-**MAKE BACKUP BEFORE MIGRATING YOUR SERVER** (see [database export](dev-server.md#database-export))
+**MAKE BACKUP BEFORE MIGRATING YOUR SERVER** (see [database export](server.md#database-export))
 
 ##### py4web database migration
 
-In order to prevent some errors with database migration when migrating to py4web, the easiest way is to [export database](dev-server.md#database-export), [clean-up the db and reimport the data](dev-server.md#database-import) with the new py4web images
+In order to prevent some errors with database migration when migrating to py4web, the easiest way is to [export database](server.md#database-export), [clean-up the db and reimport the data](server.md#database-import) with the new py4web images
 
 ##### docker compose organization
   

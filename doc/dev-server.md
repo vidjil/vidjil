@@ -188,7 +188,7 @@ make functional_server_cypress_open
 
 # Docker
 
-See [Docker installation doc](server.md#docker----installation)
+See [Docker installation doc](server.md#installation-with-docker)
 
 ## Deploy a local version for development purpose
 
