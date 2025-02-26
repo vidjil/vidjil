@@ -16,6 +16,7 @@ These metrics are pseudonymized.
 
 * We added a dedicated controller serving these metrics #5156
 * We created a configuration for a third party tool able to make visualization and throw warning (see link Prometheus / Grafana)
+* See [documentation for set-up and use](server.md#server-monitoring)
 
 **Improve analysis**
 

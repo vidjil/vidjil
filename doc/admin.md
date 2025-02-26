@@ -1,7 +1,7 @@
-
-This is the preliminary help for bioinformaticians administrators of the Vidjil web application. This help covers administrative features that are mostly accessible from the web application, and is complementary to the [Docker/Server documentation](server.md). Users should consult the [Web Platform User Manual](user.md).
-
-For administrators, new tabs are available, allowing them various actions.
+!!! note
+  This is the preliminary help for bioinformaticians administrators of the Vidjil web application. This help covers administrative features that are mostly accessible from the web application, and is complementary to the [Docker/Server documentation](server.md). Users should consult the [Web Platform User Manual](user.md).
+  
+  For administrators, new tabs are available, allowing them various actions.
 
 ## Pre-processes, processes and post-processes
 
