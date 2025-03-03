@@ -41,6 +41,51 @@ Docker images, docker-compose files and env files have been modified in this rel
   - `SHORT_JOBS_WORKERS_POOL` and `CELERY_SIZE_LIMIT_FOR_LONG_JOB`: as described in `.env.default` file, allow admin to configure some dedicated workers to allow short jobs to run even if many long jobs are already running. In most deployments, this won't be needed.
 - `docker-compose.yml` was cleaned. To migrate, compare it with the version you had built before or use it as a base for a `docker-compose.override.yml` file.
 
+Big changes were made in the way [external files used for example for preprocess](https://gitlab.inria.fr/vidjil/contrib) are organized. If you plan on using the up-to-date version from `master` branch, here are some steps for the migration:
+
+- Run `git checkout` or `git pull` to get the new version from [contrib repo](https://gitlab.inria.fr/vidjil/contrib)
+- Compile the binaries
+  - Edit `third-party-softwares/Makefile` to correctly set `VIDJIL_IMAGE_VERSION` to use to build the tools (latest by default)
+  - Run
+
+    ```bash
+    cd third-party-softwares
+    # Get the submodules
+    make fetch_submodules
+    # Compile only the tools you need, for example:
+    make flash2
+    # Or compile all tools at once (may last a while)
+    make binaries
+    ```
+
+- Edit `docker-compose.yml` or `docker-compose.override.yml` to point to the contrib repo, edit `uwsgi.volumes` to set these mount points
+
+  ```yaml
+  # Use contrib folder
+  - path/to/contrib:/usr/share/vidjil/tools/scripts
+  - path/to/contrib/third-party-softwares/compiled:/binaries
+  ```
+
+- Edit specific `defs.py` to set
+
+  ```python
+  DIR_PREPROCESS = '/usr/share/vidjil/tools/scripts/preprocess/'
+  DIR_BINARIES = '/binaries/'
+  DIR_FLASH2 = DIR_BINARIES
+  DIR_PEAR = DIR_BINARIES
+  ```
+
+- Do not forget to mount specific `defs.py` to `/usr/share/vidjil/server/py4web/apps/vidjil/defs.py` if not already done in `docker-compose.yml` or `docker-compose.override.yml`.
+- Add preprocess configurations, or modify existing ones (they won't work any longer as defined before)
+  - Preprocess is now run by calling `classed_preprocess.py` with `--` + name of the preprocess to apply
+  - Here are typical configurations:
+    - M+R2: Merge paired-end read: `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2`
+    - Merge + R2, Large files (capture/rnaseq): `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2 --vdj --keep`
+    - UMI demultiplexing + Flash2 merger (keep R2): `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --umi --keep-r2 --flash2`
+    - (beta) Merge + primers dimers filters: `python classed_preprocess.py --binaries  &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2 --dimers`
+    - (beta) Primers dimers filters: `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --output &result& --dimers`
+- Run some tests to check everything is OK
+
 ## 2024.05 release
 
 ### vidjil/server 2024.05

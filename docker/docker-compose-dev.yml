@@ -22,6 +22,8 @@ services:
             - ../tools:/usr/share/vidjil/tools
             # Use contrib folder
             - ../../contrib:/usr/share/vidjil/tools/scripts
+            - ../../contrib/third-party-softwares/compiled:/binaries
+            - ../../contrib/third-party-softwares/compiled:/usr/share/tools/
 
     nginx:
         image: vidjil/client:dev
