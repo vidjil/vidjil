@@ -481,9 +481,21 @@ data stored on the public Vidjil servers.
 
 #### Setting up `restic` service
 
-The backup task is done using the [restic](https://restic.net/) tool. To do this, we add a `restic` service in our docker compose configuration. An example of how to set the service up is implemented in `docker-compose-dev.yml`.
+The backup task is done using the [restic](https://restic.net/) tool. To do this, we add a `restic` service in our docker compose configuration. An example of how to set the service up is implemented in `docker-compose-dev.yml`. Restic password is to modify in .env file.
 
 To be able to get data from the database, you need to create a dedicated user `backup` in your MySQL database and to give it access to vidjil database, see [below](#create-backup-user).
+
+Some commands (see [restic doc](https://restic.readthedocs.io/en/stable/) for more details):
+
+- to see snapshots:
+  1. Get in the docker container from vdb server:
+    `docker exec -it vidjil-restic bash`
+  1. Run command `restic snapshots`
+
+- to load a snapshot:
+  1. Get in the docker container from vdb server:
+    `docker exec -it vidjil-restic bash`
+  1. Run command `sudo restic restore [snapshot id] --target [/folder]`
 
 #### Create backup user
 
