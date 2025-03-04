@@ -26,7 +26,7 @@ and dedicated support for IT staff (platform administration and maintenance).
 ## In-lab/in-hospital Hosting
 
 - Installed by your local IT staff, with support from the Vidjil team
-- Documentation on [installation and maintenance](server.md#docker-installation)
+- Documentation on [installation and maintenance](server.md#installation-with-docker)
 - For [VidjilNet](https://www.vidjil.net) members, dedicated support including dedicated training/support of IT staff, and/or remote dedicated maintenance through remote SSH access
 - Suitable for production and hosting clinical data, depending the regulations of your country
 - Privacy policy managed in your lab/hospital

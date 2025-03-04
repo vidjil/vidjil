@@ -50,6 +50,7 @@ demo/*.fa
 demo/*.fasta
 
 doc/analysis-example2.analysis
+doc/tags.html
 
 docker/volumes/
 docker/vidjil-client/ssl/vidjil.crt
