@@ -18,7 +18,7 @@ We made plenty change on docker usage, allowing to be more efficient, more robus
 !!! warning
     With the new version of mysql, it is required to migrate the database, ses below
 
-- Version of mysql was bumped to 8.4 (newest LTS version). In order to migrate to the new version, the easiest way to do this is to backup your sql data, start a fresh instance, and import the previously exported data (see [database export](server.md#database-export) and [database export](server.md#database-import))
+- Version of mysql was bumped to 8.4 (newest LTS version). In order to migrate to the new version, the easiest way to do this is to backup your sql data, start a fresh instance, and import the previously exported data (see [database export](server.md#database-export) and [database import](server.md#database-import))
 
 - Owner of volumes will be automatically set to `www-data` for right reasons. On an already existing instance, a `chown change` will be called on various directories (see file docker/vidjil-server/scripts/uwsgi-entrypoint.sh). A parameter `CHANGE_OWNER` is given in `.env.default` conf file, that can be set to `false` in this file or in a specific configuration file to prevent this behavior.
 
