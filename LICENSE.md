@@ -36,6 +36,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 * @license          LGPL
 
 json                : JSON for Modern C++
+
 * @version          3.11.3
 * @author           Niels Lohmann
 * @link             <https://github.com/nlohmann/json>
@@ -198,7 +199,7 @@ x is "current version" at time of release
 
 ### Server base docker image
 
-**ubuntu 20.04**        : docker image used as base for vidjil-server docker image
+**ubuntu 24.04**        : docker image used as base for vidjil-server docker image
 
 * @license          <https://ubuntu.com/licensing>
 

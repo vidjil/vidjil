@@ -79,10 +79,10 @@ Contact us if you want help on converting such data.
     Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
 
   - or with “file”/“import/export”, manually selecting a `.vidjil` file
-
+œ
 - You can change the number of displayed clonotypes by moving the slider “number of clonotypes” (menu “filter”).
   The maximal number of clonotypes that can be displayed depends on the processing step before.
-  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
+  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads-)".
 
 - clonotypes can be selected by clicking on them either in the list, on the sample graph,
   or the grid (simple selection or rectangle selection).
@@ -213,7 +213,7 @@ It shows the most frequent clonotypes of each sample, tracked into every sample.
 - The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using `←` and `→`.
 
 - By default, the graph shows clonotypes present in the top 20 of any sample.
-  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
+  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads-)".
   You can instead choose to show only the clonotypes present in the current sample
   with “filter \> focus on clonotypes of one sample“.
 
@@ -261,7 +261,7 @@ When there is only one sample, two such views are shown.
 
 <figure markdown>
   ![Image title](./pictures/panel_scatterplot.png){ width="500" }
-  <figcaption>Grid view with the default axes (V/5' and J/3' gene) focusing on the TRG locus. 
+  <figcaption>Grid view with the default axes (V/5' and J/3' gene) focusing on the TRG locus.
     The TRGV10/TRGJP10 clonotype appears in red because it has been tagged as `clone 1` from the clonotype list.  
     Clicking on IGH focus on the IGH locus.
   </figcaption>
@@ -307,7 +307,7 @@ and/or to select them for the next report.
 
 The sequence panel shows, for the selected clonotypes:
 
-- the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clonotype)"
+- the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clonotype-)"
 - some *features* on these sequences
 
 <figure markdown>
@@ -477,7 +477,7 @@ Samples are `.fasta`, `.fastq`, `.gz` or `.clntab` files, possibly pre-processed
 Once you uploaded samples (either in 'patients', 'runs', or 'sets'),
 you can process your data and save the results of your analysis.
 
-### Patients
+## Patients
 
 <figure markdown>
   ![Image title](./pictures/table_db_content_patient_list.png)
@@ -499,7 +499,7 @@ New patients can be added (`+ new patients`), edited (`✏️`)  or deleted (`�
 By default, you are the only one who can see and update this new patient.
 If you have an admin access, you can grant access to other users (`p`).
 
-### Runs and sets
+## Runs and sets
 
 Runs and sets can be manipulated the same way as patients. They can be added (`+ new runs`, `+ new sets`),
 edited (`✏️`) or deleted (`⌫`).
@@ -507,7 +507,8 @@ They are just different ways to group samples.
 Sets can for example gather a set of samples of a same experiment.
 Runs can be used to gather samples that have been sequenced in the same run.
 
-### Batch creation of patients/runs/sets
+## Batch creation of patients/runs/sets
+
 <a name='batch-creation'></a>
 
 Patients, runs and sets can be added one by one (`add patient`, `add run`, `add set`).
@@ -563,7 +564,7 @@ process, and access to the results (`See results`, bottom right).
 <figure markdown>
   ![Image title](./pictures/table_db_content_patient_0_multi_config.png)
   <figcaption>
-    The demo patient LIL-L3, available from the demo account, has 5 samples 
+    The demo patient LIL-L3, available from the demo account, has 5 samples
     here analyzed with the default `multi+inc+xxx` configuration.
   </figcaption>
 </figure>
@@ -663,7 +664,6 @@ Displayed and hidden columns are saved in your local settings.
 | Shannon | Shannon's diversity (0: no diversity, 3-5+: full diversity)|
 | Pielou | Pielou's evenness (0: no diversity, 1: full diversity)|
 | Simpson | Simpson's diversity (0: no diversity, 1: full diversity)|
-
 
 ### Groups
 
@@ -941,7 +941,7 @@ Parsing the `.vidjil` files gives then all information computed on each clonotyp
 
 ### Going back to the analyzed reads
 
-The web application displays one consensus sequence per clonotype (see [Representative](#what-is-the-sequence-displayed-for-each-clonotype) above).
+The web application displays one consensus sequence per clonotype (see [Representative](#what-is-the-sequence-displayed-for-each-clonotype-) above).
 In some situations, one may want to go back to the reads.
 
 For **vidjil-algo**, analyzing a dataset with the *default + extract reads* process
@@ -1029,7 +1029,7 @@ In **vidjil-algo**,
 the clonotype coverage is the ratio of the length of the clonotype consensus sequence
 to the median read length in the clonotype.
 A consensus sequence is
-displayed for each clonotype (see [What is the sequence displayed for each clonotype?](#what-is-the-sequence-displayed-for-each-clonotype)).
+displayed for each clonotype (see [What is the sequence displayed for each clonotype?](#what-is-the-sequence-displayed-for-each-clonotype-)).
 Its length should be representative of the read lengths among that clonotype. A
 clonotype can be constituted of thousands of reads of various lengths. We
 expect the consensus sequence to be close to the median read length of the
@@ -1125,8 +1125,7 @@ This panel allows you to import and export your local settings.
 - Import: You can provide your exported settings file. A log of the imported values is displayed under a dedicated menu.
 - Reset: All settings are reset to their default values. Templates are also erased.
 
-This panel is availabe at the bottom of settings menu under "manage settings" entry.
-
+This panel is available at the bottom of settings menu under "manage settings" entry.
 
 ## Keyboard shortcuts
 

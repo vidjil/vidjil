@@ -8,42 +8,45 @@ or by any RepSeq program or script willing to inform the user.
 The following list is a work-in-progress, with links to gitlab issues in Vidjil.
 Warnings which were implemented ([x]) have a fixed code that should not be changed for backward compatibility.
 
-
 ## Generic errors
+
 - [ ] W0x Outdated program
 - [ ]     Outdated germlines  
 - [ ]     Strange parameters: xxxx xxxx
 - [ ] W0z Unknown error
 - [x] W09 Program interrupted, output data may be not complete
 
-## Output of a pre-process ~"server-pre-process" 
+## Output of a pre-process ~"server-pre-process"
+
 - [ ] W10 Few assembled reads  #2243  
 - [ ] W1z Other pre-processing warning/error
 
-
 ## Output of an analysis, global warnings
+
 - [x] W20 Very few V(D)J recombinations found (0.7%)
 - [x] W21 Doubtful e-value multiplier
 - [ ] W2x Sequences with known adapters #1669
 - [ ] W2x CDR3 detection without gapped germlines   #2187   (ou bien par clone ?)
 
-
 ## Output of an analysis, warnings on some clonotypes
 
 ### Read quality
-- [ ] W40 Low quality  #1544 
+
+- [ ] W40 Low quality  #1544
 
 ### Clonotype quality (KmerSegmenter in vidjil-algo)
+
 - [x] W50 Short or shifted window in vidjil-algo
 - [x] W51 Low coverage (0.112)
-- [ ]     Bad e-value (0.xxx)  #1437/#1566/#1889 
+- [ ]     Bad e-value (0.xxx)  #1437/#1566/#1889
 - [x] W53 Similar to another clonotype
-- [ ]     Possible strand ambiguity 
+- [ ]     Possible strand ambiguity
 
 ### Strange recombination (FineSegmenter in vidjil-algo), V and J genes
-- [ ]     Potential co-linear genome match (pos xxxxxx) #1664 #1629 
+
+- [ ]     Potential co-linear genome match (pos xxxxxx) #1664 #1629
 - [ ] W61 Non-recombined D7-27/J1 sequence  #2232
-- [ ]     Potential di-mer #2820 
+- [ ]     Potential di-mer #2820
 - [ ]     Very large deletion (xxx bp) #2909
 - [ ]     Unexpected recombination
 - [ ]     High probability clonotype ?
@@ -51,14 +54,14 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 - [x] W69 Several V/J candidate genes with equal probability #3575
 
 ### Strange recombination (FineSegmenter in vidjil-algo), D gene, N regions*
-- [ ] W7x Mutations near breakpoint #1412 
-- [ ]     Palindromic sequence ?
-- [ ]     D with bad e-value ? 
 
+- [ ] W7x Mutations near breakpoint #1412
+- [ ]     Palindromic sequence ?
+- [ ]     D with bad e-value ?
 
 ## Comparisons between several samples or patients (such as with clonedb)
-- [ ] W8x Potential contamination or public clone #1744 
+
+- [ ] W8x Potential contamination or public clone #1744
 - [ ]     Known public clonotype
 - [x] W81 Clonotyoe with different V(D)J designations in some samples #4566
 - [x] W82 Clonotype with different productivities in some samples #4578
-
