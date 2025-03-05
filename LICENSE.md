@@ -287,7 +287,7 @@ x is "current version" at time of release
 **apt-utils**
 
 * @license  GPLv2+
-* @link     <https://packages.ubuntu.com/bionic/apt-utils>
+* @link     <https://packages.ubuntu.com/noble/apt-utils>
 
 **pyuwsgi**
 
