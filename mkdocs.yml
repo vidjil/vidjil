@@ -108,8 +108,6 @@ theme:
 extra:
   generator: true
   social:
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/vidjilnet
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/vidjil
     - icon: fontawesome/brands/gitlab
