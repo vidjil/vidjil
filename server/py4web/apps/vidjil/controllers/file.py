@@ -21,7 +21,6 @@ from ..common import db, T, auth, log, scheduler
 # HELPERS
 ###########################
 def extract_set_type(target):
-    log.debug(f"extract_set_type for {target}")
     mapping = {
         'p': 'patient',
         'r': 'run',
@@ -98,8 +97,6 @@ def validate_sets(set_ids):
     id_dict = {}
     sets = []
     errors = []
-    
-    log.debug(f"validate_sets for {set_ids}")
 
     if len(set_ids) == 0:
         errors.append("missing set association")
