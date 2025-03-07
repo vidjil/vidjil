@@ -1,3 +1,4 @@
+
 DB_ADDRESS = ""
 DB_TIMEOUT_CALL = 60000               // Regular call
 DB_TIMEOUT_GET_DATA = DB_TIMEOUT_CALL           // Get patient/sample .data
@@ -14,13 +15,12 @@ var SEQ_LENGTH_CLONEDB = 40; // Length of the sequence retrieved for CloneDB
  * */
 function Database(model, address) {
     var self = this;
-    this.uploader = new Uploader()
     
     //check if a default address is available in config.js
     if (typeof config !== 'undefined' && config.use_database !== undefined && config.use_database) {
         if (config.db_address) { DB_ADDRESS = config.db_address}
         
-        //if adress is set to default => use the same location as the browser
+        //if address is set to default => use the same location as the browser
         if (config.db_address == "default") DB_ADDRESS = "https://"+window.location.hostname+"/vidjil/"
     }
     
@@ -28,18 +28,14 @@ function Database(model, address) {
     if (typeof address != "undefined"){ DB_ADDRESS = address }
     
     
-    if (DB_ADDRESS !== ""){
-        // var fileref=document.createElement('script')
-        // fileref.setAttribute("type","text/javascript")
-        // fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
-        // document.getElementsByTagName("head")[0].appendChild(fileref)
-        
+    if (DB_ADDRESS !== ""){        
         this.db_address = DB_ADDRESS;
         this.upload = {};
         this.url = []
         this.m = model
         this.build()
         this.m.db = this
+        this.uploader = new Uploader(this)
         
         window.onbeforeunload = function(e){
             if ( self.uploader.is_uploading() ){
@@ -614,7 +610,6 @@ Database.prototype = {
         
         }
 
-        
         // submit form with files
         if ( document.getElementById('upload_sample_form') ){
             $('#upload_sample_form').on('submit', function(e) {
@@ -645,7 +640,9 @@ Database.prototype = {
                         var js = self.display_result(result)
                         var id, fileSelect, files, file, filename, filename2;
                         if (typeof js.file_ids !== 'undefined'){
+                            console.log("js.file_ids:" + js.file_ids)
                             for (var k = 0; k < js.file_ids.length; k++) {
+                                console.log("js.file_ids:" + js.file_ids)
                                 id = js.file_ids[k];
                                 fileSelect = document.getElementById('file_upload_1_' + k);
                                 if( fileSelect.files.length !== 0 ){
@@ -1401,12 +1398,12 @@ Database.prototype = {
     error:    function(msg) { this.log(40, msg) },
     critical: function(msg) { this.log(50, msg) },
 
-    // Log catched error to server
+    // Log caught error to server
     log_error: function(err) { this.error(err.name + ': ' + err.description + ' ' + err.stack) }
     
 }
 
-function Uploader() {
+function Uploader_old() {
     var self = this;
     this.keys = [];
     this.queue = {};
@@ -1419,7 +1416,7 @@ function Uploader() {
     }, 200);
 }
 
-Uploader.prototype = {
+Uploader_old.prototype = {
 
     // Adds an upload to the queue
     add : function (id, data, filename, file_number) {

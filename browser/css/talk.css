@@ -1315,7 +1315,7 @@ span.logo {
   margin-left: -6px;
   border-top: none;
   margin-top: calc(32px - 24px);
-  z-index: 5;
+  z-index: 11;
   overflow: hidden;
   border-width: 1px;
   background-color: #ffffff;

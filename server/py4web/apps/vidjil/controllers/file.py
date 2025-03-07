@@ -5,7 +5,7 @@ import json
 import os
 import pathlib
 
-from py4web import action, request
+from py4web import HTTP, action, request
 
 from .. import sampleSet, settings, tasks
 from ..common import T, auth, db, log, scheduler
@@ -446,6 +446,102 @@ def submit():
     else:
         print(f["errors"])
         return error_message("add_form() failed")
+
+
+@action("/vidjil/file/resumable_upload", method=["GET"])
+@action.uses(db, auth.user)
+def resumable_upload_get():
+    log.debug(f"resumable_upload {request.params=}")
+
+    error = ""
+
+    if "resumableIdentifier" not in request.params:
+        error += "missing resumableIdentifier"
+    elif "resumableChunkNumber" not in request.params:
+        error += "missing resumableChunkNumber"
+
+    if error:
+        return error_message(error)
+
+    resumableIdentifier = request.params["resumableIdentifier"]
+    resumableChunkNumber = int(request.params["resumableChunkNumber"])
+
+    # chunk folder path based on the parameters
+    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, resumableIdentifier)
+
+    # chunk path based on the parameters
+    chunk_name = f"{resumableChunkNumber}.part"
+    chunk_path = os.path.join(chunk_dir, chunk_name)
+    log.debug(f"Getting chunk: {chunk_path}")
+
+    if os.path.isfile(chunk_path):
+        # Let resumable.js know this chunk already exists
+        log.debug(f"Found chunk: {chunk_path}")
+        return "OK"
+    else:
+        # Let resumable.js know this chunk does not exists and needs to be uploaded
+        log.debug("Not found")
+        raise HTTP(404)
+
+
+@action("/vidjil/file/resumable_upload", method=["POST"])
+@action.uses(db, auth.user)
+def resumable_upload_post():
+    log.debug(f"resumable_upload {request.params=}")
+
+    mes = ""
+    error = ""
+
+    if "resumableIdentifier" not in request.params:
+        error += "missing resumableIdentifier"
+    elif "resumableChunkNumber" not in request.params:
+        error += "missing resumableChunkNumber"
+    elif "resumableTotalChunks" not in request.params:
+        error += "missing resumableTotalChunks"
+    elif "resumableFilename" not in request.params:
+        error += "missing resumableFilename"
+    elif "file" not in request.files:
+        error += "missing file"
+
+    if error:
+        return error_message(error)
+
+    resumableIdentifier = request.params["resumableIdentifier"]
+    resumableChunkNumber = int(request.params["resumableChunkNumber"])
+    resumableTotalChunks = int(request.params["resumableTotalChunks"])
+    resumableFilename = request.params["resumableFilename"]
+    file = request.files["file"]
+
+    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, resumableIdentifier)
+    if not os.path.exists(chunk_dir):
+        os.makedirs(chunk_dir)
+
+    chunk_name = f"{resumableChunkNumber}.part"
+    chunk_path = os.path.join(chunk_dir, chunk_name)
+
+    with open(chunk_path, "wb") as chunk_file:
+        chunk_file.write(file.file.read())
+
+    mes += f"Chunk {resumableChunkNumber} of {resumableFilename} received."
+
+    # Check if all chunks are received
+    received_chunks = len(os.listdir(chunk_dir))
+    if received_chunks == resumableTotalChunks:
+        mes += " All chunks received. Merging file."
+        final_path = os.path.join(settings.UPLOAD_FOLDER, resumableFilename)
+        with open(final_path, "wb") as final_file:
+            for i in range(1, resumableTotalChunks + 1):
+                chunk_path = os.path.join(chunk_dir, f"{i}.part")
+                with open(chunk_path, "rb") as chunk_file:
+                    final_file.write(chunk_file.read())
+        mes += f" File {resumableFilename} merged successfully."
+        # Clean up chunks
+        for i in range(1, resumableTotalChunks + 1):
+            os.remove(os.path.join(chunk_dir, f"{i}.part"))
+        os.rmdir(chunk_dir)
+
+    log.info(mes)
+    return "OK"
 
 
 @action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])

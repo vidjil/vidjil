@@ -6,6 +6,12 @@ requirejs.config({
         app: '',
         jquery: './js/lib/jquery-3.3.1.min',
         d3: './js/lib/d3.v5.min',
+        resumable: './js/lib/resumable',
+    },
+    shim: {
+        "resumable": {
+            exports: "Resumable"
+        }
     }
 });
 
@@ -22,7 +28,8 @@ require(["jquery",
          "js/lib/vmi",
          "js/lib/svgExport",
          "js/lib/bioseq",
-         "js/lib/select2.min"], function() {
+         "js/lib/select2.min",
+         "resumable"], function() {
              // Then config file (needed by Vidjil)
              require(['js/conf'], function() {
                  loadAfterConf()
@@ -91,6 +98,7 @@ function loadAfterConf() {
                                          "js/info",
                                          "js/com",
                                          "js/crossDomain",
+                                         "js/uploader",
                                          "js/database",
                                          "js/shortcut",
                                          "js/notification",
