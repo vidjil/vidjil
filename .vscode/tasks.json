@@ -8,15 +8,15 @@
 			"type": "shell",
 			"command": "make algo",
 			"group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "focus": true,
-                "panel": "dedicated",
-                "reveal": "silent",
-                "clear": true
-            }
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"focus": true,
+				"panel": "dedicated",
+				"reveal": "silent",
+				"clear": true
+			}
 		},
 		{
 			"label": "Make Clean",
@@ -29,30 +29,29 @@
 			"command": "make -C algo shoudlocus",
 			"args": [],
 			"group": {
-			  "kind": "test",
-			  "isDefault": false
+				"kind": "test",
+				"isDefault": false
 			},
 			"problemMatcher": [],
-			// "detail": "node --test src/tests/**.js"
 			"presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            }
-		  }, {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
 			"type": "shell",
 			"label": "test: algo unit",
 			"command": "make -C algo unit",
 			"args": [],
 			"group": {
-			  "kind": "test",
-			  "isDefault": true
+				"kind": "test",
+				"isDefault": true
 			},
 			"problemMatcher": [],
-			// "detail": "node --test src/tests/**.js"
 			"presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            }
-		  }
+				"reveal": "always",
+				"panel": "shared"
+			}
+		}
 	]
 }
