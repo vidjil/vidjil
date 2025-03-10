@@ -253,6 +253,13 @@ Filter.prototype = {
                                 c.hide()
                             }
                             break;
+                        case "remove":
+                            if (!c.active) break;
+                            if (f.value.indexOf(a.fct(c)) != -1) {
+                                c.disable()
+                                c.remove()
+                                c.hide()
+                            }
                         case "search":
                             if (!c.active) break;
                             if (!c.search(f.value))  {

@@ -375,8 +375,10 @@ Aligner.prototype = {
         // Focus/hide/label
         document.getElementById("focus_selected").onclick = function () { self.m.filter.add("Clonotype", "focus", self.m.getSelected()); };
         document.getElementById("hide_selected").onclick = function () { self.m.filter.add("Clonotype", "hide", self.m.getSelected()); };
+        document.getElementById("remove_selected").onclick = function () { self.m.filter.add("Clonotype", "remove", self.m.getSelected()); };
         document.getElementById("reset_focus").onclick = function () {  self.m.filter.remove("Clonotype", "focus")
                                                                         self.m.filter.remove("Clonotype", "hide") };
+        document.getElementById("reset_removed").onclick = function () {  self.m.filter.remove("Clonotype", "remove")};                                                                     
         document.getElementById("star_selected").onclick = function (e) {
             if (m.getSelected().length > 0) { self.m.tags.openSelector(m.getSelected(), e); }};
         document.getElementById("cluster").onclick = function () { self.m.merge(); };
@@ -1159,10 +1161,12 @@ Aligner.prototype = {
             $("#star_selected").css("display", "")
             $("#focus_selected").css("display", "")
             $("#hide_selected").css("display", "")
+            $("#remove_selected").css("display", "")
         } else {
             $("#star_selected").css("display", "none")
             $("#focus_selected").css("display", "none")
             $("#hide_selected").css("display", "none")
+            $("#remove_selected").css("display", "none")
         }
 
         if (this.m.filter.check("Clonotype", "focus") != -1 ||
@@ -1170,7 +1174,12 @@ Aligner.prototype = {
                 $("#reset_focus").css("display", "")
             else
                 $("#reset_focus").css("display", "none")
-    },
+
+        if (this.m.filter.check("Clonotype", "remove") != -1)
+                $("#reset_removed").css("display", "")
+            else
+                $("#reset_removed").css("display", "none")
+        },
 
     /**
      * find and return the list of clone fields who contain potential information that can be highlighted on sequences

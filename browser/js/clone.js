@@ -790,7 +790,19 @@ Clone.prototype = {
         time = this.m.getTime(time);
         
         if (this.m.reads.segmented[time] === 0 ) return 0;
-        var result     = this.getReads(time) / this.m.reads.segmented[time];
+
+        if (this.isRemoved()) return 0;
+        
+        // write as a function inside model and return 0 if removed == true
+        // add isRemoved() method
+        var total_removed_clones_reads = 0;
+        for (var i = 0; i < this.m.clones.length; i++) {
+            if (this.m.clones[i].isRemoved()) {
+                total_removed_clones_reads += this.m.clones[i].getReads(time);
+            }
+        }
+
+        var result     = this.getReads(time) / (this.m.reads.segmented[time] - total_removed_clones_reads);
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
             return result
@@ -1980,7 +1992,7 @@ Clone.prototype = {
     enable: function (top) {
         this.active = true
         this.hidden = false
-
+        this.removed = false
         if (this.getTag() == "smaller_clonotypes" && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1){
             this.active = false
         }
@@ -1998,6 +2010,16 @@ Clone.prototype = {
         var c = this.m.clusters[this.index]
         for (var i=0; i<c.length; i++){
             this.m.clone(c[i]).hidden = true;
+            this.m.clone(c[i]).active = false;
+        }
+    },
+
+    remove: function () {
+        this.active = false
+        this.removed = true
+        var c = this.m.clusters[this.index]
+        for (var i=0; i<c.length; i++){
+            this.m.clone(c[i]).removed = true;
             this.m.clone(c[i]).active = false;
         }
     },
@@ -2030,6 +2052,10 @@ Clone.prototype = {
         return this.index == this.m.focus
     },
     
+    isRemoved: function () {
+        return this.removed;
+    },
+
     get: function (field_name, time) {
         var field;
         if (typeof this[field_name] != 'undefined'){

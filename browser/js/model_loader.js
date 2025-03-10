@@ -449,6 +449,18 @@ Model_loader.prototype = {
             index++ ;
         }
         
+        for (var q = 0; q < this.system_available.length; q++) {
+            var other = {
+                "sequence": 0,
+                "id": "removed"+this.system_available[q],
+                "top": 0,
+                "reads": [],
+                "germline" : this.system_available[q],
+            };
+            new Clone(other, self, index, C_SIZE_OTHER);
+            index++ ;
+        }
+
         //remove incomplete similarity matrix (TODO: fix fuse.py)
         this.similarity = {"nt": undefined, "aa": undefined};
         this.check_export_monitor()

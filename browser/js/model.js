@@ -1349,6 +1349,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.filter.apply()
         
         this.computeOtherSize();
+        this.computeRemovedSize();
 
         for (var n = 0; n < this.clones.length; n++) {
             this.clone(n).updateColor()
@@ -1525,9 +1526,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         other_quantifiable_clones = [];
         for (var pos = 0; pos < this.clones.length; pos++) {
             var c = this.clone(pos)
-            if (c.hasSizeOther()){
+            if (c.hasSizeOther() && c.id.includes("other")){
                 other_quantifiable_clones.push(pos);
-            } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() ) {
+            } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() || c.isRemoved()) { 
                 for (var s = 0; s < this.samples.number ; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
                         newOthers[c.germline][s] -= this.clone(this.clusters[pos][k]).get('reads', s);
@@ -1535,19 +1536,48 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 }
             }
         }
-
         // values assignation of other
         //for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) {
-        var self = this;
-        other_quantifiable_clones.forEach(function(pos) {
-            var c = self.clone(pos);
+        other_quantifiable_clones.forEach((pos) => {
+            var c = this.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clonotypes";
-            if (this.filter && this.filter.check("Clonotype", "hide") != -1)
+            if (this.filter && this.filter.check("Clonotype", "hide") != -1) {
                 c.name += " + filtered clonotypes";
-        })
+            }
+        });  
     },
     
+    computeRemovedSize: function () {
+        var newRemoved = {};
+
+        // Creation of newRemoved dict by germlines & timestamp
+        for (var elt in this.system_available){
+            var locus = this.system_available[elt];
+            newRemoved[locus] = [0];
+        }
+
+        // compute size for each germlines of newRemoved
+        other_quantifiable_clones = [];
+        for (var pos = 0; pos < this.clones.length; pos++) {
+            var c = this.clone(pos)
+            if (c.hasSizeOther() && c.id.includes("removed") ){
+                other_quantifiable_clones.push(pos);
+            } else if (c.isRemoved()) { 
+                for (var s = 0; s < this.samples.number ; s++) {
+                    for (var k = 0; k < this.clusters[pos].length; k++) {
+                        newRemoved[c.germline][s] += this.clone(this.clusters[pos][k]).get('reads', s);
+                    }
+                }
+            }
+        }
+        // values assignation of other
+        other_quantifiable_clones.forEach((pos) => {
+            var c = this.clone(pos);
+            c.reads = newRemoved[c.germline];
+            c.name = c.germline + " removed";
+        });  
+    },
 
 
     /**
