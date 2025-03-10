@@ -129,6 +129,8 @@ QUnit.test("time control", function(assert) {
     
     assert.equal(m.getStrTime(0, "sampling_date"), "2014-10-20", "get sampling date")
     assert.equal(m.getStrTime(0, "name"), "Diag", "get time original name")
+    assert.equal(m.getStrTime(0, "associated_sets_names"), "other_1;other_2", "get associated sets 0")
+    assert.equal(m.getStrTime(1, "associated_sets_names"), "/", "get associated sets 1")
     assert.equal(m.dateDiffInDays("2014-10-05", "2014-10-10"), "+5", "datediffindays")
     assert.ok(isNaN(m.dateDiffInDays("2014-10-05", "toto")), "datediffindays with a string")
     assert.deepEqual(m.dateDiffMinMax(), {'min': 5 , 'max': 30}, "dateDiffMinMax (min = " + m.dateDiffMinMax()['min']+", max = " + m.dateDiffMinMax()['max']+")")

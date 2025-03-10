@@ -143,7 +143,7 @@ def add_indexed_user(session: Session, user_index: int) -> int:
 # Patient management
 
 
-def add_patient(patient_number: int, user_id: int = -1, auth=None):
+def add_patient(patient_number: int, user_id: int = -1, auth = None) -> tuple[int, int]:
     """Add a patient to a user
 
     Args:
@@ -161,7 +161,7 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
         creator=user_id, sample_type=sampleSet.SET_TYPE_PATIENT)
     patient_id = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
                                    info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
-    if (auth != None):
+    if auth:
         user_group_id = auth.user_group(user_id)
         auth.add_permission(
             user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
@@ -191,7 +191,7 @@ def remove_user_from_group(group_id : int, user_id : int):
 # Sequence file management
 
 
-def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1) -> int:
+def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1, force_filename: str = None, other_sample_sets_ids: list[int] = []) -> int:
     """Add a fake sequence file to a patient
 
     Args:
@@ -200,6 +200,8 @@ def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool
         use_real_file (bool, optional): If set to false, use a simple string value. If set to True, really load a file in db. Default to False
         preprocess (bool, optional): Switch preprocess status. If set to False, don't fill preprocess fields of db. If set to True, fill them with values given (preprocess conf and task id; load 2 file instead of one. Default to False
         preprocess_conf_id (int, optional): Preprocess conf id. if not set, not used
+        force_filename (str, optional): if set, filename to use (to be able to get coherent values)
+        other_sample_sets_ids (list[int], optional): list of other samples ids to link sequence to
 
     Returns:
         int: corresponding sequence file id
@@ -209,7 +211,10 @@ def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool
         user_id = db(db.auth_user).select().first().id
 
     if use_real_file:
-        filename = "analysis-example.vidjil"
+        if force_filename:
+            filename = force_filename
+        else:
+            filename = "analysis-example.vidjil"
         file = pathlib.Path(test_utils.get_resources_path(),
                             "analysis-example.vidjil")
         with file.open("rb") as stream:
@@ -217,7 +222,10 @@ def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool
             data_file2 = db.sequence_file.data_file2.store(stream, filename) if preprocess else None
             preprocess_file = db.sequence_file.preprocess_file.store(stream, filename) if preprocess else None
     else:
-        filename = "test_file.fasta"
+        if force_filename:
+            filename = force_filename
+        else:
+            filename = "test_file.fasta"
         data_file = "/test/sequence/test_file.fasta"
         data_file2 = "/test/sequence/test_file2.fasta" if preprocess else None
         preprocess_file = "/test/sequence/preprocess_test_file.fasta" if preprocess else None
@@ -236,6 +244,9 @@ def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool
                                                )
     db.sample_set_membership.insert(
         sample_set_id=sample_set_id, sequence_file_id=sequence_file_id)
+    for other_sample_set_id in other_sample_sets_ids:
+        db.sample_set_membership.insert(
+            sample_set_id=other_sample_set_id, sequence_file_id=sequence_file_id)
 
     return sequence_file_id
 

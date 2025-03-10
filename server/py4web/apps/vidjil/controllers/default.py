@@ -19,7 +19,7 @@ from ast import literal_eval
 from py4web import action, request, URL, response
 
 from .. import settings, tasks
-from ..modules import vidjil_utils, sampleSet
+from ..modules import vidjil_utils, sampleSet, zmodel_factory
 from ..modules.controller_utils import error_message
 from ..modules.sampleSet import get_set_group, get_sample_set_id_from_results_file
 from ..modules.sequenceFile import check_space, get_patient_id
@@ -329,7 +329,6 @@ def checkProcess():
 @action("/vidjil/default/get_data", method=["POST", "GET"])
 @action.uses( db, auth.user)
 def get_data():
-    from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True,
                             vars=dict(_next=URL('default', 'get_data', scheme=True,
@@ -351,12 +350,12 @@ def get_data():
     if "run" in request.query :
         request.query["sample_set_id"] = db.run[request.query["run"]].sample_set_id
     
-    if not "sample_set_id" in request.query or request.query['sample_set_id'] is None:
+    if "sample_set_id" not in request.query or not request.query['sample_set_id']:
         error += "id sampleset file needed, "
-    else : 
+    else :
         if not auth.can_view_sample_set(int(request.query["sample_set_id"])):
             error += "you do not have permission to consult this sample_set ("+str(request.query["sample_set_id"])+")"
-    if not "config" in request.query:
+    if "config" not in request.query:
         error += "id config needed, "
 
 
@@ -376,42 +375,31 @@ def get_data():
         data = json.loads(f.read())
         f.close()
         
-        patient_name = ""
-        run_name = ""
         config_name = db.config[request.query["config"]].name
         command = db.config[request.query["config"]].command
-
-        log_reference_id = request.query["sample_set_id"]
-
-        if (sample_set.sample_type == sampleSet.SET_TYPE_GENERIC) :
-            for row in db( db.generic.sample_set_id == request.query["sample_set_id"] ).select() :
-                log_reference_id = row.id
-                generic_name = db.generic[row.id].name
-                data["dataFileName"] = generic_name + " (" + config_name + ")"
-                data["info"] = db.generic[row.id].info
-                data["generic_id"] = row.id
-                data["sample_name"] = generic_name
-                data["group_id"] = get_set_group(row.sample_set_id)
-
-        if (sample_set.sample_type == sampleSet.SET_TYPE_PATIENT):
-            for row in db( db.patient.sample_set_id == request.query["sample_set_id"] ).select() :
-                log_reference_id = row.id
-                patient_name = vidjil_utils.anon_ids([row.id])[0]
-                data["dataFileName"] = patient_name + " (" + config_name + ")"
-                data["info"] = db.patient[row.id].info
-                data["patient_id"] = row.id
-                data["sample_name"] = patient_name
-                data["group_id"] = get_set_group(row.sample_set_id)
-
-        if (sample_set.sample_type == sampleSet.SET_TYPE_RUN) :
-            for row in db( db.run.sample_set_id == request.query["sample_set_id"] ).select() :
-                log_reference_id = row.id
-                run_name = db.run[row.id].name
-                data["dataFileName"] = run_name + " (" + config_name + ")"
-                data["info"] = db.run[row.id].info
-                data["run_id"] = row.id
-                data["sample_name"] = run_name
-                data["group_id"] = get_set_group(row.sample_set_id)
+        
+        # Create helpers to get specialized sample set data
+        model_factory = zmodel_factory.ModelFactory()
+        set_types = [sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSet.SET_TYPE_GENERIC]
+        helpers = {}
+        for set_type in set_types:
+            helpers[set_type] = model_factory.get_instance(set_type)     
+        
+        # Get info from specialized sample set
+        model_factory = zmodel_factory.ModelFactory()
+        sample_set_specific_data = helpers[sample_set.sample_type].get_data(request.query["sample_set_id"])
+        log_reference_id = sample_set_specific_data.id
+        name = helpers[sample_set.sample_type].get_name(sample_set_specific_data)
+        data["dataFileName"] = name + " (" + config_name + ")"
+        data["info"] = sample_set_specific_data.info
+        data["sample_name"] = name
+        data["group_id"] = get_set_group(request.query["sample_set_id"])
+        specific_id = "patient_id"
+        if sample_set.sample_type == sampleSet.SET_TYPE_GENERIC:
+            specific_id = "generic_id"
+        elif sample_set.sample_type == sampleSet.SET_TYPE_RUN:
+            specific_id = "run_id"
+        data[specific_id] = sample_set_specific_data.id
 
         log_query = db(  ( db.user_log.record_id == log_reference_id )
                        & ( db.user_log.table_name == sample_set.sample_type )
@@ -421,7 +409,7 @@ def get_data():
         for row in log_query:
             data["logs"].append({'message': row.msg, 'created': str(row.created)})
 
-        ## récupération des infos stockées sur la base de données
+        # Get info from db
         query = db(  ( db.sample_set.id == request.query["sample_set_id"] )
                    & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
                    & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
@@ -451,14 +439,15 @@ def get_data():
         data["samples"]["sample_name"] = []
         data["samples"]["run_id"] = []
         data["samples"]["commandline"] = []
+        data["samples"]["associated_sets_names"] = []
 
         for i in range(len(data["samples"]["original_names"])) :
-            o_n = data["samples"]["original_names"][i].split('/')[-1]
+            original_name = data["samples"]["original_names"][i].split('/')[-1]
             
             if 'distributions' in data and 'repertoires' in data['distributions']:
-                data['distributions']['repertoires'][o_n] = data['distributions']['repertoires'][data["samples"]["original_names"][i]]
+                data['distributions']['repertoires'][original_name] = data['distributions']['repertoires'][data["samples"]["original_names"][i]]
                 del data['distributions']['repertoires'][data["samples"]["original_names"][i]]
-            data["samples"]["original_names"][i] = o_n
+            data["samples"]["original_names"][i] = original_name
             data["samples"]["config_id"].append(request.query['config'])
             data["samples"]["db_key"].append('')
             data["samples"]["commandline"].append(command)
@@ -466,23 +455,23 @@ def get_data():
             found_sequence_file = False
             found_result_file   = False # For AIRR files
             found_filename      = False # for Vidjil files
-            if o_n in query2:
+            if original_name in query2:
                 found_sequence_file = True
             else:
                 # Sometimes, result_file is the key to use, and not sequence_file (AIRR/clntab import)
                 for seqfile in query2:
                     # AIRR case
-                    if o_n == query2[seqfile].results_file.data_file:
+                    if original_name == query2[seqfile].results_file.data_file:
                         found_result_file = seqfile
                         break
                     # Vidjil file case
-                    elif os.path.splitext(o_n)[0] == os.path.splitext(query2[seqfile].sequence_file.filename)[0]: # ne marche pas a cause de l'extension
+                    elif os.path.splitext(original_name)[0] == os.path.splitext(query2[seqfile].sequence_file.filename)[0]: # ne marche pas a cause de l'extension
                         found_filename = seqfile
                         break
 
             if found_sequence_file or found_result_file or found_filename:
                 if found_sequence_file: # standard case
-                    row = query2[o_n]
+                    row = query2[original_name]
                 elif found_filename: # case import vidjil file
                     row = query2[found_filename]
                 else: # case AIRR/clntab data
@@ -498,13 +487,31 @@ def get_data():
                 data["samples"]["id"].append(row.sequence_file.id)
                 data["samples"]["patient_id"].append(get_patient_id(row.sequence_file.id))
                 data["samples"]["run_id"].append(row.sequence_file.id)
+                
+                # Get other samples names
+                associated_sets_names = []
+                other_sets = db((db.sample_set_membership.sequence_file_id == row.sequence_file.id) &
+                                   (db.sample_set_membership.sample_set_id != request.query["sample_set_id"]) &
+                                   (db.sample_set_membership.sample_set_id == db.sample_set.id)
+                                   ).select(db.sample_set_membership.sample_set_id.with_alias("sample_set_id"), 
+                                            db.sample_set.sample_type.with_alias("sample_type"))
+                for other_set in other_sets:
+                    sample_set_specific_data = helpers[other_set.sample_type].get_data(other_set.sample_set_id)
+                    name = helpers[other_set.sample_type].get_name(sample_set_specific_data)
+                    associated_sets_names.append(name)
+                data["samples"]["associated_sets_names"].append(associated_sets_names)
+                
             else :
+                data["samples"]["names"].append("deleted")
+                data["samples"]["sample_name"].append("deleted")
+                data["samples"]["results_file_id"].append("")
                 data["samples"]["info"].append("this file has been deleted from the database, info relative to this sample are no longer available")
                 data["samples"]["timestamp"].append("None")
                 data["samples"]["sequence_file_id"].append("")
-                data["samples"]["results_file_id"].append("")
-                data["samples"]["names"].append("deleted")
                 data["samples"]["id"].append("")
+                data["samples"]["patient_id"].append("")
+                data["samples"]["run_id"].append("")
+                data["samples"]["associated_sets_names"].append([])
 
         log.debug("get_data (%s) c%s -> %s (%s)" % (request.query["sample_set_id"], request.query["config"], fused_file, "downloaded" if download else "streamed"))
         log.info("load sample", extra={'user_id': auth.user_id, 'record_id': request.query['sample_set_id'], 'table_name': 'sample_set'})

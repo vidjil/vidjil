@@ -2639,6 +2639,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     }
                 }
                 break;
+            case "associated_sets_names":
+                if (typeof this.samples.associated_sets_names !== 'undefined' && 
+                    Array.isArray(this.samples.associated_sets_names[timeID]) &&
+                    this.samples.associated_sets_names[timeID].length > 0) {
+                        result = this.samples.associated_sets_names[timeID].join(";");
+                } else {
+                    result = "/";
+                }
+                break;
             default:
                 if (typeof this.samples[format] != 'undefined') {
                     result = this.samples[format][timeID];
