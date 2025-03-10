@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import base64
 import datetime
+import io
 import json
 import os
 import pathlib
+import shutil
 
 from py4web import HTTP, action, request
 
@@ -484,6 +486,9 @@ def resumable_upload_get():
         raise HTTP(404)
 
 
+MERGED_SUFFIX = ".merged"
+
+
 @action("/vidjil/file/resumable_upload", method=["POST"])
 @action.uses(db, auth.user)
 def resumable_upload_post():
@@ -527,14 +532,17 @@ def resumable_upload_post():
     # Check if all chunks are received
     received_chunks = len(os.listdir(chunk_dir))
     if received_chunks == resumableTotalChunks:
-        mes += " All chunks received. Merging file."
-        final_path = os.path.join(settings.UPLOAD_FOLDER, resumableFilename)
+        mes += " All chunks received. Storing merged file."
+
+        final_path = os.path.join(
+            settings.UPLOAD_FOLDER, resumableIdentifier + MERGED_SUFFIX
+        )
         with open(final_path, "wb") as final_file:
             for i in range(1, resumableTotalChunks + 1):
                 chunk_path = os.path.join(chunk_dir, f"{i}.part")
                 with open(chunk_path, "rb") as chunk_file:
                     final_file.write(chunk_file.read())
-        mes += f" File {resumableFilename} merged successfully."
+        mes += f" File {resumableIdentifier}{MERGED_SUFFIX} written successfully."
         # Clean up chunks
         for i in range(1, resumableTotalChunks + 1):
             os.remove(os.path.join(chunk_dir, f"{i}.part"))
@@ -544,116 +552,113 @@ def resumable_upload_post():
     return "OK"
 
 
-@action("/vidjil/file/upload", method=["POST", "GET", "OPTIONS"])
+@action("/vidjil/file/upload", method=["POST"])
 @action.uses(db, auth.user)
 def upload():
-    mes = ""
-    error = ""
+    # Check input parameters
+    error = []
+    if "sequence_id" not in request.params:
+        error.append("missing parameter sequence_id")
+    if "filename" not in request.params:
+        error.append("missing parameter filename")
+    if "file_number" not in request.params:
+        error.append("missing parameter file_number")
 
-    if "id" not in request.params:
-        error += "missing id"
-    elif db.sequence_file[request.params["id"]] is None:
-        error += "no sequence file with this id"
-    elif "status" in request.params and request.params["upload_error"]:
-        error += "Upload error"
-        db.sequence_file[request.params["id"]].update(
-            pre_process_flag=tasks.UPLOAD_FAILED
-        )
-
-    if not error:
-        mes += " file {%s} " % (request.params["id"])
-        res = {"message": mes + "processing uploaded file"}
-        log.debug(res)
-        if "file" in request.files:
-            f = request.files["file"]
-            try:
-                if request.params["file_number"] == "1":
-                    db.sequence_file[request.params["id"]].update_record(
-                        data_file=db.sequence_file.data_file.store(f.file, f.filename)
-                    )
-                else:
-                    db.sequence_file[request.params["id"]].update_record(
-                        data_file2=db.sequence_file.data_file.store(f.file, f.filename)
-                    )
-                mes += "upload finished (%s)" % (f.filename)
-            except IOError as e:
-                if str(e).find("File name too long") > -1:
-                    error += "Your filename is too long, please shorten it."
-                else:
-                    error += "System error during processing of uploaded file."
-                    log.error(str(e))
-
-        data_file = db.sequence_file[request.params["id"]].data_file
-        data_file2 = db.sequence_file[request.params["id"]].data_file2
-
-        if (
-            request.params["file_number"] == "1"
-            and len(error) == 0
-            and data_file is None
-        ):
-            error += "no data file"
-        if (
-            request.params["file_number"] == "2"
-            and len(error) == 0
-            and data_file2 is None
-        ):
-            error += "no data file"
-
-        db.sequence_file[request.params["id"]].update(
-            pre_process_flag=None, pre_process_result=None
-        )
-
-        preprocess = (
-            db.pre_process[request.params["pre_process"]]
-            if "pre_process" in request.params and request.params["pre_process"] != "0"
-            else None
-        )
-        required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
-        if "pre_process" in request.params and request.params["pre_process"] != "0":
-            if data_file is not None and (
-                data_file2 is not None if required_files == 2 else True
-            ):
-                db.sequence_file[request.params["id"]].update(
-                    pre_process_flag=tasks.STATUS_WAITING
-                )
-                old_task_id = db.sequence_file[
-                    request.params["id"]
-                ].pre_process_scheduler_task_id
-                if db.scheduler_task[old_task_id] is not None:
-                    scheduler.control.revoke(old_task_id, terminate=True)
-                    db(db.scheduler_task.id == old_task_id).delete()
-                    db.commit()
-                tasks.schedule_pre_process(
-                    int(request.params["id"]), int(request.params["pre_process"])
-                )
-                mes += " | p%s start pre_process %s " % (
-                    request.params["pre_process"],
-                    request.params["id"] + "-" + request.params["pre_process"],
-                )
-
-        if data_file is not None:
-            seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)
-            # Compute and store file size
-            size = os.path.getsize(seq_file)
-            mes += " (%s)" % vidjil_utils.format_size(size)
-            db(db.sequence_file.id == request.params["id"]).update(size_file=size)
-
-        if data_file2 is not None:
-            seq_file2 = pathlib.Path(
-                db.sequence_file.data_file2.uploadfolder, data_file2
-            )
-            size2 = os.path.getsize(seq_file2)
-            mes += " (%s)" % vidjil_utils.format_size(size2)
-            db(db.sequence_file.id == request.params["id"]).update(size_file2=size2)
-
-    # Log and exit
-    res = {"message": error + mes}
     if error:
-        res["success"] = "false"
-        res["priority"] = 3
-        log.error(res)
-    else:
-        log.info(res)
+        return error_message(error)
+
+    sequence_id = request.params["sequence_id"]
+    filename = request.params["filename"]
+    file_number = request.params["file_number"]
+
+    if db.sequence_file[sequence_id] is None:
+        error.append("no sequence file with this id")
+
+    if "status" in request.params and request.params["status"] == "upload_error":
+        error.append("Upload error")
+        db.sequence_file[sequence_id].update(pre_process_flag=tasks.UPLOAD_FAILED)
+
+    expected_merged_file = os.path.join(
+        settings.UPLOAD_FOLDER, sequence_id + MERGED_SUFFIX
+    )
+    if not os.path.isfile(expected_merged_file):
+        error.append(f"Expected merged file {expected_merged_file} not found")
+        db.sequence_file[sequence_id].update(pre_process_flag=tasks.UPLOAD_FAILED)
+
+    if error:
+        return error_message(error)
+
+    mes = f"file {filename}({sequence_id}) "
+    log.debug(mes + "processing uploaded file")
+
+    # Store file in db
+    try:
+        if file_number == "2":
+            db_filename = ""
+            with io.BytesIO() as empty_file:
+                db_filename = db.sequence_file.data_file2.store(empty_file, filename)
+            shutil.move(
+                expected_merged_file, os.path.join(settings.DIR_SEQUENCES, db_filename)
+            )
+            db.sequence_file[sequence_id].update_record(data_file2=db_filename)
+        else:
+            db_filename = ""
+            with io.BytesIO() as empty_file:
+                db_filename = db.sequence_file.data_file.store(empty_file, filename)
+            shutil.move(
+                expected_merged_file, os.path.join(settings.DIR_SEQUENCES, db_filename)
+            )
+            db.sequence_file[sequence_id].update_record(data_file=db_filename)
+    except IOError as e:
+        if str(e).find("File name too long") > -1:
+            error += "Your filename is too long, please shorten it."
+        else:
+            error += "System error during processing of uploaded file."
+            log.error(str(e))
+
+    data_file = db.sequence_file[sequence_id].data_file
+    data_file2 = db.sequence_file[sequence_id].data_file2
+
+    if file_number == "1" and data_file is None:
+        return error_message("no data file")
+    if file_number == "2" and data_file2 is None:
+        return error_message("no data file 2")
+
+    # Start preprocess if needed
+    db.sequence_file[sequence_id].update(pre_process_flag=None, pre_process_result=None)
+    preprocess = (
+        db.pre_process[request.params["pre_process"]]
+        if "pre_process" in request.params and request.params["pre_process"] != "0"
+        else None
+    )
+    number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
+    if preprocess is not None:
+        if data_file is not None and (
+            data_file2 is not None if number_of_required_files == 2 else True
+        ):
+            db.sequence_file[sequence_id].update(pre_process_flag=tasks.STATUS_WAITING)
+            old_task_id = db.sequence_file[sequence_id].pre_process_scheduler_task_id
+            if db.scheduler_task[old_task_id] is not None:
+                scheduler.control.revoke(old_task_id, terminate=True)
+                db(db.scheduler_task.id == old_task_id).delete()
+                db.commit()
+            tasks.schedule_pre_process(int(sequence_id), int(preprocess))
+            mes += f" | p{preprocess} start pre_process {sequence_id}-{preprocess} "
+
+    # Compute and store file size
+    if file_number == "1" and data_file is not None:
+        seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)
+        size = os.path.getsize(seq_file)
+        mes += " (%s)" % vidjil_utils.format_size(size)
+        db.sequence_file[sequence_id].update(size_file=size)
+    if file_number == "2" and data_file2 is not None:
+        seq_file2 = pathlib.Path(db.sequence_file.data_file2.uploadfolder, data_file2)
+        size2 = os.path.getsize(seq_file2)
+        mes += " (%s)" % vidjil_utils.format_size(size2)
+        db.sequence_file[sequence_id].update(size_file2=size2)
+
+    res = {"message": mes}
+    log.info(res)
     return json.dumps(res, separators=(",", ":"))
 
 

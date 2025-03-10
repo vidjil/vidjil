@@ -132,7 +132,7 @@
 
                 <tr id="row_sequence_file_[[=row.sequence_file.id]]" >
                     <td [[ if waiting_for_file :]] 
-                            [[=XML("class='inactive' title='file is missing'+row.sequence_file.filename ")]] 
+                            [[=XML("class='unchecked' title='file is missing ' + row.sequence_file.filename ")]] 
                         [[else:]] 
                             [[=XML(f"title='{row.sequence_file.filename}'")]] 
                         [[pass]] id="sequence_file_[[=row.sequence_file.id]]" title="[[=row.sequence_file.filename]]">
