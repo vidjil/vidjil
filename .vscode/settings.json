@@ -41,5 +41,9 @@
     ],
     "python.analysis.extraPaths": [
         "./server/py4web/apps/vidjil"
-    ]
+    ],
+    "files.associations": {
+        "*.fastq": "fastq",
+        "*.fa": "fasta"
+    }
 }
