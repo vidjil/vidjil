@@ -18,6 +18,7 @@
 *.vidjil
 *.xml
 dep.mk
+out-ruff
 .directory
 
 algo/git-version.h
@@ -33,6 +34,7 @@ algo/tools/dynprog
 algo/tools/segmentD
 algo/tools/similarity
 algo/tools/vdj_assign
+algo/**/*.gcda
 
 binaries/
 

@@ -1,21 +1,22 @@
 import os
+
 import pytest
-from py4web.core import _before_request, Session
-from ..functional.db_initialiser import DBInitialiser
-from .utils import db_manipulation_utils, test_utils
-from ...common import db, auth
+from py4web.core import Session, _before_request
 
 from ... import user_groups
+from ...common import auth, db
+from ..functional.db_initialiser import DBInitialiser
+from .utils import db_manipulation_utils
 
 
-class TestUserGroups():
-
+class TestUserGroups:
     # TODO: mutualize ?
     @pytest.fixture(autouse=True)
     def init_env_and_db(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -35,7 +36,8 @@ class TestUserGroups():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         user_group_id = auth.user_group(user_id)
 
         # When : Calling get_default_creation_group
@@ -59,8 +61,8 @@ class TestUserGroups():
         groups, max_group = result
         assert len(groups) == 5
 
-        assert {'id': 1, 'name': 'admin'} in groups
-        assert {'id': 2, 'name': 'Personal Group'} in groups
-        assert {'id': 3, 'name': 'public'} in groups
-        assert {'id': 4, 'name': 'metrics'} in groups
+        assert {"id": 1, "name": "admin"} in groups
+        assert {"id": 2, "name": "Personal Group"} in groups
+        assert {"id": 3, "name": "public"} in groups
+        assert {"id": 4, "name": "metrics"} in groups
         # {'id': 5, 'name': 'test parent'}

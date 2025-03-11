@@ -6,6 +6,8 @@ pydal == 20241111.2
 pymysql
 celery
 celery[redis]
+ruff
+pre-commit
 
 requests
 ijson

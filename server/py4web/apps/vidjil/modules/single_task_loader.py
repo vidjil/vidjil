@@ -1,9 +1,9 @@
 from celery.loaders.app import AppLoader
+
 # See https://github.com/celery/celery/discussions/7106
 
 
 class SingleTaskLoader(AppLoader):
-
     def on_worker_init(self):
         # called when the worker starts, before logging setup
         super().on_worker_init()
@@ -25,7 +25,7 @@ class SingleTaskLoader(AppLoader):
 
             if self.delegate_can_consume exists, run it instead
             """
-            if delegate := getattr(self, 'delegate_can_consume', False):
+            if delegate := getattr(self, "delegate_can_consume", False):
                 return delegate()
             else:
                 return builtin_can_consume(self)
@@ -42,11 +42,9 @@ class SingleTaskLoader(AppLoader):
         from celery.worker import state as worker_state
 
         class Set_QoS_Delegate(bootsteps.StartStopStep):
-
-            requires = {'celery.worker.consumer.tasks:Tasks'}
+            requires = {"celery.worker.consumer.tasks:Tasks"}
 
             def start(self, c):
-
                 def can_consume():
                     """
                     delegate for QoS.can_consume
@@ -55,7 +53,9 @@ class SingleTaskLoader(AppLoader):
                     no other messages
                     """
                     # note: reserved_requests includes active_requests
-                    return len(worker_state.reserved_requests) < c.controller.concurrency
+                    return (
+                        len(worker_state.reserved_requests) < c.controller.concurrency
+                    )
 
                 # types...
                 # c: celery.worker.consumer.consumer.Consumer
@@ -65,4 +65,4 @@ class SingleTaskLoader(AppLoader):
                 c.task_consumer.channel.qos.delegate_can_consume = can_consume
 
         # add bootstep to Consumer blueprint
-        self.app.steps['consumer'].add(Set_QoS_Delegate)
+        self.app.steps["consumer"].add(Set_QoS_Delegate)

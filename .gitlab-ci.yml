@@ -247,6 +247,43 @@ code_quality_custom:
   extends:
     - .need_for_quick_test
 
+.base_ruff:
+  stage: test_quality
+  interruptible: true
+  image: ghcr.io/astral-sh/ruff:0.9.9-alpine
+  before_script:
+    - cd $CI_PROJECT_DIR
+    - ruff --version
+  tags:
+    - cidocker
+  extends:
+    - .need_for_quick_test
+
+Ruff Check:
+  extends: .base_ruff
+  script:
+    - ruff check --output-format=gitlab > code-quality-report.json
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-client/
+    - dev
+    - schedules
+  artifacts:
+    reports:
+      codequality: $CI_PROJECT_DIR/code-quality-report.json
+
+Ruff Format:
+  extends: .base_ruff
+  script:
+    - ruff format --diff
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-client/
+    - dev
+    - schedules
+
 # Server
 
 test_server_unit:
