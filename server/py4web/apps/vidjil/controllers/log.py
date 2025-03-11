@@ -1,15 +1,15 @@
-'''
+"""
 Returns messages previously logged within the 'user_log' table.
 See UserLogHandler() in models/db.py.
-'''
+"""
 
 import json
-from py4web import action, request, URL
 
+from py4web import URL, action, request
+
+from ..common import auth, db
 from ..modules import vidjil_utils
 from ..modules.permission_enum import PermissionEnum
-from ..common import db, auth
-
 
 ##################################
 # HELPERS
@@ -17,21 +17,22 @@ from ..common import db, auth
 
 ACCESS_DENIED = "access denied"
 
+
 def anon_names(data):
     for row in data:
         # TODO use helper ?
         row.name = vidjil_utils.anon_ids([row.id])[0]
     return data
 
+
 def get_data_list(table):
     data = db(auth.vidjil_accessible_query(PermissionEnum.read.value, table)).select()
 
-    if table == 'patient':
+    if table == "patient":
         data = anon_names(data)
     data_list = [(row.id, row.name) for row in data]
     data_list.sort(key=lambda tup: tup[1])
     return data_list
-
 
 
 ##################################
@@ -42,65 +43,86 @@ def get_data_list(table):
 @vidjil_utils.jsontransformer
 def index():
     if not auth.user:
-        res = {"redirect" : URL('default', 'user', args='login', scheme=True,
-                            vars=dict(_next=URL('patient', 'index', scheme=True)))
-            }
+        res = {
+            "redirect": URL(
+                "default",
+                "user",
+                args="login",
+                scheme=True,
+                vars=dict(_next=URL("patient", "index", scheme=True)),
+            )
+        }
 
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
 
     user_log = db.user_log
     data_list = []
     groups = []
-    table_name = 'all'
+    table_name = "all"
     id_value = 0
 
-    auth.load_permissions(PermissionEnum.anon.value, 'patient')
+    auth.load_permissions(PermissionEnum.anon.value, "patient")
     if auth.is_admin():
-        query = (user_log.id > 0)
+        query = user_log.id > 0
     else:
         user_groups = auth.get_user_groups()
         parent_groups = auth.get_user_group_parents()
         group_list = [g.id for g in user_groups]
         public_id = vidjil_utils.getPublicGroupId(db)
-        if vidjil_utils.publicGroupIsInList(db, group_list): # Remove logs on  public group
+        if vidjil_utils.publicGroupIsInList(
+            db, group_list
+        ):  # Remove logs on  public group
             group_list.remove(public_id)
         parent_list = [g.id for g in parent_groups]
 
         groups = list(set(group_list + parent_list))
-        query = ((user_log.table_name == db.auth_permission.table_name) &
-            (user_log.record_id == db.auth_permission.record_id) &
-            (db.auth_permission.name == PermissionEnum.access.value) &
-            (db.auth_permission.group_id.belongs(groups))
-            )
+        query = (
+            (user_log.table_name == db.auth_permission.table_name)
+            & (user_log.record_id == db.auth_permission.record_id)
+            & (db.auth_permission.name == PermissionEnum.access.value)
+            & (db.auth_permission.group_id.belongs(groups))
+        )
 
-    if 'table' in request.query and request.query['table'] != 'all':
-        table_name = request.query['table']
-        table = db[table_name]
+    if "table" in request.query and request.query["table"] != "all":
+        table_name = request.query["table"]
         query &= user_log.table_name == table_name
         data_list = get_data_list(table_name)
 
-    if 'id' in request.query and request.query['id'] != 0:
-        id_value = request.query['id']
-        query &= user_log.record_id == request.query['id']
+    if "id" in request.query and request.query["id"] != 0:
+        id_value = request.query["id"]
+        query &= user_log.record_id == request.query["id"]
 
-    query &= (db.auth_user.id == user_log.user_id)
-    query_result = db(query).select(user_log.ALL, db.auth_user.first_name, db.auth_user.last_name, db.patient.first_name, db.patient.last_name, db.run.name,
-            left = [
-                db.patient.on((db.patient.id == db.user_log.record_id) & (db.user_log.table_name == 'patient')),
-                db.run.on((db.run.id == db.user_log.record_id) & (db.user_log.table_name == 'run'))
-            ],
-            orderby=~db.user_log.created)
+    query &= db.auth_user.id == user_log.user_id
+    query_result = db(query).select(
+        user_log.ALL,
+        db.auth_user.first_name,
+        db.auth_user.last_name,
+        db.patient.first_name,
+        db.patient.last_name,
+        db.run.name,
+        left=[
+            db.patient.on(
+                (db.patient.id == db.user_log.record_id)
+                & (db.user_log.table_name == "patient")
+            ),
+            db.run.on(
+                (db.run.id == db.user_log.record_id) & (db.user_log.table_name == "run")
+            ),
+        ],
+        orderby=~db.user_log.created,
+    )
     for row in query_result:
         if row.patient.first_name is not None:
             row.names = vidjil_utils.anon_ids([row.user_log.record_id])[0]
         else:
             row.names = row.run.name
 
-
-    return dict(query=query_result,
-                request=request,
-                data_list=data_list,
-                stable=table_name,
-                sid=id_value,
-                auth=auth,
-                db=db)
+    return dict(
+        query=query_result,
+        request=request,
+        data_list=data_list,
+        stable=table_name,
+        sid=id_value,
+        auth=auth,
+        db=db,
+    )

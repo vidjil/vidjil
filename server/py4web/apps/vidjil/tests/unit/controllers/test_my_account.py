@@ -1,19 +1,20 @@
 import os
 import unittest
 
-from ..utils.omboddle import Omboddle
-from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session, HTTP
-from ....common import db, auth
+from py4web.core import HTTP, Session, _before_request
+
+from ....common import auth, db
 from ....controllers import my_account as my_account_controller
+from ...functional.db_initialiser import DBInitialiser
+from ..utils.omboddle import Omboddle
 
 
 class TestMyAccountController(unittest.TestCase):
-
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()

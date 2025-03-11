@@ -1,23 +1,24 @@
-import os
 import json
+import os
 import unittest
 
 import requests
-
 from bs4 import BeautifulSoup
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils
-from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session
-from ....common import db, auth
+from py4web.core import Session, _before_request
+
+from ....common import auth, db
 from ....controllers import proxy as proxy_controller
+from ...functional.db_initialiser import DBInitialiser
+from ..utils import db_manipulation_utils
+from ..utils.omboddle import Omboddle
+
 
 class TestProxyController(unittest.TestCase):
-
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -52,7 +53,9 @@ class TestProxyController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, method="POST"):
+        with Omboddle(
+            self.session, keep_session=True, params={"format": "json"}, method="POST"
+        ):
             result = proxy_controller.imgt()
 
         # Then : We get a result
@@ -60,7 +63,7 @@ class TestProxyController(unittest.TestCase):
         assert result.url == "https://www.imgt.org/IMGT_vquest/analysis"
         bs = BeautifulSoup(result.text, "lxml")
         assert bs is not None
-        
+
     # TODO : add a test with real content
 
     ##################################
@@ -72,7 +75,9 @@ class TestProxyController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, method="POST"):
+        with Omboddle(
+            self.session, keep_session=True, params={"format": "json"}, method="POST"
+        ):
             try:
                 result = proxy_controller.assign_subsets()
             except requests.exceptions.SSLError:
@@ -82,8 +87,5 @@ class TestProxyController(unittest.TestCase):
         # Then : Check result is containing a valid URL
         str_result = str(result)
         assert "https://bat.infspire.org/arrest/assignsubsets_results/" in str_result
-        
-        
+
     # TODO : add a test with real content
-    
-    
