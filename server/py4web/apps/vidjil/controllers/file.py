@@ -463,7 +463,7 @@ def resumable_upload_get():
         error += "missing resumableChunkNumber"
 
     if error:
-        return error_message(error)
+        return error_message(", ".join(error))
 
     resumableIdentifier = request.params["resumableIdentifier"]
     resumableChunkNumber = int(request.params["resumableChunkNumber"])
@@ -509,7 +509,7 @@ def resumable_upload_post():
         error += "missing file"
 
     if error:
-        return error_message(error)
+        return error_message(", ".join(error))
 
     resumableIdentifier = request.params["resumableIdentifier"]
     resumableChunkNumber = int(request.params["resumableChunkNumber"])
@@ -565,7 +565,7 @@ def upload():
         error.append("missing parameter file_number")
 
     if error:
-        return error_message(error)
+        return error_message(", ".join(error))
 
     sequence_id = request.params["sequence_id"]
     filename = request.params["filename"]
@@ -576,29 +576,34 @@ def upload():
 
     if "status" in request.params and request.params["status"] == "upload_error":
         error.append("Upload error")
-        db.sequence_file[sequence_id].update(pre_process_flag=tasks.UPLOAD_FAILED)
+        db.sequence_file[sequence_id].update(
+            pre_process_flag=tasks.STATUS_UPLOAD_FAILED
+        )
 
     expected_merged_file = os.path.join(
-        settings.UPLOAD_FOLDER, sequence_id + MERGED_SUFFIX
+        settings.UPLOAD_FOLDER, f"{sequence_id}{MERGED_SUFFIX}"
     )
     if not os.path.isfile(expected_merged_file):
         error.append(f"Expected merged file {expected_merged_file} not found")
-        db.sequence_file[sequence_id].update(pre_process_flag=tasks.UPLOAD_FAILED)
+        db.sequence_file[sequence_id].update(
+            pre_process_flag=tasks.STATUS_UPLOAD_FAILED
+        )
 
     if error:
-        return error_message(error)
+        return error_message(", ".join(error))
 
     mes = f"file {filename}({sequence_id}) "
     log.debug(mes + "processing uploaded file")
 
-    # Store file in db
+    # Store file in db by moving it to the correct location
     try:
         if file_number == "2":
             db_filename = ""
             with io.BytesIO() as empty_file:
                 db_filename = db.sequence_file.data_file2.store(empty_file, filename)
             shutil.move(
-                expected_merged_file, os.path.join(settings.DIR_SEQUENCES, db_filename)
+                expected_merged_file,
+                os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
             )
             db.sequence_file[sequence_id].update_record(data_file2=db_filename)
         else:
@@ -606,7 +611,8 @@ def upload():
             with io.BytesIO() as empty_file:
                 db_filename = db.sequence_file.data_file.store(empty_file, filename)
             shutil.move(
-                expected_merged_file, os.path.join(settings.DIR_SEQUENCES, db_filename)
+                expected_merged_file,
+                os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
             )
             db.sequence_file[sequence_id].update_record(data_file=db_filename)
     except IOError as e:
@@ -649,15 +655,15 @@ def upload():
     if file_number == "1" and data_file is not None:
         seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)
         size = os.path.getsize(seq_file)
-        mes += " (%s)" % vidjil_utils.format_size(size)
+        mes += f" ({vidjil_utils.format_size(size)})"
         db.sequence_file[sequence_id].update(size_file=size)
     if file_number == "2" and data_file2 is not None:
         seq_file2 = pathlib.Path(db.sequence_file.data_file2.uploadfolder, data_file2)
         size2 = os.path.getsize(seq_file2)
-        mes += " (%s)" % vidjil_utils.format_size(size2)
+        mes += f" ({vidjil_utils.format_size(size2)})"
         db.sequence_file[sequence_id].update(size_file2=size2)
 
-    res = {"message": mes}
+    res = {"message": mes + " upload finished"}
     log.info(res)
     return json.dumps(res, separators=(",", ":"))
 

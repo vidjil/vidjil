@@ -3,9 +3,9 @@ import json
 import logging
 import os
 import pathlib
+import shutil
 import unittest
 
-from py4web import request
 from py4web.core import Session, _before_request
 
 from .... import settings
@@ -610,36 +610,49 @@ class TestFileController(unittest.TestCase):
         sequence_file_id = db_manipulation_utils.add_sequence_file(
             sample_set_id, user_id
         )
-        file_to_upload = pathlib.Path(
-            test_utils.get_resources_path(), "analysis-example.vidjil"
-        )
-        with file_to_upload.open("rb") as file:
-            upload_helper = test_utils.UploadHelper(file, "plopapou")
-            save_upload_folder = db.sequence_file.data_file.uploadfolder
-            try:
-                db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
-                # When : Calling uplaod
-                with Omboddle(
-                    self.session,
-                    keep_session=True,
-                    params={"id": sequence_file_id, "file_number": 1, "format": "json"},
-                ):
-                    request.files["file"] = upload_helper
-                    json_result = file_controller.upload()
+        filename = "plop"
+        save_upload_folder = settings.UPLOAD_FOLDER
+        save_data_file_upload_folder = db.sequence_file.data_file.uploadfolder
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+            shutil.copy(
+                pathlib.Path(
+                    test_utils.get_resources_path(), "analysis-example.vidjil"
+                ),
+                pathlib.Path(
+                    db.sequence_file.data_file.uploadfolder,
+                    f"{sequence_file_id}{file_controller.MERGED_SUFFIX}",
+                ),
+            )
+            # When : Calling upload
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "sequence_id": sequence_file_id,
+                    "filename": filename,
+                    "file_number": 1,
+                    "format": "json",
+                },
+            ):
+                json_result = file_controller.upload()
 
-                # Then : Check result
-                result = json.loads(json_result)
-                assert result["message"].startswith(
-                    f" file {{{sequence_file_id}}} upload finished (plopapou)"
-                )
-                result_file = pathlib.Path(
-                    test_utils.get_results_path(),
-                    db.sequence_file[sequence_file_id].data_file,
-                )
-                assert result_file.exists()
-                os.remove(result_file)
-            finally:
-                db.sequence_file.data_file.uploadfolder = save_upload_folder
+            # Then : Check result
+            result = json.loads(json_result)
+            assert (
+                result["message"]
+                == f"file {filename}({sequence_file_id})  (35.6 kB) upload finished"
+            )
+            result_file = pathlib.Path(
+                test_utils.get_results_path(),
+                db.sequence_file[sequence_file_id].data_file,
+            )
+            assert result_file.exists()
+            os.remove(result_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_data_file_upload_folder
+            settings.UPLOAD_FOLDER = save_upload_folder
 
     # TODO: more tests for upload ? use data_file_2 ? preprocess ?
 
