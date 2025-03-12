@@ -8,8 +8,6 @@ class Uploader {
     // Initialize Resumable.js
     this.resumable = new Resumable({
       target: this.db.db_address + "file/resumable_upload",
-      chunkSize: 1 * 1024 * 1024, // 1MB
-      simultaneousUploads: 2,
       // deactivate this feature for now until who know what we're doing :)
       testChunks: false,
       throttleProgressCallbacks: 1,
@@ -35,6 +33,8 @@ class Uploader {
       self.db.info("Upload completed for " + resumableFile.fileName);
       self.queue[resumableFile.uniqueIdentifier].status = "server_check";
       self.display_summary();
+
+      // Call upload
       const url =
         self.db.db_address +
         "file/upload?" +

@@ -94,7 +94,7 @@ def validate(myfile, id, pre_process):
             error.append("missing filename2")
 
     # a single filename must be provided to add a file without pre_process
-    if not reupload and pre_process is None:
+    if not reupload and required_files == 1:
         if myfile["filename"] == "":
             error.append("missing filename")
 
@@ -450,6 +450,11 @@ def submit():
         return error_message("add_form() failed")
 
 
+PARTS_FOLDER = "parts"
+PART_SUFFIX = ".part"
+MERGED_SUFFIX = ".merged"
+
+
 @action("/vidjil/file/resumable_upload", method=["GET"])
 @action.uses(db, auth.user)
 def resumable_upload_get():
@@ -469,10 +474,10 @@ def resumable_upload_get():
     resumableChunkNumber = int(request.params["resumableChunkNumber"])
 
     # chunk folder path based on the parameters
-    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, resumableIdentifier)
+    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, PARTS_FOLDER, resumableIdentifier)
 
     # chunk path based on the parameters
-    chunk_name = f"{resumableChunkNumber}.part"
+    chunk_name = f"{resumableChunkNumber}{PART_SUFFIX}"
     chunk_path = os.path.join(chunk_dir, chunk_name)
     log.debug(f"Getting chunk: {chunk_path}")
 
@@ -482,11 +487,8 @@ def resumable_upload_get():
         return "OK"
     else:
         # Let resumable.js know this chunk does not exists and needs to be uploaded
-        log.debug("Not found")
+        log.debug(f"Not found chunk: {chunk_path}")
         raise HTTP(404)
-
-
-MERGED_SUFFIX = ".merged"
 
 
 @action("/vidjil/file/resumable_upload", method=["POST"])
@@ -517,11 +519,10 @@ def resumable_upload_post():
     resumableFilename = request.params["resumableFilename"]
     file = request.files["file"]
 
-    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, resumableIdentifier)
-    if not os.path.exists(chunk_dir):
-        os.makedirs(chunk_dir)
+    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, PARTS_FOLDER, resumableIdentifier)
+    os.makedirs(chunk_dir, exist_ok=True)
 
-    chunk_name = f"{resumableChunkNumber}.part"
+    chunk_name = f"{resumableChunkNumber}{PART_SUFFIX}"
     chunk_path = os.path.join(chunk_dir, chunk_name)
 
     with open(chunk_path, "wb") as chunk_file:
@@ -565,32 +566,28 @@ def upload():
         error.append("missing parameter file_number")
 
     if error:
-        return error_message(", ".join(error))
+        raise HTTP(500, ", ".join(error))
 
-    sequence_id = request.params["sequence_id"]
+    sequence_id = request.params["sequence_id"].removesuffix("_2")
     filename = request.params["filename"]
     file_number = request.params["file_number"]
+    sequence_file = db.sequence_file[sequence_id]
 
-    if db.sequence_file[sequence_id] is None:
+    if sequence_file is None:
         error.append("no sequence file with this id")
 
     if "status" in request.params and request.params["status"] == "upload_error":
         error.append("Upload error")
-        db.sequence_file[sequence_id].update(
-            pre_process_flag=tasks.STATUS_UPLOAD_FAILED
-        )
 
     expected_merged_file = os.path.join(
-        settings.UPLOAD_FOLDER, f"{sequence_id}{MERGED_SUFFIX}"
+        settings.UPLOAD_FOLDER, f"{request.params['sequence_id']}{MERGED_SUFFIX}"
     )
     if not os.path.isfile(expected_merged_file):
         error.append(f"Expected merged file {expected_merged_file} not found")
-        db.sequence_file[sequence_id].update(
-            pre_process_flag=tasks.STATUS_UPLOAD_FAILED
-        )
 
     if error:
-        return error_message(", ".join(error))
+        sequence_file.update_record(pre_process_flag=tasks.STATUS_UPLOAD_FAILED)
+        raise HTTP(500, ", ".join(error))
 
     mes = f"file {filename}({sequence_id}) "
     log.debug(mes + "processing uploaded file")
@@ -605,7 +602,7 @@ def upload():
                 expected_merged_file,
                 os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
             )
-            db.sequence_file[sequence_id].update_record(data_file2=db_filename)
+            sequence_file.update_record(data_file2=db_filename)
         else:
             db_filename = ""
             with io.BytesIO() as empty_file:
@@ -614,7 +611,7 @@ def upload():
                 expected_merged_file,
                 os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
             )
-            db.sequence_file[sequence_id].update_record(data_file=db_filename)
+            sequence_file.update_record(data_file=db_filename)
     except IOError as e:
         if str(e).find("File name too long") > -1:
             error += "Your filename is too long, please shorten it."
@@ -622,8 +619,8 @@ def upload():
             error += "System error during processing of uploaded file."
             log.error(str(e))
 
-    data_file = db.sequence_file[sequence_id].data_file
-    data_file2 = db.sequence_file[sequence_id].data_file2
+    data_file = sequence_file.data_file
+    data_file2 = sequence_file.data_file2
 
     if file_number == "1" and data_file is None:
         return error_message("no data file")
@@ -631,7 +628,6 @@ def upload():
         return error_message("no data file 2")
 
     # Start preprocess if needed
-    db.sequence_file[sequence_id].update(pre_process_flag=None, pre_process_result=None)
     preprocess = (
         db.pre_process[request.params["pre_process"]]
         if "pre_process" in request.params and request.params["pre_process"] != "0"
@@ -642,8 +638,8 @@ def upload():
         if data_file is not None and (
             data_file2 is not None if number_of_required_files == 2 else True
         ):
-            db.sequence_file[sequence_id].update(pre_process_flag=tasks.STATUS_WAITING)
-            old_task_id = db.sequence_file[sequence_id].pre_process_scheduler_task_id
+            sequence_file.update_record(pre_process_flag=tasks.STATUS_WAITING)
+            old_task_id = sequence_file.pre_process_scheduler_task_id
             if db.scheduler_task[old_task_id] is not None:
                 scheduler.control.revoke(old_task_id, terminate=True)
                 db(db.scheduler_task.id == old_task_id).delete()
@@ -654,14 +650,14 @@ def upload():
     # Compute and store file size
     if file_number == "1" and data_file is not None:
         seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)
-        size = os.path.getsize(seq_file)
+        size = seq_file.stat().st_size
         mes += f" ({vidjil_utils.format_size(size)})"
-        db.sequence_file[sequence_id].update(size_file=size)
+        sequence_file.update_record(size_file=size)
     if file_number == "2" and data_file2 is not None:
         seq_file2 = pathlib.Path(db.sequence_file.data_file2.uploadfolder, data_file2)
-        size2 = os.path.getsize(seq_file2)
+        size2 = seq_file2.stat().st_size
         mes += f" ({vidjil_utils.format_size(size2)})"
-        db.sequence_file[sequence_id].update(size_file2=size2)
+        sequence_file.update_record(size_file2=size2)
 
     res = {"message": mes + " upload finished"}
     log.info(res)
