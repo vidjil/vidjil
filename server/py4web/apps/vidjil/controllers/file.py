@@ -162,9 +162,9 @@ def get_pre_process_list():
 def get_set_list(id_dict, helpers):
     sets = []
     for key in id_dict:
-        slist = db(db[key].id.belongs(id_dict[key])).select()
-        for sset in slist:
-            sets.append({"type": key, "id": helpers[key].get_id_string(sset)})
+        sample_set_ids = db(db[key].id.belongs(id_dict[key])).select()
+        for sample_set_id in sample_set_ids:
+            sets.append({"type": key, "id": helpers[key].get_id_string(sample_set_id)})
     return sets
 
 
@@ -176,8 +176,8 @@ def get_set_helpers():
         sampleSet.SET_TYPE_RUN,
     ]
     helpers = {}
-    for stype in sample_types:
-        helpers[stype] = factory.get_instance(type=stype)
+    for sample_type in sample_types:
+        helpers[sample_type] = factory.get_instance(type=sample_type)
     return helpers
 
 
@@ -237,10 +237,10 @@ def form():
             .select()
             .first()
         )
-        stype = sample_set.sample_type
-        if stype not in relevant_ids:
-            relevant_ids[stype] = []
-        relevant_ids[stype].append(row.id)
+        sample_type = sample_set.sample_type
+        if sample_type not in relevant_ids:
+            relevant_ids[sample_type] = []
+        relevant_ids[sample_type].append(row.id)
         action = "add"
         log.debug(
             "load add form",
