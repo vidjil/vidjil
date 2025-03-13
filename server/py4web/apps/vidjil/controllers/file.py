@@ -458,6 +458,22 @@ MERGED_SUFFIX = ".merged"
 @action("/vidjil/file/resumable_upload", method=["GET"])
 @action.uses(db, auth.user)
 def resumable_upload_get():
+    """
+    Handle GET requests for resumableJS uploads (see https://github.com/23/resumable.js).
+
+    This method checks if a specific chunk of a file has already been uploaded.
+    If the chunk exists, it returns "OK". If the chunk does not exist, it raises a 404 error.
+
+    Request Parameters:
+    resumableIdentifier (str): The unique identifier for the file being uploaded.
+    resumableChunkNumber (int): The chunk number being checked.
+
+    Raises:
+    HTTP(404): If the chunk does not exist.
+
+    Returns:
+    str: "OK" if the chunk exists.
+    """
     log.debug(f"resumable_upload {request.params=}")
 
     error = ""
@@ -494,6 +510,25 @@ def resumable_upload_get():
 @action("/vidjil/file/resumable_upload", method=["POST"])
 @action.uses(db, auth.user)
 def resumable_upload_post():
+    """
+    Handle POST requests for resumableJS uploads (see https://github.com/23/resumable.js).
+
+    This method receives a chunk of a file being uploaded, saves it to disk, and checks if all chunks have been received.
+    If all chunks are received, it merges them into a single file.
+
+    Request Parameters:
+    resumableIdentifier (str): The unique identifier for the file being uploaded.
+    resumableChunkNumber (int): The chunk number being uploaded.
+    resumableTotalChunks (int): The total number of chunks for the file.
+    resumableFilename (str): The name of the file being uploaded.
+    file (FileStorage): The file chunk being uploaded.
+
+    Raises:
+    HTTP(500): If any required parameters are missing.
+
+    Returns:
+    str: "OK" if the chunk is successfully received and processed.
+    """
     log.debug(f"resumable_upload {request.params=}")
 
     mes = ""
@@ -553,9 +588,29 @@ def resumable_upload_post():
     return "OK"
 
 
-@action("/vidjil/file/upload", method=["POST"])
+@action("/vidjil/file/resumable_upload_process", method=["POST"])
 @action.uses(db, auth.user)
-def upload():
+def resumable_upload_process():
+    """
+    Handle POST requests to process the uploaded file after all chunks have been received and merged
+    for resumableJS uploads (see https://github.com/23/resumable.js)..
+
+    This method processes the uploaded file by moving it to the correct location, updating the database,
+    and starting the preprocessing task if needed.
+
+    Request Parameters:
+    sequence_id (str): The ID of the sequence file.
+    filename (str): The name of the uploaded file.
+    file_number (str): The file number (1 or 2) indicating whether it's the first or second file.
+    pre_process (str, optional): The ID of the preprocessing task to be started, or "0" if no preprocessing is needed.
+    status (str, optional): The status of the upload, should be "upload_error" if there was an error during upload.
+
+    Raises:
+    HTTP(500): If any required parameters are missing or if there was an upload error.
+
+    Returns:
+    str: A JSON string containing the result message.
+    """
     # Check input parameters
     error = []
     if "sequence_id" not in request.params:
@@ -564,6 +619,8 @@ def upload():
         error.append("missing parameter filename")
     if "file_number" not in request.params:
         error.append("missing parameter file_number")
+    if "status" in request.params and request.params["status"] == "upload_error":
+        error.append("Upload error")
 
     if error:
         raise HTTP(500, ", ".join(error))
@@ -571,16 +628,93 @@ def upload():
     sequence_id = request.params["sequence_id"].removesuffix("_2")
     filename = request.params["filename"]
     file_number = request.params["file_number"]
+    preprocess = (
+        db.pre_process[request.params["pre_process"]]
+        if "pre_process" in request.params and request.params["pre_process"] != "0"
+        else None
+    )
+    upload_process(sequence_id, filename, file_number, preprocess)
+
+
+@action("/vidjil/file/upload", method=["POST"])
+@action.uses(db, auth.user)
+def upload():
+    """
+    Handle POST requests to upload a file.
+
+    This method writes the uploaded file to disk and starts processing it by moving it to the correct location,
+    updating the database, and starting the preprocessing task if needed.
+
+    Request Parameters:
+    id (str): The ID of the sequence file.
+    file_number (str): The file number (1 or 2) indicating whether it's the first or second file.
+    file (FileStorage): The file being uploaded.
+    pre_process (str, optional): The ID of the preprocessing task to be started, or "0" if no preprocessing is needed.
+
+    Raises:
+    HTTP(500): If any required parameters are missing.
+
+    Returns:
+    str: A JSON string containing the result message.
+    """
+
+    # Check input parameters
+    error = []
+    if "id" not in request.params:
+        error.append("missing parameter id")
+    if "file_number" not in request.params:
+        error.append("missing parameter file_number")
+    if "file" not in request.files:
+        error.append("missing file")
+
+    if error:
+        raise HTTP(500, ", ".join(error))
+
+    # write uploaded file to disk
+    sequence_id = request.params["id"]
+    merged_file = os.path.join(settings.UPLOAD_FOLDER, f"{sequence_id}{MERGED_SUFFIX}")
+    uploaded_file_upload = request.files["file"]
+    filename = uploaded_file_upload.filename
+    with open(merged_file, "wb") as f:
+        f.write(uploaded_file_upload.file.read())
+
+    # Start processing the uploaded file
+    file_number = request.params["file_number"]
+    preprocess = (
+        db.pre_process[request.params["pre_process"]]
+        if "pre_process" in request.params and request.params["pre_process"] != "0"
+        else None
+    )
+    upload_process(sequence_id, filename, file_number, preprocess)
+
+
+def upload_process(
+    sequence_id: int, filename: str, file_number: int, preprocess: int | None
+) -> str:
+    """
+    Process the uploaded file by moving it to the correct location, updating the database,
+    and starting the preprocessing task if needed.
+
+    Parameters:
+    sequence_id (int): The ID of the sequence file.
+    filename (str): The name of the uploaded file.
+    file_number (int): The file number (1 or 2) indicating whether it's the first or second file.
+    preprocess (int | None): The ID of the preprocessing task to be started, or None if no preprocessing is needed.
+
+    Raises:
+    HTTP: If there are any errors during the processing of the uploaded file.
+
+    Returns:
+    str: A JSON string containing the result message.
+    """
+    error = []
     sequence_file = db.sequence_file[sequence_id]
 
     if sequence_file is None:
         error.append("no sequence file with this id")
 
-    if "status" in request.params and request.params["status"] == "upload_error":
-        error.append("Upload error")
-
     expected_merged_file = os.path.join(
-        settings.UPLOAD_FOLDER, f"{request.params['sequence_id']}{MERGED_SUFFIX}"
+        settings.UPLOAD_FOLDER, f"{sequence_id}{MERGED_SUFFIX}"
     )
     if not os.path.isfile(expected_merged_file):
         error.append(f"Expected merged file {expected_merged_file} not found")
@@ -628,11 +762,6 @@ def upload():
         return error_message("no data file 2")
 
     # Start preprocess if needed
-    preprocess = (
-        db.pre_process[request.params["pre_process"]]
-        if "pre_process" in request.params and request.params["pre_process"] != "0"
-        else None
-    )
     number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
     if preprocess is not None:
         if data_file is not None and (

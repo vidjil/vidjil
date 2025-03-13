@@ -37,7 +37,7 @@ class Uploader {
       // Call upload
       const url =
         self.db.db_address +
-        "file/upload?" +
+        "file/resumable_upload_process?" +
         self.db.argsToStr({
           sequence_id: resumableFile.uniqueIdentifier,
           filename: resumableFile.fileName,
