@@ -72,7 +72,7 @@ services:
             RESTIC_COMPRESSION: max
             RESTIC_BACKUP_SOURCES: /mnt/volumes
             RESTIC_BACKUP_ARGS: >-
-                --tag health-data --exclude='*.tmp' --limit-download 10000 --limit-upload 10000 --verbose
+                --tag health-data --exclude='*.tmp' --verbose=2 --ignore-ctime
             RESTIC_FORGET_ARGS: >-
                 --keep-last 50 --keep-daily 30 --keep-weekly 15 --keep-monthly 36 --keep-yearly 10
             RESTIC_READ_CONCURRENCY: 1
