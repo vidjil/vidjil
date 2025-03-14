@@ -633,7 +633,7 @@ def resumable_upload_process():
         if "pre_process" in request.params and request.params["pre_process"] != "0"
         else None
     )
-    upload_process(sequence_id, filename, file_number, preprocess)
+    return upload_process(sequence_id, filename, file_number, preprocess)
 
 
 @action("/vidjil/file/upload", method=["POST"])
@@ -685,7 +685,7 @@ def upload():
         if "pre_process" in request.params and request.params["pre_process"] != "0"
         else None
     )
-    upload_process(sequence_id, filename, file_number, preprocess)
+    return upload_process(sequence_id, filename, file_number, preprocess)
 
 
 def upload_process(
