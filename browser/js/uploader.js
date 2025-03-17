@@ -8,8 +8,7 @@ class Uploader {
     // Initialize Resumable.js
     this.resumable = new Resumable({
       target: this.db.db_address + "file/resumable_upload",
-      // deactivate this feature for now until who know what we're doing :)
-      testChunks: false,
+      testChunks: true,
       throttleProgressCallbacks: 1,
       withCredentials: true,
       generateUniqueIdentifier: function (file) {
@@ -39,10 +38,11 @@ class Uploader {
         self.db.db_address +
         "file/resumable_upload_process?" +
         self.db.argsToStr({
-          sequence_id: resumableFile.uniqueIdentifier,
+          resumableIdentifier: resumableFile.uniqueIdentifier,
+          sequence_id: self.queue[resumableFile.uniqueIdentifier].sequenceId,
           filename: resumableFile.fileName,
-          file_number: self.queue[resumableFile.uniqueIdentifier].file_number,
-          pre_process: self.queue[resumableFile.uniqueIdentifier].pre_process,
+          file_number: self.queue[resumableFile.uniqueIdentifier].fileNumber,
+          pre_process: self.queue[resumableFile.uniqueIdentifier].preProcess,
         });
 
       $.ajax({
@@ -107,26 +107,30 @@ class Uploader {
 
   add(id, data) {
     var file = data.get("file");
-    var pre_process = data.get("pre_process");
-    var file_number = data.get("file_number");
+    var preProcess = data.get("pre_process");
+    var fileNumber = data.get("file_number");
     var div_parent = $("#upload_summary_selector").children()[0];
     var div = $("<div/>").appendTo(div_parent);
-    this.queue[id] = {
+    this.fileIdMatch[file] = id;
+    this.queue[this.generateUniqueIdentifier(file)] = {
       filename: file.name,
       file: file,
       status: "queued",
       percent: 0,
       div: div,
-      pre_process: pre_process,
-      file_number: file_number,
+      preProcess: preProcess,
+      fileNumber: fileNumber,
+      sequenceId: id,
     };
-    this.fileIdMatch[file] = id;
     this.resumable.addFile(file);
   }
 
   generateUniqueIdentifier(file) {
     if (file in this.fileIdMatch) {
-      return this.fileIdMatch[file];
+      const sequenceId = this.fileIdMatch[file];
+      const filename = file.name;
+      const fileSize = file.size;
+      return `${sequenceId}-${filename}-${fileSize}`;
     } else {
       return this.resumable.generateUniqueIdentifier(file);
     }
@@ -154,7 +158,7 @@ class Uploader {
       if (id in this.queue) {
         var file = this.queue[id].file;
         this.queue[id].status = "queued";
-        this.fileIdMatch[file] = id;
+        this.fileIdMatch[file] = this.queue[id].sequenceId;
         this.resumable.addFile(file);
         this.display();
       }
@@ -162,7 +166,10 @@ class Uploader {
   }
 
   reload(id) {
-    if (document.getElementById("sequence_file_" + id)) {
+    const sequenceId = this.queue[id].sequenceId;
+    const trimmedSequenceId = sequenceId.toString().replace("_2", "");
+    const elementId = "sequence_file_" + trimmedSequenceId;
+    if (document.getElementById(elementId)) {
       this.db.reload();
     }
     this.display_summary();
@@ -171,7 +178,7 @@ class Uploader {
   update_percent() {
     for (var key in this.queue) {
       if (this.queue[key].status == "upload") {
-        $(".loading_" + key).width(this.queue[key].percent + "%");
+        $(".loading_" + this.queue[key].sequenceId).width(this.queue[key].percent + "%");
       }
     }
   }
@@ -181,7 +188,7 @@ class Uploader {
       var status = this.queue[key].status;
       if (status != "completed") {
         var html = this.statusHtml(key);
-        $("#sequence_file_" + key).html(html);
+        $("#sequence_file_" + this.queue[key].sequenceId).html(html);
       }
     }
     this.display_summary();
@@ -234,7 +241,7 @@ class Uploader {
       case "upload":
         html +=
           "<span class='loading_gauge'><span class='loading_" +
-          id +
+          this.queue[id].sequenceId +
           " loading_bar'></span></span>";
         html +=
           "<span class='button2' onclick='db.uploader.cancel(\"" +
