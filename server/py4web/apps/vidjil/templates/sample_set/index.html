@@ -132,12 +132,13 @@
 
                 <tr id="row_sequence_file_[[=row.sequence_file.id]]" >
                     <td [[ if waiting_for_file :]] 
-                            [[=XML("class='unchecked' title='file is missing ' + row.sequence_file.filename ")]] 
+                            [[=XML(f"class='unchecked' title='{row.sequence_file.filename} - All the files have not been properly received yet. It this persists, please edit the samples to reupload them.'")]] 
                         [[else:]] 
                             [[=XML(f"title='{row.sequence_file.filename}'")]] 
                         [[pass]] id="sequence_file_[[=row.sequence_file.id]]" title="[[=row.sequence_file.filename]]">
                         [[if row.sequence_file.network:]]<i class="icon-upload-cloud-outline" title="This file is stored on your lab's network"></i>[[pass]]
-		                [[if auth.is_admin():]]([[=row.sequence_file.id]])[[pass]]
+		                [[if waiting_for_file:]]<i class="icon-warning-1" title="All the files have not been properly received yet. It this persists, please edit the samples to reupload them."></i>[[pass]]
+                        [[if auth.is_admin():]]([[=row.sequence_file.id]])[[pass]]
                         [[=row.sequence_file.filename]]
                     </td>
                     <td> 
