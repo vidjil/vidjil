@@ -742,7 +742,7 @@ class TestFileController(unittest.TestCase):
             ):
                 with self.assertRaises(HTTP) as cm:
                     file_controller.resumable_upload_get()
-                assert cm.exception.status == 404
+                assert cm.exception.status == 204
         finally:
             settings.UPLOAD_FOLDER = save_upload_folder
             if chunk_path.exists():
@@ -778,7 +778,7 @@ class TestFileController(unittest.TestCase):
                 ),
                 pathlib.Path(
                     db.sequence_file.data_file.uploadfolder,
-                    f"{sequence_file_id}{file_controller.MERGED_SUFFIX}",
+                    f"{sequence_file_id}-{filename}{file_controller.MERGED_SUFFIX}",
                 ),
             )
             # When : Calling upload
@@ -786,6 +786,7 @@ class TestFileController(unittest.TestCase):
                 self.session,
                 keep_session=True,
                 params={
+                    "resumableIdentifier": f"{sequence_file_id}-{filename}",
                     "sequence_id": sequence_file_id,
                     "filename": filename,
                     "file_number": 1,
