@@ -76,8 +76,59 @@ describe('Report', function () {
 
     cy.get('#rs-clone-clone-001')
       .should("not.exist")
+  })
 
-    return
+
+  it('shortcut to add/remove clonotypes to report',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.get('#export_report_menu').click({force: true})
+
+    // no clone in the report
+    cy.get('#rs-selected-clones-count')
+      .contains("[0 selected]") 
+
+    // change active selection
+    cy.selectCloneMulti([0, 2, 6])
+
+    // type r to add clonotypes to the report
+    cy.get("body").type("r")
+ 
+    // change active selection
+    cy.selectCloneMulti([0, 3])
+ 
+    // correct number of clone added to report
+    cy.get('#rs-selected-clones-count')
+      .contains("[3 selected]")
+
+    // type shift+r to remove all clonotypes from report
+    cy.get("body").type("{shift}R")
+
+    // all clones removed from report
+    cy.get('#rs-selected-clones-count')
+      .contains("[0 selected]") 
+
+    // close report menu
+    cy.get('.popup_container > .closeButton > .icon-cancel').click()
+
+    // change active selection
+    cy.selectCloneMulti([1, 5])
+
+    // type ctrl+r to add clonotypes and open report
+    cy.get("body").type("{ctrl}r")
+ 
+    // correct number of clone added to report
+    cy.get('#rs-selected-clones-count')
+      .contains("[2 selected]")
+
+    // change active selection
+    cy.selectCloneMulti([0, 1, 4])
+
+    // type r to add clonotypes to the report
+    cy.get("body").type("r")
+ 
+    // correct number of clone added to report
+    cy.get('#rs-selected-clones-count')
+      .contains("[4 selected]")
   })
 
   it('Save/delete as template & report',  function() {
