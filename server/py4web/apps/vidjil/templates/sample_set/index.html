@@ -215,9 +215,13 @@
                     [[if row.results_file.id:]]
                         <td id="status_[[=row.sequence_file.id]]_[[=config_id]]"
                             [[if pre_process_status in [tasks.STATUS_RUNNING, tasks.STATUS_WAITING] :]]
-                                > PREPROCESSING
+                                [[if status == tasks.STATUS_FAILED:]]
+                                    class="button" title="Stopped waiting for preprocess, re-upload to restart preprocess and run again"> FAILED
+                                [[else:]]
+                                    class="button" title="Waiting for pre-process to end"> PREPROCESSING
+                                [[pass]]
                             [[ else:]]
-                                class="button" onclick="db.call('results_file/info', { 'results_file_id' : '[[=row.results_file.id]]' } )"> [[=status]]
+                                class="button" title="Click to display logs" onclick="db.call('results_file/info', { 'results_file_id' : '[[=row.results_file.id]]' } )"> [[=status]]
                             [[ pass]]
                         </td>
                         <td>
