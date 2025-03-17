@@ -148,6 +148,13 @@ x is "current version" at time of release
 * @link             <https://github.com/select2/select2>
 * @license          MIT
 
+**seedrandom.js**       : A replacement of Math.random of javascript that allow to get fixed seed
+
+* @author           Steffen Fagerström Christensen + external contributors
+* @version          1.1.0
+* @link             <https://github.com/23/resumable.js>
+* @license          MIT
+
 ### Client base docker image
 
 **nginx**               : docker image used as base for vidjil-client docker image
