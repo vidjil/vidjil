@@ -792,6 +792,8 @@ Clone.prototype = {
         if (this.m.reads.segmented[time] === 0 ) return 0;
 
         if (this.isRemoved()) return 0;
+
+        if (this.id.includes("removed")) return this.getReads(time);
         
         // write as a function inside model and return 0 if removed == true
         // add isRemoved() method

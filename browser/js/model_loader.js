@@ -351,6 +351,7 @@ Model_loader.prototype = {
                 }
 
                 var imported_clone = new Clone(clone, self, index, c_attributes)
+                imported_clone.removed = true
                 self.mapID[imported_clone.id] = index;
                 index++
 

@@ -330,6 +330,9 @@ Filter.prototype = {
                     case "hide":
                         if (value.indexOf(a.fct(c)) != -1) list.push(c.index)
                         break;
+                    case "remove":
+                        if (value.indexOf(a.fct(c)) != -1) list.push(c.index)
+                        break;
                     case "search":
                         if (!c.search(value)) list.push(c.index)
                         break;

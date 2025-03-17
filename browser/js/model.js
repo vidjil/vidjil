@@ -1566,7 +1566,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             } else if (c.isRemoved()) { 
                 for (var s = 0; s < this.samples.number ; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
-                        newRemoved[c.germline][s] += this.clone(this.clusters[pos][k]).get('reads', s);
+                        //newRemoved[c.germline][s] += this.clone(this.clusters[pos][k]).get('reads', s);
+                        newRemoved[c.germline][s] += 1;
                     }
                 }
             }
