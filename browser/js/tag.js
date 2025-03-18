@@ -28,11 +28,13 @@ function TagManager(model) {
         "custom_2":             {"color" : "#379149", "display" : true, name: "custom 2"},
         "custom_3":             {"color" : "#508100", "display" : true, name: "custom 3"},
         "none":                 {"color" : "",        "display" : true},
-        "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true, name: "smaller clonotype"}
+        "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true, name: "smaller clonotype"},
+        "removed_clonotypes":   {"color" : "#000000", "display" : true, name: "removed clonotype"}
     }
 
     this.default_tag="none";
     this.distrib_tag="smaller_clonotypes";
+    this.removed_tag="removed_clonotypes";
 }
 
 

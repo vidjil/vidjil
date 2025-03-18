@@ -1997,6 +1997,8 @@ Clone.prototype = {
         this.removed = false
         if (this.getTag() == "smaller_clonotypes" && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1){
             this.active = false
+        } else if (this.getTag() == "removed_clonotypes"){
+            this.removed = true
         }
     },
 
