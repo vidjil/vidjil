@@ -1367,7 +1367,7 @@ Clone.prototype = {
         newTag = newTag.replace("tag", "");
         console.log("changeTag() (clonotype " + this.index + " <<" + newTag + ")");
         this.tag = newTag;
-        this.m.updateElem([this.index]);
+        this.m.update();
         this.m.analysisHasChanged = true;
     },
     
