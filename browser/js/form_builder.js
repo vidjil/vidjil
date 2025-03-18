@@ -199,6 +199,64 @@ function add_file(target_id, index, group_ids) {
     $('#jstree_loader_' + index).trigger('load');
 }
 
+function validateFileNames(fileId) {
+  console.log("validateFileNames - fileId: " + fileId);
+
+  const upload_1 = document.getElementById("file_upload_1_" + fileId);
+  const upload_2 = document.getElementById("file_upload_2_" + fileId);
+  const warning = document.getElementById("file_names_errors_" + fileId);
+
+  // Reset all warnings
+  upload_1.style.removeProperty("border");
+  upload_2.style.removeProperty("border");
+  warning.style.display = "none";
+  var error = [];
+  var warning1 = false;
+  var warning2 = false;
+
+  var num_files = $("select#pre_process").find(':selected').attr("required_files"); // number of files requested by pre_process
+  if (num_files == 2) {
+    if (upload_1.files.length > 0) {
+      const file1 = upload_1.files[0].name;
+      if (file1.indexOf("_R1") == -1) {
+        error.push("File 1 should contain '_R1'");
+        warning1 = true;
+      }
+    }
+    if (upload_2.files.length > 0) {
+      const file2 = upload_2.files[0].name;
+      if (file2.indexOf("_R2") == -1) {
+        error.push("File 2 should contain '_R2'");
+        warning2 = true;
+      }
+    }
+    if (upload_1.files.length > 0 && upload_2.files.length > 0) {
+      const file1_cleared = upload_1.files[0].name.replace("_R1", "");
+      const file2_cleared = upload_2.files[0].name.replace("_R2", "");
+      if (file1_cleared != file2_cleared) {
+        error.push("Files should have the same name except from '_R1' and '_R2'");
+        warning1 = true;
+        warning2 = true;
+      }
+    }
+  }
+
+  if (error.length > 0) {
+    console.log("show error");
+    warning.style.display = "block";
+    warning.title = error.join("\n");
+  }
+
+  if (warning1) {
+    console.log("warning1");
+    upload_1.style.border= "1px solid red";
+  }
+  if (warning2) {
+    console.log("warning1");
+    upload_2.style.border = "1px solid red";
+  }
+}
+
 
 
 function FormBuilder() {
@@ -445,6 +503,7 @@ FileFormBuilder.prototype = {
         var div = this.build_div('sample');
         div.appendChild(this.createCloseButton());
         div.appendChild(this.build_hidden_fields());
+        div.appendChild(this.build_warning_field());
         div.appendChild(this.build_file_div());
         div.appendChild(this.build_date('sampling_date', this.type, 'sampling_date'));
         div.appendChild(this.build_info('file', this.group_ids, 'sample'));
@@ -536,6 +595,9 @@ FileFormBuilder.prototype = {
             d.style.display = "none";
         }
         var i = this.build_input('upload_' + id, 'upload_field file_'+ id, 'file'+id, 'file', 'file');
+        i.addEventListener('change', function() {
+            validateFileNames(self.index);
+        });
         if (this.source) {
             i.disabled = true;
         } else if (! hidden) {
@@ -544,6 +606,18 @@ FileFormBuilder.prototype = {
         i.title = "(.fa, .fastq, .fa.gz, .fastq.gz, .clntab)";
         d.appendChild(i);
         return d;
+    },
+
+    build_warning_field: function() {
+        var self = this;
+        var div = this.build_wrapper();
+        var span = document.createElement('span');
+        span.id = "file_names_errors_" + self.index;
+        span.className = "icon-warning-1"
+        span.style.display = "none"
+        span.style.color = "red"
+        div.appendChild(span)
+        return div;
     },
 
     build_jstree: function(id, hidden) {
