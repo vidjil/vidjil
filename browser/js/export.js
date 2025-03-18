@@ -391,6 +391,18 @@ Report.prototype = {
     },
 
     /**
+     * Set selection of samples to the current sample and only this.
+     * @param {int} sampleId Sample id to set
+     */
+    selectSample: function(sampleId) {
+        const sampleName = this.m.getStrTime(sampleId, "original_name")
+        this.settings.samples = [sampleName]
+
+        // rerender content
+        this.initSamples()
+    },
+
+    /**
      * Change the sample status after a click on one sample tile
      * Take into account the shift press status to modify the behavior of selection
      * Menu is rerendered after modification
@@ -418,7 +430,7 @@ Report.prototype = {
                 this.showAllSamples();
             }
         }
-            
+        
         // rerender content
         this.initSamples()
     },
@@ -1333,7 +1345,28 @@ Report.prototype = {
     // remove a clone from settings by clone id 
     removeClone : function(id) {
         var index = this.clones.indexOf(id)
-        if ( index != -1) this.clones.splice(index, 1)
+        if ( index != -1) {
+            this.clones.splice(index, 1)
+
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+        }
+    },
+
+    // remove all clones from settings
+    removeAllClones : function() {
+        if (this.clones.length > 0) {
+            this.clones = []
+
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+        }
     },
 
     // print a block in the report using given conf
