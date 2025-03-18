@@ -1130,7 +1130,7 @@ Database.prototype = {
                 }
             });
         }else{
-            console.log({"type": "flash", "msg": "server : save analysis error : this file is nor from the database" , "priority": 2});
+            console.log({"type": "flash", "msg": "server : save analysis error : this file is not from the database" , "priority": 2});
         }
     },
 
