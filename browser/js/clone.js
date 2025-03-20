@@ -793,18 +793,11 @@ Clone.prototype = {
 
         if (this.isRemoved()) return 0;
 
+        // getReads returns the number of clones for the removed clonotype
+        // TODO: overwrite getSize method with new class for removed clonotypes ?
         if (this.id.includes("removed")) return this.getReads(time);
         
-        // write as a function inside model and return 0 if removed == true
-        // add isRemoved() method
-        var total_removed_clones_reads = 0;
-        for (var i = 0; i < this.m.clones.length; i++) {
-            if (this.m.clones[i].isRemoved()) {
-                total_removed_clones_reads += this.m.clones[i].getReads(time);
-            }
-        }
-
-        var result     = this.getReads(time) / (this.m.reads.segmented[time] - total_removed_clones_reads);
+        var result     = this.getReads(time) / (this.m.reads.segmented[time] - this.m.total_removed_clones_reads);
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
             return result
@@ -2014,16 +2007,6 @@ Clone.prototype = {
         var c = this.m.clusters[this.index]
         for (var i=0; i<c.length; i++){
             this.m.clone(c[i]).hidden = true;
-            this.m.clone(c[i]).active = false;
-        }
-    },
-
-    remove: function () {
-        this.active = false
-        this.removed = true
-        var c = this.m.clusters[this.index]
-        for (var i=0; i<c.length; i++){
-            this.m.clone(c[i]).removed = true;
             this.m.clone(c[i]).active = false;
         }
     },

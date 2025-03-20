@@ -454,6 +454,10 @@ List.prototype = {
 
         var span_name = document.createElement('span');
         span_name.className = "nameBox";
+        // TODO: doesn't update dynamically to put somewhere else
+        span_name.style.textDecoration = this.m.tags.getTextDecoration(clone.getTag());
+        span_name.style.opacity = this.m.tags.getOpacity(clone.getTag());
+
         if (clone.hasSizeConstant())
             span_name.className += " cloneName";
         span_name.ondblclick = function () {

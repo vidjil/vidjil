@@ -848,6 +848,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
     },
     
+    computeTotalRemovedClonesReads: function(){
+    var total_removed_clones_reads = 0;
+    for (var i = 0; i < this.clones.length; i++) {
+        if (this.clones[i].isRemoved()) {
+            total_removed_clones_reads += this.clones[i].getReads();
+        }
+    }
+    this.total_removed_clones_reads = total_removed_clones_reads;
+    },
 
     /**
      * [changeNormalisation description]
@@ -1395,7 +1404,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 this.view[i].update();
         }
         this.updateIcon();
-        this.computeOrderWithStock()
+        this.computeOrderWithStock();
+        this.computeTotalRemovedClonesReads()
     },
 
     /**
@@ -1548,6 +1558,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         });  
     },
     
+    // merge with computeOtherSize
     computeRemovedSize: function () {
         var newRemoved = {};
 

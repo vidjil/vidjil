@@ -253,13 +253,6 @@ Filter.prototype = {
                                 c.hide()
                             }
                             break;
-                        case "remove":
-                            if (!c.active) break;
-                            if (f.value.indexOf(a.fct(c)) != -1) {
-                                c.disable()
-                                c.remove()
-                                c.hide()
-                            }
                         case "search":
                             if (!c.active) break;
                             if (!c.search(f.value))  {
@@ -328,9 +321,6 @@ Filter.prototype = {
                         if (value.indexOf(a.fct(c)) == -1) list.push(c.index)
                         break;
                     case "hide":
-                        if (value.indexOf(a.fct(c)) != -1) list.push(c.index)
-                        break;
-                    case "remove":
                         if (value.indexOf(a.fct(c)) != -1) list.push(c.index)
                         break;
                     case "search":

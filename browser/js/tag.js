@@ -29,12 +29,18 @@ function TagManager(model) {
         "custom_3":             {"color" : "#508100", "display" : true, name: "custom 3"},
         "none":                 {"color" : "",        "display" : true},
         "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true, name: "smaller clonotype"},
-        "removed_clonotypes":   {"color" : "#000000", "display" : true, name: "removed clonotype"}
+        "removed_clonotypes":   {
+            "color" : "#000000", 
+            "display" : true, 
+            name: "removed clonotype", 
+            // additional properties, to put somwhere else?
+            "textDecoration" : "line-through",
+            "opacity" : 0.3
+        }
     }
 
     this.default_tag="none";
     this.distrib_tag="smaller_clonotypes";
-    this.removed_tag="removed_clonotypes";
 }
 
 
@@ -62,6 +68,22 @@ TagManager.prototype = {
     getColor: function(key){
         return this.tag[key].color
     },
+
+    // return tag current textDecoration value
+    getTextDecoration: function(key){
+        if (this.tag[key] && this.tag[key].textDecoration) 
+            return this.tag[key].textDecoration;
+        else
+            return "none";
+    },    
+
+    // return tag current opacity value
+    getOpacity: function(key){
+        if (this.tag[key] && this.tag[key].opacity) 
+            return this.tag[key].opacity;
+        else
+            return 1;
+    },   
 
     // return tag current display value
     isVisible: function(key){
