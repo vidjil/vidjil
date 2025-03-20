@@ -795,8 +795,12 @@ Clone.prototype = {
 
         // getReads returns the number of clones for the removed clonotype
         // TODO: overwrite getSize method with new class for removed clonotypes ?
-        if (this.id.includes("removed")) return this.getReads(time);
-        
+        // FIX: doesn't work with clonality setup for some reason
+        //if (this.id.includes("removed")) return this.getReads(time);
+        if (this.id != null) {
+            if (this.id.includes("removed")) return this.getReads(time);
+        }
+
         var result     = this.getReads(time) / (this.m.reads.segmented[time] - this.m.total_removed_clones_reads);
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
