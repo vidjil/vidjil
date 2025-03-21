@@ -839,6 +839,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
         
+        // mark analysis as changed
+        analysisHasChanged = true
+        
+        // update views
         this.updateModel()
         //check if current germline is in the selected_system
         if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
