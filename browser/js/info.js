@@ -413,10 +413,11 @@ Info.prototype = {
         var val = "no read";
         var warning_title = false;
         var warning_class = '' ;
+        var removed_reads = this.m.total_removed_clones_reads
 
         if (read_number[this.m.t] > 0) {
-            var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100;
-            val = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)";
+            var percent = ((read_number[this.m.t] - removed_reads) / this.m.reads.total[this.m.t]) * 100;
+            val = this.m.toStringThousands(read_number[this.m.t] - removed_reads) + " (" + percent.toFixed(2) + "%)";
 
             if (percent < 10) {
                 warning_title = "Very few reads " + qualifier;
