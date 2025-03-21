@@ -1,4 +1,5 @@
 import json
+import pathlib
 
 from .. import settings
 from ..common import db
@@ -26,7 +27,8 @@ def get_analysis_data(sample_set_id):
     analysis_query = get_analysis_from_sample_set(sample_set_id)
     if len(analysis_query) > 0:
         row = analysis_query.first()
-        f = open(settings.DIR_RESULTS + "/" + row.analysis_file, "r", encoding="utf-8")
+        analysis_path = pathlib.Path(settings.DIR_RESULTS, row.analysis_file)
+        f = open(analysis_path, "r", encoding="utf-8")
         return get_clean_analysis(f)
     else:
         return get_default_analysis()

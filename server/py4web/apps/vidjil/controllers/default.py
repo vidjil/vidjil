@@ -802,7 +802,7 @@ def get_custom_data():
 
 #########################################################################
 # return .analysis file
-# need sample_set_id or patient_id
+# need sample_set_id or patient_id or run_id
 # need patient admin or read permission
 @action("/vidjil/default/get_analysis", method=["POST", "GET"])
 @action.uses(db, auth.user)

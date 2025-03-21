@@ -1,0 +1,55 @@
+{
+  "producer": "browser",
+  "info": "Test analysis",
+  "timestamp": "2025-3-21 17:6:26",
+  "vidjil_json_version": "2014.09",
+  "samples": {
+    "id": [
+      "sequence_file.data_file.96ffc184def28023.RGVtby1YNS5mYQ==.fa"
+    ],
+    "info": [
+      "Uploaded by API"
+    ],
+    "order": [
+      0
+    ],
+    "stock_order": [
+      0
+    ],
+    "names": [
+      "Demo-X5"
+    ]
+  },
+  "clones": [
+    {
+      "id": "GATGTGTTTCATTGTGCCTTCCTATGGCAGTGCTACAAAACCTACAGAGA",
+      "sequence": "AGCGGGTGGTGATGGCAAAGTGCCAAGGAAAGGGAAAAAGGAAGAAGAGGGTTTTTATACTGATGTGTTTCATTGTGCCTTCCTATGGCAGTGCTACAAAACCTACAGAGACCTGTACAAAAACTGCAGGGGCAAAAGTGCCATTTCCCTGGGATATCCTCACCCTGGGTCCCATGCCTCAGGAGACAAACACAGCAAGCAGCTTCCCTC",
+      "tag": "clonotype_1"
+    }
+  ],
+  "clusters": [
+    [
+      "TATTACTGCAGCTCATATACAAGCTTTCTTGGGTGTTCGGCGGAGGGACC",
+      "TACTACTGTGCCTGTGACACCCCCCTGTACTGGGGGATACGCACAGTGCT"
+    ]
+  ],
+  "report_save": {},
+  "system_selected": [
+    "TRA",
+    "TRB",
+    "TRB+",
+    "TRG",
+    "TRD",
+    "TRA+D",
+    "TRD+",
+    "IGK",
+    "IGK+",
+    "IGL"
+  ],
+  "normalization": {
+    "method": "constant",
+    "size_list": [],
+    "expected_size": 0,
+    "id": -1
+  }
+}
