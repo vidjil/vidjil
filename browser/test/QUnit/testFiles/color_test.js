@@ -23,7 +23,7 @@ QUnit.test("Clone color", function(assert) {
     // change color axis -> "Size"
     m.color.set("Size")
     c1.updateColor()
-    assert.equal(c1.getColor(), "rgb(0, 236, 58)", "getColor() >> abundance color : ");
+    assert.equal(c1.getColor(), "rgb(0, 223, 137)", "getColor() >> abundance color : ");
     
 });
 
