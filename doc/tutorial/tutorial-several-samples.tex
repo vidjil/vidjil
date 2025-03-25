@@ -185,10 +185,10 @@ Revert the color by choosing \com{by tag}.}
   // test_C_samples_08_compare_sample
     cy.changeColorby("Size")
     cy.get('.gradient').should('exist', "color gradient is present")
-    cy.getCloneInList(0).should('have.css', 'color', 'rgb(174, 184, 0)')
+    cy.getCloneInList(0).should('have.css', 'color', 'rgb(168, 189, 0)')
 
     cy.get("#time4").click()
-    cy.getCloneInList(0).should('have.css', 'color', 'rgb(246, 73, 0)')
+    cy.getCloneInList(0).should('have.css', 'color', 'rgb(246, 75, 0)')
 
 
 \end{verbatim}
