@@ -847,16 +847,32 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.update()
         }
     },
-    
-    computeTotalRemovedClonesReads: function(){
-    var total_removed_clones_reads = 0;
-    for (var i = 0; i < this.clones.length; i++) {
-        if (this.clones[i].isRemoved()) {
-            total_removed_clones_reads += this.clones[i].getReads();
+    computeRemovedClonesReads: function(){
+        var removed_clones_reads = 0;
+        var removed_clones_reads_total = 0;
+        var time = this.getTime();
+        var germline = []
+
+        if (!this.system_selected || this.system_selected.length === 0) {
+            var germline = "undefined";
+        } else {
+            for (var i = 0; i < this.system_selected.length; i++) {
+                germline[i] = this.system_selected[i];
+            }
         }
-    }
-    this.total_removed_clones_reads = total_removed_clones_reads;
-    },
+        for (var j= 0; j < this.clones.length; j++) {
+            var c = this.clone(j)
+            if (this.clones[j].isRemoved()) {
+                removed_clones_reads += this.clones[j].getReads(time);
+                removed_clones_reads_total += this.clones[j].getReads(time);
+                if (!germline.includes(this.clones[j].get('germline'))) {
+                    removed_clones_reads -= this.clones[j].getReads(time);
+                }
+            }
+        }
+        this.removed_clones_reads = removed_clones_reads;
+        this.removed_clones_reads_total = removed_clones_reads_total;
+        },
 
     /**
      * [changeNormalisation description]
@@ -1405,7 +1421,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
         this.updateIcon();
         this.computeOrderWithStock();
-        this.computeTotalRemovedClonesReads()
+        this.computeRemovedClonesReads();
     },
 
     /**
@@ -1565,7 +1581,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         // Creation of newRemoved dict by germlines & timestamp
         for (var elt in this.system_available){
             var locus = this.system_available[elt];
-            newRemoved[locus] = [0];
+            newRemoved[locus] = [];
+            for (var sample = 0; sample < this.samples.number; sample++) {
+                newRemoved[locus][sample] = 0;
+            }
         }
 
         // compute size for each germlines of newRemoved
@@ -1577,8 +1596,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             } else if (c.isRemoved()) { 
                 for (var s = 0; s < this.samples.number ; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
-                        //newRemoved[c.germline][s] += this.clone(this.clusters[pos][k]).get('reads', s);
-                        newRemoved[c.germline][s] += 1;
+                        if (this.clone(this.clusters[pos][k]).get('reads', s) !== 0) {
+                            newRemoved[c.germline][s] += 1;
+                        }
                     }
                 }
             }

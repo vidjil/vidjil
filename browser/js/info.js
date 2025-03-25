@@ -161,14 +161,14 @@ Info.prototype = {
             reads_div.className = "reads_details";
 
             // Segmented reads
-            var div_segmented = this.build_line_read_number("info_segmented", "analyzed reads", "analyzed", this.m.reads.segmented_all);
+            var div_segmented = this.build_line_read_number("info_segmented", "analyzed reads", "analyzed", this.m.reads.segmented_all, total=true);
             div_segmented.title = "total: " + this.m.toStringThousands(this.m.reads.total[this.m.t]);
             reads_div.appendChild(div_segmented);
 
 
             // Segmented reads, on the selected system(s)
             if (this.m.system == "multi") {
-                div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented);
+                div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented, total=false);
                 reads_div.appendChild(div_segmented);
             }
 
@@ -409,22 +409,28 @@ Info.prototype = {
         return div;
     },
 
-    build_line_read_number: function (id, label, qualifier, read_number) {
+    build_line_read_number: function (id, label, qualifier, read_number, total=true) {
         var val = "no read";
         var warning_title = false;
         var warning_class = '' ;
-        var removed_reads = this.m.total_removed_clones_reads
+        var removed_reads = this.m.removed_clones_reads;
+        var removed_reads_total = this.m.removed_clones_reads_total
 
-        if (read_number[this.m.t] > 0) {
-            var percent = ((read_number[this.m.t] - removed_reads) / this.m.reads.total[this.m.t]) * 100;
-            val = this.m.toStringThousands(read_number[this.m.t] - removed_reads) + " (" + percent.toFixed(2) + "%)";
+        if (total) {
+            var percent = ((read_number[this.m.t] - removed_reads_total) / this.m.reads.total[this.m.t]) * 100;
+            val = this.m.toStringThousands(read_number[this.m.t]- removed_reads_total) + " (" + percent.toFixed(2) + "%)"; 
+        } else {
+            if (read_number[this.m.t] > 0) {
+                var percent = ((read_number[this.m.t] - removed_reads) / this.m.reads.total[this.m.t]) * 100;
+                val = this.m.toStringThousands(read_number[this.m.t]- removed_reads) + " (" + percent.toFixed(2) + "%)";
 
-            if (percent < 10) {
-                warning_title = "Very few reads " + qualifier;
-                warning_class = "alert";
-            } else if (percent < 50) {
-                warning_title = "Few reads " + qualifier;
-                warning_class = "warning";
+                if (percent < 10) {
+                    warning_title = "Very few reads " + qualifier;
+                    warning_class = "alert";
+                } else if (percent < 50) {
+                    warning_title = "Few reads " + qualifier;
+                    warning_class = "warning";
+                }
             }
         }
         div = this.build_named_info_line(id, label, val, false);

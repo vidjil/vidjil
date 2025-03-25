@@ -781,7 +781,7 @@ Clone.prototype = {
      * @param {boolean} ignore_expected_normalisation - Return size with no normalisation for scatterplot usage
      * @return {float} size
      * */
-    getSize: function (time, ignore_expected_normalisation) {
+    getSize: function (time, ignore_expected_normalisation, true_size_removed) {
         if (ignore_expected_normalisation == undefined) { ignore_expected_normalisation=false}
 
         if (!this.quantifiable)
@@ -791,7 +791,7 @@ Clone.prototype = {
         
         if (this.m.reads.segmented[time] === 0 ) return 0;
 
-        if (this.isRemoved()) return 0;
+        if (this.isRemoved() && !true_size_removed) return 0;
 
         // getReads returns the number of clones for the removed clonotype
         // TODO: overwrite getSize method with new class for removed clonotypes ?
@@ -799,7 +799,11 @@ Clone.prototype = {
         //if (this.id.includes("removed")) return this.getReads(time);
         if (this.id != null && this.id.includes("removed")) return this.getReads(time);
         
-        var result     = this.getReads(time) / (this.m.reads.segmented[time] - this.m.total_removed_clones_reads);
+        // return the size without considering removed clones for getMaxSizeTimepoint
+        if (true_size_removed) {
+            return (this.getReads(time) / this.m.reads.segmented[time])
+        }
+        var result     = this.getReads(time) / (this.m.reads.segmented[time] - this.m.removed_clones_reads);
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
             return result
@@ -856,7 +860,7 @@ Clone.prototype = {
         var max=0;
         var maxTime=0;
         for (var i in this.m.samples.order){
-            var tmp=this.getSize(this.m.samples.order[i]);
+            var tmp=this.getSize(this.m.samples.order[i], undefined, true);
             if (tmp>max){ 
                 max=tmp;
                 maxTime=this.m.samples.order[i];
@@ -865,7 +869,6 @@ Clone.prototype = {
         return maxTime;
     }, 
     
-
     /**
      * @return {string} the global size ratio of the clone at the given time
      */
