@@ -847,7 +847,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.update()
         }
     },
-    computeRemovedClonesReads: function(){
+    computeRemovedClonesReads: function(time){
         var removed_clones_reads = 0;
         var removed_clones_reads_total = 0;
         var time = this.getTime();
@@ -861,12 +861,11 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
         for (var j= 0; j < this.clones.length; j++) {
-            var c = this.clone(j)
             if (this.clones[j].isRemoved()) {
-                removed_clones_reads += this.clones[j].getReads(time);
-                removed_clones_reads_total += this.clones[j].getReads(time);
-                if (!germline.includes(this.clones[j].get('germline'))) {
-                    removed_clones_reads -= this.clones[j].getReads(time);
+                var reads = this.clones[j].getReads(time);
+                removed_clones_reads_total += reads;
+                if (germline.includes(this.clones[j].get('germline'))) {
+                    removed_clones_reads += reads;
                 }
             }
         }

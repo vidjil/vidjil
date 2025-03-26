@@ -779,31 +779,23 @@ Clone.prototype = {
      * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
      * @param {boolean} ignore_expected_normalisation - Return size with no normalisation for scatterplot usage
+     * @param {boolean} true_size_removed - Return size without substracting removed clonotypes from total
      * @return {float} size
      * */
-    getSize: function (time, ignore_expected_normalisation, true_size_removed) {
-        if (ignore_expected_normalisation == undefined) { ignore_expected_normalisation=false}
-
-        if (!this.quantifiable)
-            return this.NOT_QUANTIFIABLE_SIZE
+    getSize: function (time, ignore_expected_normalisation=false, true_size_removed=false) {
+        if (!this.quantifiable) return this.NOT_QUANTIFIABLE_SIZE
 
         time = this.m.getTime(time);
-        
         if (this.m.reads.segmented[time] === 0 ) return 0;
-
         if (this.isRemoved() && !true_size_removed) return 0;
 
-        // getReads returns the number of clones for the removed clonotype
-        // TODO: overwrite getSize method with new class for removed clonotypes ?
-        // FIX: doesn't work with clonality setup for some reason
-        //if (this.id.includes("removed")) return this.getReads(time);
-        if (this.id != null && this.id.includes("removed")) return this.getReads(time);
+        if (this.id && this.id.includes("removed")) return this.getReads(time);
         
-        // return the size without considering removed clones for getMaxSizeTimepoint
-        if (true_size_removed) {
-            return (this.getReads(time) / this.m.reads.segmented[time])
-        }
-        var result     = this.getReads(time) / (this.m.reads.segmented[time] - this.m.removed_clones_reads);
+        // Compute size based on whether removed clones should be considered
+        var reads = this.getReads(time);
+        var total_reads = this.m.reads.segmented[time];
+        var result = true_size_removed ? (reads / total_reads) : (reads / (total_reads - this.m.removed_clones_reads));
+
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
             return result
@@ -847,7 +839,7 @@ Clone.prototype = {
     getMaxSize: function () {
         var max=0;
         for (var i in this.m.samples.order){
-            var tmp=this.getSize(this.m.samples.order[i]);
+            var tmp=this.getSize(this.m.samples.order[i], undefined, true_size_removed=true);
             if (tmp>max) max=tmp;
         }
         return max;
@@ -860,7 +852,7 @@ Clone.prototype = {
         var max=0;
         var maxTime=0;
         for (var i in this.m.samples.order){
-            var tmp=this.getSize(this.m.samples.order[i], undefined, true);
+            var tmp=this.getSize(this.m.samples.order[i], undefined, true_size_removed=true);
             if (tmp>max){ 
                 max=tmp;
                 maxTime=this.m.samples.order[i];

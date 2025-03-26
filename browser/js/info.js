@@ -416,23 +416,21 @@ Info.prototype = {
         var removed_reads = this.m.removed_clones_reads;
         var removed_reads_total = this.m.removed_clones_reads_total
 
-        if (total) {
-            var percent = ((read_number[this.m.t] - removed_reads_total) / this.m.reads.total[this.m.t]) * 100;
-            val = this.m.toStringThousands(read_number[this.m.t]- removed_reads_total) + " (" + percent.toFixed(2) + "%)"; 
-        } else {
-            if (read_number[this.m.t] > 0) {
-                var percent = ((read_number[this.m.t] - removed_reads) / this.m.reads.total[this.m.t]) * 100;
-                val = this.m.toStringThousands(read_number[this.m.t]- removed_reads) + " (" + percent.toFixed(2) + "%)";
-
-                if (percent < 10) {
-                    warning_title = "Very few reads " + qualifier;
-                    warning_class = "alert";
-                } else if (percent < 50) {
-                    warning_title = "Few reads " + qualifier;
-                    warning_class = "warning";
-                }
-            }
+        if (read_number[this.m.t] > 0) {
+            var removed = total ? removed_reads_total : removed_reads;
+            var remaining_reads = read_number[this.m.t] - removed;
+            var percent = (remaining_reads / this.m.reads.total[this.m.t]) * 100;
+            val = this.m.toStringThousands(remaining_reads) + " (" + percent.toFixed(2) + "%)"; 
         }
+                
+        if (percent < 10) {
+            warning_title = "Very few reads " + qualifier;
+            warning_class = "alert";
+        } else if (percent < 50) {
+            warning_title = "Few reads " + qualifier;
+            warning_class = "warning";
+        }
+
         div = this.build_named_info_line(id, label, val, false);
 
         if (warning_class !== "") {
