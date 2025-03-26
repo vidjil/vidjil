@@ -847,14 +847,17 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.update()
         }
     },
+    /* 
+    compute total removed reads for the selected germline and the total at the curent time
+     */
     computeRemovedClonesReads: function(time){
         var removed_clones_reads = 0;
         var removed_clones_reads_total = 0;
-        var time = this.getTime();
+        time = this.getTime();
         var germline = []
 
         if (!this.system_selected || this.system_selected.length === 0) {
-            var germline = "undefined";
+            germline = "undefined";
         } else {
             for (var i = 0; i < this.system_selected.length; i++) {
                 germline[i] = this.system_selected[i];

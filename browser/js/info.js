@@ -414,12 +414,13 @@ Info.prototype = {
         var warning_title = false;
         var warning_class = '' ;
         var removed_reads = this.m.removed_clones_reads;
-        var removed_reads_total = this.m.removed_clones_reads_total
+        var removed_reads_total = this.m.removed_clones_reads_total;
+        var percent;
 
         if (read_number[this.m.t] > 0) {
             var removed = total ? removed_reads_total : removed_reads;
             var remaining_reads = read_number[this.m.t] - removed;
-            var percent = (remaining_reads / this.m.reads.total[this.m.t]) * 100;
+            percent = (remaining_reads / this.m.reads.total[this.m.t]) * 100;
             val = this.m.toStringThousands(remaining_reads) + " (" + percent.toFixed(2) + "%)"; 
         }
                 

@@ -436,31 +436,29 @@ Model_loader.prototype = {
             self.system = germline_list[0];
         }
 
-        // add virtuals clones (ex-others)
+        // add virtuals clones (ex-others and removed clonotype counter)
         for (var q = 0; q < this.system_available.length; q++) {
             var other = {
                 "sequence": 0,
-                "id": "other"+this.system_available[q],
+                "id": "other" + this.system_available[q],
                 "top": 0,
                 "reads": [],
-                "germline" : this.system_available[q],
+                "germline": this.system_available[q],
             };
             new Clone(other, self, index, C_SIZE_OTHER);
-            index++ ;
+            index++;
+
+            var removed = {
+                "sequence": 0,
+                "id": "removed" + this.system_available[q],
+                "top": 0,
+                "reads": [],
+                "germline": this.system_available[q],
+            };
+            new Clone(removed, self, index, C_SIZE_OTHER);
+            index++;
         }
         
-        for (var q = 0; q < this.system_available.length; q++) {
-            var other = {
-                "sequence": 0,
-                "id": "removed"+this.system_available[q],
-                "top": 0,
-                "reads": [],
-                "germline" : this.system_available[q],
-            };
-            new Clone(other, self, index, C_SIZE_OTHER);
-            index++ ;
-        }
-
         //remove incomplete similarity matrix (TODO: fix fuse.py)
         this.similarity = {"nt": undefined, "aa": undefined};
         this.check_export_monitor()
