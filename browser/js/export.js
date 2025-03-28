@@ -1351,15 +1351,23 @@ Report.prototype = {
 
     // add a list of clones to current report
     addClones : function(list) {
+        var numberOfAddedClones = 0
         for (var i=0; i<list.length; i++){
             var clone_id  = m.clone(list[i]).id
-            if (this.clones.indexOf(clone_id) == -1)
+            if (this.clones.indexOf(clone_id) == -1) {
                 this.clones.push(clone_id)
+                numberOfAddedClones++
+            }
         }
-        // If menu is already open, update it
-        // Useful when user already selected clonotype, but don't add them
-        if ($("#report-menu").is(":visible")){
-            this.menu()
+        if (numberOfAddedClones > 0) {
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+
+            // Display message
+            console.log({"type": "flash", "msg": "report: " + numberOfAddedClones + " clone(s) added to the report" , "priority": 1});
         }
     },
 
@@ -1387,6 +1395,9 @@ Report.prototype = {
             if ($("#report-menu").is(":visible")){
                 this.menu()
             }
+
+            // Display message
+            console.log({"type": "flash", "msg": "report: all clones removed from the report" , "priority": 1});
         }
     },
 

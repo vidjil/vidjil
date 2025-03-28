@@ -112,6 +112,7 @@ describe('Report', function () {
 
     // type r to add clonotypes to the report
     cy.get("body").type("r")
+    cy.get('.flash_1').should("contain", "report: 3 clone(s) added to the report")
  
     // change active selection
     cy.selectCloneMulti([0, 3])
@@ -122,6 +123,7 @@ describe('Report', function () {
 
     // type shift+r to remove all clonotypes from report
     cy.get("body").type("{shift}R")
+    cy.get('.flash_1').should("contain", "report: all clones removed from the report")
 
     // all clones removed from report
     cy.get('#rs-selected-clones-count')
@@ -135,6 +137,7 @@ describe('Report', function () {
 
     // type ctrl+r to add clonotypes and open report
     cy.get("body").type("{ctrl}r")
+    cy.get('.flash_1').should("contain", "report: 2 clone(s) added to the report")
  
     // correct number of clone added to report
     cy.get('#rs-selected-clones-count')
@@ -145,6 +148,7 @@ describe('Report', function () {
 
     // type r to add clonotypes to the report
     cy.get("body").type("r")
+    cy.get('.flash_1').should("contain", "report: 2 clone(s) added to the report")
  
     // correct number of clone added to report
     cy.get('#rs-selected-clones-count')
