@@ -27,6 +27,7 @@ import "./info";
 import "./aligner";
 import "./network";
 import "./external";
+import "./report";
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
 Cypress.on("uncaught:exception", (err, runnable) => {

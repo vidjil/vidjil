@@ -76,6 +76,26 @@ describe('Report', function () {
 
     cy.get('#rs-clone-clone-001')
       .should("not.exist")
+
+    // check samples selection/un-selection
+    cy.get("#rs-selected-sample-count").contains("[2 selected]") // both samples are selected
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag") // T8045-BC081-Diag selected in blocks
+    cy.get("#rs-sample-select1").click() // unselected the 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag")
+    cy.get("#rs-sample-select1").click() // reselect the 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[2 selected]")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag")
+    cy.get("#rs-sample-select1").click({shiftKey: true}) // select only 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.get("#rs-sample-select0").should("have.class", "rs-unselected")
+    cy.get("#rs-sample-select1").should("have.class", "rs-selected")
+    cy.checkSelectedSampleInBlocks("T8045-BC082-fu1") // change as only one selected
+    cy.get("#rs-sample-select0").click({shiftKey: true}) // select only 1st sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.get("#rs-sample-select0").should("have.class", "rs-selected")
+    cy.get("#rs-sample-select1").should("have.class", "rs-unselected")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag") // change as only one selected
   })
 
 
