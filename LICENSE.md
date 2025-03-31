@@ -148,7 +148,7 @@ x is "current version" at time of release
 * @link             <https://github.com/select2/select2>
 * @license          MIT
 
-**seedrandom.js**       : A replacement of Math.random of javascript that allow to get fixed seed
+**resumable.js**       : A JavaScript library for providing multiple simultaneous, stable, fault-tolerant and resumable/restartable uploads via the HTML5 File API. 
 
 * @author           Steffen Fagerström Christensen + external contributors
 * @version          1.1.0
