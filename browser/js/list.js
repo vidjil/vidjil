@@ -525,11 +525,7 @@ List.prototype = {
             //update clone axis
             var axis = this.selectedAxis;
             cloneDom.color("axisBox", clone.getColor());
-            if (this.m.clones[cloneID].id.includes("removed")) {
-                cloneDom.content("axisBox", axis.fct(clone))
-            } else {
-                cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : axis.fct(clone))
-            }
+            cloneDom.content("axisBox", axis.pretty ? axis.pretty(axis.fct(clone)).outerHTML : axis.fct(clone))
             if (axis.hover != undefined){
                 cloneDom.title( "axisBox", axis.hover(clone, this.m.getTime()))
             } else {

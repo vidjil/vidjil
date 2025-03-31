@@ -788,13 +788,12 @@ Clone.prototype = {
         time = this.m.getTime(time);
         if (this.m.reads.segmented[time] === 0 ) return 0;
         if (this.isRemoved() && !true_size_removed) return 0;
-
-        if (this.id && this.id.includes("removed")) return this.getReads(time);
         
         // Compute size based on whether removed clones should be considered
         var reads = this.getReads(time);
         var total_reads = this.m.reads.segmented[time];
         var result = true_size_removed ? (reads / total_reads) : (reads / (total_reads - this.m.removed_clones_reads));
+        if (this.id && this.id.includes("removed")) return (reads / total_reads)
 
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
@@ -2166,6 +2165,7 @@ Clone.prototype = {
     },
 
     isInteractable: function() {
+        if (this.isRemoved()) return false
         var comp = (C_INTERACTABLE == (this.attributes & C_INTERACTABLE))
         return comp
     },

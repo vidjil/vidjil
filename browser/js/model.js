@@ -91,6 +91,9 @@ function Model() {
     setInterval(function(){return self.updateIcon()}, 100); 
 
     this.trimming_before_external = false
+
+    this.removed_clones_reads = 0;
+    this.removed_clones_reads_total = 0;
 }
 
 
@@ -1599,7 +1602,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 for (var s = 0; s < this.samples.number ; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
                         if (this.clone(this.clusters[pos][k]).get('reads', s) !== 0) {
-                            newRemoved[c.germline][s] += 1;
+                            newRemoved[c.germline][s] += this.clone(this.clusters[pos][k]).get('reads', s)
+                            //newRemoved[c.germline][s] += 1;
                         }
                     }
                 }
@@ -1608,8 +1612,12 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         // values assignation of other
         other_quantifiable_clones.forEach((pos) => {
             var c = this.clone(pos);
+            var time = this.getTime()
             c.reads = newRemoved[c.germline];
-            c.name = c.germline + " removed";
+            c.name = c.germline + " removed (% of total selected loci reads)";
+            if (c.getReads(time) == 0) {
+                c.hide();
+            }
         });  
     },
 
