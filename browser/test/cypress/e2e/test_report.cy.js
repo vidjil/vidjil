@@ -76,6 +76,26 @@ describe('Report', function () {
 
     cy.get('#rs-clone-clone-001')
       .should("not.exist")
+
+    // check samples selection/un-selection
+    cy.get("#rs-selected-sample-count").contains("[2 selected]") // both samples are selected
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag") // T8045-BC081-Diag selected in blocks
+    cy.get("#rs-sample-select1").click() // unselected the 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag")
+    cy.get("#rs-sample-select1").click() // reselect the 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[2 selected]")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag")
+    cy.get("#rs-sample-select1").click({shiftKey: true}) // select only 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.get("#rs-sample-select0").should("have.class", "rs-unselected")
+    cy.get("#rs-sample-select1").should("have.class", "rs-selected")
+    cy.checkSelectedSampleInBlocks("T8045-BC082-fu1") // change as only one selected
+    cy.get("#rs-sample-select0").click({shiftKey: true}) // select only 1st sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.get("#rs-sample-select0").should("have.class", "rs-selected")
+    cy.get("#rs-sample-select1").should("have.class", "rs-unselected")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag") // change as only one selected
   })
 
 
@@ -92,6 +112,7 @@ describe('Report', function () {
 
     // type r to add clonotypes to the report
     cy.get("body").type("r")
+    cy.get('.flash_1').should("contain", "report: 3 clone(s) added to the report")
  
     // change active selection
     cy.selectCloneMulti([0, 3])
@@ -102,6 +123,7 @@ describe('Report', function () {
 
     // type shift+r to remove all clonotypes from report
     cy.get("body").type("{shift}R")
+    cy.get('.flash_1').should("contain", "report: all clones removed from the report")
 
     // all clones removed from report
     cy.get('#rs-selected-clones-count')
@@ -115,6 +137,7 @@ describe('Report', function () {
 
     // type ctrl+r to add clonotypes and open report
     cy.get("body").type("{ctrl}r")
+    cy.get('.flash_1').should("contain", "report: 2 clone(s) added to the report")
  
     // correct number of clone added to report
     cy.get('#rs-selected-clones-count')
@@ -125,6 +148,7 @@ describe('Report', function () {
 
     // type r to add clonotypes to the report
     cy.get("body").type("r")
+    cy.get('.flash_1').should("contain", "report: 2 clone(s) added to the report")
  
     // correct number of clone added to report
     cy.get('#rs-selected-clones-count')

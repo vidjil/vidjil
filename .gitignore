@@ -99,11 +99,12 @@ vidjil-algo
 vidjil-algo/
 
 # Tests
-cypress/
+/cypress
 cypress.config.js
 algo/tests/should-get-tests/out/*
 algo/tests/data/analysis-with-windows.analysis.formatted
 algo/tests/data/analysis-with-windows.analysis.new.new.formatted
+browser/test/cypress/fixtures
 browser/test/cypress/reports
 browser/test/cypress/screenshots
 browser/test/cypress/videos
@@ -116,6 +117,8 @@ server/py4web/apps/vidjil/tests/cypress/screenshots/*
 server/py4web/apps/vidjil/tests/cypress/downloads/*
 server/py4web/apps/vidjil/tests/cypress/fixtures
 server/py4web/apps/vidjil/tests/cypress/support
+server/py4web/apps/vidjil/tests/cypress/plugins
+server/py4web/apps/vidjil/tests/cypress/integration
 server/.coverage
 tools/tests/should.retry
 tools/tests/should.warned.retry
