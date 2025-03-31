@@ -496,6 +496,10 @@ def get_data():
         data["info"] = sample_set_specific_data.info
         data["sample_name"] = name
         data["group_id"] = get_set_group(request.query["sample_set_id"])
+        data["user"] = (
+            f"{auth.get_user().get('first_name')} {auth.get_user().get('last_name')}"
+        )
+        log.debug(f"{data["user"]=}")
         specific_id = "patient_id"
         if sample_set.sample_type == sampleSet.SET_TYPE_GENERIC:
             specific_id = "generic_id"
