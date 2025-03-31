@@ -838,7 +838,6 @@ def get_analysis():
         # récupération des infos se trouvant dans le fichier .analysis
         analysis_data = get_analysis_data(request.query["sample_set_id"])
         dumped_json = json.dumps(analysis_data, separators=(",", ":"))
-        print(f"{analysis_data=} - {dumped_json=}")
 
         log.info(
             "load analysis",
