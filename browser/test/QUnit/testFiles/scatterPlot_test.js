@@ -26,7 +26,7 @@ QUnit.test("grid", function(assert) {
                                     }, 
                                     "buildSystemGrid()");
     
-    assert.equal(sp.nodes.length, 7 , "check nodes");
+    assert.equal(sp.nodes.length, 9 , "check nodes");
 
     sp.changeSplitMethod("V/5' gene", "V/5' gene", "grid");
     sp.update()

@@ -51,22 +51,23 @@ QUnit.test("= / > / <", function(assert) {
     m.initClones()
     assert.equal(m.filter.filters.length, 1, "filter list must contain a single filter, found "+ m.filter.filters.length)
     
-    assert.deepEqual(m.filter.visible(), [0,1,2,3,4,5,6],   "default top>50, expect clones 0,1,2,3,4, 5,6 to be visible, found " + m.filter.visible())
+    // clone 6 is now removed other
+    assert.deepEqual(m.filter.visible(), [0,1,2,3,4,5,7],   "default top>50, expect clones 0,1,2,3,4, 5,7 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", ">", 0)
-    assert.deepEqual(m.filter.visible(), [5,6],            "Top>0, expect clones 5,6(other) to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [5,7],            "Top>0, expect clones 5,7(other) to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", ">", 1)
-    assert.deepEqual(m.filter.visible(), [0,5,6],           "Top>1, expect clones 0, 5,6 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [0,5,7],           "Top>1, expect clones 0, 5,7 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", ">", 4)
-    assert.deepEqual(m.filter.visible(), [0,1,2,3,5,6],     "Top>4 ,expect clone 0,1,2,3, 5,6 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [0,1,2,3,5,7],     "Top>4 ,expect clone 0,1,2,3, 5,7 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", "<", 2)
-    assert.deepEqual(m.filter.visible(), [1,2,3,5,6],       "Top>4 && Top<2 ,expect clone 1,2,3, 5,6 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [1,2,3,5,7],       "Top>4 && Top<2 ,expect clone 1,2,3, 5,7 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", "=", 3)
-    assert.deepEqual(m.filter.visible(), [1,3,5,6],         "Top>4 && Top<2 && top=3 ,expect clone 1,3, 5,6 to be visible, found " + m.filter.visible())
+    assert.deepEqual(m.filter.visible(), [1,3,5,7],         "Top>4 && Top<2 && top=3 ,expect clone 1,3, 5,7 to be visible, found " + m.filter.visible())
 
     assert.equal(m.filter.filters.length, 3, "filter list must contain 3 filters, found "+ m.filter.filters.length)
 

@@ -517,12 +517,12 @@ QUnit.test("distribution_load", function(assert) {
     m1.parseJsonData(json_data, 100)
     m1.initClones()
 
-    assert.equal(m1.clones.length, 7, 'Correct number of clones WITHOUT distributions clones')
+    assert.equal(m1.clones.length, 9, 'Correct number of clones WITHOUT distributions clones')
     assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITHOUT distributions clones')
 
     m1.distributions = data_distributions
     m1.loadAllDistribClones()
-    assert.equal(m1.clones.length, 12, 'Correct number of clones WITH distributions clones')
+    assert.equal(m1.clones.length, 14, 'Correct number of clones WITH distributions clones')
     assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITH distributions clones')
    
     // Add distrib values directly into json data
@@ -532,7 +532,7 @@ QUnit.test("distribution_load", function(assert) {
     var m2 = new Model();
     m2.parseJsonData(json_data_bis, 100)
 
-    assert.equal(m2.clones.length, 12, 'Correct number of clones WITH distributions clones (directly from json_data)')
+    assert.equal(m2.clones.length, 14, 'Correct number of clones WITH distributions clones (directly from json_data)')
     assert.equal(countRealClones(m2), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
    
 });
