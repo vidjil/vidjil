@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 
     <head>
@@ -99,6 +100,7 @@
             }
 
             .container:hover .container_button {
+                cursor: pointer;
                 display: block;
             }
 
@@ -301,6 +303,15 @@
                 text-align: center;
                 width: 50px;
             }
+            .clone_button {
+                font-size: 150%;
+                display: none;
+            }
+            .clone:hover .clone_button {
+                font-size: 150%;
+                cursor: pointer;
+                display: block;
+            }
             .log-date{
                 width: 150px;
                 opacity: 0.8;
@@ -403,11 +414,6 @@
     </head>
     
     <body class="page">
-
-<!-- bug with webkit
-        <header class="print"> vidjil header : hello !! </header>
-        <footer class="print"> vidjil footer : copyright blabla / rbx.vidjil.org/browser | 2015 voodooj company </footer>
--->
         <div id="header">
             <div id="header-logo"><div id="logo">Vidjil <span class="logo">(beta)</span></div></div>
             <div id="header-title">Report template</div>

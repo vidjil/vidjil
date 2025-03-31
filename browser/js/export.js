@@ -1647,12 +1647,22 @@ Report.prototype = {
     },
     
     clone : function(cloneID, block) {
+        var self = this;
+
+        var clone = $('<div/>', {'class': 'clone'});
         var color = this.getCloneExportColor(cloneID);
-        var clone = $('<div/>', {'class': 'clone'})
-        var clone_polyline = document.getElementById("polyline" + cloneID)
-        
+
         var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
+
+        // Insert comments button
+        $('<i/>', {
+            'class': 'clone_button pointer icon-pencil-1 float-right',
+            'title': 'insert comments below this clone'
+        }).click(function(){self.insertCloneComments(clone)})
+          .appendTo(head);
+
         //clone svg path icon
+        var clone_polyline = document.getElementById("polyline" + cloneID);
         if (clone_polyline != null){
             var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1772,7 +1782,41 @@ Report.prototype = {
             j++;
           }
         }
-        return clone
+
+        return clone;
+    },
+
+    cloneComments: function() {
+        var self = this;
+
+        var cloneComments = $('<div/>', {'class': 'clone'});
+
+        // Insert close button
+        var head = $('<span/>', {'class': 'clone_head'}).appendTo(cloneComments);
+        $('<i/>', {
+            'class': 'clone_button pointer icon-cancel float-right',
+            'title': 'Remove this clone comments'
+        }).click(function(){self.removeCloneComments(cloneComments)})
+            .appendTo(head);
+        $('<span/>', {'text':"Comments", 'class': 'clone_name'}).appendTo(head);
+
+        $('<textarea/>', {'title': "These comments won't be saved.", 
+                        'style': "width: 100%; display: block; overflow: hidden; resize: vertical;",
+                        'rows': 5, 
+                        'placeholder': "Write clone comments"
+                        }).appendTo(cloneComments)
+    
+        return cloneComments
+    },
+
+    insertCloneComments: function(clone){
+        var self = this;
+        var comment = self.cloneComments();
+        comment.insertAfter(clone);
+    },
+
+    removeCloneComments: function(cloneComments){
+        cloneComments.remove();
     },
 
     sampleLog: function(block) {
