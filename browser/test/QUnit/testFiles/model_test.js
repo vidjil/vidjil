@@ -15,8 +15,8 @@ QUnit.test("convert", function(assert) {
         "cdr3": {"start": 1, "end": 4}, // 1-based
         "foo": {"start": 18, "stop": 43}
     };
-    assert.equal(m.getConvertedBoundary(json_clone3.seg, "5", "end"), 5, "getConvertedBoundary existant: Ok");
-    assert.equal(typeof m.getConvertedBoundary(json_clone3.seg, "5", "start"), 'undefined', "getConvertedBoundary non existant: Ok");
+    assert.equal(m.getConvertedBoundary(json_clone3.seg, "5", "end"), 5, "getConvertedBoundary existing: Ok");
+    assert.equal(typeof m.getConvertedBoundary(json_clone3.seg, "5", "start"), 'undefined', "getConvertedBoundary not existing: Ok");
     assert.deepEqual(m.getConvertedSegNames(seg['cdr3']), {"start": 1, "stop": 4}, "getConvertedSegNames (before 0-based conversion)")
 
     assert.deepEqual(m.getConvertedSeg(seg, "3"), {"name": "J", "start": 3}, "getConvertedSeg: Ok");
@@ -91,8 +91,8 @@ QUnit.test("load with new order && stock_order", function(assert) {
     m.parseJsonAnalysis(analysis_data_stock_order_with_error)
     m.initClones()
 
-    assert.deepEqual(m.samples.order,          [2, 0, 3], "Correct order after loading analysis with dusplicate sample in order" )
-    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading analysis with dusplicate sample in order" )
+    assert.deepEqual(m.samples.order,          [2, 0, 3], "Correct order after loading analysis with duplicate sample in order" )
+    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading analysis with duplicate sample in order" )
     
 });
 
@@ -269,6 +269,19 @@ QUnit.test("system selection", function(assert) {
     assert.equal(m.system_selected.length, 1, "one system selected (IGH)")
     assert.equal(m.reads.segmented[0], 100, "100 reads segmented on IGH")
     assert.notEqual(m.system_selected.indexOf("IGH"), 1, "IGH selected")
+
+    // test analysis loading
+    m.parseJsonData(json_data, 100)
+    assert.deepEqual(m.system_selected, m.system_available, "All systems should be selected by default")
+    analysis_data_systems = JSON.parse(JSON.stringify(analysis_data))
+    analysis_data_systems.system_selected = ["TRG"]
+    m.parseJsonAnalysis(analysis_data_systems)
+
+    assert.notEqual(m.system_available.indexOf("IGH"), -1, "IGH system is available after analysis load")
+    assert.notEqual(m.system_available.indexOf("TRG"), -1, "TRG system is available after analysis load")
+    assert.equal(m.system_selected.length, 1, "We just have 1 system selected after analysis load")
+    assert.notEqual(m.system_selected.indexOf("TRG"), -1, "TRG system is selected after analysis load")
+    assert.equal(m.system_selected.indexOf("IGH"), -1, "IGH system is not selected after analysis load")
 });
 
 QUnit.test("model: analysis sample data application", function(assert) {

@@ -1,8 +1,8 @@
+import datetime
 import json
 import logging
 import os
 import pathlib
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -545,12 +545,6 @@ class TestDefaultController:
     # TODO: add other tests !
 
     ##################################
-    # Tests on default_controller.get_analysis()
-    ##################################
-
-    # TODO: add tests for default_controller.get_analysis()
-
-    ##################################
     # Tests on default_controller.save_analysis()
     ##################################
 
@@ -562,17 +556,12 @@ class TestDefaultController:
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1),
         )
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)
-        sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        analysis_example_file = Path(
+            test_utils.get_resources_path(), "example.analysis"
         )
-        json_content_to_upload = (
-            '{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}'
-        )
-        with tempfile.NamedTemporaryFile(mode="w", delete=False) as analysis:
-            analysis.write(json_content_to_upload)
-        with open(analysis.name, "rb") as file:
-            upload_helper = test_utils.UploadHelper(file, "plopapou")
+        with open(analysis_example_file, "rb") as file:
+            upload_helper = test_utils.UploadHelper(file, "example.analysis")
             save_upload_folder = db.analysis_file.analysis_file.uploadfolder
             try:
                 db.analysis_file.analysis_file.uploadfolder = (
@@ -585,10 +574,6 @@ class TestDefaultController:
                     keep_session=True,
                     params={"format": "json"},
                     query={
-                        "patient": patient_id,
-                        "info": "fake info",
-                        "samples_id": str(sequence_file_id),
-                        "samples_info": "fake sample info",
                         "sample_set_id": sample_set_id,
                     },
                 ):
@@ -606,11 +591,129 @@ class TestDefaultController:
                     test_utils.get_results_path(), analysis_file["analysis_file"]
                 )
                 assert result_file.exists()
-                assert result_file.read_text() == json_content_to_upload
+                assert result_file.read_text() == analysis_example_file.read_text()
                 os.remove(result_file)
             finally:
                 db.analysis_file.analysis_file.uploadfolder = save_upload_folder
-        os.remove(analysis.name)
+
+    ##################################
+    # Tests on default_controller.get_analysis()
+    ##################################
+
+    def text_get_analysis_not_logged(self):
+        # Given : not logged
+
+        # When : Calling get_analysis
+        with pytest.raises(HTTP) as result:
+            with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+                default_controller.get_analysis()
+
+        # Then : We get a redirect
+        result = result.value
+        assert result.status == 303
+
+    def test_get_analysis_no_analysis(self):
+        """
+        Test get_analysis when there is no analysis recorded for the sample set.
+        """
+        # Given : Logged as other user and create a sample set without analysis
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        db_manipulation_utils.add_sequence_file(sample_set_id, user_id)
+
+        # When : Calling get_analysis
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": sample_set_id},
+        ):
+            json_result = default_controller.get_analysis()
+
+        # Then : Check result
+        result = json.loads(json_result)
+        expected_result = {
+            "samples": {
+                "number": 0,
+                "original_names": [],
+                "order": [],
+                "info_sequence_file": [],
+            },
+            "custom": [],
+            "clusters": [],
+            "clones": [],
+            "tags": {},
+            "report_save": {},
+            "vidjil_json_version": "2014.09",
+        }
+        assert result == expected_result
+
+    def test_get_analysis_with_data(self):
+        """
+        Test get_analysis with an analysis recorded for the sample set.
+        """
+        # Given : Logged as other user and create a sample set with analysis
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+
+        # Insert analysis directly in the database
+        save_upload_folder = db.analysis_file.analysis_file.uploadfolder
+        saved_dir_results = settings.DIR_RESULTS
+        analysis_file_id = None
+        try:
+            db.analysis_file.analysis_file.uploadfolder = test_utils.get_results_path()
+            settings.DIR_RESULTS = test_utils.get_results_path()
+            analysis_example_file = Path(
+                test_utils.get_resources_path(), "example.analysis"
+            )
+            with open(analysis_example_file, "rb") as analysis_file:
+                analysis_file_id = db.analysis_file.insert(
+                    analysis_file=db.analysis_file.analysis_file.store(
+                        analysis_file, "example.analysis"
+                    ),
+                    sample_set_id=sample_set_id,
+                    analyze_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                )
+
+            # When : Calling get_analysis
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"sample_set_id": sample_set_id},
+            ):
+                json_result = default_controller.get_analysis()
+
+            # Then : Check result
+            result = json.loads(json_result)
+            expected_result = json.loads(analysis_example_file.read_text())
+            assert result["samples"] == expected_result["samples"]
+            assert result["clusters"] == expected_result["clusters"]
+            assert result["clones"] == expected_result["clones"]
+            assert result["report_save"] == expected_result["report_save"]
+            assert (
+                result["vidjil_json_version"] == expected_result["vidjil_json_version"]
+            )
+            assert result["system_selected"] == expected_result["system_selected"]
+        finally:
+            if analysis_file_id is not None:
+                result_file = Path(
+                    test_utils.get_results_path(),
+                    db.analysis_file[analysis_file_id].analysis_file,
+                )
+                os.remove(result_file)
+            db.analysis_file.analysis_file.uploadfolder = save_upload_folder
+            settings.DIR_RESULTS = saved_dir_results
 
     ##################################
     # Tests on default_controller.impersonate()

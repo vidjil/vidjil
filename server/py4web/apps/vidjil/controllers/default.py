@@ -802,7 +802,7 @@ def get_custom_data():
 
 #########################################################################
 # return .analysis file
-# need patient_id
+# need sample_set_id or patient_id or run_id
 # need patient admin or read permission
 @action("/vidjil/default/get_analysis", method=["POST", "GET"])
 @action.uses(db, auth.user)
@@ -888,7 +888,6 @@ def save_analysis():
         ts = time.time()
 
         sample_set_id = request.params["sample_set_id"]
-
         db.analysis_file.insert(
             analysis_file=db.analysis_file.analysis_file.store(f.file, f.filename),
             sample_set_id=sample_set_id,
