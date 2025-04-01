@@ -8,6 +8,7 @@ class Uploader {
     // Initialize Resumable.js
     this.resumable = new Resumable({
       target: this.db.db_address + "file/resumable_upload",
+      chunkSize: 10*1024*1024,
       testChunks: true,
       throttleProgressCallbacks: 1,
       withCredentials: true,
