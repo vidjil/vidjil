@@ -51,7 +51,7 @@ QUnit.test("= / > / <", function(assert) {
     m.initClones()
     assert.equal(m.filter.filters.length, 1, "filter list must contain a single filter, found "+ m.filter.filters.length)
     
-    // clone 6 is now removed other
+    // clone 5/7 are other and 6/8 removed
     assert.deepEqual(m.filter.visible(), [0,1,2,3,4,5,7],   "default top>50, expect clones 0,1,2,3,4, 5,7 to be visible, found " + m.filter.visible())
 
     m.filter.add("Top", ">", 0)
@@ -81,18 +81,18 @@ QUnit.test("focus/hide", function(assert) {
     // test focus filter 
     m.multiSelect([0,2,3])
     m.filter.add("Clonotype", "focus", m.getSelected())
-    assert.deepEqual(m.filter.filtered(), [1,4,5,6],    "focus, expect clone 1,4,5,6 to be filtered out, found " + m.filter.filtered())
+    assert.deepEqual(m.filter.filtered(), [1,4,5,6,7,8],    "focus, expect clone 1,4,5,6,7,8 to be filtered out, found " + m.filter.filtered())
 
     // test hide filter
     m.unselectAll()
     m.select(2)
     m.filter.add("Clonotype", "hide", m.getSelected())
-    assert.deepEqual(m.filter.filtered(), [1,2,4,5,6],  "hide, expect clone 1,2,4,5,6 to be filtered out, found " + m.filter.filtered())
+    assert.deepEqual(m.filter.filtered(), [1,2,4,5,6,7,8],  "hide, expect clone 1,2,4,5,6,7,8 to be filtered out, found " + m.filter.filtered())
 
-    // reset filter
+    // reset filter, clone 6 and 8 have no reads and are hidden by default
     m.filter.remove("Clonotype", "focus", undefined)
     m.filter.remove("Clonotype", "hide", undefined)
-    assert.deepEqual(m.filter.filtered(), [],        "reset, expect no clone to be filtered out, found " + m.filter.filtered())
+    assert.deepEqual(m.filter.filtered(), [6, 8],        "reset, expect no clone to be filtered out except 6 and 8, found " + m.filter.filtered())
 
     // check filter list content
     assert.equal(m.filter.filters.length, 1, "filter list must contain a single filter, found "+ m.filter.filters.length)
@@ -124,7 +124,7 @@ QUnit.test("search", function(assert) {
     
     //reset
     m.filter.remove("Clonotype", "search", undefined)
-    assert.deepEqual(m.filter.filtered(), [], "expect no clone to be filtered out , found " + m.filter.filtered())
+    assert.deepEqual(m.filter.filtered(), [6, 8], "expect no clone to be filtered out except 6 and 8, found " + m.filter.filtered())
     assert.equal(m.filter.filters.length, 1, "filter list must contain 1 filters, found "+ m.filter.filters.length)
 
 });

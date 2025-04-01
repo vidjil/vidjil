@@ -230,13 +230,12 @@ QUnit.test("cluster", function(assert) {
 
     m.break([0])
     assert.deepEqual(m.clusters[1], [1], "break [0] -> [1] is alone");
-
     m.restoreClusters()
     m.restoreClusters()
     assert.deepEqual(m.clusters[0], [0,2], "restore previous clusters -> [0,2]");
     
     m.resetClusters()
-    assert.deepEqual(m.clusters, [[0],[1],[2],[3],[4],[5],[6]], "resetClusters");
+    assert.deepEqual(m.clusters, [[0],[1],[2],[3],[4],[5],[6],[7],[8]], "resetClusters");
     
     var m = new Model();
     m.parseJsonData(json_data,100)
