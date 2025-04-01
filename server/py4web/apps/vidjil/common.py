@@ -52,24 +52,6 @@ class CORS(Fixture):
 # headers="Content-Type" is required to prevent a different CORs browser issue.
 cors = CORS(origin="https://localhost:8000/vidjil", headers="Content-Type")
 
-
-# #######################################################
-# implement custom loggers from settings.LOGGERS
-# #######################################################
-logger = logging.getLogger("py4web:" + settings.APP_NAME)
-formatter = logging.Formatter(
-    "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
-)
-for item in settings.LOGGERS:
-    level, filename = item.split(":", 1)
-    if filename in ("stdout", "stderr"):
-        handler = logging.StreamHandler(getattr(sys, filename))
-    else:
-        handler = logging.FileHandler(filename)
-    handler.setFormatter(formatter)
-    logger.setLevel(getattr(logging, level.upper(), "DEBUG"))
-    logger.addHandler(handler)
-
 # #######################################################
 # create required folders
 # #######################################################
@@ -192,23 +174,37 @@ class UserLogHandler(logging.Handler):
             db.commit()
 
 
-def _init_log():
+def _init_log() -> logging.LoggerAdapter:
     """
     adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
     """
 
-    def create_handler(filename, level):
+    def create_handler(filename: str, level: int) -> logging.Handler:
         try:
             handler = logging.FileHandler(filename)
         except Exception as exception:
             print(f"Error when trying to create logger to {filename}: {exception=}")
             handler = logging.StreamHandler(sys.stderr)
-        else:
+        finally:
             handler.setLevel(level)
             handler.setFormatter(formatter)
         return handler
 
-    logger = logging.getLogger("vidjil")  # (request.application)
+    def create_stdout_handler() -> logging.Handler:
+        try:
+            handler = logging.StreamHandler(sys.stdout)
+        except Exception as exception:
+            print(f"Error when trying to create logger to stdout: {exception=}")
+            handler = logging.StreamHandler(sys.stderr)
+        finally:
+            log_level = logging.INFO
+            if settings.LOG_LEVEL in logging.getLevelNamesMapping():
+                log_level = logging.getLevelNamesMapping()[settings.LOG_LEVEL]
+            handler.setLevel(log_level)
+            handler.setFormatter(formatter)
+        return handler
+
+    logger = logging.getLogger("vidjil")
     if not logger.handlers:
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
@@ -217,12 +213,12 @@ def _init_log():
 
         logger.addHandler(create_handler(settings.LOG_DEBUG, logging.DEBUG))
         logger.addHandler(create_handler(settings.LOG_INFO, logging.INFO))
+        logger.addHandler(create_stdout_handler())
         logger.addHandler(UserLogHandler())
     return MsgUserAdapter(logger, {})
 
 
 log = _init_log()
-
 
 # #######################################################
 # Instantiate the object and actions that handle auth
