@@ -267,13 +267,44 @@ Shortcut.prototype = {
                     m.filter.add("Clonotype", "hide", self.m.getSelected())
             }
             break;
+
+        // Add to report
+        case 'r':
+        case 'R':
+            e.preventDefault()
+            if (e.ctrlKey || e.metakey) {
+                // Ctrl+r : Open export report menu with current selection of sample and clones
+                report.selectSample(m.t)
+                if (m.getSelected().length !== 0) {
+                    report.removeAllClones()
+                    report.addClones(self.m.getSelected())
+                }
+                report.menu()
+            }
+            else if (e.shiftKey) {
+                // Shift+r : remove all clonotype from report
+                report.removeAllClones()
+            } else {
+                // no ctrl, no shift : add selected clonotypes to report
+                if (m.getSelected().length !== 0) {
+                    report.addClones(self.m.getSelected())
+                }
+            }
+            break;
             
             // Scatterplot
         case '#':   // switch grid/bar mode
             e.preventDefault()
             m.sp.switchMode()
             break;
+
+        case '?':
+            // Display keyboard shortcuts help
+            // To trick browser to prevent popup detection, emulate a click on a button
+            document.getElementById("help_shortcuts").click();
+            break;
         }
     }
 }
+
 Shortcut.prototype = $.extend(Object.create(View.prototype), Shortcut.prototype)

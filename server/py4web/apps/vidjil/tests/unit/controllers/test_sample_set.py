@@ -1,31 +1,28 @@
 import collections
 import datetime
-import os
 import json
-import pathlib
-import shutil
-from typing import TextIO
+import os
+
 import pytest
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils, test_utils
-from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session, HTTP
-from ....common import db, auth
-from .... import defs
-from ....modules.permission_enum import PermissionEnum
-from ....modules import tag
+from py4web.core import HTTP, Session, _before_request
 
+from ....common import auth, db
 from ....controllers import sample_set as sample_set_controller
+from ....modules import sampleSet, tag_utils
+from ....modules.permission_enum import PermissionEnum
+from ...functional.db_initialiser import DBInitialiser
+from ..utils import db_manipulation_utils
+from ..utils.omboddle import Omboddle
 
 
-class TestSampleSetController():
-
+class TestSampleSetController:
     # TODO: mutualize ?
     @pytest.fixture(autouse=True)
     def init_env_and_db(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -58,13 +55,20 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
-            user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id
+        )
 
         # When : Calling index:
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": sample_set_id},
+        ):
             json_result = sample_set_controller.index()
 
         # Then : We get an error
@@ -78,19 +82,27 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
-            user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id
+        )
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
-        db_manipulation_utils.add_results_file(
-            sequence_file_id=sequence_file_id)
+            sample_set_id, user_id
+        )
+        db_manipulation_utils.add_results_file(sequence_file_id=sequence_file_id)
 
         # When : Calling index:
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": sample_set_id},
+        ):
             json_result = sample_set_controller.index()
 
         # Then : We get an error
@@ -100,8 +112,14 @@ class TestSampleSetController():
         assert len(result["query"])
         first_query_result = result["query"][0]
         assert first_query_result["sequence_file"]["id"] == sequence_file_id
-        assert first_query_result["sample_set_membership"]["sample_set_id"] == sample_set_id
-        assert first_query_result["sample_set_membership"]["sequence_file_id"] == sequence_file_id
+        assert (
+            first_query_result["sample_set_membership"]["sample_set_id"]
+            == sample_set_id
+        )
+        assert (
+            first_query_result["sample_set_membership"]["sequence_file_id"]
+            == sequence_file_id
+        )
         assert first_query_result["results_file"]["id"] is None
         # TODO : Shouldn't this be results_file_id ? According to config management, it is coherent, but is it what we want ?
 
@@ -165,17 +183,22 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"type": defs.SET_TYPE_PATIENT}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"type": sampleSet.SET_TYPE_PATIENT},
+        ):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "add patient"
-        assert result["isEditing"] == False
+        assert not result["isEditing"]
         groups = result["groups"]
         assert len(groups) == 1
         assert groups[0]["id"] == user_group_id
@@ -188,18 +211,23 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         auth.add_membership(2, user_id)
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"type": defs.SET_TYPE_PATIENT}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"type": sampleSet.SET_TYPE_PATIENT},
+        ):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "add patient"
-        assert result["isEditing"] == False
+        assert not result["isEditing"]
         groups = result["groups"]
         assert len(groups) == 1
         assert groups[0]["id"] == user_group_id
@@ -212,15 +240,20 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(1, user_id)
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": sample_set_id},
+        ):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
@@ -240,15 +273,20 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
-        sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)[1]
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": sample_set_id},
+        ):
             json_result = sample_set_controller.form()
 
         # Then : We get results_file list
@@ -261,21 +299,39 @@ class TestSampleSetController():
 
     patient_tag_1 = "patienttest1"
     patient_tag_2 = "patienttest2"
-    patient_add_data = {"first_name": "Jane", "last_name": "Doe", "birth": "",
-                        "info": f"info with tag #{patient_tag_1}", "sample_set_id": "", "id": "", "error": []}
-    patient_edit_data = {"first_name": "John", "last_name": "Snow", "birth": "2001-09-11",
-                         "info": f"info with tag #{patient_tag_2}", "sample_set_id": "", "id": "", "error": []}
+    patient_add_data = {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "birth": "",
+        "info": f"info with tag #{patient_tag_1}",
+        "sample_set_id": "",
+        "id": "",
+        "error": [],
+    }
+    patient_edit_data = {
+        "first_name": "John",
+        "last_name": "Snow",
+        "birth": "2001-09-11",
+        "info": f"info with tag #{patient_tag_2}",
+        "sample_set_id": "",
+        "id": "",
+        "error": [],
+    }
 
-    def _initialize_json_submit_data(self, user_group_id: int, patient_id: int, patient_sample_set_id: int) -> str:
-        sets = {defs.SET_TYPE_PATIENT: [],
-                defs.SET_TYPE_RUN: [],
-                defs.SET_TYPE_GENERIC: [],
-                "group": user_group_id}
+    def _initialize_json_submit_data(
+        self, user_group_id: int, patient_id: int, patient_sample_set_id: int
+    ) -> str:
+        sets = {
+            sampleSet.SET_TYPE_PATIENT: [],
+            sampleSet.SET_TYPE_RUN: [],
+            sampleSet.SET_TYPE_GENERIC: [],
+            "group": user_group_id,
+        }
 
-        sets[defs.SET_TYPE_PATIENT].append(self.patient_add_data)
+        sets[sampleSet.SET_TYPE_PATIENT].append(self.patient_add_data)
         self.patient_edit_data["sample_set_id"] = patient_sample_set_id
         self.patient_edit_data["id"] = patient_id
-        sets[defs.SET_TYPE_PATIENT].append(self.patient_edit_data)
+        sets[sampleSet.SET_TYPE_PATIENT].append(self.patient_edit_data)
 
         return json.dumps(sets)
 
@@ -283,13 +339,12 @@ class TestSampleSetController():
         # Given : not logged
 
         # When : Calling submit
-        with pytest.raises(HTTP) as excinfo:
+        with pytest.raises(HTTP) as exception:
             with Omboddle(self.session, keep_session=True, params={"format": "json"}):
                 sample_set_controller.submit()
 
         # Then : We get a redirect
-        exception = excinfo.value
-        assert exception.status == 303
+        assert exception.value.status == 303
 
     def test_submit(self):
         # Given : logged as other user
@@ -298,18 +353,33 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         patient_id, patient_sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+            1, user_id
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.read.value, db.sample_set, patient_sample_set_id)
+            user_group_id,
+            PermissionEnum.read.value,
+            db.sample_set,
+            patient_sample_set_id,
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, patient_sample_set_id)
+            user_group_id,
+            PermissionEnum.access.value,
+            db.sample_set,
+            patient_sample_set_id,
+        )
         json_submit_data = self._initialize_json_submit_data(
-            user_group_id, patient_id, patient_sample_set_id)
+            user_group_id, patient_id, patient_sample_set_id
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+        ):
             json_result = sample_set_controller.submit()
 
         # Then : We get results_file list
@@ -319,14 +389,22 @@ class TestSampleSetController():
         patient = db.patient[patient_id]
         assert patient["first_name"] == self.patient_edit_data["first_name"]
         assert patient["last_name"] == self.patient_edit_data["last_name"]
-        assert patient["birth"] == datetime.datetime.strptime(
-            self.patient_edit_data["birth"], "%Y-%m-%d").date()
-        tags = tag.get_tags(db, [user_group_id])
-        tag_names_for_group = [result["tag"]["name"]
-                               for result in tags if result["group_tag"]["group_id"] == user_group_id]
+        assert (
+            patient["birth"]
+            == datetime.datetime.strptime(
+                self.patient_edit_data["birth"], "%Y-%m-%d"
+            ).date()
+        )
+        tags = tag_utils.get_tags(db, [user_group_id])
+        tag_names_for_group = [
+            result["tag"]["name"]
+            for result in tags
+            if result["group_tag"]["group_id"] == user_group_id
+        ]
         expected_tag_names = [self.patient_tag_1, self.patient_tag_2]
-        assert collections.Counter(
-            tag_names_for_group) == collections.Counter(expected_tag_names)
+        assert collections.Counter(tag_names_for_group) == collections.Counter(
+            expected_tag_names
+        )
 
     def test_submit_access_denied(self):
         # Given : logged as other user
@@ -335,28 +413,46 @@ class TestSampleSetController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         patient_id, patient_sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)
+            1, user_id
+        )
         auth.del_permission(
-            user_group_id, PermissionEnum.read.value, db.sample_set, patient_sample_set_id)
+            user_group_id,
+            PermissionEnum.read.value,
+            db.sample_set,
+            patient_sample_set_id,
+        )
         auth.del_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, patient_sample_set_id)
+            user_group_id,
+            PermissionEnum.access.value,
+            db.sample_set,
+            patient_sample_set_id,
+        )
         json_submit_data = self._initialize_json_submit_data(
-            user_group_id, patient_id, patient_sample_set_id)
+            user_group_id, patient_id, patient_sample_set_id
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+        ):
             json_result = sample_set_controller.submit()
 
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "an error occurred"
-        patients = result["sets"][defs.SET_TYPE_PATIENT]
+        patients = result["sets"][sampleSet.SET_TYPE_PATIENT]
         assert len(patients) == 2
         # Patient add was added
         patient_add = next(
-            patient for patient in patients if patient["last_name"] == self.patient_add_data["last_name"])
+            patient
+            for patient in patients
+            if patient["last_name"] == self.patient_add_data["last_name"]
+        )
         assert len(patient_add["error"]) == 0
         patient_add_in_db = db.patient[patient_add["id"]]
         assert patient_add_in_db["first_name"] == self.patient_add_data["first_name"]
@@ -364,14 +460,17 @@ class TestSampleSetController():
         assert patient_add_in_db["birth"] is None
         # patient edit was not modified
         patient_edit = next(
-            patient for patient in patients if patient["last_name"] == self.patient_edit_data["last_name"])
+            patient
+            for patient in patients
+            if patient["last_name"] == self.patient_edit_data["last_name"]
+        )
         assert len(patient_edit["error"]) == 1
         assert patient_edit["id"] == patient_id
         patient_edit_in_db = db.patient[patient_edit["id"]]
         assert patient_edit_in_db["first_name"] != self.patient_edit_data["first_name"]
         assert patient_edit_in_db["last_name"] != self.patient_edit_data["last_name"]
 
-    # TODO : add tests for other defs.SET_TYPE
+    # TODO : add tests for other sampleSet.SET_TYPE
 
     # ##################################
     # # Tests on sample_set_controller.download()
@@ -403,14 +502,14 @@ class TestSampleSetController():
     # #         user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
     # #     sequence_file_id = db_manipulation_utils.add_sequence_file(
     # #         patient_id, user_id)
-    # #     save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
+    # #     save_dir_out_vidjil_id = settings.DIR_OUT_VIDJIL_ID
     # #     try:
     # #         results_file_id = db_manipulation_utils.add_results_file(
     # #             sequence_file_id=sequence_file_id)
-    # #         defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
-    # #             test_utils.get_results_path(), f"out-{defs.BASENAME_OUT_VIDJIL_ID}")) + os.sep
+    # #         settings.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
+    # #             test_utils.get_results_path(), f"out-{settings.BASENAME_OUT_VIDJIL_ID}")) + os.sep
     # #         results_file_directory = pathlib.Path(
-    # #             defs.DIR_OUT_VIDJIL_ID % results_file_id)
+    # #             settings.DIR_OUT_VIDJIL_ID % results_file_id)
     # #         results_file_directory.mkdir(parents=True, exist_ok=True)
     # #         results_filename = "test_result_file.res"
     # #         results_content = "test_content"
@@ -426,7 +525,7 @@ class TestSampleSetController():
     # #         assert result == "Response from mock"
     # #         assert TestResultsFileController.stream_log != None
     # #     finally:
-    # #         defs.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
+    # #         settings.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
     # #         shutil.rmtree(results_file_directory)
 
     # ##################################

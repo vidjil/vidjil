@@ -13,7 +13,7 @@
             "3": ["TRGJ.fa"]
         } ],
         "parameters": {
-            "seed": "13s"
+            "seed": "13s", "search_recombinations": ["5", "3"]
         }
     },
 
@@ -29,7 +29,7 @@
             "3": ["IGLJ.fa"]
         } ],
         "parameters": {
-            "seed": "12s"
+            "seed": "12s", "search_recombinations": ["5", "3"]
         }
     }
     }

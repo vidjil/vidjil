@@ -8,12 +8,14 @@
 #include "dynprog.h"
 #include "tools.h"
 #include "output.h"
-#include "germline.h"
+#include "germline.hpp"
+#include "multi_germline.hpp"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
 #include "../lib/json_fwd.hpp"
-#include "filter.h"
+#include "filter.hpp"
+#include <memory>
 
 // #define DEBUG_EVALUE
 
@@ -100,13 +102,14 @@ const char* const segmented_mesg[] = { "?",
 /**
  * An alignment box (AlignBox) gather all parameters for a recombined gene segment (V, D, J, other D...)
  **/
-
+template<typename Affect>
 class AlignBox
 {
  public:
-  BioReader *rep;
+  std::shared_ptr<BioReader> rep;
   string key;
   string color;
+  Affect affect;
 
 
   /**
@@ -174,10 +177,14 @@ class AlignBox
 /**
  * Show sequence, and possibly alignments against the germline genes, possibly adding the ANSI colors
  */
-void show_colored_read(ostream &out, Sequence seq, const AlignBox *boxV, const AlignBox *boxJ, int start_5, int end_3);
-void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox *box_V, const AlignBox *box_J, int max_gene_align);
 
-ostream &operator<<(ostream &out, const AlignBox &box);
+template<typename Affect>
+void show_colored_read(ostream &out, Sequence seq, const AlignBox<Affect> *boxV, const AlignBox<Affect> *boxJ, int start_5, int end_3);
+template<typename Affect>
+void show_colored_read_germlines(ostream &out, Sequence seq, const AlignBox<Affect> *box_V, const AlignBox<Affect> *box_J, int max_gene_align);
+
+template<typename Affect>
+ostream &operator<<(ostream &out, const AlignBox<Affect> &box);
 
 /**
  * Check whether there is an overlap between two boxes,
@@ -194,15 +201,18 @@ ostream &operator<<(ostream &out, const AlignBox &box);
  * @return                                 the N segment
  */
 
+template<typename Affect>
 string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
-                                 AlignBox *box_left, AlignBox *box_right,
+                                 AlignBox<Affect> *box_left, AlignBox<Affect> *box_right,
                                  Cost segment_cost, bool reverse_V = false,
                                  bool reverse_J = false);
 
+template <typename Affect>
 class Segmenter {
 protected:
   string sequence;
   string sequence_or_rc;
+  string quality;
 
   // JUNCTIONstart/end and CDR3start/end are 1-based
   int JUNCTIONstart, JUNCTIONend;
@@ -229,14 +239,14 @@ protected:
   bool finishSegmentationD();
 
  public:
-  Germline *segmented_germline;
+  Germline<Affect> *segmented_germline;
   string label;
   string code;
   string info;        // .vdj.fa header, fixed fields
   string info_extra;  // .vdj.fa header, other information, at the end of the header
   string seg_V, seg_N, seg_J, system;
 
-  AlignBox *box_V, *box_D, *box_J;
+  AlignBox<Affect> *box_V, *box_D, *box_J;
 
   double evalue;
   double evalue_left;
@@ -328,19 +338,25 @@ protected:
    */
   void setSegmentationStatus(int status);
 
-  friend ostream &operator<<(ostream &out, const Segmenter &s);
+  template <typename A>
+  friend ostream &operator<<(ostream &out, const Segmenter<A> &s);
 };
 
 
 
-ostream &operator<<(ostream &out, const Segmenter &s);
+template <typename Affect>
+ostream &operator<<(ostream &out, const Segmenter<Affect> &s);
+
+std::ostream& fasta(std::ostream& os);
+
+std::ostream& fastq(std::ostream& os);
 
 
-
-class KmerSegmenter : public Segmenter
+template <typename Affect>
+class KmerSegmenter : public Segmenter<Affect>
 {
  private:
-  KmerAffectAnalyser *kaa;
+  MultipleAffectAnalyser *kaa;
  protected:
   string affects;
 
@@ -354,9 +370,13 @@ class KmerSegmenter : public Segmenter
   /**
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param germline: the germline
+   * @param index: the index of all the germlines
+   * @param segmentation_method: the segmentation method (see enum SEGMENTATION_METHODS)
+   * @param germlines: the germlines index in the index
+   * @param required_germline: the germline that should be used to segment (null if no requirement and if all the index should be used)
+   * @param out_unsegmented: ptr to an output stream for the unsegmented sequences (nullptr if no output needed)
    */
-  KmerSegmenter(Sequence seq, Germline *germline, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
+  KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method, MultiGermline<Affect> *germlines, Germline<Affect> *required_germline=nullptr, ostream *out_unsegmented=nullptr, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -365,7 +385,7 @@ class KmerSegmenter : public Segmenter
   /**
    * @return the KmerAffectAnalyser of the current sequence.
    */
-  KmerAffectAnalyser *getKmerAffectAnalyser() const;
+  MultipleAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
   void toOutput(CloneOutput *clone, bool details=true);
@@ -373,30 +393,17 @@ class KmerSegmenter : public Segmenter
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
                            double threshold, double multiplier);
-};
 
-
-class KmerMultiSegmenter
-{
- private:
-  double threshold_nb_expected;
- public:
   /**
-   * @param seq: An object read from a FASTA/FASTQ file
-   * @param multigermline: the multigerm
-   * @param threshold: threshold of randomly expected segmentation
+   * Choose the right germline that is common to the sets of Kmeraffect before and after
    */
-  KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
-                     double threshold = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
+  void chooseGermline(MultiGermline<Affect> *germlines, set<KmerAffect> &before_set, set<KmerAffect> &after_set);
 
-  ~KmerMultiSegmenter();
-
-  KmerSegmenter *the_kseg;
-  MultiGermline *multi_germline;
 };
 
 
-class FineSegmenter : public Segmenter
+template <typename Affect>
+class FineSegmenter : public Segmenter<Affect>
 {
  private:
   BioReader filtered_rep_5;
@@ -406,7 +413,7 @@ class FineSegmenter : public Segmenter
    vector<pair<int, int> > score_D;
    vector<pair<int, int> > score_J;
 
-   vector <AlignBox*> boxes ;
+   vector <AlignBox<Affect>*> boxes ;
 
    /**
    * Build a fineSegmenter based on KmerSegmentation
@@ -419,7 +426,7 @@ class FineSegmenter : public Segmenter
    *   for the filtering.
    * By default this parameter doesn't filter the germline.
    */
-   FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
+  FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_cost,
                  double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
                 int kmer_threshold=NO_LIMIT_VALUE, int alternative_genes=NO_LIMIT_VALUE);
 
@@ -429,11 +436,11 @@ class FineSegmenter : public Segmenter
   * extend segmentation from VJ to VDJ
   * @param germline: germline used
   */
-  void FineSegmentD(Germline *germline, bool several_D,
+  void FineSegmentD(Germline<Affect> *germline, bool several_D,
                     double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
 
-  bool FineSegmentD(Germline *germline,
-                    AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
+  bool FineSegmentD(Germline<Affect> *germline,
+                    AlignBox<Affect> *box_Y, AlignBox<Affect> *box_DD, AlignBox<Affect> *box_Z,
                     int forbidden_id,
                     int extend_DD_on_Y, int extend_DD_on_Z,
                     double threshold = THRESHOLD_NB_EXPECTED_D, double multiplier=1.0);
@@ -469,9 +476,10 @@ class FineSegmenter : public Segmenter
  * @param evalue_threshold: threshold for randomly expected segmentation (evalue) to relaunch a full DP without banded_dp
  * @post  box is filled
  */
-void align_against_collection(string &read, BioReader &rep, int forbidden_rep_id,
+template<typename Affect>
+void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int forbidden_rep_id,
                               bool reverse_ref, bool reverse_both, bool local,
-                              AlignBox *box, Cost segment_cost, bool banded_dp=true,
+                              AlignBox<Affect> *box, Cost segment_cost, bool banded_dp=true,
                               double evalue_threshold=1.);
 
 #endif

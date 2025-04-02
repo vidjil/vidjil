@@ -16,7 +16,7 @@ QUnit.test("loadCluster", function(assert) {
     m.initClones()
     m.parseJsonAnalysis(analysis_data_clusters)
 
-    // Controle fake clusters
+    // Control fake clusters
     assert.deepEqual(m.analysis_clusters.length,  2, "Correct number of non found clusters" )
     assert.deepEqual(m.analysis_clusters[0],  ["id_fake_1", "id_fake_2"], "Correct values for first non found cluster" )
     assert.deepEqual(m.analysis_clusters[1],  ["id_fake_1b", "id_fake_2b"], "Correct values for second non found cluster (don't get real clone Id)" )

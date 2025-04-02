@@ -71,14 +71,14 @@ public:
 
   /**
    * Copy constructor
-   */ 
+   */
   KmerAffect(const KmerAffect &ka);
 
   /*
    * Copy constructor, possibly reversing the strand if 'reverse' is true
    */
   KmerAffect(const KmerAffect &ka, bool reverse);
-     
+
   /**
    * Construct an affectation as stated by the parameters
    * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0] AND
@@ -128,6 +128,11 @@ public:
   unsigned char getLength() const;
 
   /**
+   * @return the maximal hash value we can set
+   */
+  static uint getMaxHashValue();
+
+  /**
    * @return the unknown affectation
    */
   static KmerAffect getUnknown();
@@ -152,7 +157,7 @@ public:
    * @return true iff the value is the same as the one given by default constructor
    */
   bool isNull() const;
-  
+
   /**
   * @return true if the K-mer is not odd (ambiguous or unknown)
   */
@@ -177,13 +182,14 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
 namespace std {
   template <>
   struct hash<KmerAffect> {
+    // Needs to have NO COLLISION (for optimisations in PointerACAutomaton::getAllResults)
     size_t operator()(const KmerAffect &affect) const {
-      return (((unsigned char) affect.affect.c << 8) | (affect.getLength()));
+      return (((unsigned char)affect.affect.c << 8) | (affect.getLength()));
     }
   };
 }
 
-  
+
 
 #define AFFECT_NOT_UNKNOWN_SYMBOL "*"
 #define AFFECT_AMBIGUOUS_SYMBOL "\0"
@@ -320,6 +326,8 @@ public:
   bool isGeneric() const;
 
   string toString() const;
+
+  static uint getMaxHashValue();
 };
 bool operator!=(const KmerStringAffect &k1, const KmerStringAffect &k2);
 bool operator==(const KmerStringAffect &k1, const KmerStringAffect &k2);
@@ -331,5 +339,15 @@ ostream &operator<<(ostream &os, const KmerStringAffect &kmer);
 
 const KmerStringAffect KSA_UNKNOWN = KmerStringAffect();
 const KmerStringAffect KSA_AMBIGUOUS = KmerStringAffect("", 2);
+
+namespace std {
+  template <>
+  struct hash<KmerStringAffect> {
+    // Not really implemented
+    size_t operator()(const KmerStringAffect &affect) const {
+      return affect.getLength();
+    }
+  };
+}
 
 #endif

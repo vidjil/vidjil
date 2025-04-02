@@ -1,28 +1,32 @@
 import collections
-import os
+import io
 import json
-import unittest
-import pathlib
-
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils, test_utils
-from ...functional.db_initialiser import DBInitialiser, TEST_ADMIN_EMAIL
-from py4web import request
-from py4web.core import _before_request, Session, HTTP
-from .... import defs
-from ....common import db, auth, T
-from ....controllers import file as file_controller
-
 import logging
+import os
+import pathlib
+import shutil
+import unittest
+
+from py4web import HTTP, request
+from py4web.core import Session, _before_request
+
+from .... import settings
+from ....common import auth, db
+from ....controllers import file as file_controller
+from ....modules import sampleSet
+from ...functional.db_initialiser import DBInitialiser
+from ..utils import db_manipulation_utils, test_utils
+from ..utils.omboddle import Omboddle
+
 LOGGER = logging.getLogger(__name__)
 
 
 class TestFileController(unittest.TestCase):
-
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -39,22 +43,28 @@ class TestFileController(unittest.TestCase):
     def test_form(self):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        db_manipulation_utils.log_in(self.session,
-                                     db_manipulation_utils.get_indexed_user_email(
-                                         1),
-                                     db_manipulation_utils.get_indexed_user_password(1))
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": sample_set_id},
+        ):
             json_result = file_controller.form()
 
         # Then : We get users list
         assert json_result is not None
         result = json.loads(json_result)
         assert result["pre_process_list"][0]["name"] == "public pre-process"
-        assert result["sets"][0]["type"] == defs.SET_TYPE_PATIENT
-        assert result["sample_type"] == defs.SET_TYPE_PATIENT
+        assert result["sets"][0]["type"] == sampleSet.SET_TYPE_PATIENT
+        assert result["sample_type"] == sampleSet.SET_TYPE_PATIENT
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) == 1
         assert not result["isEditing"]
@@ -65,13 +75,20 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": sample_set_id, "file_id": sequence_file_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": sample_set_id, "file_id": sequence_file_id},
+        ):
             json_result = file_controller.form()
 
         # Then : We get users list
@@ -79,12 +96,12 @@ class TestFileController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Form response"
         assert result["pre_process_list"][0]["name"] == "public pre-process"
-        assert result["sets"][0]["type"] == defs.SET_TYPE_PATIENT
-        assert result["sample_type"] == defs.SET_TYPE_PATIENT
+        assert result["sets"][0]["type"] == sampleSet.SET_TYPE_PATIENT
+        assert result["sample_type"] == sampleSet.SET_TYPE_PATIENT
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) > 1
         assert result["files"][0]["id"] == sequence_file_id
-        assert result["isEditing"] == False
+        assert not result["isEditing"]
 
     def test_form_edit_file(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -92,14 +109,24 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         # pass auth to correctly set the rights
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file_id": sequence_file_id, "sample_type": defs.SET_TYPE_PATIENT}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={
+                "file_id": sequence_file_id,
+                "sample_type": sampleSet.SET_TYPE_PATIENT,
+            },
+        ):
             json_result = file_controller.form()
 
         # Then : We get users list
@@ -107,8 +134,8 @@ class TestFileController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == "Form response"
         assert result["pre_process_list"][0]["name"] == "public pre-process"
-        assert result["sets"][0]["type"] == defs.SET_TYPE_PATIENT
-        assert result["sample_type"] == defs.SET_TYPE_PATIENT
+        assert result["sets"][0]["type"] == sampleSet.SET_TYPE_PATIENT
+        assert result["sample_type"] == sampleSet.SET_TYPE_PATIENT
         assert result["upload_group_ids"][0] == 9
         assert len(result["files"][0]) > 1
         assert result["files"][0]["id"] == sequence_file_id
@@ -120,14 +147,21 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         # do not pass auth not to add the rights
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
 
         # When : Calling form
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file_id": sequence_file_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"file_id": sequence_file_id},
+        ):
             json_result = file_controller.form()
 
         # Then : We get users list
@@ -142,15 +176,17 @@ class TestFileController(unittest.TestCase):
     # Tests on file_controller.submit()
     ##################################
 
-    def _initialize_json_submit_data(self,
-                                     sample_set_id: int,
-                                     source: str,
-                                     filename: str = "",
-                                     filename2: str = "",
-                                     pre_process_id: int = 0,
-                                     sequence_file_id: int = -1,
-                                     sample_type: str = "",
-                                     use_set_id_in_file: bool = False) -> str:
+    def _initialize_json_submit_data(
+        self,
+        sample_set_id: int,
+        source: str,
+        filename: str = "",
+        filename2: str = "",
+        pre_process_id: int = 0,
+        sequence_file_id: int = -1,
+        sample_type: str = "",
+        use_set_id_in_file: bool = False,
+    ) -> str:
         data = {}
         # TODO : should we use patient_id or sample_set_id ? In the web2py case it seems like we used a patient id
         # but in code it looks like we are looking for a sample set id...
@@ -174,7 +210,7 @@ class TestFileController(unittest.TestCase):
             "producer": "plop",
             "filename": filename,
             "filename2": filename2,
-            "set_ids": file_set_ids
+            "set_ids": file_set_ids,
         }
         data["file"] = [myfile]
         return json.dumps(data)
@@ -185,14 +221,21 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
 
         json_submit_data = self._initialize_json_submit_data(
-            sample_set_id, "computer", "plopapi")
+            sample_set_id, "computer", "plopapi"
+        )
 
         # When : Calling submit
-        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+            query={"sample_set_id": sample_set_id},
+        ):
             json_result = file_controller.submit()
 
         # Then : We get a good result
@@ -208,14 +251,21 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
 
         json_submit_data = self._initialize_json_submit_data(
-            sample_set_id, "computer", "plopapi", use_set_id_in_file=True)
+            sample_set_id, "computer", "plopapi", use_set_id_in_file=True
+        )
 
         # When : Calling submit
-        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+            query={"sample_set_id": sample_set_id},
+        ):
             json_result = file_controller.submit()
 
         # Then : Check we get only one association
@@ -225,8 +275,10 @@ class TestFileController(unittest.TestCase):
         file_ids = result["file_ids"]
         assert len(file_ids) == 1
         file_id = file_ids[0]
-        rows = db(db.sample_set_membership.sequence_file_id ==
-                  file_id and db.sample_set_membership.sample_set_id == sample_set_id).select()
+        rows = db(
+            db.sample_set_membership.sequence_file_id == file_id
+            and db.sample_set_membership.sample_set_id == sample_set_id
+        ).select()
         assert len(rows) == 1
 
     def test_submit_nfs(self):
@@ -235,17 +287,24 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="Demo-X5.fa")
+                sample_set_id, "nfs", filename="Demo-X5.fa"
+            )
 
             # When : Calling submit
-            with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json", "data": json_submit_data},
+                query={"sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.submit()
 
             # Then : We get users list
@@ -253,7 +312,7 @@ class TestFileController(unittest.TestCase):
             result = json.loads(json_result)
             assert result["message"] == "successfully added/edited file(s)"
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_submit_nfs_and_pre_process(self):
         # Given : initialized data
@@ -261,18 +320,29 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         pre_process_id = db_manipulation_utils.add_pre_process()
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="Demo-X5.fa", filename2="Demo-X5.fa", pre_process_id=pre_process_id)
+                sample_set_id,
+                "nfs",
+                filename="Demo-X5.fa",
+                filename2="Demo-X5.fa",
+                pre_process_id=pre_process_id,
+            )
 
             # When : Calling submit
-            with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json", "data": json_submit_data},
+                query={"sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.submit()
 
             # Then : We get users list
@@ -280,7 +350,7 @@ class TestFileController(unittest.TestCase):
             result = json.loads(json_result)
             assert result["message"] == "successfully added/edited file(s)"
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_submit_invalid_form_no_filename(self):
         # Given : initialized data
@@ -288,22 +358,28 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
 
-            data = {}
             # TODO : should we use patient_id or sample_set_id ? In the web2py case it seems like we used a patient id
             # but in code it looks like we are looking for a sample set id...
             # data['set_ids'] = ":p plapipou (" + str(patient_id) + ")"
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="")
+                sample_set_id, "nfs", filename=""
+            )
 
             # When : Calling submit
-            with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json", "data": json_submit_data},
+                query={"sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.submit()
 
             # Then : We get users list
@@ -312,7 +388,7 @@ class TestFileController(unittest.TestCase):
             assert result["success"] == "false"
             assert result["message"] == "add_form() failed"
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_submit_invalid_form_no_pre_process_name(self):
         # Given : initialized data
@@ -320,18 +396,29 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         pre_process_id = db_manipulation_utils.add_pre_process()
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="Demo-X5.fa", filename2="", pre_process_id=pre_process_id)
+                sample_set_id,
+                "nfs",
+                filename="Demo-X5.fa",
+                filename2="",
+                pre_process_id=pre_process_id,
+            )
 
             # When : Calling submit
-            with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json", "data": json_submit_data},
+                query={"sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.submit()
 
             # Then : We get users list
@@ -340,7 +427,7 @@ class TestFileController(unittest.TestCase):
             assert result["success"] == "false"
             assert result["message"] == "add_form() failed"
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_submit_edit(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -348,16 +435,28 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
 
         json_submit_data = self._initialize_json_submit_data(
-            sample_set_id, "computer", filename="plopapi", sample_type=defs.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id)
+            sample_set_id,
+            "computer",
+            filename="plopapi",
+            sample_type=sampleSet.SET_TYPE_PATIENT,
+            sequence_file_id=sequence_file_id,
+        )
 
         # When : Calling submit
-        with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+            query={"sample_set_id": sample_set_id},
+        ):
             json_result = file_controller.submit()
 
         # Then : We get users list
@@ -372,21 +471,32 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id, auth)
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
 
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="Demo-X5.fa", sample_type=defs.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id)
+                sample_set_id,
+                "nfs",
+                filename="Demo-X5.fa",
+                sample_type=sampleSet.SET_TYPE_PATIENT,
+                sequence_file_id=sequence_file_id,
+            )
 
             # When : Calling submit
-            with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json", "data": json_submit_data},
+                query={"sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.submit()
 
             # Then : We get users list
@@ -395,7 +505,7 @@ class TestFileController(unittest.TestCase):
             assert result["message"] == "successfully added/edited file(s)"
             # TODO : check more things ?
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_submit_edit_nfs_and_pre_process(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -403,20 +513,34 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
         pre_process_id = db_manipulation_utils.add_pre_process()
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="Demo-X5.fa", filename2="Demo-X5.fa", sample_type=defs.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id, pre_process_id=pre_process_id)
+                sample_set_id,
+                "nfs",
+                filename="Demo-X5.fa",
+                filename2="Demo-X5.fa",
+                sample_type=sampleSet.SET_TYPE_PATIENT,
+                sequence_file_id=sequence_file_id,
+                pre_process_id=pre_process_id,
+            )
 
             # When : Calling submit
-            with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json", "data": json_submit_data},
+                query={"sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.submit()
 
             # Then : We get users list
@@ -425,7 +549,7 @@ class TestFileController(unittest.TestCase):
             assert result["message"] == "successfully added/edited file(s)"
             # TODO : check more things ?
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_submit_edit_invalid(self):
         # Given : Logged as other user, and add corresponding config, ...
@@ -433,20 +557,34 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
         pre_process_id = db_manipulation_utils.add_pre_process()
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
             json_submit_data = self._initialize_json_submit_data(
-                sample_set_id, "nfs", filename="", filename2="Demo-X5.fa", sample_type=defs.SET_TYPE_PATIENT, sequence_file_id=sequence_file_id, pre_process_id=pre_process_id)
+                sample_set_id,
+                "nfs",
+                filename="",
+                filename2="Demo-X5.fa",
+                sample_type=sampleSet.SET_TYPE_PATIENT,
+                sequence_file_id=sequence_file_id,
+                pre_process_id=pre_process_id,
+            )
 
             # When : Calling submit
-            with Omboddle(self.session, keep_session=True, params={"format": "json", "data": json_submit_data}, query={"sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json", "data": json_submit_data},
+                query={"sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.submit()
 
             # Then : We get users list
@@ -456,7 +594,222 @@ class TestFileController(unittest.TestCase):
             assert result["message"] == "add_form() failed"
             # TODO : check more things ?
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
+
+    ##################################
+    # Tests on file_controller.resumable_upload_get()
+    ##################################
+
+    def test_resumable_upload_get_existing_chunk(self):
+        """
+        Test resumable_upload_get to ensure it correctly checks the existence of an existing chunk.
+        """
+        # Given : Logged as a user with the necessary permissions
+        db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        resumableIdentifier = "test_identifier"
+        resumableChunkNumber = 1
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            chunk_dir = pathlib.Path(
+                settings.UPLOAD_FOLDER,
+                file_controller.PARTS_FOLDER,
+                resumableIdentifier,
+            )
+            chunk_dir.mkdir(parents=True, exist_ok=True)
+            chunk_path = (
+                chunk_dir / f"{resumableChunkNumber}{file_controller.PART_SUFFIX}"
+            )
+            chunk_path.write_bytes(b"chunk data")
+
+            # When : Calling resumable_upload_get for an existing chunk
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "resumableIdentifier": resumableIdentifier,
+                    "resumableChunkNumber": resumableChunkNumber,
+                    "format": "json",
+                },
+            ):
+                response = file_controller.resumable_upload_get()
+                assert response == "OK"
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
+            if chunk_path.exists():
+                chunk_path.unlink()
+            if chunk_dir.exists():
+                chunk_dir.rmdir()
+
+    ##################################
+    # Tests on file_controller.resumable_upload_post()
+    ##################################
+
+    def test_resumable_upload_post(self):
+        """
+        Test resumable_upload_post to ensure chunks are correctly uploaded and merged.
+        """
+        # Given : Logged as a user with the necessary permissions
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        db_manipulation_utils.add_sequence_file(sample_set_id, user_id)
+        filename = "plop"
+        chunk_data = b"chunk data"
+        resumableIdentifier = "test_identifier"
+        resumableTotalChunks = 3
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            # Upload chunks
+            for chunk_number in range(1, resumableTotalChunks + 1):
+                with Omboddle(
+                    self.session,
+                    keep_session=True,
+                    params={
+                        "resumableIdentifier": resumableIdentifier,
+                        "resumableChunkNumber": chunk_number,
+                        "resumableTotalChunks": resumableTotalChunks,
+                        "resumableFilename": filename,
+                        "format": "json",
+                    },
+                ):
+                    request.files["file"] = test_utils.UploadHelper(
+                        io.BytesIO(chunk_data), f"{filename}.part{chunk_number}"
+                    )
+                    json_result = file_controller.resumable_upload_post()
+                    assert json_result == "OK"
+
+            # Check if the final merged file exists
+            final_path = pathlib.Path(
+                settings.UPLOAD_FOLDER,
+                f"{resumableIdentifier}{file_controller.MERGED_SUFFIX}",
+            )
+            assert final_path.exists()
+            with final_path.open("rb") as f:
+                merged_data = f.read()
+                assert merged_data == chunk_data * resumableTotalChunks
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
+            if final_path.exists():
+                final_path.unlink()
+
+    def test_resumable_upload_get_missing_chunk(self):
+        """
+        Test resumable_upload_get to ensure it correctly handles a missing chunk.
+        """
+        # Given : Logged as a user with the necessary permissions
+        db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        resumableIdentifier = "test_identifier"
+        resumableChunkNumber = 1
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            chunk_dir = pathlib.Path(
+                settings.UPLOAD_FOLDER,
+                file_controller.PARTS_FOLDER,
+                resumableIdentifier,
+            )
+            chunk_dir.mkdir(parents=True, exist_ok=True)
+            chunk_path = (
+                chunk_dir / f"{resumableChunkNumber}{file_controller.PART_SUFFIX}"
+            )
+            chunk_path.write_bytes(b"chunk data")
+
+            # When : Calling resumable_upload_get for a non-existing chunk
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "resumableIdentifier": resumableIdentifier,
+                    "resumableChunkNumber": resumableChunkNumber + 1,
+                    "format": "json",
+                },
+            ):
+                with self.assertRaises(HTTP) as cm:
+                    file_controller.resumable_upload_get()
+                assert cm.exception.status == 204
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
+            if chunk_path.exists():
+                chunk_path.unlink()
+            if chunk_dir.exists():
+                chunk_dir.rmdir()
+
+    ##################################
+    # Tests on file_controller.resumable_upload_process()
+    ##################################
+
+    def test_resumable_upload_process(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+        filename = "plop"
+        save_upload_folder = settings.UPLOAD_FOLDER
+        save_data_file_upload_folder = db.sequence_file.data_file.uploadfolder
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+            shutil.copy(
+                pathlib.Path(
+                    test_utils.get_resources_path(), "analysis-example.vidjil"
+                ),
+                pathlib.Path(
+                    db.sequence_file.data_file.uploadfolder,
+                    f"{sequence_file_id}-{filename}{file_controller.MERGED_SUFFIX}",
+                ),
+            )
+            # When : Calling upload
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "resumableIdentifier": f"{sequence_file_id}-{filename}",
+                    "sequence_id": sequence_file_id,
+                    "filename": filename,
+                    "file_number": 1,
+                    "format": "json",
+                },
+            ):
+                json_result = file_controller.resumable_upload_process()
+
+            # Then : Check result
+            result = json.loads(json_result)
+            assert (
+                result["message"]
+                == f"file {filename}({sequence_file_id})  (35.6 kB) upload finished"
+            )
+            result_file = pathlib.Path(
+                test_utils.get_results_path(),
+                db.sequence_file[sequence_file_id].data_file,
+            )
+            assert result_file.exists()
+            os.remove(result_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_data_file_upload_folder
+            settings.UPLOAD_FOLDER = save_upload_folder
 
     ##################################
     # Tests on file_controller.upload()
@@ -468,31 +821,40 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
         file_to_upload = pathlib.Path(
-            test_utils.get_resources_path(), "analysis-example.vidjil")
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
         with file_to_upload.open("rb") as file:
-            upload_helper = test_utils.UploadHelper(file, "plopapou")
+            filename = "plop"
+            upload_helper = test_utils.UploadHelper(file, filename)
             save_upload_folder = db.sequence_file.data_file.uploadfolder
             try:
                 db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
-                # When : Calling uplaod
-                with Omboddle(self.session, keep_session=True,
-                              params={"id": sequence_file_id,
-                                      "file_number": 1,
-                                      "format": "json"}):
+                # When : Calling upload
+                with Omboddle(
+                    self.session,
+                    keep_session=True,
+                    params={"id": sequence_file_id, "file_number": 1, "format": "json"},
+                ):
                     request.files["file"] = upload_helper
                     json_result = file_controller.upload()
 
                 # Then : Check result
                 result = json.loads(json_result)
-                assert result["message"].startswith(
-                    f" file {{{sequence_file_id}}} upload finished (plopapou)")
-                result_file = pathlib.Path(test_utils.get_results_path(),
-                                           db.sequence_file[sequence_file_id].data_file)
+                assert (
+                    result["message"]
+                    == f"file {filename}({sequence_file_id})  (35.6 kB) upload finished"
+                )
+                result_file = pathlib.Path(
+                    test_utils.get_results_path(),
+                    db.sequence_file[sequence_file_id].data_file,
+                )
                 assert result_file.exists()
                 os.remove(result_file)
             finally:
@@ -510,11 +872,17 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         fake_sequence_file_id = 0
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": fake_sequence_file_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": fake_sequence_file_id},
+        ):
             json_result = file_controller.confirm()
 
         # Then : We get users list
@@ -529,14 +897,20 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id},
+        ):
             json_result = file_controller.confirm()
 
         # Then : We get users list
@@ -555,7 +929,8 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         save_upload_folder = db.sequence_file.data_file.uploadfolder
         save_auto_delete = db.sequence_file.data_file.autodelete
@@ -563,20 +938,26 @@ class TestFileController(unittest.TestCase):
             db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
             db.sequence_file.data_file.autodelete = True
             sequence_file_id = db_manipulation_utils.add_sequence_file(
-                sample_set_id, user_id, use_real_file=True)
-            data_file = pathlib.Path(test_utils.get_results_path(),
-                                     db.sequence_file[sequence_file_id].data_file)
+                sample_set_id, user_id, use_real_file=True
+            )
+            data_file = pathlib.Path(
+                test_utils.get_results_path(),
+                db.sequence_file[sequence_file_id].data_file,
+            )
             assert data_file.exists()
 
             # When : Calling confirm
-            with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                          query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id},
+            ):
                 json_result = file_controller.delete()
 
             # Then : We get users list
             result = json.loads(json_result)
-            assert result["message"] == f"sequence file ({
-                sequence_file_id}) deleted"
+            assert result["message"] == f"sequence file ({sequence_file_id}) deleted"
             assert not data_file.exists()
             assert db.sequence_file[sequence_file_id] is not None
         finally:
@@ -589,7 +970,8 @@ class TestFileController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         save_upload_folder = db.sequence_file.data_file.uploadfolder
         save_auto_delete = db.sequence_file.data_file.autodelete
@@ -597,20 +979,30 @@ class TestFileController(unittest.TestCase):
             db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
             db.sequence_file.data_file.autodelete = True
             sequence_file_id = db_manipulation_utils.add_sequence_file(
-                sample_set_id, user_id, use_real_file=True)
-            data_file = pathlib.Path(test_utils.get_results_path(),
-                                     db.sequence_file[sequence_file_id].data_file)
+                sample_set_id, user_id, use_real_file=True
+            )
+            data_file = pathlib.Path(
+                test_utils.get_results_path(),
+                db.sequence_file[sequence_file_id].data_file,
+            )
             assert data_file.exists()
 
             # When : Calling confirm
-            with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                          query={"id": sequence_file_id, "redirect_sample_set_id": sample_set_id, "delete_results": True}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={
+                    "id": sequence_file_id,
+                    "redirect_sample_set_id": sample_set_id,
+                    "delete_results": True,
+                },
+            ):
                 json_result = file_controller.delete()
 
             # Then : We get users list
             result = json.loads(json_result)
-            assert result["message"] == f"sequence file ({
-                sequence_file_id}) deleted"
+            assert result["message"] == f"sequence file ({sequence_file_id}) deleted"
             assert not data_file.exists()
             assert db.sequence_file[sequence_file_id] is None
         finally:
@@ -639,8 +1031,7 @@ class TestFileController(unittest.TestCase):
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(sample_set_id)
-        db.sequence_file[sequence_file_id].update_record(
-            sequencer="dummy_sequencer")
+        db.sequence_file[sequence_file_id].update_record(sequencer="dummy_sequencer")
 
         # When : Calling sequencer_list
         with Omboddle(self.session, keep_session=True):
@@ -698,7 +1089,7 @@ class TestFileController(unittest.TestCase):
 
         # Then : We get producer_list
         result = json.loads(json_result)
-        assert result["producer"] == ['vidjil']
+        assert result["producer"] == ["vidjil"]
 
     def test_producer_list_new(self):
         # Given : Logged as default admin
@@ -706,8 +1097,7 @@ class TestFileController(unittest.TestCase):
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(sample_set_id)
-        db.sequence_file[sequence_file_id].update_record(
-            producer="dummy_producer")
+        db.sequence_file[sequence_file_id].update_record(producer="dummy_producer")
 
         # When : Calling producer_list
         with Omboddle(self.session, keep_session=True):
@@ -716,8 +1106,9 @@ class TestFileController(unittest.TestCase):
         # Then : We get producer_list
         result = json.loads(json_result)
         assert len(result["producer"]) == 2
-        assert collections.Counter(result["producer"]) == collections.Counter([
-            "vidjil", "dummy_producer"])
+        assert collections.Counter(result["producer"]) == collections.Counter(
+            ["vidjil", "dummy_producer"]
+        )
 
     ##################################
     # Tests on file_controller.restart_pre_process()
@@ -767,9 +1158,9 @@ class TestFileController(unittest.TestCase):
         # Given : initialized data
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = test_utils.get_resources_path()
+            settings.FILE_SOURCE = test_utils.get_resources_path()
 
             # When : Calling submit
             with Omboddle(self.session, keep_session=True):
@@ -779,17 +1170,17 @@ class TestFileController(unittest.TestCase):
             result = json_result[0]
             assert result["text"] == "/"
             assert result["id"] == "/"
-            assert result["children"] == True
+            assert result["children"]
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_filesystem_empty_node(self):
         # Given : initialized data
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = str(test_utils.get_resources_path())
+            settings.FILE_SOURCE = str(test_utils.get_resources_path())
 
             # When : Calling submit
             with Omboddle(self.session, keep_session=True, query={"node": ""}):
@@ -799,18 +1190,17 @@ class TestFileController(unittest.TestCase):
             assert len(result) == 3
             titles = [item["li_attr"]["title"] for item in result]
             expected_titles = ["Demo-X5.fa", "results", "logs"]
-            assert collections.Counter(
-                titles) == collections.Counter(expected_titles)
+            assert collections.Counter(titles) == collections.Counter(expected_titles)
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source
 
     def test_filesystem_logs(self):
         # Given : initialized data
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
-        save_file_source = defs.FILE_SOURCE
+        save_file_source = settings.FILE_SOURCE
         try:
-            defs.FILE_SOURCE = str(test_utils.get_resources_path())
+            settings.FILE_SOURCE = str(test_utils.get_resources_path())
 
             # When : Calling submit
             with Omboddle(self.session, keep_session=True, query={"node": "/logs"}):
@@ -820,4 +1210,4 @@ class TestFileController(unittest.TestCase):
             assert len(result) == 1
             assert result[0]["li_attr"]["title"] == "nginx"
         finally:
-            defs.FILE_SOURCE = save_file_source
+            settings.FILE_SOURCE = save_file_source

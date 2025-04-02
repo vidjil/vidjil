@@ -1,8 +1,8 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2024 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2025 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
-  Contributors: 
+  Contributors:
       Mathieu Giraud <mathieu.giraud@vidjil.org>
       Mikaël Salson <mikael.salson@vidjil.org>
       Marc Duez <marc.duez@vidjil.org>
@@ -120,7 +120,7 @@ KmerAffect &KmerAffect::operator+=(const KmerAffect &kmer) {
   if (kmer.affect != affect) {
     if (isUnknown())
       *this = kmer;
-    else { 
+    else {
       // If we have same label but different strand
       // -> we put ambiguous, we could have something to say that
       // strand is ambiguous but not the label, but we don't have enough space
@@ -158,6 +158,10 @@ string KmerAffect::getLabel() const {
 
 unsigned char KmerAffect::getLength() const {
   return affect_length(affect);
+}
+
+uint KmerAffect::getMaxHashValue() {
+  return 1 << (8*sizeof(affect_t)+1);
 }
 
 KmerAffect KmerAffect::getUnknown() {
@@ -242,7 +246,7 @@ KmerStringAffect::KmerStringAffect(const string &label,
 
 KmerStringAffect &KmerStringAffect::operator+=(const KmerStringAffect &kmer) {
   if (*this != kmer) {
-    if (*this == KSA_UNKNOWN) 
+    if (*this == KSA_UNKNOWN)
       // Not defined yet
       *this = kmer;
     else if (*this != KSA_AMBIGUOUS) {
@@ -304,7 +308,7 @@ string KmerStringAffect::toString() const {
   if (isUnknown()) {
     return " _";
   }
-  
+
   switch(strand) {
   case 1:
     return "+"+label;
@@ -341,4 +345,8 @@ ostream &operator<<(ostream &os, const KmerStringAffect &kmer) {
 
 bool KmerStringAffect::hasRevcompSymetry() {
   return false;
+}
+
+uint KmerStringAffect::getMaxHashValue(){
+  return 0;                     // Not really implemented
 }

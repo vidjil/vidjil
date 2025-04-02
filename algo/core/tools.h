@@ -53,7 +53,7 @@ typedef string junction ;
 using json = nlohmann::json;
 using namespace std;
 
-#define PRINT_VAR(v) cerr << #v << " = " << v << endl
+#define PRINT_VAR(v) cerr << #v << " = " << v << " (" << __FILE__ << ":" << __LINE__ << ")" << endl
 
 #define NB_N_CHOOSE_K_STORED 500
 
@@ -89,7 +89,7 @@ inline int spaced_int(int *input, const string &seed) {
 
   int index_word = 0;
 
-  for (size_t i = 0; i < seed.length(); i++) 
+  for (size_t i = 0; i < seed.length(); i++)
     if (seed[i] == SEED_YES)
 	index_word = (index_word << 2) | input[i] ;
 
@@ -102,12 +102,23 @@ inline int spaced_int(int *input, const string &seed) {
 }
 
 
-/* 
+/*
   Join path1 and path2,
   inserting a "/" only when path1 is not empty.
   And join them only if path2 is not an absolute path.
 */
 string path_join(string path1, string path2);
+
+/* Get a json .g from a path and filename */
+json parse_json_g(string path, string json_filename);
+
+/* Load a json .g
+   - into an existing json_germlins
+   - from a path and filename
+   - possibly filtering some systems
+ */
+void load_json_g(json &json_germlines, string path, string json_filename, string systems_filter);
+
 
 /* Signal handling */
 
@@ -116,7 +127,7 @@ extern bool global_interrupted;
 
 void sigintHandler(int sig_num);
 
-/* 
+/*
   Extract the gene name from a label.
   If there is a pipe '|', consider only what is after the (first) pipe.
   If there is a star '*', consider only what is before the start
@@ -223,9 +234,16 @@ string extract_basename(string path, bool remove_ext = true);
 vector<string> generate_all_seeds(const string &str, const string &seed);
 
 /**
+ * Guess what is the format of the file whose name is filename.
+ * The guess is only based on the filename.
+ * @returns "fastq" or "fasta" or "bam"
+ */
+std::string guess_sequence_format(std::string filename);
+
+/**
  * remove_trailing_whitespaces removes the whitespaces (ie. ' ', '\t', '\r')
  * that may be at the end of the string
- * @param str: the string 
+ * @param str: the string
  * @return the number of whitespaces removed
  */
 int remove_trailing_whitespaces(string &str);
@@ -234,6 +252,20 @@ int remove_trailing_whitespaces(string &str);
  * @return subsequence delimited by biological positions (starting from 1), including both positions
  */
 string subsequence(const string &text, int start, int end);
+
+std::string to_string(char c);
+
+/**
+ * Determines the first shortcut for a given type
+ */
+template <typename Tshortcut>
+Tshortcut first_shortcut();
+
+/**
+ * Determines the shortcut following a given shortcut.
+ */
+template <typename Tshortcut>
+Tshortcut next_shortcut(Tshortcut);
 
 /**
  * @return reverse(complement(dna)) if do_revcomp, otherwise dna
@@ -257,7 +289,7 @@ string reverse(const string &text);
  * @param frame (0, 1 or 2) depending on where the position of the first codon
  *        in the sequence starts
  * @return true iff a stop codon is in-frame.
- */ 
+ */
 bool hasInFrameStopCodon(const string &sequence, int frame);
 
 /**

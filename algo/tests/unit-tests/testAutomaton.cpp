@@ -110,14 +110,7 @@ void testGetMultiResults(){
   /* Situation: No K-mer appear in the sequence. */
   seqtype seq4 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
   results = aho.getMultiResults(seq4);
-  TAP_TEST(results.size() <= 1, TEST_AC_OCCURENCES, errorSize);
-  /*
-    If there is K-mers in automaton doesn't match the sequence, the map must
-    return only unknown K-mers.
-  */
-  pair<KmerAffect, int> singleResult = *(results.begin());
-  KmerAffect unknownKmerAffect = singleResult.first;
-  TAP_TEST_EQUAL(unknownKmerAffect, AFFECT_UNKNOWN, TEST_AC_OCCURENCES, "Unknown Kmer not found");
+  TAP_TEST(results.size() == 0, TEST_AC_OCCURENCES, errorSize);
 }
 
 void testRCInsertAcAutomaton() {
@@ -139,8 +132,9 @@ void testRCInsertAcAutomaton() {
   TAP_TEST(state->is_final, TEST_AC_FINAL, "");
 
   TAP_TEST(! aho.goto_state("CAAT")->is_final, TEST_AC_FINAL, "");
-  TAP_TEST(aho.goto_state("CAAT")->informations.size() == 1, TEST_AC_GET, "");
-  TAP_TEST(aho.goto_state("CAAT")->informations.front() == AFFECT_UNKNOWN, TEST_AC_GET, "");
+  string caat = "CAAT";
+  TAP_TEST(aho.goto_state(caat)->informations.size() == 0, TEST_AC_GET, "");
+  TAP_TEST(aho.get(caat) == AFFECT_UNKNOWN, TEST_AC_GET, "");
 
   TAP_TEST(aho.goto_state("GAGTG")->informations.front() == AFFECT_V_BWD, TEST_AC_GET, "");
   TAP_TEST(aho.goto_state("GAGTG")->is_final, TEST_AC_FINAL, "");
@@ -159,8 +153,42 @@ void testRCInsertAcAutomaton() {
   TAP_TEST(results == expected, TEST_AC_GET_RESULTS, "");
 }
 
+void testGetAllResults() {
+  PointerACAutomaton<KmerAffect> aho(false, true);
+
+  KmerAffect V = KmerAffect("V", 1, 4);
+  KmerAffect J = KmerAffect("J", 1, 4);
+  aho.insert("ACAGTC", "V", true, 0, "####");
+  // Will insert ACAG, CAGT, AGTC
+  aho.insert("AGTCTT", "J", true, 0, "####");
+  // Will insert AGTC, GTCT, TCTT
+  aho.build_failure_functions();
+
+  //                                                       0123456789
+  //                                                         VV   
+  //                                                          JJJ
+  map<KmerAffect, BitSet> all_results = aho.getAllResults("AGCAGTCTTA");
+  TAP_TEST_EQUAL(all_results.size(), 2, TEST_AC_ALL_RESULTS, "");
+  TAP_TEST_EQUAL(all_results.count(V), 1, TEST_AC_ALL_RESULTS, "");
+  TAP_TEST_EQUAL(all_results.count(J), 1, TEST_AC_ALL_RESULTS, "");
+
+  auto it = all_results.find(V);
+  BitSet &b_v = it->second;
+  TAP_TEST_EQUAL(b_v.count(), 2, TEST_AC_ALL_RESULTS, "");
+  TAP_TEST_EQUAL(b_v.size(), 10, TEST_AC_ALL_RESULTS, "");
+  for (uint i = 2; i < 4; i++)
+    TAP_TEST_EQUAL(b_v.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+
+  it = all_results.find(J);
+  BitSet &b_j = it->second;
+  TAP_TEST_EQUAL(b_j.count(), 3, TEST_AC_ALL_RESULTS, "");
+  for (uint i = 3; i < 6; i++)
+    TAP_TEST_EQUAL(b_j.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+}
+
 void testAutomaton() {
   testSimpleInsertACAutomaton();
   testRCInsertAcAutomaton();
   testGetMultiResults();
+  testGetAllResults();
 }

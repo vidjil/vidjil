@@ -7,6 +7,4 @@
 1: UNSEG only V/.* 1
 # see #4730
 f1: UNSEG too few V/J .* 11
-1: UNSEG too few V/J .* 9
-
-
+f1: UNSEG too few V/J .* 9

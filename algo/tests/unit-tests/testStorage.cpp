@@ -1,6 +1,7 @@
 #include <core/bioreader.hpp>
 #include <core/kmerstore.h>
 #include <core/automaton.hpp>
+#include <type_traits>
 #include "tests.h"
 
 template<template<class> class Index>
@@ -36,7 +37,10 @@ void testKmerStoreWithKmerSimple(int k, bool revcomp, int test_id ) {
       TAP_TEST((*index)[tmp].count == (seq[2*i].length()-k+1)*2, test_id, "");
       TAP_TEST((*index)[tmp].count == (*index)[rc].count, test_id, "K-mer and its revcomp should have the same count");
     } else {
-      TAP_TEST((*index)[tmp].count == (seq[2*i].length()-k+1), test_id, "");
+      if (std::is_same<T<Kmer>, PointerACAutomaton<Kmer> >::value) {
+        TAP_TEST_EQUAL((*index)[tmp].count, 1, test_id, "For string " << tmp);
+      } else
+        TAP_TEST_EQUAL((*index)[tmp].count, (seq[2*i].length()-k+1), test_id, "For string " << tmp << " with T = " << typeid(T<Kmer>).name());
     }
   }
   delete index;

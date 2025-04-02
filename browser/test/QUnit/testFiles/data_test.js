@@ -203,6 +203,7 @@ json_data_raw = {
         "2020-05-22 10:50:53"
       ]
     }, 
+    "associated_sets_names": [["other_1", "other_2"], [], ["other_1"], []],
   },
   "data": {
     "dataTest1" : [45,60,52,60],

@@ -5,41 +5,11 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "cSpell.words": [
-        "airr",
-        "atwho",
-        "bioinformaticians",
-        "Clonality",
-        "clonotype",
-        "Clonotypes",
-        "clonotypes",
-        "fasta",
-        "fastq",
-        "genescan",
-        "germline",
-        "germlines",
-        "hypermutations",
-        "ijson",
-        "IMGT",
-        "imputability",
-        "Intron",
-        "jsontransformer",
-        "Kmer",
-        "noclass",
-        "ombott",
-        "Pielou",
-        "polyclonal",
-        "preprocess",
-        "pydal",
-        "recombinations",
-        "sampleset",
-        "scatterplot",
-        "transcriptome",
-        "uwsgi",
-        "yatl",
-        "zmodel"
-    ],
     "python.analysis.extraPaths": [
         "./server/py4web/apps/vidjil"
-    ]
+    ],
+    "files.associations": {
+        "*.fastq": "fastq",
+        "*.fa": "fasta"
+    }
 }

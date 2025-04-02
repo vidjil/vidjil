@@ -3,7 +3,7 @@ import logging, sys, datetime, os
 import shutil
 from pydal.helpers.classes import RecordDeleter, RecordUpdater
 from pydal.objects import LazySet
-import defs
+import settings
 from applications.vidjil.models.VidjilAuth import PermissionEnum
 
 
@@ -288,7 +288,7 @@ def export_pre_process_log_files(tables, dest, log):
         if sequence_file_entry["pre_process_id"] is not None:
             if not os.path.exists(pre_file_path):
                 os.makedirs(pre_file_path)
-            source_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+            source_folder = settings.DIR_PRE_VIDJIL_ID % sequence_file_id
             target_folder = pre_file_path + "/" + DIR_PRE_VIDJIL_ID_EXPORT % sequence_file_id
             try:
                 shutil.copytree(source_folder, target_folder)
@@ -305,7 +305,7 @@ def import_pre_process_log_files(tables, src, importer, log):
         if sequence_file_entry["pre_process_id"] is not None:
             source_folder = pre_file_path + "/" + DIR_PRE_VIDJIL_ID_EXPORT % int(sequence_file_id)
             mapped_sequence_file_id = importer.get_mapping_id("sequence_file", int(sequence_file_id))
-            target_folder = defs.DIR_PRE_VIDJIL_ID % int(mapped_sequence_file_id)
+            target_folder = settings.DIR_PRE_VIDJIL_ID % int(mapped_sequence_file_id)
             try:
                 shutil.copytree(source_folder, target_folder)
                 log.debug("Copying %s to %s" % (source_folder, target_folder))

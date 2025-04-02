@@ -716,7 +716,16 @@ Model_loader.prototype = {
                 }
                 }
             }
-            this.toggle_all_systems(true);
+
+            // loci
+            if (this.analysis.system_selected) {
+                this.system_selected = this.analysis.system_selected;
+                this.update_selected_system();
+            } else {
+                this.toggle_all_systems(true);
+            }
+
+            // selected sample
             this.t = this.samples.order[0]
             
         }else{
@@ -780,7 +789,8 @@ Model_loader.prototype = {
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
-            report_save :this.report_save
+            report_save :this.report_save,
+            system_selected : this.system_selected,
         }
 
         var elem;

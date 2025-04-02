@@ -5,15 +5,54 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "My (gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/vidjil-algo",
+            "args": [
+                "-g",
+                "germline/homo-sapiens.g",
+                "-r",
+                "1",
+                "-b",
+                "demo-x5",
+                "-o",
+                "development",
+                "demo/Demo-X5.fa",
+                "--out-clone-files"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "Python: Debug Tests",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
-            "purpose": ["debug-test"],
-            "env": {"PYDAL_URI":"sqlite://storage.db"},
+            "purpose": [
+                "debug-test"
+            ],
+            "env": {
+                "PYDAL_URI": "sqlite://storage.db"
+            },
             "console": "integratedTerminal",
             "justMyCode": false
-        }, 
+        },
         {
             "name": "Python: Remote Attach via 10001",
             "type": "debugpy",

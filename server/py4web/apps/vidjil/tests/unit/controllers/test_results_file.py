@@ -1,27 +1,27 @@
-import os
 import json
+import os
 import pathlib
 import shutil
-from typing import TextIO
+
 import pytest
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils, test_utils
-from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session, HTTP
-from ....common import db, auth
-from .... import defs
-from ....modules.permission_enum import PermissionEnum
+from py4web.core import HTTP, Session, _before_request
 
+from .... import settings
+from ....common import auth, db
 from ....controllers import results_file as results_file_controller
+from ....modules.permission_enum import PermissionEnum
+from ...functional.db_initialiser import DBInitialiser
+from ..utils import db_manipulation_utils, test_utils
+from ..utils.omboddle import Omboddle
 
 
-class TestResultsFileController():
-
+class TestResultsFileController:
     @pytest.fixture(autouse=True)
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -53,7 +53,8 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling index:
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -69,13 +70,17 @@ class TestResultsFileController():
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling index
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"sort": "", "reverse": ""}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sort": "", "reverse": ""},
+        ):
             json_result = results_file_controller.index()
 
         # Then : We get results_file list
         result = json.loads(json_result)
-        assert result["reverse"] == False
+        assert result["reverse"] is False
         query = result["query"]
         assert len(query) == 15
 
@@ -103,7 +108,8 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling run_all_patients:
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -139,24 +145,32 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+            user_group_id, PermissionEnum.access.value, "sample_set", sample_set_id
+        )
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
         results_file_id = db_manipulation_utils.add_results_file(
-            sequence_file_id=sequence_file_id)
+            sequence_file_id=sequence_file_id
+        )
 
         # When : Calling info
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"results_file_id": results_file_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"results_file_id": results_file_id},
+        ):
             json_result = results_file_controller.info()
 
         # Then : We get results_file list
         result = json.loads(json_result)
         assert result["message"] == "result info"
-        assert result["content_log"] == None
+        assert result["content_log"] is None
 
     def test_info_access_denied(self):
         # Given : logged as other user, add a results file with the wrong rights
@@ -165,18 +179,26 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
-            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+            user_group_id, PermissionEnum.access.value, "sample_set", sample_set_id
+        )
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
         results_file_id = db_manipulation_utils.add_results_file(
-            sequence_file_id=sequence_file_id)
+            sequence_file_id=sequence_file_id
+        )
 
         # When : Calling info
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"results_file_id": results_file_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"results_file_id": results_file_id},
+        ):
             json_result = results_file_controller.info()
 
         # Then : We get an error
@@ -209,20 +231,29 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.del_permission(
-            user_group_id, PermissionEnum.read.value, 'sample_set', sample_set_id)
+            user_group_id, PermissionEnum.read.value, "sample_set", sample_set_id
+        )
         auth.del_permission(
-            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+            user_group_id, PermissionEnum.access.value, "sample_set", sample_set_id
+        )
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
         results_file_id = db_manipulation_utils.add_results_file(
-            sequence_file_id=sequence_file_id)
+            sequence_file_id=sequence_file_id
+        )
 
         # When : Calling output
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"results_file_id": results_file_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"results_file_id": results_file_id},
+        ):
             json_result = results_file_controller.output()
 
         # Then : We get an error
@@ -237,31 +268,49 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
-            user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.read.value, db.sample_set, sample_set_id
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id
+        )
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
-        save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
+            sample_set_id, user_id
+        )
+        save_dir_out_vidjil_id = settings.DIR_OUT_VIDJIL_ID
         try:
             results_file_id = db_manipulation_utils.add_results_file(
-                sequence_file_id=sequence_file_id)
-            defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
-                test_utils.get_results_path(), f"out-{defs.BASENAME_OUT_VIDJIL_ID}")) + os.sep
+                sequence_file_id=sequence_file_id
+            )
+            settings.DIR_OUT_VIDJIL_ID = (
+                str(
+                    pathlib.Path(
+                        test_utils.get_results_path(),
+                        f"out-{settings.BASENAME_OUT_VIDJIL_ID}",
+                    )
+                )
+                + os.sep
+            )
             results_file_directory = pathlib.Path(
-                defs.DIR_OUT_VIDJIL_ID % results_file_id)
+                settings.DIR_OUT_VIDJIL_ID % results_file_id
+            )
             results_file_directory.mkdir(parents=True, exist_ok=True)
             results_filename = "test_result_file.res"
             results_content = "test_content"
-            pathlib.Path(results_file_directory,
-                         results_filename).write_text(results_content)
+            pathlib.Path(results_file_directory, results_filename).write_text(
+                results_content
+            )
 
             # When : Calling output
-            with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                          query={"results_file_id": results_file_id}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"results_file_id": results_file_id},
+            ):
                 json_result = results_file_controller.output()
 
             # Then : We get the correct list of files
@@ -273,7 +322,7 @@ class TestResultsFileController():
             assert files[0]["filename"] == results_filename
             assert files[0]["size"] == f"{len(results_content)} B"
         finally:
-            defs.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
+            settings.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
             shutil.rmtree(results_file_directory)
 
     ##################################
@@ -306,14 +355,14 @@ class TestResultsFileController():
     #         user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
     #     sequence_file_id = db_manipulation_utils.add_sequence_file(
     #         patient_id, user_id)
-    #     save_dir_out_vidjil_id = defs.DIR_OUT_VIDJIL_ID
+    #     save_dir_out_vidjil_id = settings.DIR_OUT_VIDJIL_ID
     #     try:
     #         results_file_id = db_manipulation_utils.add_results_file(
     #             sequence_file_id=sequence_file_id)
-    #         defs.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
-    #             test_utils.get_results_path(), f"out-{defs.BASENAME_OUT_VIDJIL_ID}")) + os.sep
+    #         settings.DIR_OUT_VIDJIL_ID = str(pathlib.Path(
+    #             test_utils.get_results_path(), f"out-{settings.BASENAME_OUT_VIDJIL_ID}")) + os.sep
     #         results_file_directory = pathlib.Path(
-    #             defs.DIR_OUT_VIDJIL_ID % results_file_id)
+    #             settings.DIR_OUT_VIDJIL_ID % results_file_id)
     #         results_file_directory.mkdir(parents=True, exist_ok=True)
     #         results_filename = "test_result_file.res"
     #         results_content = "test_content"
@@ -329,7 +378,7 @@ class TestResultsFileController():
     #         assert result == "Response from mock"
     #         assert TestResultsFileController.stream_log != None
     #     finally:
-    #         defs.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
+    #         settings.DIR_OUT_VIDJIL_ID = save_dir_out_vidjil_id
     #         shutil.rmtree(results_file_directory)
 
     ##################################
@@ -354,13 +403,17 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
-        sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)[1]
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": sample_set_id},
+        ):
             json_result = results_file_controller.confirm()
 
         # Then : edit is authorized
@@ -374,19 +427,24 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
-        sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)[1]
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.run.value, db.sample_set, sample_set_id)
-        auth.add_permission(
-            user_group_id, PermissionEnum.run.value, db.sample_set, 0)
+            user_group_id, PermissionEnum.run.value, db.sample_set, sample_set_id
+        )
+        auth.add_permission(user_group_id, PermissionEnum.run.value, db.sample_set, 0)
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": sample_set_id},
+        ):
             json_result = results_file_controller.confirm()
 
         # Then : authorized
@@ -415,13 +473,17 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
-        sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id)[1]
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
 
         # When : Calling delete
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"sample_set_id": sample_set_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": sample_set_id},
+        ):
             json_result = results_file_controller.delete()
 
         # Then : edit is authorized
@@ -435,30 +497,40 @@ class TestResultsFileController():
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id)
+            user_group_id, PermissionEnum.access.value, db.sample_set, sample_set_id
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.run.value, db.sample_set, sample_set_id)
-        auth.add_permission(
-            user_group_id, PermissionEnum.run.value, db.sample_set, 0)
+            user_group_id, PermissionEnum.run.value, db.sample_set, sample_set_id
+        )
+        auth.add_permission(user_group_id, PermissionEnum.run.value, db.sample_set, 0)
         sequence_file_id = db_manipulation_utils.add_sequence_file(
-            sample_set_id, user_id)
+            sample_set_id, user_id
+        )
         results_file_id = db_manipulation_utils.add_results_file(
-            sequence_file_id=sequence_file_id)
+            sequence_file_id=sequence_file_id
+        )
         assert db.results_file[results_file_id] is not None
 
         # When : Calling delete
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"sample_set_id": sample_set_id, "results_file_id": results_file_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": sample_set_id, "results_file_id": results_file_id},
+        ):
             json_result = results_file_controller.delete()
 
         # Then : authorized
         result = json.loads(json_result)
         assert result["success"] == "true"
         assert result["redirect"] == "sample_set/index"
-        assert result["message"] == f"[{
-            results_file_id}] ({sample_set_id}) c1: process deleted"
+        assert (
+            result["message"]
+            == f"[{results_file_id}] ({sample_set_id}) c1: process deleted"
+        )
         assert result["args"]["id"] == str(sample_set_id)
-        assert db.results_file[results_file_id] == None
+        assert db.results_file[results_file_id] is None

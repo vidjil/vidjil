@@ -2,12 +2,12 @@
 !LAUNCH: $VIDJIL_DIR/$EXEC -c clones -g $VIDJIL_DIR/germline/homo-sapiens.g:IGK ../data/diversity.fa
 
 $ Focusing on IGK recombination, three reads are detected
-1: junction detected in 3 reads
+f1: junction detected in 3 reads
 
 $ Diversity measures are correct
-1:index_Ds_diversity    0.667 0.667
-1:index_H_entropy       0.637 0.637
-1:index_E_equitability  0.579 0.579
+f1:index_Ds_diversity    0.667 0.667
+f1:index_H_entropy       0.637 0.637
+f1:index_E_equitability  0.579 0.579
 
 
 !LAUNCH: $VIDJIL_DIR/$EXEC -c clones -g $VIDJIL_DIR/germline/homo-sapiens.g:TRA,TRG,IGK,IGL ../data/diversity.fa

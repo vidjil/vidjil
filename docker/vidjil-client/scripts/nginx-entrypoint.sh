@@ -26,18 +26,27 @@ fi
 if test -v "FRONT_ADDRESS"; then
     echo "Setting front address to $FRONT_ADDRESS"
     sed -i "s/server_name \$hostname;/server_name ${FRONT_ADDRESS};/g" /etc/vidjil/nginx_vidjil.conf
+    sed -i "s/server_name \$hostname;/server_name ${FRONT_ADDRESS};/g" /etc/vidjil/nginx_vidjil_http.conf
 fi
 
 # Set the DB address if given
 if test -v "DB_ADDRESS"; then
     echo "Setting DB address to $DB_ADDRESS"
-    sed -i "s/https:\/\/localhost/https:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+    sed -i "s/:\/\/localhost/:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+    sed -i "s/:\/\/localhost/:\/\/${DB_ADDRESS}/g" /etc/vidjil/conf_http.js
 fi
 
-# Set the DB address if set
-if test -v "DB_ADDRESS"; then
-   sed -i "s/https:////localhost/${DB_ADDRESS}/g" /etc/vidjil/conf.js
+# Set the healthcare config is given
+if test -v "HEALTHCARE_COMPLIANCE"; then
+    if [ "${HEALTHCARE_COMPLIANCE,,}" = "true" ]; then
+        echo "Setting HEALTHCARE_COMPLIANCE to true"
+        sed -i "s/healthcare: false/healthcare: true/g" /etc/vidjil/conf.js
+        sed -i "s/healthcare: false/healthcare: true/g" /etc/vidjil/conf_http.js
+        sed -i "s/\";*Research Use Only. This instance of Vidjil is hosted by.*/\"This server has been set up to be compliant for clinical use by the server maintainers. You should ensure that you comply with the applicable regulations in your country concerning storage and processing of healthcare data.\",/g" /etc/vidjil/conf.js
+        sed -i "s/\".*Research Use Only. This instance of Vidjil is hosted by.*/\"This server has been set up to be compliant for clinical use by the server maintainers. You should ensure that you comply with the applicable regulations in your country concerning storage and processing of healthcare data.\",/g" /etc/vidjil/conf_http.js
+    fi
 fi
 
+echo "Start nginx"
 spawn-fcgi -U nginx -u nginx -G nginx -g nginx -s /var/run/fcgiwrap.socket /usr/bin/fcgiwrap
 nginx -g 'daemon off;'

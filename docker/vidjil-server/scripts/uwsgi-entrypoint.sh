@@ -8,9 +8,6 @@ mkdir -p /mnt/backup/ /mnt/data/ /mnt/result/ /mnt/upload/
 user=33
 echo "user : `id -nu $user` (id $user)"
 
-echo "==== Change owner of vidjil directories: $user"
-echo "     .../database"
-
 if [[ "$CHANGE_OWNER" == "true" ]]; then
     echo "==== Change owner of directories to owner '`id -nu $user` (id $user)': '$CHANGE_OWNER'"
     echo "     - databases"

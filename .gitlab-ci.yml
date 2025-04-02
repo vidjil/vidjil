@@ -3,7 +3,7 @@
 # Step 2, moderate:
 #   client: client_firefox_supported, tuto-c1-ff-supported
 #   server: server_firefox_supported, tuto-s1-ff-supported
-# Step 3, late, longer or tricky: 
+# Step 3, late, longer or tricky:
 variables:
   CYPRESS_DOCKER_VERSION: "12.9"
 
@@ -103,7 +103,7 @@ include:
 .need_for_quick_test:
   needs: []
 
-### Client part should not containt server stage
+### Client part should not contain server stage
 .need_for_moderate_client:
   needs: [test_tools, test_browser_unit, code_quality_custom]
 .need_for_staged_client:
@@ -111,7 +111,7 @@ include:
 .need_for_late_client:
   needs: [client1-ff-supported, external1-ff-supported, tuto-c1-ff-supported]
 
-### Server part should not containt client stage
+### Server part should not contain client stage
 .need_for_moderate_server:
   needs: [test_tools, test_server_unit, build_test_server_docker]
 .need_for_late_server:
@@ -125,7 +125,7 @@ include:
 
 algo_valgrind_unit:
   stage: valgrind_unit
-  script: make -C algo valgrind_unit
+  script: make germline && make data && make -C algo valgrind_unit
   only:
     - /^feature-.*a.*\/.*$/
     - schedules
@@ -134,7 +134,7 @@ algo_valgrind_unit:
 
 .snip_valgrind_functional: &valgrind_functional
   stage: valgrind_functional
-  script: make -C algo valgrind_should
+  script: make germline && make data && make -C algo valgrind_should
   tags:
     - valgrind
 
@@ -154,13 +154,16 @@ release_valgrind_functional:
 
 tgz_release:
   stage: tgz_release
-  script: make -C algo release RELEASE_TAG=`cat algo/release`
+  script:
+    - make -C algo release RELEASE_TAG=`cat algo/release`
+    - echo "RELEASE_NAME=$(cat algo/release)" >> $GITLAB_ENV
+    - echo "UNAME_M=$(uname -m)" >> $GITLAB_ENV
   only:
     - /^feature-.*a.*\/release$/
   artifacts:
     paths:
-    - algo/releases/vidjil-algo-`cat algo/release`.tar.gz
-    - algo/releases/vidjil-algo-`cat algo/release`/vidjil-algo-`cat algo/release`_`uname -m`
+    - algo/releases/vidjil-algo-$RELEASE_NAME.tar.gz
+    - algo/releases/vidjil-algo-$RELEASE_NAME/vidjil-algo-${RELEASE_NAME}_${UNAME_M}
     expire_in: 10 years
   allow_failure: false
   tags:
@@ -198,7 +201,7 @@ deploy_release_prod:
 test_browser_unit:
   image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION
   stage: test_unit
-  script: 
+  script:
     - npm -v
     - npm install --save-dev qunit
     - npm link nightmare --unsafe-perm=true ;
@@ -244,6 +247,43 @@ code_quality_custom:
   extends:
     - .need_for_quick_test
 
+.base_ruff:
+  stage: test_quality
+  interruptible: true
+  image: ghcr.io/astral-sh/ruff:0.9.9-alpine
+  before_script:
+    - cd $CI_PROJECT_DIR
+    - ruff --version
+  tags:
+    - cidocker
+  extends:
+    - .need_for_quick_test
+
+Ruff Check:
+  extends: .base_ruff
+  script:
+    - ruff check --output-format=gitlab > code-quality-report.json
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-client/
+    - dev
+    - schedules
+  artifacts:
+    reports:
+      codequality: $CI_PROJECT_DIR/code-quality-report.json
+
+Ruff Format:
+  extends: .base_ruff
+  script:
+    - ruff format --diff
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-client/
+    - dev
+    - schedules
+
 # Server
 
 test_server_unit:
@@ -267,6 +307,8 @@ test_server_unit:
           path: server/unit_coverage.xml
       paths:
         - pip_freeze_requirements.txt
+        - server/unit_report.xml
+        - server/unit_coverage.xml
       expire_in: 7 day
     only:
       - /^feature-.*s.*\/.*$/
@@ -284,47 +326,29 @@ test_server_unit:
     # Build specific version of docker images
     - echo "CI_COMMIT_REF_NAME - $CI_COMMIT_REF_NAME"
     - echo "TIME $(date) - before pulling docker images" >> time.log
+    # - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT vidjil/client:test
     - docker tag $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER vidjil/server:test
     - echo "TIME $(date) - after pulling docker images" >> time.log
-    - sed -i '/\:\/etc\/nginx\/ssl/d' ./docker/docker-compose.yml
-    - sed -i '/\/var\/lib\/mysql/d' ./docker/docker-compose.yml 
-    - sed -i 's/latest/test/g' ./docker/docker-compose.yml
-    # Replace path for some volumes
-    # Use http version of config
-    - cd docker/vidjil-server/conf/ && mv defs.py defs_https.py && mv defs_http.py defs.py && cd ../../..
-    # - make germline && cp browser/js/germline.js docker/vidjil-client/conf
-    - sed -i "s/^\(FILE_SOURCE .*\)/FILE_SOURCE = '\/usr\/share\/vidjil\/demo'/" docker/vidjil-server/conf/defs.py
-    # Up py4web
+    # Prepare docker configuration (including mounting test controller)
     - cd docker
-    - cp .env.docker-compose-interpolation .env
-    - echo "UWSGI_POOL=1" >> .env.default
-    - mkdir -p volumes
+    - cp ../server/py4web/apps/vidjil/__init__.py ./ci/test_controller/__init__.py && echo $'\nfrom .controllers import test_controller\n' >> ./ci/test_controller/__init__.py && cat ./ci/test_controller/__init__.py
+    - ln -sf docker-compose-ci-tests.yml docker-compose.override.yml
+    - chmod a-w ./ci/mysql-logs/my.cnf
+    - rm -Rf volumes && mkdir -p volumes
+    # Up docker compose
     - docker-compose config
-    - docker-compose up -d mysql uwsgi
-    - echo "TIME $(date) - after first compose up" >> ../time.log
-    # Set rights
-    - docker exec vidjil-uwsgi mkdir -p /usr/share/vidjil/server/py4web/apps/vidjil/errors/
-    - docker exec vidjil-mysql chmod 0777 /var/lib/mysql/vidjil -R
-    - docker exec vidjil-uwsgi chmod 0777 /usr/share/vidjil/server/py4web/apps/vidjil/databases -R
-    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/results   -R
-    - docker exec vidjil-uwsgi chmod 0777 /mnt/result/tmp
-    - docker exec vidjil-uwsgi chmod 0777 /mnt/upload/uploads   -R
-    - docker exec vidjil-uwsgi chmod 0777 /usr/share/tools      -R
-    - chmod 777 -R volumes/vidjil/
-    # Start other docker images
     - docker-compose up -d
-    # Show some information on current states of docker services
     - docker ps
-    # Execute a script of init database and moke (fake ?) data inside; to be launch before executing tests
+    # Execute a script of init database and mock (fake ?) data inside; to launch before executing tests
+    - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ci_erase.sql"
     - docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
-    # Change File source definition in defs.py file 
+    - echo "TIME $(date) - after compose up" >> time.log
     - cd .. # Go to root git directory
-    - echo "TIME $(date) - before other server script" >> time.log
-
+    
 
 .test_server_base_dind:
   image:
@@ -332,23 +356,27 @@ test_server_unit:
     entrypoint: [""]
   stage: test_functional
   services:
-    - docker:dind
+    - name: docker:dind
+      alias: docker
+      command: ["--tls=false"]
   before_script:
     - apk update
     - apk add docker docker-compose make wget tar yq
     - !reference [.setup_docker_server]
   after_script:
     - echo "TIME $(date) - END OF SERVER JOB" >> time.log
-    - docker cp vidjil-uwsgi:/usr/share/vidjil/server/py4web/apps/vidjil/errors/ server/py4web/apps/vidjil/
     - docker ps
     - mkdir -p logs/after; cd docker; for service in `docker compose config | yq '.services[]|key'`; do docker logs vidjil-${service} > ../logs/after/${service}.log 2>&1; done
-    - docker-compose down -v
+    - docker compose down -v
     - cd .. && cat time.log
     - docker rmi "vidjil/server:test" "vidjil/client:test"
     - docker rmi $CI_REGISTRY_IMAGE/$IMAGE_NAME_CLIENT $CI_REGISTRY_IMAGE/$IMAGE_NAME_SERVER
   variables:
     IMAGE_NAME_CLIENT: dev-client/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     IMAGE_NAME_SERVER: dev-server/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    DOCKER_HOST: tcp://docker:2375
+    # DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -356,8 +384,7 @@ test_server_unit:
     - dev
     - schedules
   tags:
-    - ci.inria.fr
-    - medium
+    - cidocker
 
 
 # Deployment
@@ -386,17 +413,18 @@ deploy_review_server:
   stage: deploy_review
   script:
     - make browser demo
-    - cp ./docker/vidjil-client/conf/conf.js ./browser/js/conf.js
-    - sed -r 's/^.*FILE_SOURCE.*$/FILE_SOURCE="\/usr\/share\/vidjil\/demo"/' ./docker/vidjil-server/conf/defs.py > ./server/py4web/apps/vidjil/defs.py
-    - sed -i -e "/EMAIL_SUBJECT_START/c EMAIL_SUBJECT_START='[Vidjil/CI][$CI_COMMIT_REF_NAME]'" -e '/FROM_EMAIL/c FROM_EMAIL="server.ci@vidjil.org"' ./server/py4web/apps/vidjil/defs.py
     - sed -ri 's/^(uwsgi_pass )\$upstream_(.*)$/\1\2/g' docker/vidjil-client/conf/uwsgi.conf
+    # Use https config in conf_http.js to prevent mixed content error
+    - cp ./docker/vidjil-client/conf/conf.js ./docker/vidjil-client/conf/conf_http.js
     - mv docker docker_${CI_COMMIT_REF_SLUG}
     - cd docker_${CI_COMMIT_REF_SLUG}
-    - cp .env.docker-compose-interpolation .env
-    - echo "PY4WEB_ADMIN_PASSWORD=${REVIEW_SERVER_ADMIN_PASSWORD}" >> .env.default
-    - echo "VIRTUAL_HOST_NAME=${CI_COMMIT_REF_SLUG}" >> .env.default
-    - echo "FRONT_ADDRESS=${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org" >> .env.default
-    - echo "DB_ADDRESS=${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org" >> .env.default
+    - echo "SMTP_EMAIL_SUBJECT_START='[Vidjil/CI][${CI_COMMIT_REF_NAME}]'" >> .env.ci-review
+    - echo "PY4WEB_ADMIN_PASSWORD='${REVIEW_SERVER_ADMIN_PASSWORD}'" >> .env.ci-review
+    - echo "VIRTUAL_HOST_NAME='${CI_COMMIT_REF_SLUG}'" >> .env.ci-review
+    - echo "VIRTUAL_HOST='${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org'" >> .env.ci-review
+    - echo "FRONT_ADDRESS='${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org'" >> .env.ci-review
+    - echo "DB_ADDRESS='${CI_COMMIT_REF_SLUG}.server.ci.vidjil.org'" >> .env.ci-review
+    - cat .env.ci-review
     - cd ..
     - rsync -av --exclude .git . $REVIEW_SERVER:$REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG} || $(case "$?" in 0|23) exit 0 ;; *) exit $?; esac)
     - 'ssh $REVIEW_SERVER "
@@ -445,9 +473,9 @@ deploy_client:
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh    
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts  
+    - chmod 644 ~/.ssh/known_hosts
   script:
     - ssh vidjil@$PROD_CLIENT_SERVER "
          cd $PROD_CLIENT_PATH
@@ -466,34 +494,43 @@ deploy_client:
     - cidocker
   needs:
     - deploy_docker
-  
-    
+
+
 build_test_server_docker:
   stage: build_test_server_docker
   image: docker:latest
   services:
-    - docker:dind
+    - name: docker:dind
+      alias: docker
+      command: ["--tls=false"]
   before_script: []
   script:
     - echo $CI_REGISTRY_IMAGE:$IMAGE_NAME
     - echo "TIME $(date) - before building docker image" >> time.log
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    # build and push the image to be used in subsequent stages
+    # build and push the image to be used in subsequent stages, using cache
+    # See https://docs.gitlab.com/ee/ci/docker/docker_layer_caching.htmls
+    - docker pull ${CI_REGISTRY_IMAGE}/$IMAGE_LATEST || true
     - 'docker build 
-        --no-cache
+        --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${CI_REGISTRY_IMAGE}/$IMAGE_LATEST
         --build-arg build_env=TEST 
-        -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME
+        -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME -t ${CI_REGISTRY_IMAGE}/$IMAGE_LATEST 
         -f docker/vidjil-$TYPE/Dockerfile
         ./'
     # Push image as commit and branch name to allow to use cache if another commit come to this branch
     - echo "TIME $(date) - before pushing docker image" >> time.log
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE_LATEST
     - echo "TIME $(date) - after push" >> time.log
   parallel:
     matrix:
       - TYPE: [client, server]
   variables:
     IMAGE_NAME: dev-$TYPE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    IMAGE_LATEST: dev-$TYPE/${CI_COMMIT_REF_SLUG}:latest
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   only:
     - /^prod-server/
     - /^prod-client/
@@ -503,8 +540,7 @@ build_test_server_docker:
     - /^hotfix-.*t.*\/.*$/
     - dev
   tags:
-    - ci.inria.fr
-    - small
+    - cidocker
   artifacts:
     paths:
       - time.log
@@ -513,7 +549,7 @@ build_test_server_docker:
   needs:
     - []
 
-    
+
 deploy_docker:
   stage: publish_release
   image: docker:latest
@@ -551,7 +587,7 @@ deploy_germlines:
   only:
     - manual
     - /^feature-.*g.*\/.*$/
-    
+
 
 
 stop_deploy_review:
@@ -574,9 +610,9 @@ stop_deploy_review:
 stop_deploy_review_server:
   stage: deploy_review
   script:
-    - 'ssh $REVIEW_SERVER "set -o xtrace; 
+    - 'ssh $REVIEW_SERVER "set -o xtrace;
         cd $REVIEW_SERVER_PATH_SERVER${CI_COMMIT_REF_SLUG}/docker_${CI_COMMIT_REF_SLUG};
-        docker compose -f docker-compose.yml -f docker-compose-ci.yml -f docker-compose-ci-review.yml down -v; 
+        docker compose down -v;
         cd ; 
         sudo ./scripts/remove_server_folder.sh ${CI_COMMIT_REF_SLUG};
         docker system prune -af --filter until=20m;
@@ -591,4 +627,3 @@ stop_deploy_review_server:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
   allow_failure: true
-

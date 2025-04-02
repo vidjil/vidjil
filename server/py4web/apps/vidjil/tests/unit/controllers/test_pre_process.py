@@ -1,24 +1,25 @@
 import collections
-import os
 import json
+import os
 import unittest
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils, test_utils
-from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session, HTTP
-from ....common import db, auth
-from ....modules.permission_enum import PermissionEnum
-from .... import defs
-from .... import tasks
+
+from py4web.core import HTTP, Session, _before_request
+
+from .... import settings, tasks
+from ....common import auth, db
 from ....controllers import pre_process as pre_process_controller
+from ....modules.permission_enum import PermissionEnum
+from ...functional.db_initialiser import DBInitialiser
+from ..utils import db_manipulation_utils, test_utils
+from ..utils.omboddle import Omboddle
 
 
 class TestPreProcessController(unittest.TestCase):
-
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -58,11 +59,15 @@ class TestPreProcessController(unittest.TestCase):
         query = result["query"]
         assert len(query) == 5
         names = [item["name"] for item in query]
-        expected_names = ["public pre-process", "pre-process perm",
-                          "test pre-process 0", "test pre-process 1", "test pre-process 2"]
-        assert collections.Counter(
-            names) == collections.Counter(expected_names)
-        assert result["isAdmin"] == True
+        expected_names = [
+            "public pre-process",
+            "pre-process perm",
+            "test pre-process 0",
+            "test pre-process 1",
+            "test pre-process 2",
+        ]
+        assert collections.Counter(names) == collections.Counter(expected_names)
+        assert result["isAdmin"] is True
 
     ##################################
     # Tests on pre_process_controller.add()
@@ -111,23 +116,33 @@ class TestPreProcessController(unittest.TestCase):
     def test_add_form(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_to_add = dict(pre_process_name="new pre_process name",
-                                  pre_process_command="new pre_process command",
-                                  pre_process_info="new pre_process info")
+        pre_process_to_add = dict(
+            pre_process_name="new pre_process name",
+            pre_process_command="new pre_process command",
+            pre_process_info="new pre_process info",
+        )
 
         # When : Calling add_form
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json", **pre_process_to_add}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", **pre_process_to_add},
+        ):
             json_result = pre_process_controller.add_form()
 
         # Then : notification was added
         result = json.loads(json_result)
         pre_process_id = result["pre_process_id"]
         assert result["redirect"] == "pre_process/index"
-        assert result["message"] == f"pre_process '{pre_process_to_add['pre_process_name']}' added"
+        assert (
+            result["message"]
+            == f"pre_process '{pre_process_to_add['pre_process_name']}' added"
+        )
         pre_process_from_db = db.pre_process[pre_process_id]
         assert pre_process_from_db["name"] == pre_process_to_add["pre_process_name"]
-        assert pre_process_from_db["command"] == pre_process_to_add["pre_process_command"]
+        assert (
+            pre_process_from_db["command"] == pre_process_to_add["pre_process_command"]
+        )
         assert pre_process_from_db["info"] == pre_process_to_add["pre_process_info"]
 
     ##################################
@@ -149,18 +164,25 @@ class TestPreProcessController(unittest.TestCase):
     def test_edit_no_rights(self):
         # Given : Logged as other user
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
         db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling edit
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.edit()
 
         # Then : edit is authorized
@@ -170,13 +192,19 @@ class TestPreProcessController(unittest.TestCase):
     def test_edit_ok(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
 
         # When : Calling edit
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.edit()
 
         # Then : edit is authorized
@@ -202,18 +230,25 @@ class TestPreProcessController(unittest.TestCase):
     def test_edit_form_no_rights(self):
         # Given : Logged as other user
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
         db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling edit_form
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.edit_form()
 
         # Then : edit is authorized
@@ -223,21 +258,31 @@ class TestPreProcessController(unittest.TestCase):
     def test_edit_form(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
-        pre_process_edit = dict(pre_process_name="new pre process name",
-                                pre_process_info="new pre process info",
-                                pre_process_command="new pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
+        pre_process_edit = dict(
+            pre_process_name="new pre process name",
+            pre_process_info="new pre process info",
+            pre_process_command="new pre process command",
+        )
 
         # When : Calling edit_form
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json", "id": pre_process_id, **pre_process_edit}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "id": pre_process_id, **pre_process_edit},
+        ):
             json_result = pre_process_controller.edit_form()
 
         # Then : notification was updated
         result = json.loads(json_result)
-        assert result["message"] == f"pre_process '{pre_process_edit['pre_process_name']}' updated"
+        assert (
+            result["message"]
+            == f"pre_process '{pre_process_edit['pre_process_name']}' updated"
+        )
         assert result["redirect"] == "pre_process/index"
         pre_process_from_db = db.pre_process[pre_process_id]
         assert pre_process_from_db["name"] == pre_process_edit["pre_process_name"]
@@ -263,18 +308,25 @@ class TestPreProcessController(unittest.TestCase):
     def test_confirm_no_rights(self):
         # Given : Logged as other user
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
         db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.confirm()
 
         # Then : edit is authorized
@@ -284,13 +336,19 @@ class TestPreProcessController(unittest.TestCase):
     def test_confirm(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.confirm()
 
         # Then : notification was updated
@@ -316,18 +374,25 @@ class TestPreProcessController(unittest.TestCase):
     def test_delete_no_rights(self):
         # Given : Logged as other user
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
         db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.delete()
 
         # Then : access denied
@@ -337,21 +402,27 @@ class TestPreProcessController(unittest.TestCase):
     def test_delete(self):
         # Given : Logged as admin, adding a preprocess
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
-        assert db.pre_process[pre_process_id] != None
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
+        assert db.pre_process[pre_process_id] is not None
 
         # When : Calling delete
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.delete()
 
         # Then : pre_process was deleted
         result = json.loads(json_result)
         assert result["redirect"] == "pre_process/index"
         assert result["message"] == f"pre_process '{pre_process_id}' deleted"
-        assert db.pre_process[pre_process_id] == None
+        assert db.pre_process[pre_process_id] is None
 
     ##################################
     # Tests on pre_process_controller.info()
@@ -375,10 +446,16 @@ class TestPreProcessController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling info
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": 1}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": 1},
+        ):
             json_result = pre_process_controller.info()
 
         # Then : We get an error
@@ -390,42 +467,71 @@ class TestPreProcessController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
-        sequence_file_id = db_manipulation_utils.add_sequence_file(sample_set_id, use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
-        defs.DIR_PRE_VIDJIL_ID = str(test_utils.get_resources_path()) + '/results/tmp/pre/out-%06d/'
-        directory1 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, use_real_file=False, preprocess=True, preprocess_conf_id=1
+        )
+        db_manipulation_utils.add_scheduler_task(
+            task_name="preprocess",
+            sequence_file_id=sequence_file_id,
+            status=tasks.STATUS_PENDING,
+            args=[sequence_file_id, 1],
+        )
+        settings.DIR_PRE_VIDJIL_ID = (
+            str(test_utils.get_resources_path()) + "/results/tmp/pre/out-%06d/"
+        )
+        directory1 = settings.DIR_PRE_VIDJIL_ID % sequence_file_id
         os.makedirs(directory1, exist_ok=True)
-        
-        #### When : Calling info
-        ## Case 1; no log for this preprocess
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": sample_set_id, "sequence_file_id":sequence_file_id}):
+
+        # When : Calling info
+        # Case 1; no log for this preprocess
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={
+                "sample_set_id": sample_set_id,
+                "sequence_file_id": sequence_file_id,
+            },
+        ):
             json_result = pre_process_controller.info()
 
         # Then : results with no log
         result = json.loads(json_result)
         assert result["message"] == "result info"
-        assert result["content_log"] is None # no log file exist
+        assert result["content_log"] is None  # no log file exist
         os.rmdir(directory1)
 
         # Given
-        ## Case 1; Log exist for this preprocess, should return raw content of the log
-        sequence_file_id2 = db_manipulation_utils.add_sequence_file(sample_set_id, use_real_file=False, preprocess=True, preprocess_conf_id=1)
-        db_manipulation_utils.add_scheduler_task(task_name="preprocess", sequence_file_id=sequence_file_id, status=tasks.STATUS_PENDING, args=[sequence_file_id, 1])
-        directory2 = defs.DIR_PRE_VIDJIL_ID % sequence_file_id2
-        file_log  = directory2 + "/file.pre.log"
+        # Case 1; Log exist for this preprocess, should return raw content of the log
+        sequence_file_id2 = db_manipulation_utils.add_sequence_file(
+            sample_set_id, use_real_file=False, preprocess=True, preprocess_conf_id=1
+        )
+        db_manipulation_utils.add_scheduler_task(
+            task_name="preprocess",
+            sequence_file_id=sequence_file_id,
+            status=tasks.STATUS_PENDING,
+            args=[sequence_file_id, 1],
+        )
+        directory2 = settings.DIR_PRE_VIDJIL_ID % sequence_file_id2
+        file_log = directory2 + "/file.pre.log"
         os.makedirs(directory2, exist_ok=True)
         with open(file_log, "w") as f_log:
-            f_log.write( "some log values")
+            f_log.write("some log values")
 
-        #### When : Calling info
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"sample_set_id": 1, "sequence_file_id":sequence_file_id2}):
+        # When : Calling info
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"sample_set_id": 1, "sequence_file_id": sequence_file_id2},
+        ):
             json_result = pre_process_controller.info()
 
         # Then : results with log
         result = json.loads(json_result)
         assert result["message"] == "result info"
-        assert result["content_log"] is not None # log file exist
-        assert result["content_log"] == "some log values" # log file exist
+        assert result["content_log"] is not None  # log file exist
+        assert result["content_log"] == "some log values"  # log file exist
         os.remove(file_log)
         os.rmdir(directory2)
 
@@ -464,7 +570,12 @@ class TestPreProcessController(unittest.TestCase):
         first_pre_process_id = db(db.pre_process).select().first().id
 
         # When : Calling permission with no id in params
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": first_pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": first_pre_process_id},
+        ):
             json_result = pre_process_controller.permission()
 
         # Then : check result
@@ -479,12 +590,19 @@ class TestPreProcessController(unittest.TestCase):
     def test_permission_id_new_pre_process(self):
         # Given : Logged as admin, adding a preprocess
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
 
         # When : Calling permission with no id in params
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.permission()
 
         # Then : check result
@@ -498,15 +616,23 @@ class TestPreProcessController(unittest.TestCase):
     def test_permission_id_new_pre_process_with_rights(self):
         # Given : Logged as admin, adding a preprocess with access rights
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        pre_process_id = db.pre_process.insert(name="pre process name",
-                                               info="pre process info",
-                                               command="pre process command")
+        pre_process_id = db.pre_process.insert(
+            name="pre process name",
+            info="pre process info",
+            command="pre process command",
+        )
         user_group_id = auth.user_group()
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, db.pre_process, pre_process_id)
+            user_group_id, PermissionEnum.access.value, db.pre_process, pre_process_id
+        )
 
         # When : Calling permission with no id in params
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": pre_process_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": pre_process_id},
+        ):
             json_result = pre_process_controller.permission()
 
         # Then : check result
@@ -550,15 +676,21 @@ class TestPreProcessController(unittest.TestCase):
     def test_change_permission_access_denied(self):
         # Given : a user and pre_process
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        db_manipulation_utils.log_in(self.session,
-                                     db_manipulation_utils.get_indexed_user_email(
-                                         1),
-                                     db_manipulation_utils.get_indexed_user_password(1))
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         pre_process_id = db_manipulation_utils.add_pre_process()
         user_group_id = auth.user_group(user_1_id)
 
         # When : Calling change_permission with no id in params
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"pre_process_id": pre_process_id, "group_id": user_group_id},
+        ):
             json_result = pre_process_controller.change_permission()
 
         # Then : Error expected
@@ -571,18 +703,28 @@ class TestPreProcessController(unittest.TestCase):
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
         user_group_id = auth.user_group(user_1_id)
-        assert auth.get_group_access(
-            "pre_process", pre_process_id, user_group_id) == False
+        assert (
+            auth.get_group_access("pre_process", pre_process_id, user_group_id) is False
+        )
 
         # When : Calling change_permission with no id in params
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"pre_process_id": pre_process_id, "group_id": user_group_id},
+        ):
             json_result = pre_process_controller.change_permission()
 
         # Then : access granted
         result = json.loads(json_result)
-        assert result["message"] == f"c{pre_process_id}: access '{PermissionEnum.access.value}' granted to '{db.auth_group[user_group_id].role}'"
-        assert auth.get_group_access(
-            "pre_process", pre_process_id, user_group_id) == True
+        assert (
+            result["message"]
+            == f"c{pre_process_id}: access '{PermissionEnum.access.value}' granted to '{db.auth_group[user_group_id].role}'"
+        )
+        assert (
+            auth.get_group_access("pre_process", pre_process_id, user_group_id) is True
+        )
 
     def test_change_permission_deleted(self):
         # Given : a user and pre_process
@@ -590,17 +732,32 @@ class TestPreProcessController(unittest.TestCase):
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
         user_group_id = auth.user_group(user_1_id)
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"pre_process_id": pre_process_id, "group_id": user_group_id},
+        ):
             json_result = pre_process_controller.change_permission()
-        assert auth.get_group_access(
-            "pre_process", pre_process_id, user_group_id) == True
+        assert (
+            auth.get_group_access("pre_process", pre_process_id, user_group_id) is True
+        )
 
         # When : Calling change_permission with no id in params
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"pre_process_id": pre_process_id, "group_id": user_group_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"pre_process_id": pre_process_id, "group_id": user_group_id},
+        ):
             json_result = pre_process_controller.change_permission()
 
         # Then : access deleted
         result = json.loads(json_result)
-        assert result["message"] == f"c{pre_process_id}: access '{PermissionEnum.access.value}' deleted to '{db.auth_group[user_group_id].role}'"
-        assert auth.get_group_access(
-            "pre_process", pre_process_id, user_group_id) == False
+        assert (
+            result["message"]
+            == f"c{pre_process_id}: access '{PermissionEnum.access.value}' deleted to '{db.auth_group[user_group_id].role}'"
+        )
+        assert (
+            auth.get_group_access("pre_process", pre_process_id, user_group_id) is False
+        )

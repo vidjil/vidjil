@@ -2,24 +2,35 @@
 #define AUTOMATON_HPP
 
 #include "automaton.h"
+#include "BitSet.hpp"
 #include <stack>
 #include <set>
 #include <list>
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
-AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {}
+AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {
+  null_info = Info();
+}
 
 template <class Info>
 void AbstractACAutomaton<Info>::finish_building() {
   if (! IKmerStore<Info>::finished_building) {
     IKmerStore<Info>::finish_building();
     build_failure_functions();
+    all_index_load = 0;
+    for(auto iter: kmers_inserted) {
+      index_load[iter.first] = computeIndexLoad(iter.first);
+      if (iter.first.getStrand())
+        all_index_load += getIndexLoad(iter.first);
+    }
   }
-  all_index_load = 0;
-  for(auto iter: kmers_inserted) {
-    all_index_load += getIndexLoad(iter.first);
-  }
+}
+
+template<class Info>
+float AbstractACAutomaton<Info>::computeIndexLoad(Info kmer) const {
+  double nb_inserted = kmers_inserted.at(kmer);
+  return min(1., nb_inserted / pow(4.0, kmer.getLength()));
 }
 
 template<class Info>
@@ -27,7 +38,7 @@ float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
   if (kmers_inserted.count(kmer) == 0) {
     return (kmer.isUnknown()) ? 1 - all_index_load : all_index_load;
   } else {
-    return kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
+    return index_load.at(kmer);
   }
 }
 
@@ -88,10 +99,12 @@ void PointerACAutomaton<Info>::init(string seed, bool revcomp, bool multiple_inf
   this->revcomp_indexed = revcomp;
   this->max_size_indexing = 0;
   this->multiple_info = multiple_info;
+  this->lookup_bitsets = (BitSet **) calloc(Info::getMaxHashValue(), sizeof(BitSet*));
 }
 
 template <class Info>
 PointerACAutomaton<Info>::~PointerACAutomaton() {
+  free(lookup_bitsets);
   free_automaton(this->getInitialState());
 }
 
@@ -138,14 +151,12 @@ void PointerACAutomaton<Info>::build_failure_functions() {
     pointer_state<Info> *failed_state = couple.second;
     if (failed_state->is_final) {
       current_state->is_final = true;
-      if (! current_state->informations.front().isNull()) {
-        if (! this->multiple_info)
-          current_state->informations.front() += failed_state->informations.front();
-        else
+      if (current_state->informations.size() > 0) {
+        if (this->multiple_info)
           current_state->informations.insert(current_state->informations.end(),
                                              failed_state->informations.begin(),
                                              failed_state->informations.end());
-      } else {
+      } else if (failed_state->informations.size() > 0){
         current_state->informations = failed_state->informations;
       }
     }
@@ -199,12 +210,19 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
   state->is_final = true;
   if (! existing_final) {
     this->nb_kmers_inserted++;
-    this->kmers_inserted[info]++;
   }
-  if (state->informations.front().isNull() || ! this->multiple_info)
+  if (state->informations.size() > 0 &&
+      state->informations.back() != info && 
+      ! this->multiple_info) {
     state->informations.front() += info;
-  else
+    if (! state->informations.front().isAmbiguous()) {
+      this->kmers_inserted[info]++;
+    }
+  } else if (state->informations.size() == 0
+             || (multiple_info && state->informations.back() != info)){
+    this->kmers_inserted[info]++;
     state->informations.push_back(info);
+  }
 }
 
 template <class Info>
@@ -244,7 +262,7 @@ void PointerACAutomaton<Info>::insert(const seqtype &sequence, const string &lab
     for (seqtype &seq: sequences) {
       insert(seq, Info(label, 1, seed_span));
     }
-    if (! Info::hasRevcompSymetry()) {
+    if (this->revcomp_indexed && ! Info::hasRevcompSymetry()) {
       for (seqtype &seq: sequences_rev) {
         insert(seq, Info(label, -1, seed_span));
       }
@@ -282,8 +300,8 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
   
   for (size_t i = 0; i < seq_len; i++) {
     current_state = (pointer_state<Info> *)next(current_state, seq[i]);
-    Info info = current_state->informations.front();
-    if (! info.isNull()) {
+    if (current_state->informations.size() > 0) {
+      Info info = current_state->informations.front();
       if (info.isAmbiguous() && ! result[i - info.getLength() + 1].isNull()
           && previous_length > 0)
         // We try to maintain a consistency as the length for an ambiguous
@@ -299,6 +317,57 @@ vector<Info> PointerACAutomaton<Info>::getResults(const seqtype &seq, bool no_re
   }
 
   return result;
+}
+
+template <class Info>
+map<Info, BitSet> PointerACAutomaton<Info>::getAllResults(const seqtype &seq, bool no_revcomp, string seed) {
+  UNUSED(no_revcomp);
+  UNUSED(seed);
+
+  pointer_state<Info>* current_state = getInitialState();
+  size_t seq_len = seq.length();
+  map<Info, BitSet> bitsets;
+  list<Info> found_affects;
+  
+  for (size_t i = 0; i < seq_len; i++) {
+    current_state = (pointer_state<Info> *)next(current_state, seq[i]);
+    size_t nb_info = current_state->informations.size();
+    for (size_t j = 0 ; j < nb_info; j++) {
+      const Info &info = current_state->informations[j];
+        size_t hash = std::hash<Info>{}(info);
+        if (! lookup_bitsets[hash]) {
+          lookup_bitsets[hash] = new BitSet(seq_len);
+          found_affects.push_back(info);
+        }
+
+#ifdef SEED_COVER
+        // Experimental, see #3342
+        bitset_it.first->second.setConsecutive(i - info.getLength() + 1, info.getLength());
+#else
+        lookup_bitsets[hash]->set(i - info.getLength() + 1);
+#endif
+    }
+  }
+
+  for (Info &info : found_affects) {
+    size_t hash = std::hash<Info>{}(info);
+    bitsets.emplace(info, *lookup_bitsets[hash]);
+    delete lookup_bitsets[hash];
+    lookup_bitsets[hash] = NULL;
+  }
+
+#ifdef DEBUG
+  for (auto it: bitsets) {
+    KmerAffect info = it.first;
+    cerr << info << "\t" << (int)info.getLength() << "\t" <<
+      this->getIndexLoad(info) << "\tin getAllResults " << this->kmers_inserted.at((Info)info) << " kmers" << endl
+         << "\t" << it.second << endl
+	 << "\t" << it.second.size()<< endl;
+    
+  }
+#endif
+  
+  return bitsets;
 }
 
 template <class Info>
@@ -330,7 +399,9 @@ map<Info, int> PointerACAutomaton<Info>::getMultiResults(const seqtype &seq, boo
 template <class Info>
 Info& PointerACAutomaton<Info>::get(seqtype &word) {
   pointer_state<Info> *state = (pointer_state<Info> *)this->goto_state(word);
-  return state->informations.front();
+  if (state->informations.size() > 0)
+    return state->informations.front();
+  return this->null_info;
 }
 
 template <class Info>

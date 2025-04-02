@@ -92,10 +92,10 @@ void testFastaAdd() {
     TAP_TEST(fa1.label(i) == fa2.label(i)
              && fa1.label(i) == fa2.label(i+fa1.size()), TEST_FASTA_ADD, "");
     TAP_TEST(fa1.label_full(i) == fa2.label_full(i)
-             && fa1.label_full(i) == fa2.label_full(i+fa1.size()), 
+             && fa1.label_full(i) == fa2.label_full(i+fa1.size()),
              TEST_FASTA_ADD, "");
     TAP_TEST(fa1.sequence(i) == fa2.sequence(i)
-             && fa1.sequence(i) == fa2.sequence(i+fa1.size()), 
+             && fa1.sequence(i) == fa2.sequence(i+fa1.size()),
              TEST_FASTA_ADD, "");
   }
 }
@@ -474,11 +474,11 @@ void testTrimSequence() {
 
     // Test the last parameters
 
-    //                       0        0  1          2  2 
+    //                       0        0  1          2  2
     //                       0        9  2          3  6
     string representative = "TTTTTTTTTNNNNCCCCCCCCCCNNNNAAAAAAAAA";
 
-    list <std::tuple<size_t, size_t, string> > required_params = 
+    list <std::tuple<size_t, size_t, string> > required_params =
       { std::make_tuple(13, 10, "CCCCCCCCCC"),
         std::make_tuple(13, 11, "CCCCCCCCCCN"),
         std::make_tuple(12, 10, "NCCCCCCCCC"),
@@ -511,11 +511,11 @@ void testTrimSequence() {
     TAP_TEST(trimmed.find(window) != string::npos, TEST_TRIM_SEQUENCE, "Trimmed representative is " << trimmed << " start = " << start << ", length = " << length );
 }
 
-/* 
-	Check the integrity of the extractGeneName function. 
+/*
+	Check the integrity of the extractGeneName function.
 	The whole name is truncated before the star.
 	If there isn't any star in the name, the label
-	is returned as it is.	
+	is returned as it is.
 */
 void testExtractGeneName(){
 	string example_1 = "IGHV-01*01";
@@ -551,10 +551,21 @@ void testExpandSeed() {
   }
 }
 
-void testConversions(){  
+void testConversions(){
   TAP_TEST_EQUAL(string_of_int(12), "12", TEST_CONVERSIONS, "");
   TAP_TEST_EQUAL(string_of_int(12, 4), "0012", TEST_CONVERSIONS, "");
   TAP_TEST_EQUAL(fixed_string_of_float(12.345, 1), "12.3", TEST_CONVERSIONS, "");
+}
+
+void testGuessFormat() {
+  TAP_TEST_EQUAL(guess_sequence_format("a"), "fasta", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fastq"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fq"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fq.gz"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fastq.gz"), "fastq", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("a.fastq.toto"), "fasta", TEST_GUESS_FORMAT, ""); // Fallback to fasta
+  TAP_TEST_EQUAL(guess_sequence_format("a.bam"), "bam", TEST_GUESS_FORMAT, "");
+  TAP_TEST_EQUAL(guess_sequence_format("abam"), "fasta", TEST_GUESS_FORMAT, "");
 }
 
 void testTools() {
@@ -583,4 +594,5 @@ void testTools() {
 	testExtractGeneName();
   testConversions();
   testExpandSeed();
+  testGuessFormat();
 }

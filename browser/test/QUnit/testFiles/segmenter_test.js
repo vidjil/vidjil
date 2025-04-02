@@ -348,7 +348,7 @@ QUnit.test("align", function (assert) {
                       insert1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " inserted nucleotide");
 
         var amino1 = seq1.aminoString();
-        assert.equal( amino1.replace(/(?=\s)[^\r\n\t]/g, ' '),  " I ## C  M  H  –––––A  P  P  P  P  N  F  F  F  F  F  F  D  A  S  D  A  –*  ?", 
+        assert.equal( amino1.replace(/(?=\s)[^\r\n\t]/g, ' '),  " I ## C  M  H  –––––A  P  P  P  P  N  F  F  F  F  F  F  D  R  S  D  R  –*  ?", 
                       amino1.toUpperCase().replace(/(?=\s)[^\r\n\t]/g, '_') + " Amino seq");
 
         var aminosplit1 = seq1.aminoSplitString();

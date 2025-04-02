@@ -1,22 +1,24 @@
-import os
 import json
-from pathlib import Path
+import os
 import unittest
-from ..utils.omboddle import Omboddle
-from py4web.core import _before_request, Session, HTTP
+from pathlib import Path
+
+from py4web.core import HTTP, Session, _before_request
+
+from .... import settings
+from ....common import auth, db
+from ....controllers import admin as admin_controller
 from ...functional.db_initialiser import DBInitialiser
 from ..utils import db_manipulation_utils, test_utils
-from ....common import db, auth
-from .... import defs
-from ....controllers import admin as admin_controller
+from ..utils.omboddle import Omboddle
 
 
 class TestAdminController(unittest.TestCase):
-
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -27,8 +29,7 @@ class TestAdminController(unittest.TestCase):
         initialiser.run()
 
         # add a user
-        self.user_1_id = db_manipulation_utils.add_indexed_user(
-            self.session, 1)
+        self.user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
 
     ##################################
     # Tests on admin_controller.index()
@@ -51,7 +52,8 @@ class TestAdminController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling index
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -61,8 +63,11 @@ class TestAdminController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == admin_controller.ACCESS_DENIED
         assert result["success"] == "false"
-        assert result["redirect"] == "http://127.0.0.1/vidjil/sample_set/all?type=patient&page=0"
-        
+        assert (
+            result["redirect"]
+            == "http://127.0.0.1/vidjil/sample_set/all?type=patient&page=0"
+        )
+
     def test_index(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
@@ -90,16 +95,21 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_vidjil(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
             log_path = "vidjil.log"
-            with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "vidjil"}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"file": log_path, "format": "vidjil"},
+            ):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)
@@ -110,16 +120,21 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_vidjil_debug(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
             log_path = "vidjil-debug.log"
-            with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "vidjil"}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"file": log_path, "format": "vidjil"},
+            ):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)
@@ -130,16 +145,21 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_raw_access_log(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
             log_path = Path("nginx", "access.log")
-            with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "raw"}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"file": log_path, "format": "raw"},
+            ):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)
@@ -150,16 +170,21 @@ class TestAdminController(unittest.TestCase):
     def test_showlog_raw_error_log(self):
         # Given : Logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
-        saved_dir_log = defs.DIR_LOG
-        defs.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
+        saved_dir_log = settings.DIR_LOG
+        settings.DIR_LOG = str(test_utils.get_resources_log_path()) + os.sep
 
         try:
             # When : Calling showlog
             log_path = Path("nginx", "error.log")
-            with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"file": log_path, "format": "raw"}):
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"file": log_path, "format": "raw"},
+            ):
                 json_result = admin_controller.showlog()
         finally:
-            defs.DIR_LOG = saved_dir_log
+            settings.DIR_LOG = saved_dir_log
 
         # Then : We get a result
         result = json.loads(json_result)
@@ -174,15 +199,17 @@ class TestAdminController(unittest.TestCase):
     def test_repair_missing_files(self):
         # Given : Logged as admin and a missing file
         test_file_name = "test_file_zXtRe"
-        sequence_file_id = db.sequence_file.insert(sampling_date="1978-12-12",
-                                                   info="",
-                                                   pcr="",
-                                                   sequencer="",
-                                                   producer="",
-                                                   patient_id=1,
-                                                   filename=test_file_name,
-                                                   provider=auth.user_id,
-                                                   data_file="plopapi")  # incorrect data file
+        sequence_file_id = db.sequence_file.insert(
+            sampling_date="1978-12-12",
+            info="",
+            pcr="",
+            sequencer="",
+            producer="",
+            patient_id=1,
+            filename=test_file_name,
+            provider=auth.user_id,
+            data_file="plopapi",
+        )  # incorrect data file
         assert db.sequence_file[sequence_file_id].data_file == "plopapi"
 
         # When : Calling repair_missing_files
@@ -193,7 +220,7 @@ class TestAdminController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["success"] == "true"
         assert result["message"].endswith(test_file_name)
-        assert db.sequence_file[sequence_file_id].data_file == None
+        assert db.sequence_file[sequence_file_id].data_file is None
 
     # TODO: add more tests for repair_missing_files
 

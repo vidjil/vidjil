@@ -58,7 +58,7 @@ SIMILARITY_TOOL=$(TOOLDIR)similarity
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
-TEE = python ../tools/tee.py -v
+TEE = python3 ../tools/tee.py -v
 
 .PHONY: all core lib clean forcedep gcovr_reports
 
@@ -246,18 +246,18 @@ cppcheck:
 shouldvdj_generated_kmer: base
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Kmer"
-	-cd tests/data/gen ; python ../../should-vdj-to-tap.py -2q *.should-vdj.fa
+	-cd tests/data/gen ; python2 ../../should-vdj-to-tap.py -2q *.should-vdj.fa
 	@echo "*** Generated .should-vdj.fa tests finished -- Kmer"
-	python tests/tap-stats.py tests/data/gen/0-*.2.tap
+	python3 tests/tap-stats.py tests/data/gen/0-*.2.tap
 	python tests/tap-stats.py tests/data/gen/5-*.2.tap
 
 shouldvdj_generated_fine: base
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Fine"
-	-cd tests/data/gen ; python ../../should-vdj-to-tap.py *.should-vdj.fa
+	-cd tests/data/gen ; python2 ../../should-vdj-to-tap.py *.should-vdj.fa
 	@echo "*** Generated .should-vdj.fa tests finished -- Fine"
-	python tests/tap-stats.py tests/data/gen/0-*.1.tap
-	python tests/tap-stats.py tests/data/gen/5-*.1.tap
+	python3 tests/tap-stats.py tests/data/gen/0-*.1.tap
+	python3 tests/tap-stats.py tests/data/gen/5-*.1.tap
 
 
 
@@ -281,7 +281,7 @@ RELEASE_ALGO = src/
 RELEASE_TOOLS = $(wildcard ../tools/*.py)
 RELEASE_MAKE = ../tools/tests/Makefile ../doc/Makefile
 RELEASE_TESTS = ../doc/vidjil-format.md $(wildcard ../doc/analysis-example.vidjil) $(wildcard ../tools/tests/*.should_get) ../tools/should.py  ../tools/diff_json.sh ../demo/get-sequences ../demo/Demo-X5.fa ../demo/Makefile
-RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline ../germline/split-germlines.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py ../germline/homo-sapiens/IKZF*fa ../germline/homo-sapiens/ERG*fa 
+RELEASE_GERMLINES = ../germline/Makefile ../germline/germline_id ../germline/get-saved-germline ../germline/get-germline ../germline/split-germlines.py $(wildcard ../germline/*.g) ../germline/revcomp-fasta.py ../germline/fasta.py ../germline/homo-sapiens/IKZF*fa ../germline/homo-sapiens/ERG*fa
 RELEASE_HELP = ../doc/vidjil-algo.md ../doc/libraries-recombinations.md ../doc/tools.md ../doc/vidjil-format.md ../doc/should-vdj.md ../doc/quality.md ../doc/credits.md ../doc/changelog-algo.md ../LICENSE ../README.md ../INSTALL.md
 RELEASE_FILES = $(RELEASE_TOOLS) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) $(RELEASE_HELP)
 
@@ -364,4 +364,3 @@ ifeq (${DEP},)
 $(shell	$(CXX) $(CXXFLAGS) -M $(MAINCORE) > dep.mk)
 endif
 include dep.mk
-

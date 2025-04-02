@@ -1,7 +1,7 @@
 !REQUIRES: python3 $VIDJIL_DIR/tools/check_python3_version.py
 !OUTPUT_FILE: out/json_content.vidjil
 !LAUNCH: $VIDJIL_DIR/$EXEC -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --out-details -w 60 -r 5 -e 10 -b json_content  $VIDJIL_DATA/Stanford_S22.fasta > /dev/null 
-#; cat out/data.vidjil | python3 $VIDJIL_DIR/tools/format_json.py -1
+#; cat out/data.vidjil
 !OPTIONS: --mod jR
 
 
@@ -26,7 +26,7 @@ $ Most abundant window
 :clones[0].reads: [8]
 
 $ Affect values are over all the sequence
-:clones[0].seg.affectSigns.seq: \+\+\+\+\+\+\+\+\+\+\+   \+  \+\+  \+\+\+\+\+\+\+\+\+      \+      \+\+\+\+\+\+\+     \+\+     \+                       -----            \+                     \+\+\+\+\+\+\+\+            
+f:clones[0].seg.affectSigns.seq: \+\+\+\+\+\+\+\+\+\+\+   \+  \+\+  \+\+\+\+\+\+\+\+\+      \+      \+\+\+\+\+\+\+     \+\+     \+                       -----            \+                     \+\+\+\+\+\+\+\+
 :clones[0].seg.affectSigns.start: 1
 :clones[0].seg.affectSigns.stop: 145
 
@@ -92,7 +92,7 @@ $ Warning on common genes
 ######### Second clonotype
 
 $ Second clonotype have correct Id
-:clones[1].id: TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC
+f:clones[1].id: TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC
 
 $ Second sequence has a DNA sequence provided
 :clones[1].sequence

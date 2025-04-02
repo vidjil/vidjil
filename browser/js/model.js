@@ -839,6 +839,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
         
+        // mark analysis as changed
+        analysisHasChanged = true
+        
+        // update views
         this.updateModel()
         //check if current germline is in the selected_system
         if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
@@ -2637,6 +2641,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                             result = (diff >= 0 ? '+' : '') + diff;
                         }
                     }
+                }
+                break;
+            case "associated_sets_names":
+                if (typeof this.samples.associated_sets_names !== 'undefined' && 
+                    Array.isArray(this.samples.associated_sets_names[timeID]) &&
+                    this.samples.associated_sets_names[timeID].length > 0) {
+                        result = this.samples.associated_sets_names[timeID].join(";");
+                } else {
+                    result = "/";
                 }
                 break;
             default:

@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
 
 var localhost = true
-var url = "./browser/index.html"
+console.log( Cypress.env('workdir') )
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
 
@@ -76,7 +77,82 @@ describe('Report', function () {
     cy.get('#rs-clone-clone-001')
       .should("not.exist")
 
-    return
+    // check samples selection/un-selection
+    cy.get("#rs-selected-sample-count").contains("[2 selected]") // both samples are selected
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag") // T8045-BC081-Diag selected in blocks
+    cy.get("#rs-sample-select1").click() // unselected the 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag")
+    cy.get("#rs-sample-select1").click() // reselect the 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[2 selected]")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag")
+    cy.get("#rs-sample-select1").click({shiftKey: true}) // select only 2nd sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.get("#rs-sample-select0").should("have.class", "rs-unselected")
+    cy.get("#rs-sample-select1").should("have.class", "rs-selected")
+    cy.checkSelectedSampleInBlocks("T8045-BC082-fu1") // change as only one selected
+    cy.get("#rs-sample-select0").click({shiftKey: true}) // select only 1st sample
+    cy.get("#rs-selected-sample-count").contains("[1 selected]")
+    cy.get("#rs-sample-select0").should("have.class", "rs-selected")
+    cy.get("#rs-sample-select1").should("have.class", "rs-unselected")
+    cy.checkSelectedSampleInBlocks("T8045-BC081-Diag") // change as only one selected
+  })
+
+
+  it('shortcut to add/remove clonotypes to report',  function() {
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+    cy.get('#export_report_menu').click({force: true})
+
+    // no clone in the report
+    cy.get('#rs-selected-clones-count')
+      .contains("[0 selected]") 
+
+    // change active selection
+    cy.selectCloneMulti([0, 2, 6])
+
+    // type r to add clonotypes to the report
+    cy.get("body").type("r")
+    cy.get('.flash_1').should("contain", "report: 3 clone(s) added to the report")
+ 
+    // change active selection
+    cy.selectCloneMulti([0, 3])
+ 
+    // correct number of clone added to report
+    cy.get('#rs-selected-clones-count')
+      .contains("[3 selected]")
+
+    // type shift+r to remove all clonotypes from report
+    cy.get("body").type("{shift}R")
+    cy.get('.flash_1').should("contain", "report: all clones removed from the report")
+
+    // all clones removed from report
+    cy.get('#rs-selected-clones-count')
+      .contains("[0 selected]") 
+
+    // close report menu
+    cy.get('.popup_container > .closeButton > .icon-cancel').click()
+
+    // change active selection
+    cy.selectCloneMulti([1, 5])
+
+    // type ctrl+r to add clonotypes and open report
+    cy.get("body").type("{ctrl}r")
+    cy.get('.flash_1').should("contain", "report: 2 clone(s) added to the report")
+ 
+    // correct number of clone added to report
+    cy.get('#rs-selected-clones-count')
+      .contains("[2 selected]")
+
+    // change active selection
+    cy.selectCloneMulti([0, 1, 4])
+
+    // type r to add clonotypes to the report
+    cy.get("body").type("r")
+    cy.get('.flash_1').should("contain", "report: 2 clone(s) added to the report")
+ 
+    // correct number of clone added to report
+    cy.get('#rs-selected-clones-count')
+      .contains("[4 selected]")
   })
 
   it('Save/delete as template & report',  function() {

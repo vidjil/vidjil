@@ -12,7 +12,7 @@ Versions: \
 WORKDIR /app
 
 ##################################
-### Update and install ressources
+### Update and install resources
 ##################################
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Paris"
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y -q npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb wget bzip2 tar unzip nano curl ca-certificates make python3 python2.7 libxml2-utils nodejs &&\

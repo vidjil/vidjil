@@ -1,22 +1,15 @@
-
-
 /**
  * Allow to click and wait network response from server for semgenter page testing
  * @return
  */
-Cypress.Commands.add('submitSegmenterNetwork', () => {
-    cy.intercept({
-        method: 'POST',
-        url: '/vidjil/segmenter*',
-        hostname: 'db.vidjil.org',
-      }).as('getActivities')
+Cypress.Commands.add("submitSegmenterNetwork", () => {
+  cy.intercept({
+    method: "POST",
+    url: "segmenter*",
+  }).as("postSegmenter");
 
-    cy.wait(500)
-    cy.get('#form_submit')
-      .should("be.visible")
-      .click({force: true})
-      .should('be.disabled')
+  cy.get("#btn_exportfasta").should("be.disabled")
+    .get("#form_submit").should("be.visible").click({ force: true });
 
-    cy.wait(['@getActivities'], {timeout: 15000})
-    cy.update_icon(100)
-})
+  cy.wait("@postSegmenter", { timeout: 15000 });
+});

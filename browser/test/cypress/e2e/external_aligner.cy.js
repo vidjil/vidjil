@@ -1,13 +1,17 @@
+
 var localhost = true
-var url = "./browser/index.html"
+console.log( Cypress.env('workdir') )
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
 var TIMEOUT_IMGT = 30000
 
 describe('External Aligner', function () {
-    beforeEach(function () {
-        cy.setBrowser(url)
-    })
+  beforeEach(function () {
+      cy.setBrowser(url)
+
+      Cypress.config("pageLoadTimeout", 120000)
+  })
 
   
   it('Aligner init',  function() {

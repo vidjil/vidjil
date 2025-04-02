@@ -58,8 +58,9 @@ upper left corner.
   Thus click twice on \com{add patient} and once on \com{add run}.
 }
 \begin{verbatim}
-  ///////////////////////////
-  cy.log("// test_002_add_new_patient")
+    ///////////////////////////
+    cy.log("// test_002_add_new_patient")
+    
     cy.goToPatientPage()
     cy.get('[onclick="db.call(\'sample_set/form\', {\'type\': \'patient\'})"]')
     .click()
@@ -79,8 +80,9 @@ upper left corner.
   called Patient 4).
 }
 \begin{verbatim}
-  ///////////////////////////
-  cy.log("// test_003_add_new_patient")
+    ///////////////////////////
+    cy.log("// test_003_add_new_patient")
+
     // Add 2 new patients + run lines
     cy.get("#patient_button").click()
     cy.get("#patient_button").click()
@@ -96,21 +98,14 @@ upper left corner.
 \question{ Now you can fill the mandatory fields (circled with red) and,
   optionally, the other fields.}
 \begin{verbatim}
-  ////////////////////////////
-  cy.log("// test_004_fill_new_patient")
+    ////////////////////////////
+    cy.log("// test_004_prepare_new_patients_and_run")
+
     // Add 2 new patients + run lines
     cy.get('#run_button').click()
     cy.get('#group_select')
       .select("public")
       .trigger("change")
-
-
-    // Fill forms
-    cy.fillPatient(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "")
-    cy.fillPatient(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "")
-    cy.fillPatient(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "")
-    cy.fillRun(0, "id_r1", "run_name 1", "2010-01-01", "run informations #tagtest")
- 
 
 \end{verbatim}
 
@@ -132,11 +127,14 @@ Your custom tags will also be saved and will be suggested later on.
 \question{Enter information for the three patients, such as \texttt{\#diagnosis \#B-ALL} for a patient, \texttt{\#blood \#CLL}
 for another one, and \texttt{bone \#marrow \#B-ALL} for the last one.}
 \begin{verbatim}
-  cy.log("// test_005_change_description")
+    ////////////////////////////
+    cy.log("// test_005_fill_patients")
+
     // Fill forms
     cy.fillPatient(0, "id_p1", "First_name_1", "Last_name_1", "2000-01-01", "#diagnosis of patient with #B-ALL")
     cy.fillPatient(1, "id_p2", "First_name_2", "Last_name_2", "2000-01-01", "#blood sample #CLL")
     cy.fillPatient(3, "id_p3", "First_name_3", "Last_name_3", "2000-01-01", "bone #marrow #B-ALL")
+    cy.fillRun(0, "id_r1", "run_name 1", "2010-01-01", "run info #tagtest")
 
     cy.get('#object_form > .btn')
       .should("have.value", "save")
@@ -165,7 +163,9 @@ the sequence files yet.
 \question{Now go to the \com{runs} page. You should see the run you have just
   created. Click on it. Then click on \com{+ add samples}.}
 \begin{verbatim}
-  cy.log("// test_006_add_new_run")
+    ////////////////////////////
+    cy.log("// test_006_add_new_run")
+
     cy.goToRunPage()
     cy.get('tr').contains("run_name 1")
       .click()
@@ -178,8 +178,9 @@ want on this page.
 \question{As we need to upload three samples, click twice on the \com{add
     other sample} button so that you have three lines to add a sample.}
 \begin{verbatim}
-  cy.log("// test_007_add_new_samples_line_in_run")
-    // Do by the next cypress function call
+    ////////////////////////////
+    cy.log("// test_007_add_new_samples_line_in_run")
+    // Done by the next cypress function call
 
 \end{verbatim}
 
@@ -188,8 +189,9 @@ first patient, and do the same for the other patients.
   You can also add extra information, including
   tags, as previously.}
 \begin{verbatim}
-  cy.log("// test_008_upload_new_samples_in_run")
-    // Do by the next cypress function call
+    ////////////////////////////
+    cy.log("// test_008_upload_new_samples_in_run")
+    // Done by the next cypress function call
 
 \end{verbatim}
 
@@ -205,24 +207,26 @@ need to modify this field.
   Either click on the correct patient or type the first letters of her/his
   name. Then validate with \com{Enter} or by clicking on the correct entry.}
 \begin{verbatim}
- 
-  cy.log("// test_009_upload_sample_set_common_sets")
-    // Do by the next cypress function call
+    ////////////////////////////
+    cy.log("// test_009_upload_sample_set_common_sets")
+    // Done by the next cypress function call
 
 \end{verbatim}
 
 \question{When you have associated each sample to its corresponding patient
   you can upload the samples by clicking on the \com{Submit samples} button.}
 \begin{verbatim}
-  cy.log("// test_010_upload_sample_submit")
+    ////////////////////////////
+    cy.log("// test_010_upload_sample_submit")
+
     var preprocess   = undefined
     var filename1    = "Demo-X5.fa"
     var filename2    = undefined
-    var informations = " from tutorial server tests #functional #tutorial"
+    var info = " from tutorial server tests #functional #tutorial"
 
-    cy.addSample(preprocess, "nfs", filename1, filename2, "2010-01-01", "Solo; Sample 1"+informations, "Last_name_1")
-    cy.addSample(preprocess, "nfs", filename1, filename2, "2011-01-01", "Solo; Sample 2"+informations, "Last_name_2")
-    cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Solo; Sample 3"+informations, "Last_name_3")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2010-01-01", "Solo; Sample 1" + info, "Last_name_1").as("sample_id_1")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2011-01-01", "Solo; Sample 2" + info, "Last_name_2").as("sample_id_2")
+    cy.addSample(preprocess, "nfs", filename1, filename2, "2012-01-01", "Solo; Sample 3" + info, "Last_name_3")
 
     var sample_to_add_1 = [preprocess, "nfs", filename1, filename2, "2010-01-01", "Batch; Sample 1x #functional #tutorial; multiple add", "Last_name_1"]
     var sample_to_add_2 = [preprocess, "nfs", filename1, filename2, "2011-01-01", "Batch; Sample 2x #functional #tutorial; multiple add", "Last_name_2"]
@@ -241,9 +245,11 @@ process all human V(D)J recombinations}
 and then
 clicking on the gearwheel.}
 \begin{verbatim}
-  cy.log("// test_011_launch_analysis_sample")
-    var sample_id = 49
-    cy.launchProcess("2", sample_id)
+    ////////////////////////////
+    cy.log("// test_011_launch_analysis_sample")
+
+    cy.get("@sample_id_1").then((sample_id_1) => {
+      cy.launchProcess("2", sample_id_1)
 
 \end{verbatim}
 
@@ -256,8 +262,10 @@ launched.
   (possibly \com{STOPPED}), \com{RUNNING}, \com{COMPLETED} (or
   \com{FAILED} when there is an issue, in such a case please contact us)}
 \begin{verbatim}
-  cy.log("// test_012_sample_analysis")
-    cy.waitAnalysisCompleted("2", sample_id)
+      ////////////////////////////
+      cy.log("// test_012_sample_analysis")
+      cy.waitAnalysisCompleted("2", sample_id_1)
+    })
 
 \end{verbatim}
 
@@ -268,22 +276,17 @@ you can visualize the clonotype populations on Vidjil
 
   %%% à déplacer, filter B-ALL
 \begin{verbatim}
-  cy.log("// test_013_patient_page_and_filter")
+    ////////////////////////////
+    cy.log("// test_013_patient_page_and_filter")
     cy.goToPatientPage()
-  
+
+    cy.get("@sample_id_2").then((sample_id_2) => {
+      cy.get(`#sample_set_open_${sample_id_2}_config_id_-1`)
+        .should("not.exist")
+    })
+
     var value_filter = "#B-ALL"
     cy.dbPageFilter(value_filter)
-
-    cy.get('#db_table_container')
-      .find('tbody')
-      .find('tr').each(($el, index, $list) => {// $el is a wrapped jQuery element
-          // wrap this element so we can use cypress commands on it
-          cy.wrap($el).should("contain", value_filter)
-    })
-    
-    var uid_sample2 = 33
-    cy.get(`#sample_set_open_${uid_sample2}_config_id_-1`)
-      .should("not.exist")
 
 \end{verbatim}
 

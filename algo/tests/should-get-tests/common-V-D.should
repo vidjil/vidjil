@@ -4,8 +4,8 @@ $ Segments the sequence
 1: SEG  .* -> .* 1 
 
 $ Find the good affects for the D segment, including a AMBIGUOUS k-mer, common with V
-1:___\?ffffff____
-1:   \+\+\+\+\+\+
+f1:___\?ffffff____
+f1:   \+\+\+\+\+\+
 
 $ The windows found by the KmerSegmenter has a fairly good position
-2: 1 163 180 220
+f2: 1 163 180 220

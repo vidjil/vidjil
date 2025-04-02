@@ -21,11 +21,18 @@ using namespace std;
  */
 template <class Info>
 class AbstractACAutomaton: public IKmerStore<Info> {
-
+public:
+  Info null_info;
+  
 protected:
   void *initialState;
   float all_index_load;
   map<Info, size_t> kmers_inserted;
+  map<Info, float> index_load;
+
+private:
+  float computeIndexLoad(Info kmer) const;
+  
 public:
   AbstractACAutomaton();
 
@@ -109,7 +116,7 @@ public:
   pointer_state():is_final(false),informations() {
     for (size_t i = 0; i < NB_TRANSITIONS; i++)
       transitions[i] = NULL;
-    informations.push_back(Info());
+    //    informations.push_back(Info());
   }
 
   pointer_state<Info> *transition(char c) {
@@ -125,6 +132,8 @@ template <class Info>
 class PointerACAutomaton: public AbstractACAutomaton<Info> {
 private:
   bool multiple_info;
+  BitSet **lookup_bitsets;      // Use for getAllResults
+
 
   void free_automaton(pointer_state<Info> *);
   void init(string seed, bool revcomp, bool multiple_info);
@@ -202,7 +211,9 @@ public:
   // From IKmerStore
 
   vector<Info> getResults(const seqtype &seq, bool no_revcomp=false, string seed = "");
- 	 
+
+  map<Info, BitSet> getAllResults(const seqtype &seq, bool no_revcomp=false, string seed="");
+
   map<Info,int> getMultiResults(const seqtype &seq, bool no_revcomp=false, string seed = "");
   Info& get(seqtype &word) ;
 

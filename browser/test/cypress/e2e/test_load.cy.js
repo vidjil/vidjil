@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
 
 var localhost = true
-var url = "./browser/index.html"
+console.log( Cypress.env('workdir') )
+var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
 console.log( url )
 
 // those tests are opening different .vidjil files with or without .analysis and check the expected data have been loaded

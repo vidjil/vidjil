@@ -1,6 +1,6 @@
-import defs
+import settings
 import os
 
-com = defs.DIR_VIDJIL + 'vidjil -h 2> /dev/null | grep -E "(# version|# git)"'
+com = settings.DIR_VIDJIL + 'vidjil -h 2> /dev/null | grep -E "(# version|# git)"'
 os.system(com)
 

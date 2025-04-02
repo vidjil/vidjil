@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from yatl.helpers import I, DIV, SPAN
+
+from yatl.helpers import DIV, SPAN, I
 
 
 @dataclass(frozen=True)
@@ -63,7 +64,7 @@ class BarChartDecorator(StatDecorator):
         bars = []
         for val in data:
             bar_span = SPAN(
-                _style=f"height: {val}%; width: {(1.0/len(data))*100}%",
+                _style=f"height: {val}%; width: {(1.0 / len(data)) * 100}%",
                 _title=f"{val}%",
                 _class="bar",
             )

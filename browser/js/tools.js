@@ -206,7 +206,7 @@ function tsvToArray(allText) {
                 // empty data line -> do nothing
                 break;
             default:
-                // imgt returned no results or incomplete results for a sequence 
+                // imgt returned no results or incomplete results for a sequence
                 // -> copy only first two column (Sequence number + ID)
                 tarr[headers[0]] = data[0];
                 tarr[headers[1]] = data[1];
@@ -302,7 +302,7 @@ function prepend_path_if_not_web(file, path) {
 /**
  * Function to download file located to another server.
  * For the moment, XHR variante is bypassed as not working with cross-domain (see issue https://gitlab.inria.fr/vidjil/vidjil/-/issues/5287)
- * Classic <a> link to download don't allow to give a name to downloaded fiel if url call en external url. 
+ * Classic <a> link to download don't allow to give a name to downloaded fiel if url call en external url.
  * See note at https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
  */
 function downloadFile(url, file_name, type="txt") {
@@ -543,7 +543,7 @@ function nice_ceil(x, force_pow10)
 
     try {
         var floor_power10 = (typeof force_pow10 == 'undefined') ? floor_pow10(x) : force_pow10
- 
+
         return discard_float_approximation(Math.ceil(x / floor_power10) * floor_power10)
     }
     catch(e) {
@@ -811,7 +811,7 @@ function logadd1(x) { return Math.log(x + 1) ; }
  * @return {Number}      A number -1 if A before B, else 1
  */
 function locus_cmp(valA, valB){
-    // Ordered list of all  generic locus 
+    // Ordered list of all  generic locus
     var index_A = LOCUS_ORDER.indexOf(valA)
     var index_B = LOCUS_ORDER.indexOf(valB)
 
@@ -897,7 +897,7 @@ function fixDuplicateNames(names){
         }
     }
     return names
-} 
+}
 
 
 /**
@@ -908,7 +908,7 @@ function fixDuplicateNames(names){
 function openAndFillNewTab (content){
     var target = document.getElementById("form").target
     var w = window.open("", target, "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-    
+
     var result = $('<div/>', {
         html: content
     }).appendTo(w.document.body);
@@ -934,7 +934,7 @@ Array.prototype.equals = function (array) {
     if (!array)
         return false;
 
-    // compare lengths - can save a lot of time 
+    // compare lengths - can save a lot of time
     if (this.length != array.length)
         return false;
 
@@ -943,13 +943,13 @@ Array.prototype.equals = function (array) {
         if (this[i] instanceof Array && array[i] instanceof Array) {
             // recurse into the nested arrays
             if (!this[i].equals(array[i]))
-                return false;       
-        }           
-        else if (this[i] != array[i]) { 
+                return false;
+        }
+        else if (this[i] != array[i]) {
             // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;   
-        }           
-    }       
+            return false;
+        }
+    }
     return true;
 }
 // Hide method from for-in loops
@@ -968,7 +968,7 @@ function getNFirstSequences(data, n) {
         return data.substr(0, pos);
     } else {
         return data;
-    }    
+    }
 }
 
 /**
@@ -1007,7 +1007,7 @@ function removeDuplicate(array) {
 function removeEltAndDecrease(array, value) {
     for (var i = 0; i < array.length; i++) {
         if (array[i] > value) {
-            array[i] = array[i] - 1 
+            array[i] = array[i] - 1
         } else if (array[i] == value) {
             array.splice(i, 1)
             i = i-1
@@ -1120,7 +1120,7 @@ function getRelativeZindex(elem){
 /// Fct to fill info table
 ///////////////////
 var clean_title = function(title){ return title.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/gi,'_').replace(/__/gi,'_')}
-        
+
 /**
  * Create a header line for info table
  *  @param {String} content - String to show in the header
@@ -1131,7 +1131,7 @@ var header = function(content, title, time_length, class_line, class_cell) {
     class_line = class_line != undefined ? `class='${class_line}'` : ""
     class_cell = class_cell != undefined ? `class='${class_cell} header'` : "class='header'"
     title = (title == undefined) ? clean_title(content) : clean_title(title)
-    return `<tr id='modal_header_${title}' ${class_line}><td ${class_cell} colspan='${(time_length + 1)}'>${content}</td></tr>` ; 
+    return `<tr id='modal_header_${title}' ${class_line}><td ${class_cell} colspan='${(time_length + 1)}'>${content}</td></tr>` ;
 }
 
 /**
@@ -1164,7 +1164,7 @@ var row_1  = function(item, content, title, time_length, class_line, class_cell_
  *  @param {string} title - Specific title id to give to the line
  *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
  */
-var row_from_list  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other) { 
+var row_from_list  = function(item, content, title, time_length, class_line, class_cell_first, class_cell_other) {
     class_line = class_line != undefined ? `class='${class_line}'` : ""
     class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
     class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
@@ -1184,7 +1184,7 @@ var row_from_list  = function(item, content, title, time_length, class_line, cla
  *  @param {string} title - Specific title id to give to the line
  *  @param {} content - Content that will be automatically casted
  *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
- *  @param {} clone 
+ *  @param {} clone
  */
 var row_cast_content = function(title, content, time_length, clone) {
     if (content == undefined) {
@@ -1214,8 +1214,8 @@ var row_cast_content = function(title, content, time_length, clone) {
 
 /**
  * Update a checkbox indeterminate and checked states according to a list of checkboxes
- * @param {checkbox} checkboxToUpdate 
- * @param {Array<checkbox>} checkboxes 
+ * @param {checkbox} checkboxToUpdate
+ * @param {Array<checkbox>} checkboxes
  */
 function updateIndeterminateState(checkboxToUpdate, checkboxes) {
     numberOfChecked = 0;

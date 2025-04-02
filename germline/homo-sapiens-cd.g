@@ -14,7 +14,8 @@
             "description": "CD",
             "recombinations": [ { "1": ["CD-sorting.fa"] } ],
             "parameters": {
-                "seed": "13s"
+                "seed": "13s",
+                "search_recombinations": ["1"]
             }
         }
     }

@@ -17,7 +17,8 @@
                 "3": ["IKZF1-as-J.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -30,7 +31,8 @@
                 "3": ["ERG-as-J.fa"]
             } ],
             "parameters": {
-                "seed": "10s"
+                "seed": "10s",
+                "search_recombinations": ["5", "3"]
             }
         }
     }

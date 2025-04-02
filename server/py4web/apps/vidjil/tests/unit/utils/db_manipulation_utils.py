@@ -1,20 +1,22 @@
-""" Helper to manipulate db for tests"""
+"""Helper to manipulate db for tests"""
+
 import json
 import pathlib
 from typing import Any
 
-from . import test_utils
-from .omboddle import Omboddle
-from ....controllers import auth as auth_controller
-from ....common import db
-from ....modules.permission_enum import PermissionEnum
-from .... import defs
-from .... import tasks
-from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
 from py4web.core import Session
 
+from .... import tasks
+from ....common import db
+from ....controllers import auth as auth_controller
+from ....modules import sampleSet
+from ....modules.permission_enum import PermissionEnum
+from ...functional.db_initialiser import TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD
+from . import test_utils
+from .omboddle import Omboddle
 
 # User management
+
 
 def log_in_as_default_admin(session: Session) -> None:
     """Log in with the default admin email and password
@@ -33,7 +35,9 @@ def log_in(session: Session, email: str, password: str) -> Any:
         email (str): user email
         password (str): user password
     """
-    with Omboddle(session, keep_session=True, params={"login": email, "password": password}):
+    with Omboddle(
+        session, keep_session=True, params={"login": email, "password": password}
+    ):
         json_result = auth_controller.submit()
         return json.loads(json_result)
 
@@ -44,11 +48,17 @@ def logout(session: Session) -> None:
     Args:
         session (Session): Session to log out
     """
-    with Omboddle(session, keep_session=True, params={"login": TEST_ADMIN_EMAIL, "password": TEST_ADMIN_PASSWORD}):
+    with Omboddle(
+        session,
+        keep_session=True,
+        params={"login": TEST_ADMIN_EMAIL, "password": TEST_ADMIN_PASSWORD},
+    ):
         auth_controller.logout()
 
 
-def add_user(session: Session, first_name: str, last_name: str, email: str, password: str) -> int:
+def add_user(
+    session: Session, first_name: str, last_name: str, email: str, password: str
+) -> int:
     """Add a user
 
     Args:
@@ -63,13 +73,17 @@ def add_user(session: Session, first_name: str, last_name: str, email: str, pass
     """
     user_id = -1
     log_in_as_default_admin(session)
-    with Omboddle(session,
-                  keep_session=True,
-                  params={"first_name": first_name,
-                          "last_name": last_name,
-                          "email": email,
-                          "password": password,
-                          "confirm_password": password}):
+    with Omboddle(
+        session,
+        keep_session=True,
+        params={
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "password": password,
+            "confirm_password": password,
+        },
+    ):
         response = auth_controller.register_form()
         user_id = json.loads(response)["user_id"]
     logout(session)
@@ -134,16 +148,19 @@ def add_indexed_user(session: Session, user_index: int) -> int:
     Returns:
         int: user id in db
     """
-    return add_user(session,
-                    get_indexed_user_first_name(user_index),
-                    get_indexed_user_last_name(user_index),
-                    get_indexed_user_email(user_index),
-                    get_indexed_user_password(user_index))
+    return add_user(
+        session,
+        get_indexed_user_first_name(user_index),
+        get_indexed_user_last_name(user_index),
+        get_indexed_user_email(user_index),
+        get_indexed_user_password(user_index),
+    )
+
 
 # Patient management
 
 
-def add_patient(patient_number: int, user_id: int = -1, auth=None):
+def add_patient(patient_number: int, user_id: int = -1, auth=None) -> tuple[int, int]:
     """Add a patient to a user
 
     Args:
@@ -158,21 +175,33 @@ def add_patient(patient_number: int, user_id: int = -1, auth=None):
         user_id = db(db.auth_user).select().first().id
 
     sample_set_id = db.sample_set.insert(
-        creator=user_id, sample_type=defs.SET_TYPE_PATIENT)
-    patient_id = db.patient.insert(id_label="", first_name="patient", last_name=patient_number, birth="2010-10-10",
-                                   info=f"test patient {patient_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
-    if (auth != None):
+        creator=user_id, sample_type=sampleSet.SET_TYPE_PATIENT
+    )
+    patient_id = db.patient.insert(
+        id_label="",
+        first_name="patient",
+        last_name=patient_number,
+        birth="2010-10-10",
+        info=f"test patient {patient_number} for user {user_id}",
+        sample_set_id=sample_set_id,
+        creator=user_id,
+    )
+    if auth is not None:
         user_group_id = auth.user_group(user_id)
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+            user_group_id, PermissionEnum.access.value, "sample_set", sample_set_id
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, 'patient', patient_id)
+            user_group_id, PermissionEnum.access.value, "patient", patient_id
+        )
 
     return patient_id, sample_set_id
 
+
 # Group management
 
-def add_group(group_name : str, user_id : int = -1) -> int : 
+
+def add_group(group_name: str, user_id: int = -1) -> int:
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
 
@@ -180,18 +209,29 @@ def add_group(group_name : str, user_id : int = -1) -> int :
     return group_id
 
 
-def add_user_to_group(group_id : int, user_id : int) : 
+def add_user_to_group(group_id: int, user_id: int):
     db.auth_membership.insert(id="", group_id=group_id, user_id=user_id)
 
-def remove_user_from_group(group_id : int, user_id : int):
-    db((db.auth_membership.group_id==group_id) & (db.auth_membership.user_id==user_id)).delete()
 
+def remove_user_from_group(group_id: int, user_id: int):
+    db(
+        (db.auth_membership.group_id == group_id)
+        & (db.auth_membership.user_id == user_id)
+    ).delete()
 
 
 # Sequence file management
 
 
-def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool = False, preprocess: bool = False, preprocess_conf_id: int=-1) -> int:
+def add_sequence_file(
+    sample_set_id: int,
+    user_id: int = -1,
+    use_real_file: bool = False,
+    preprocess: bool = False,
+    preprocess_conf_id: int = -1,
+    force_filename: str = None,
+    other_sample_sets_ids: list[int] = [],
+) -> int:
     """Add a fake sequence file to a patient
 
     Args:
@@ -200,6 +240,8 @@ def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool
         use_real_file (bool, optional): If set to false, use a simple string value. If set to True, really load a file in db. Default to False
         preprocess (bool, optional): Switch preprocess status. If set to False, don't fill preprocess fields of db. If set to True, fill them with values given (preprocess conf and task id; load 2 file instead of one. Default to False
         preprocess_conf_id (int, optional): Preprocess conf id. if not set, not used
+        force_filename (str, optional): if set, filename to use (to be able to get coherent values)
+        other_sample_sets_ids (list[int], optional): list of other samples ids to link sequence to
 
     Returns:
         int: corresponding sequence file id
@@ -209,35 +251,57 @@ def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool
         user_id = db(db.auth_user).select().first().id
 
     if use_real_file:
-        filename = "analysis-example.vidjil"
-        file = pathlib.Path(test_utils.get_resources_path(),
-                            "analysis-example.vidjil")
+        if force_filename:
+            filename = force_filename
+        else:
+            filename = "analysis-example.vidjil"
+        file = pathlib.Path(test_utils.get_resources_path(), "analysis-example.vidjil")
         with file.open("rb") as stream:
             data_file = db.sequence_file.data_file.store(stream, filename)
-            data_file2 = db.sequence_file.data_file2.store(stream, filename) if preprocess else None
-            preprocess_file = db.sequence_file.preprocess_file.store(stream, filename) if preprocess else None
+            data_file2 = (
+                db.sequence_file.data_file2.store(stream, filename)
+                if preprocess
+                else None
+            )
+            preprocess_file = (
+                db.sequence_file.preprocess_file.store(stream, filename)
+                if preprocess
+                else None
+            )
     else:
-        filename = "test_file.fasta"
+        if force_filename:
+            filename = force_filename
+        else:
+            filename = "test_file.fasta"
         data_file = "/test/sequence/test_file.fasta"
         data_file2 = "/test/sequence/test_file2.fasta" if preprocess else None
-        preprocess_file = "/test/sequence/preprocess_test_file.fasta" if preprocess else None
+        preprocess_file = (
+            "/test/sequence/preprocess_test_file.fasta" if preprocess else None
+        )
 
-    sequence_file_id = db.sequence_file.insert(patient_id=None,
-                                               sampling_date="2010-10-10",
-                                               info="testf",
-                                               filename=filename,
-                                               size_file=1024,
-                                               network=False,
-                                               provider=user_id,
-                                               data_file=data_file,
-                                               data_file2=data_file2,
-                                               pre_process_id=preprocess_conf_id if preprocess else None,
-                                               pre_process_file=preprocess_file if preprocess else None,
-                                               )
+    sequence_file_id = db.sequence_file.insert(
+        patient_id=None,
+        sampling_date="2010-10-10",
+        info="testf",
+        filename=filename,
+        size_file=1024,
+        network=False,
+        provider=user_id,
+        data_file=data_file,
+        data_file2=data_file2,
+        pre_process_id=preprocess_conf_id if preprocess else None,
+        pre_process_file=preprocess_file if preprocess else None,
+    )
     db.sample_set_membership.insert(
-        sample_set_id=sample_set_id, sequence_file_id=sequence_file_id)
+        sample_set_id=sample_set_id, sequence_file_id=sequence_file_id
+    )
+    for other_sample_set_id in other_sample_sets_ids:
+        db.sample_set_membership.insert(
+            sample_set_id=other_sample_set_id, sequence_file_id=sequence_file_id
+        )
 
     return sequence_file_id
+
 
 # config management
 
@@ -245,17 +309,21 @@ def add_sequence_file(sample_set_id: int, user_id: int = -1, use_real_file: bool
 TEST_CONFIG_NAME = "test_config_plapipou"
 
 
-def add_config(name : int = TEST_CONFIG_NAME) -> int:
-    config_id = db.config.insert(name=name,
-                                 info="plop_info",
-                                 command="plop_command",
-                                 fuse_command="plop_fuse_command",
-                                 program="none",
-                                 classification=None)
+def add_config(name: int = TEST_CONFIG_NAME) -> int:
+    config_id = db.config.insert(
+        name=name,
+        info="plop_info",
+        command="plop_command",
+        fuse_command="plop_fuse_command",
+        program="none",
+        classification=None,
+    )
     return config_id
 
+
 # def add_run(run_id : int = -1):
-    
+
+
 def add_run(run_number: int = -1, user_id: int = -1, auth=None):
     """Add a run set to a user
 
@@ -270,17 +338,25 @@ def add_run(run_number: int = -1, user_id: int = -1, auth=None):
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
 
-    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=defs.SET_TYPE_RUN)
-    run_id = db.run.insert(name=f"run_{run_number}", info=f"test run {run_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
-    if (auth != None):
+    sample_set_id = db.sample_set.insert(
+        creator=user_id, sample_type=sampleSet.SET_TYPE_RUN
+    )
+    run_id = db.run.insert(
+        name=f"run_{run_number}",
+        info=f"test run {run_number} for user {user_id}",
+        sample_set_id=sample_set_id,
+        creator=user_id,
+    )
+    if auth is not None:
         user_group_id = auth.user_group(user_id)
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
-        auth.add_permission(
-            user_group_id, PermissionEnum.access.value, 'run', run_id)
+            user_group_id, PermissionEnum.access.value, "sample_set", sample_set_id
+        )
+        auth.add_permission(user_group_id, PermissionEnum.access.value, "run", run_id)
 
     return run_id, sample_set_id
-    
+
+
 def add_generic(generic_number: int = -1, user_id: int = -1, auth=None):
     """Add a generic set to a user
 
@@ -295,14 +371,23 @@ def add_generic(generic_number: int = -1, user_id: int = -1, auth=None):
     if user_id == -1:
         user_id = db(db.auth_user).select().first().id
 
-    sample_set_id = db.sample_set.insert(creator=user_id, sample_type=defs.SET_TYPE_GENERIC)
-    generic_id = db.generic.insert(name=f"generic_{generic_number}", info=f"test generic {generic_number} for user {user_id}", sample_set_id=sample_set_id, creator=user_id)
-    if (auth != None):
+    sample_set_id = db.sample_set.insert(
+        creator=user_id, sample_type=sampleSet.SET_TYPE_GENERIC
+    )
+    generic_id = db.generic.insert(
+        name=f"generic_{generic_number}",
+        info=f"test generic {generic_number} for user {user_id}",
+        sample_set_id=sample_set_id,
+        creator=user_id,
+    )
+    if auth is not None:
         user_group_id = auth.user_group(user_id)
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, 'sample_set', sample_set_id)
+            user_group_id, PermissionEnum.access.value, "sample_set", sample_set_id
+        )
         auth.add_permission(
-            user_group_id, PermissionEnum.access.value, 'generic', generic_id)
+            user_group_id, PermissionEnum.access.value, "generic", generic_id
+        )
 
     return generic_id, sample_set_id
 
@@ -312,12 +397,17 @@ def add_generic(generic_number: int = -1, user_id: int = -1, auth=None):
 #         generic_id = db(db.generic).select().first().id
 #     sample_set_id = db.generic[generic_id].sample_set_id
 #     new_generic_id = db.generic.insert(id="", name="add_generic_test", info= "",creator= 1, sample_set_id = sample_set_id)
-#     return new_generic_id 
+#     return new_generic_id
 
 # Results file management
 
 
-def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_task_id: int = -1, use_real_file: bool = False) -> int:
+def add_results_file(
+    sequence_file_id: int = -1,
+    config_id: int = -1,
+    scheduler_task_id: int = -1,
+    use_real_file: bool = False,
+) -> int:
     """Add a fake result file
 
     Args:
@@ -341,19 +431,21 @@ def add_results_file(sequence_file_id: int = -1, config_id: int = -1, scheduler_
 
     if use_real_file:
         filename = "analysis-example.vidjil"
-        file = pathlib.Path(test_utils.get_resources_path(),
-                            "analysis-example.vidjil")
+        file = pathlib.Path(test_utils.get_resources_path(), "analysis-example.vidjil")
         with file.open("rb") as stream:
             data_file = db.results_file.data_file.store(stream, filename)
     else:
         data_file = "/test/sequence/test_file.fasta"
 
-    results_file_id = db.results_file.insert(sequence_file_id=sequence_file_id,
-                                             config_id=config_id,
-                                             run_date="2010-10-10 10:10:10",
-                                             scheduler_task_id=scheduler_task_id,
-                                             data_file=data_file)
+    results_file_id = db.results_file.insert(
+        sequence_file_id=sequence_file_id,
+        config_id=config_id,
+        run_date="2010-10-10 10:10:10",
+        scheduler_task_id=scheduler_task_id,
+        data_file=data_file,
+    )
     return results_file_id
+
 
 # pre-process management
 
@@ -364,15 +456,22 @@ def add_pre_process() -> int:
     Returns:
         int: corresponding pre_process_id
     """
-    pre_process_id = db.pre_process.insert(name="foobar",
-                                           command="cat &file1& &file2& > &result&",
-                                           info="barfoo")
+    pre_process_id = db.pre_process.insert(
+        name="foobar", command="cat &file1& &file2& > &result&", info="barfoo"
+    )
     return pre_process_id
+
 
 # Fused file management
 
 
-def add_fused_file(sample_set_id: int = -1, sequence_file_id: int = -1, config_id: int = -1, scheduler_task_id: int = -1, use_real_file: bool = False) -> int:
+def add_fused_file(
+    sample_set_id: int = -1,
+    sequence_file_id: int = -1,
+    config_id: int = -1,
+    scheduler_task_id: int = -1,
+    use_real_file: bool = False,
+) -> int:
     """Add a fake fused file
 
     Args:
@@ -397,8 +496,7 @@ def add_fused_file(sample_set_id: int = -1, sequence_file_id: int = -1, config_i
 
     if use_real_file:
         filename = "analysis-example.vidjil"
-        file = pathlib.Path(test_utils.get_resources_path(),
-                            "analysis-example.vidjil")
+        file = pathlib.Path(test_utils.get_resources_path(), "analysis-example.vidjil")
         with file.open("rb") as stream:
             fused_file = db.fused_file.fused_file.store(stream, filename)
     else:
@@ -410,11 +508,18 @@ def add_fused_file(sample_set_id: int = -1, sequence_file_id: int = -1, config_i
         fuse_date="2010-10-10 10:10:10",
         status=tasks.STATUS_COMPLETED,
         sequence_file_list="%d_" % sequence_file_id,
-        fused_file=fused_file)
+        fused_file=fused_file,
+    )
     return fused_file_id
 
 
-def add_scheduler_task(task_name: str, sequence_file_id: int, status: str, args: list, start_time: str="2024-01-01 10:00:00") -> int:
+def add_scheduler_task(
+    task_name: str,
+    sequence_file_id: int,
+    status: str,
+    args: list,
+    start_time: str = "2024-01-01 10:00:00",
+) -> int:
     """Add a fake scheduler task in db
 
     Args:
@@ -436,7 +541,7 @@ def add_scheduler_task(task_name: str, sequence_file_id: int, status: str, args:
         status=status,
         # enabled
         args=args,
-        start_time=start_time
+        start_time=start_time,
     )
 
     if task_name == "pre_process":

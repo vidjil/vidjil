@@ -1,6 +1,7 @@
 
 
 # Not satisfactory
+# TODO defs.py
 cp ../../defs.py defs.py.tmp
 echo "DIR_FUSE_POST='tests/data/pre_process'" >> ../../defs.py
 ### Use a script to verify that an external script can be triggered

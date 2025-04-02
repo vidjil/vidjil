@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import apps.vidjil.modules.dictobj  as dictobj
 import os
 from collections import namedtuple
 
-Path = namedtuple('Path', ('path', 'id'))
+import apps.vidjil.modules.dictobj as dictobj
+
+Path = namedtuple("Path", ("path", "id"))
 
 
 class Node(dictobj.DictionaryObject):
@@ -51,34 +52,35 @@ class Node(dictobj.DictionaryObject):
         """
         super(Node, self).__init__()
 
-        children = kwargs.get('children', {})
+        children = kwargs.get("children", {})
         if any(filter(lambda key: not isinstance(children[key], Node), children)):
             raise TypeError(
-              "One or more children were not instances of '%s'" % Node.__name__)
-        if 'children' in kwargs:
-            del kwargs['children']
-        self._items['children'] = dictobj.MutableDictionaryObject(children)
+                "One or more children were not instances of '%s'" % Node.__name__
+            )
+        if "children" in kwargs:
+            del kwargs["children"]
+        self._items["children"] = dictobj.MutableDictionaryObject(children)
 
         if oid is not None:
-            li_attr = kwargs.get('li_attr', {})
-            li_attr['id'] = oid
-            kwargs['li_attr'] = li_attr
+            li_attr = kwargs.get("li_attr", {})
+            li_attr["id"] = oid
+            kwargs["li_attr"] = li_attr
 
         self._items.update(dictobj.DictionaryObject(**kwargs))
-        self._items['text'] = path
+        self._items["text"] = path
 
     def jsonData(self):
         children = [self.children[k].jsonData() for k in sorted(self.children)]
         output = {}
         for k in self._items:
-            if 'children' == k:
+            if "children" == k:
                 continue
             if isinstance(self._items[k], dictobj.DictionaryObject):
                 output[k] = self._items[k].asdict()
             else:
                 output[k] = self._items[k]
         if len(children):
-            output['children'] = children
+            output["children"] = children
         return output
 
 
@@ -104,37 +106,36 @@ class JSTree(dictobj.DictionaryObject):
         True
         """
         if any(filter(lambda p: not isinstance(p, Path), paths)):
-            raise TypeError(
-              "All paths must be instances of '%s'" % Path.__name__)
+            raise TypeError("All paths must be instances of '%s'" % Path.__name__)
 
         super(JSTree, self).__init__()
 
-        root = Node('', None, **kwargs)
+        root = Node("", None, **kwargs)
         for path in sorted(set(paths)):
             curr = root
             subpaths = path.path.split(os.path.sep)
             for i, subpath in enumerate(subpaths):
                 if subpath not in curr.children:
-                  oid = path.id if len(subpaths) - 1 == i else None
-                  curr.children[subpath] = Node(subpath, oid, **kwargs)
+                    oid = path.id if len(subpaths) - 1 == i else None
+                    curr.children[subpath] = Node(subpath, oid, **kwargs)
                 curr = curr.children[subpath]
-            self._items['_root'] = root
+            self._items["_root"] = root
 
     def pretty(self, root=None, depth=0, spacing=2):
         """
-        Create a "pretty print" represenation of the tree with customized indentation at each
-        level of the tree.
+            Create a "pretty print" represenation of the tree with customized indentation at each
+            level of the tree.
 
-        Example:
-        >>> import jstree
-        >>> paths = [jstree.Path("editor/2012-07/31/.classpath", 1), jstree.Path("editor/2012-07/31/.project", 2)]
-        >>> print(jstree.JSTree(paths).pretty())
-    /
-      editor/
-        2012-07/
-          31/
-            .classpath
-            .project
+            Example:
+            >>> import jstree
+            >>> paths = [jstree.Path("editor/2012-07/31/.classpath", 1), jstree.Path("editor/2012-07/31/.project", 2)]
+            >>> print(jstree.JSTree(paths).pretty())
+        /
+          editor/
+            2012-07/
+              31/
+                .classpath
+                .project
         """
         if root is None:
             root = self._root
@@ -150,7 +151,7 @@ class JSTree(dictobj.DictionaryObject):
         Returns a copy of the internal tree in a JSON-friendly format,
         ready for consumption by jsTree.  The data is represented as a
         list of dictionaries, each of which are our internal nodes.
-    
+
         Examples:
         >>> import jstree
         >>> paths = [jstree.Path("editor/2012-07/31/.classpath", 1), jstree.Path("editor/2012-07/31/.project", 2)]

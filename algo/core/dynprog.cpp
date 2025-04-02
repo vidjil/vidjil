@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil-algo <http://www.vidjil.org>
-  Copyright (C) 2011-2024 by VidjilNet consortium and Bonsai bioinformatics
+  Copyright (C) 2011-2025 by VidjilNet consortium and Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -499,8 +499,8 @@ void DynProg::backtrack()
   while (1) {
 
 
-    if ((!reverse_y && (j == marked_pos_j))
-        || (reverse_y && (n-j+1 == marked_pos_j)))
+    if (marked_pos_j > 0 && ((!reverse_y && (j == marked_pos_j))
+        || (reverse_y && (n-j+1 == marked_pos_j))))
       {
         marked_pos_i = reverse_x ? m-i+1 : i ;
       }

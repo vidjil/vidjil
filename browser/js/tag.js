@@ -158,7 +158,7 @@ TagManager.prototype = {
 
         // add to report button
         var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
-        var report_button = $('<div/>', { text: 'add clone(s) to next report'
+        var report_button = $('<div/>', { text: 'add clone(s) to next report ', title: '(r to add / shift+r to remove all)'
                                         }).appendTo(div2)
                                             .click(function (){
                                                 report.addClones(clonesIDs);

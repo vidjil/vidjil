@@ -1,22 +1,22 @@
-# -*- coding: utf-8 -*-
 """
 This file defines cache, session, and translator T object for the app
 These are fixtures that every app needs so probably you will not be editing this file
 """
+
+import logging
 import os
 import sys
-import logging
-from . import defs
-from py4web import Session, Cache, Translator, Flash, DAL, Field, action
-from py4web.utils.mailer import Mailer
-from py4web.utils.downloader import downloader
-from pydal.tools.tags import Tags
-from py4web.utils.factories import ActionFactory
-from . import settings
-from .VidjilAuth import VidjilAuth
-from .modules import single_task_loader
 
+from py4web import DAL, Cache, Flash, Session, Translator, action
 from py4web.core import HTTP, Fixture, request, response
+from py4web.utils.downloader import downloader
+from py4web.utils.factories import ActionFactory
+from py4web.utils.mailer import Mailer
+from pydal.tools.tags import Tags
+
+from . import settings
+from .modules import single_task_loader
+from .VidjilAuth import VidjilAuth
 
 
 class CORS(Fixture):
@@ -34,8 +34,10 @@ class CORS(Fixture):
 
     def on_request(self, context):
         response.headers["Access-Control-Allow-Origin"] = self.origin
-        if 'HTTP_ORIGIN' in request.environ :
-            response.headers["Access-Control-Allow-Origin"] = request.environ['HTTP_ORIGIN']
+        if "HTTP_ORIGIN" in request.environ:
+            response.headers["Access-Control-Allow-Origin"] = request.environ[
+                "HTTP_ORIGIN"
+            ]
         response.headers["Access-Control-Max-Age"] = self.age
         response.headers["Access-Control-Allow-Headers"] = self.headers
         response.headers["Access-Control-Allow-Methods"] = self.methods
@@ -43,37 +45,18 @@ class CORS(Fixture):
         if request.method == "OPTIONS":
             raise HTTP(200)
 
+
 # set the origin to where ever your frontend server is running,
 # use host and port rather than "localhost" as the browser session
 # cookies may not be set otherwise preventing auth usage.
 # headers="Content-Type" is required to prevent a different CORs browser issue.
-cors = CORS(origin='https://localhost:8000/vidjil', headers="Content-Type") 
-
-
-# #######################################################
-# implement custom loggers from settings.LOGGERS
-# #######################################################
-logger = logging.getLogger("py4web:" + settings.APP_NAME)
-formatter = logging.Formatter(
-    "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
-)
-for item in settings.LOGGERS:
-    level, filename = item.split(":", 1)
-    if filename in ("stdout", "stderr"):
-        handler = logging.StreamHandler(getattr(sys, filename))
-    else:
-        handler = logging.FileHandler(filename)
-    handler.setFormatter(formatter)
-    logger.setLevel(getattr(logging, level.upper(), "DEBUG"))
-    logger.addHandler(handler)
+cors = CORS(origin="https://localhost:8000/vidjil", headers="Content-Type")
 
 # #######################################################
 # create required folders
 # #######################################################
 
-for folder in [settings.DB_FOLDER,
-               settings.T_FOLDER,
-               settings.UPLOAD_FOLDER]:
+for folder in [settings.DB_FOLDER, settings.T_FOLDER, settings.UPLOAD_FOLDER]:
     if not os.path.exists(folder):
         os.mkdir(folder)
 
@@ -113,7 +96,7 @@ elif settings.SESSION_TYPE == "redis":
     )
     session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn)
 elif settings.SESSION_TYPE == "memcache":
-    import memcache, time
+    import memcache  # type: ignore
 
     conn = memcache.Client(settings.MEMCACHE_CLIENTS, debug=0)
     session = Session(secret=settings.SESSION_SECRET_KEY, storage=conn)
@@ -121,23 +104,23 @@ elif settings.SESSION_TYPE == "database":
     from py4web.utils.dbstore import DBStore
 
     session = Session(secret=settings.SESSION_SECRET_KEY, storage=DBStore(db))
-    
+
 
 # #######################################################
 # Define custom log
 # #######################################################
 logging.ADMIN = logging.INFO + 1
-logging.addLevelName(logging.ADMIN, 'ADMIN')
+logging.addLevelName(logging.ADMIN, "ADMIN")
+
 
 class MsgUserAdapter(logging.LoggerAdapter):
-
-    def process(self, msg, kwargs):        
+    def process(self, msg, kwargs):
         if type(msg) is dict:
-            if 'message' in msg:
-                msg = msg['message']
+            if "message" in msg:
+                msg = msg["message"]
             else:
-                msg = '?'
-        
+                msg = "?"
+
         ip = request.remote_addr
         if ip:
             for ip_prefix in ips:
@@ -152,70 +135,90 @@ class MsgUserAdapter(logging.LoggerAdapter):
             logging.getLogger().setLevel(logging.ERROR)
             user_id = (str(auth.user_id)) if auth.user else "N/A"
             logging.getLogger().setLevel(previous_level)
-            user_id = user_id.replace(' ','-')
+            user_id = user_id.replace(" ", "-")
             if auth.is_impersonating():
-                user_id = 'team!' + user_id
+                user_id = "team!" + user_id
         except Exception:
             # Ignore exception, this may occur when logging from worker or client
             pass
-        
-        new_msg =  u'%30s %12s %s' % (ip, (u'<%s>' % user_id), msg)
+
+        new_msg = "%30s %12s %s" % (ip, ("<%s>" % user_id), msg)
         return new_msg, kwargs
-    
+
     def admin(self, msg, extra=None):
         self.log(logging.ADMIN, msg, extra=extra)
+
+
 #
 class UserLogHandler(logging.Handler):
-
     def __init__(self):
         logging.Handler.__init__(self)
-        self.table = 'user_log'
+        self.table = "user_log"
 
     def emit(self, record):
-        '''
+        """
         When 'user_id' and 'record_id' are defined,
         further store the record in the db.
-        '''
-        if hasattr(record, 'user_id') and hasattr(record, 'record_id'):
+        """
+        if hasattr(record, "user_id") and hasattr(record, "record_id"):
             from datetime import datetime
+
             now = datetime.now()
             db[self.table].insert(
                 user_id=record.user_id,
                 table_name=record.table_name,
                 created=now,
                 msg=record.message,
-                record_id=record.record_id
+                record_id=record.record_id,
             )
             db.commit()
 
-def _init_log():
+
+def _init_log() -> logging.LoggerAdapter:
     """
     adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
     """
 
-    def create_handler(filename, level):
+    def create_handler(filename: str, level: int) -> logging.Handler:
         try:
             handler = logging.FileHandler(filename)
         except Exception as exception:
             print(f"Error when trying to create logger to {filename}: {exception=}")
             handler = logging.StreamHandler(sys.stderr)
-        else:
+        finally:
             handler.setLevel(level)
             handler.setFormatter(formatter)
         return handler
 
-    logger = logging.getLogger('vidjil') # (request.application)
+    def create_stdout_handler() -> logging.Handler:
+        try:
+            handler = logging.StreamHandler(sys.stdout)
+        except Exception as exception:
+            print(f"Error when trying to create logger to stdout: {exception=}")
+            handler = logging.StreamHandler(sys.stderr)
+        finally:
+            log_level = logging.INFO
+            if settings.LOG_LEVEL in logging.getLevelNamesMapping():
+                log_level = logging.getLevelNamesMapping()[settings.LOG_LEVEL]
+            handler.setLevel(log_level)
+            handler.setFormatter(formatter)
+        return handler
+
+    logger = logging.getLogger("vidjil")
     if not logger.handlers:
         logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
+        formatter = logging.Formatter(
+            "[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s"
+        )
 
-        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
-        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
+        logger.addHandler(create_handler(settings.LOG_DEBUG, logging.DEBUG))
+        logger.addHandler(create_handler(settings.LOG_INFO, logging.INFO))
+        logger.addHandler(create_stdout_handler())
         logger.addHandler(UserLogHandler())
     return MsgUserAdapter(logger, {})
 
-log = _init_log()
 
+log = _init_log()
 
 # #######################################################
 # Instantiate the object and actions that handle auth
@@ -228,19 +231,19 @@ auth.allowed_actions = ["all"]
 auth.login_expiration_time = 3600
 auth.password_complexity = {"entropy": 50}
 auth.block_previous_password_num = 3
-auth.__prerequisites__.insert(0, cors) 
+auth.__prerequisites__.insert(0, cors)
 auth.define_tables()
 
 # #######################################################
 # Configure email sender for auth
 # #######################################################
-if defs.SMTP_SERVER:
+if settings.SMTP_SERVER:
     auth.sender = Mailer(
-        server=defs.SMTP_SERVER,
-        sender=defs.FROM_EMAIL,
-        login=defs.SMTP_CREDENTIALS,
-        #tls=defs.SMTP_TLS,
-        #ssl=defs.SMTP_SSL,
+        server=settings.SMTP_SERVER,
+        sender=settings.SMTP_FROM_EMAIL,
+        login=settings.SMTP_CREDENTIALS,
+        # tls=settings.SMTP_SMTP_TLS,
+        # ssl=settings.SMTP_SMTP_SSL,
     )
 
 # #######################################################
@@ -299,10 +302,12 @@ if settings.OAUTH2OKTA_CLIENT_ID:
 # files uploaded and reference by Field(type='upload')
 # #######################################################
 if settings.UPLOAD_FOLDER:
-    @action('download/<filename>')                                                   
-    @action.uses(db)                                                                                           
+
+    @action("download/<filename>")
+    @action.uses(db)
     def download(filename):
-        return downloader(db, settings.UPLOAD_FOLDER, filename) 
+        return downloader(db, settings.UPLOAD_FOLDER, filename)
+
     # To take advantage of this in Form(s)
     # for every field of type upload you MUST specify:
     #
@@ -318,21 +323,20 @@ if settings.USE_CELERY:
     # to use "from .common import scheduler" and then use it according
     # to celery docs
     scheduler = Celery(
-        "apps.%s.tasks" % settings.APP_NAME, 
+        "apps.%s.tasks" % settings.APP_NAME,
         broker=settings.CELERY_BROKER,
-        backend='redis://redis',
+        backend="redis://redis",
         loader=single_task_loader.SingleTaskLoader,
     )
-    
+
     scheduler.conf.update(
-        broker_connection_retry_on_startup=True,
-        worker_send_task_event=False
+        broker_connection_retry_on_startup=True, worker_send_task_event=False
     )
 
 # #######################################################
 # Enable authentication
 # #######################################################
-#auth.enable(uses=(cors,session, T, db, flash), env=dict(T=T))
+# auth.enable(uses=(cors,session, T, db, flash), env=dict(T=T))
 
 # #######################################################
 # Define convenience decorators
@@ -341,29 +345,29 @@ unauthenticated = ActionFactory(cors, db, session, T, flash, auth)
 authenticated = ActionFactory(cors, db, session, T, flash, auth.user)
 
 
-
 # #######################################################
 # Reverse IP
 # #######################################################
 ips = {}
 
 try:
-    for l in open(defs.REVERSE_IP):
-        ip, kw = l.split()
+    for line in open(settings.REVERSE_IP):
+        ip, kw = line.split()
         ips[ip] = kw
-except:
+except Exception:
     pass
 
 # #######################################################
 # Configure mail
 # #######################################################
 mail = Mailer(
-        server=defs.SMTP_SERVER,
-        sender=defs.FROM_EMAIL,
-        login=defs.SMTP_CREDENTIALS
-        #tls=defs.SMTP_TLS,
-        #ssl=defs.SMTP_SSL
-    )
+    server=settings.SMTP_SERVER,
+    sender=settings.SMTP_FROM_EMAIL,
+    login=settings.SMTP_CREDENTIALS,
+    # tls=settings.SMTP_SMTP_TLS,
+    # ssl=settings.SMTP_SMTP_SSL
+)
+
 
 # #######################################################
 # try to create an index on these un-indexed columns
@@ -374,6 +378,7 @@ def try_create_index(index_sql: str):
     except Exception:
         # If problem occurs, assume it is already created
         pass
+
 
 try_create_index("CREATE INDEX table_name_index ON tag_ref (table_name);")
 try_create_index("CREATE INDEX record_id_index ON tag_ref (record_id);")

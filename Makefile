@@ -39,58 +39,45 @@ unit_server:
 ###############################
 ### Browser tests WITH CYPRESS
 build_cypress_image:
-	docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
+	docker build ./docker/ci -t "vidjilci/cypress_with_browsers:latest"
 
 functional_browser_cypress_open:
 	# Need to create a symbolic link; but allow to directly see result
-	# Usefull for fast debugging; allow to launch script one by one
-	mv browser/js/conf.js browser/js/conf.js.bak  || true
+	# Useful for fast debugging; allow to launch script one by one
+	mv browser/js/conf.js browser/js/conf.js.bak || true
 	ln -sf browser/test/cypress
 	ln -sf docker/ci/cypress.config.js
 	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/
-	./node_modules/cypress/bin/cypress open --env workdir=../ --env host=localhost
+	./node_modules/cypress/bin/cypress open --env workdir=../,host=local,server=false
 	cp browser/js/conf.js.bak browser/js/conf.js || true
 
-
 functional_browser_cypress:
-	docker run \
+	docker run --rm \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/browser/:/browser/  \
-		-v `pwd`/doc/:/app/doc/  \
-		-v `pwd`/demo/:/app/demo/  \
-		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
-		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
+		--env BROWSER=electron --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
 
 functional_tutorial_browser_cypress:
 	$(MAKE) -C doc/tutorial build_tutorial_cypress_client
-	docker run \
+	docker run --rm \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/browser/:/browser/  \
-		-v `pwd`/doc/:/app/doc/  \
-		-v `pwd`/demo/:/app/demo/  \
-		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
-		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
+		--env BROWSER=electron --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
 
 functional_browser_external_cypress:
-	docker run \
+	docker run --rm \
 		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/browser/:/browser/  \
-		-v `pwd`/doc/:/app/doc/  \
-		-v `pwd`/demo/:/app/demo/  \
-		-v `pwd`/tools/:/app/tools/  \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
-		--env BROWSER=electron --env HOST=localhost "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/external_*.js"
+		--env BROWSER=electron --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/external_*.js"
 
 functional_server_cypress_open:
 	ln -sf server/py4web/apps/vidjil/tests/cypress/ .
@@ -99,44 +86,30 @@ functional_server_cypress_open:
 	ln -sf ../../../../../../browser/test/cypress/support  cypress/support
 	ln -sf docker/ci/cypress.config.js
 	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/
-	./node_modules/cypress/bin/cypress open --env workdir=../,host=local
+	./node_modules/cypress/bin/cypress open --env workdir=../,host=local,server=true
 
 functional_tutorial_server_cypress:
 	$(MAKE) -C doc/tutorial build_tutorial_cypress_client
 	# Need to have a local server deploy with the ci data integrated
-	docker run \
-		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/e2e:/app/cypress/e2e \
-		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
-		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
-		-v `pwd`/browser/:/browser/  \
-		-v `pwd`/doc/:/app/doc/  \
-		-v `pwd`/demo/:/app/demo/  \
-		-v `pwd`/tools/:/app/tools/  \
+	docker run --rm \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress:/app/cypress \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
-		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
+		--env BROWSER=electron --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
 
 functional_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
-	docker run \
-		-v `pwd`/browser/test/cypress:/app/cypress \
-		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/e2e:/app/cypress/e2e \
-		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/screenshots:/app/cypress/screenshots \
-		-v `pwd`/server/py4web/apps/vidjil/tests/cypress/reports:/app/cypress/reports \
-		-v `pwd`/browser/:/browser/  \
-		-v `pwd`/doc/:/app/doc/  \
-		-v `pwd`/demo/:/app/demo/  \
-		-v `pwd`/tools/:/app/tools/  \
+	docker run --rm \
+		-v `pwd`/server/py4web/apps/vidjil/tests/cypress:/app/cypress \
 		-v `pwd`:/app/vidjil \
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
-		--env BROWSER=electron --env HOST=local "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
+		--env BROWSER=electron --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
 
 ###############################
 

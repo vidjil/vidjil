@@ -1,21 +1,22 @@
-import os
 import json
+import os
 import unittest
 
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils
-from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session, HTTP
-from ....common import db, auth
+from py4web.core import HTTP, Session, _before_request
+
+from ....common import auth, db
 from ....controllers import log as log_controller
+from ...functional.db_initialiser import DBInitialiser
+from ..utils import db_manipulation_utils
+from ..utils.omboddle import Omboddle
 
 
 class TestLogController(unittest.TestCase):
-
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -58,11 +59,13 @@ class TestLogController(unittest.TestCase):
         # Given : Logged as admin and add some logs
         db_manipulation_utils.log_in_as_default_admin(self.session)
         patient_id = db_manipulation_utils.add_patient(1, 1)[0]
-        log = dict(user_id=1,
-                   created='2022-03-30 13:23:59',
-                   table_name="patient",
-                   msg="this is a fake log msg",
-                   record_id=patient_id)
+        log = dict(
+            user_id=1,
+            created="2022-03-30 13:23:59",
+            table_name="patient",
+            msg="this is a fake log msg",
+            record_id=patient_id,
+        )
         db.user_log.insert(**log)
 
         # When : Calling index

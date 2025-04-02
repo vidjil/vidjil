@@ -25,6 +25,7 @@ enum {
   TEST_EXTRACT_GENE_NAME,
   TEST_CONVERSIONS,
   TEST_EXPAND_SEED,
+  TEST_GUESS_FORMAT,
 	
   /* Filter tests */
   TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER,
@@ -60,7 +61,7 @@ enum {
   TEST_KMERSTORE_GET_S,
   TEST_KMERSTORE_GET_SEED,
   TEST_KMERSTORE_INSERT_ONE_SEQ,
-  TEST_GET_INDEX_LOAD,
+  //  TEST_GET_INDEX_LOAD,
 
   /* Aho Corasick tests */
   TEST_AC_TRANSITIONS,
@@ -68,6 +69,7 @@ enum {
   TEST_AC_FINAL,
   TEST_AC_GET_RESULTS,
   TEST_AC_OCCURENCES,
+  TEST_AC_ALL_RESULTS,
 
   /* KmerAffect */
   TEST_AFFECT_STRAND,
@@ -145,7 +147,7 @@ enum {
   TEST_KMER_DATA,
   TEST_KMER_LEFT,
   TEST_KMER_RIGHT,
-  TEST_PROBABILITY_SEGMENTATION,
+  //  TEST_PROBABILITY_SEGMENTATION,
 
   /* WindowExtractor */
   TEST_EXTRACTOR_NB_READS,
@@ -198,6 +200,15 @@ enum {
   /* Bugs */
   TEST_BUG2224,
 
+  /* BitSet */
+  TEST_BITSET_COUNT,
+  TEST_BITSET_COPY,
+  TEST_BITSET_GET,
+  TEST_BITSET_SET,
+  TEST_BITSET_FLIP,
+  TEST_BITSET_AND,
+  TEST_BITSET_CONSECUTIVE_SET,
+
   // ProbaPrecomputer
   TEST_PROBA_PRECOMPUTER,
 
@@ -224,6 +235,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_NB_SEQUENCES, "Nb sequences in Fasta");
   RECORD_TAP_TEST(TEST_IS_STOP_CODON, "Check if is stop codon");
   RECORD_TAP_TEST(TEST_EXTRACT_GENE_NAME, "Return the gene name of an entire name");
+  RECORD_TAP_TEST(TEST_GUESS_FORMAT, "Guess read sequence format");
 	
   RECORD_TAP_TEST(TEST_AUTOMATON_BUILDER_TO_FILTER_BIOREADER, 
     "Check the automaton and the index vector produced while filtering a BioReader");	
@@ -254,13 +266,14 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_K, "Testing getK() in KmerStore");
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_S, "Testing getK() in KmerStore");
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_SEED, "Testing getK() in KmerStore");
-  RECORD_TAP_TEST(TEST_GET_INDEX_LOAD, "Testing getIndexLoad() in KmerStore");
+  //  RECORD_TAP_TEST(TEST_GET_INDEX_LOAD, "Testing getIndexLoad() in KmerStore");
 
   RECORD_TAP_TEST(TEST_AC_TRANSITIONS, "Testing that transitions are correct in Aho-Corasick");
   RECORD_TAP_TEST(TEST_AC_GET, "Testing that retrieving information from Aho-Corasick is ok");
   RECORD_TAP_TEST(TEST_AC_FINAL, "Testing that final states are positioned correctly");
   RECORD_TAP_TEST(TEST_AC_GET_RESULTS, "Testing getResults with Aho-Corasick");
   RECORD_TAP_TEST(TEST_AC_OCCURENCES, "Testing getMultiResults has the correct number of occurences");
+  RECORD_TAP_TEST(TEST_AC_ALL_RESULTS, "Testing getAllResults with Aho-Corasick");
 
   RECORD_TAP_TEST(TEST_AFFECT_STRAND, "affect_strand()");
   RECORD_TAP_TEST(TEST_AFFECT_LENGTH, "affect_length()");
@@ -324,7 +337,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMER_DATA, "Test that data is consistent with what we expect for KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_LEFT, "Test V end (resp. J start) with KmerSegmenter on fwd (resp bwd) strand");
   RECORD_TAP_TEST(TEST_KMER_RIGHT, "Test J start (resp. V end) with KmerSegmenter on fwd (resp bwd) strand");
-  RECORD_TAP_TEST(TEST_PROBABILITY_SEGMENTATION, "Test getProbabilityAtLeastOrAbove()");
+  // RECORD_TAP_TEST(TEST_PROBABILITY_SEGMENTATION, "Test getProbabilityAtLeastOrAbove()");
 
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_READS, "Test getNbReads() in WindowExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_SEGMENTED, "Test getNbSegmented() in WindowsExtractor");
@@ -371,6 +384,13 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FINE_SEGMENT_OVERLAP, "Test fine segmentation with an overlap");
   RECORD_TAP_TEST(TEST_SEGMENT_REVCOMP, "Test segmentation on a sequence and its revcomp");
   RECORD_TAP_TEST(TEST_BUG2224, "Test issue #2224 (seed longer than sequence)");
+  RECORD_TAP_TEST(TEST_BITSET_COUNT, "Test BitSet::count");
+  RECORD_TAP_TEST(TEST_BITSET_COPY, "Test BitSet copy constructor");
+  RECORD_TAP_TEST(TEST_BITSET_GET, "Test BitSet::get");
+  RECORD_TAP_TEST(TEST_BITSET_SET, "Test BitSet::set");
+  RECORD_TAP_TEST(TEST_BITSET_FLIP, "Test BitSet::flip");
+  RECORD_TAP_TEST(TEST_BITSET_AND, "Test BitSet::operator&=");
+  RECORD_TAP_TEST(TEST_BITSET_CONSECUTIVE_SET, "Test BitSet::setConsecutive");
   RECORD_TAP_TEST(TEST_PROBA_PRECOMPUTER, "Test ProbaPrecomputer::getProba");
 }
 

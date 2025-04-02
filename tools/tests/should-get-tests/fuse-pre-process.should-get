@@ -51,4 +51,3 @@ $ Fuse with one pre-process file (both); commandline
 j: samples.pre_process.commandline: ["pre_process commandline", "second pre_process commandline"]
 $ Fuse with one pre-process file (both); combined_pairs
 j: samples.pre_process.stats.combined_pairs: [3000, 3000]
-

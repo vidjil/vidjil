@@ -28,7 +28,8 @@
                      ]
             } ],
             "parameters": {
-                "seed": "12s"
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
             }
         },
 
@@ -51,8 +52,9 @@
                      ]
             } ],
             "parameters": {
-                "seed": "12s"
-            }
+                "seed": "12s",
+                "search_recombinations": ["5", "3"]
+           }
         }
     }
 }

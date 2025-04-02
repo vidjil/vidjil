@@ -1,17 +1,16 @@
 import pathlib
-from .... import VidjilAuth
 
 
-class UploadHelper():
+class UploadHelper:
     def __init__(self, file, filename: str) -> None:
         self.file = file
         self.filename = filename
 
 
 def get_resources_path() -> str:
-    resources_path = pathlib.Path(pathlib.Path(__file__).parent.absolute(),
-                                  "..",
-                                  "resources")
+    resources_path = pathlib.Path(
+        pathlib.Path(__file__).parent.absolute(), "..", "resources"
+    )
     return resources_path
 
 
