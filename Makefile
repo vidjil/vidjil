@@ -45,6 +45,11 @@ functional_browser_cypress_open:
 	# Need to create a symbolic link; but allow to directly see result
 	# Useful for fast debugging; allow to launch script one by one
 	mv browser/js/conf.js browser/js/conf.js.bak || true
+	cp browser/js/conf.js.sample browser/js/conf.js
+	sed -i "s|use_database: true,|use_database: false,|g" browser/js/conf.js
+	sed -i "s|cgi_address: \"https://localhost/cgi/\"|cgi_address: \"https://db.vidjil.org/cgi/\"|g" browser/js/conf.js
+	sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://db.vidjil.org/vidjil/\"|g" browser/js/conf.js
+	sed -i "s/server_version: \".*\"/server_version: \"test\"/g" browser/js/conf.js
 	ln -sf browser/test/cypress
 	ln -sf docker/ci/cypress.config.js
 	python tools/org-babel-tangle.py --all doc/vidjil-format.md && mv analysis-example* doc/

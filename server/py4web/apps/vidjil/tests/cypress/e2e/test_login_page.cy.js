@@ -21,13 +21,13 @@ describe('Before all step', function () {
 
         cy.get('#mailto_support')
           .should("contain", "request an account")
-          .should("have.attr", "href", "mailto:support@vidjil.org?Subject=%5BVidjil%5D%20Account%20on%20dev.vidjil.org&Body=%0ADear%20Vidjil%20Team%2C%0A%0AI%20would%20like%20to%20have%20an%20account%20on%20the%20Vidjil%20server.%0A%0A")
+          .should("have.attr", "href", "mailto:support@vidjil.org?Subject=%5BVidjil%5D%20Account%20on%20app.vidjil.org&Body=%0ADear%20Vidjil%20Team%2C%0A%0AI%20would%20like%20to%20have%20an%20account%20on%20the%20Vidjil%20server.%0A%0A")
 
         cy.get('#href_server_url')
-          .should("have.attr", "href", "https://dev.vidjil.org/")
+          .should("have.attr", "href", "https://app.vidjil.org/")
 
         cy.get('#href_server_url_analyze')
-          .should("have.attr", "href", "https://dev.vidjil.org/analyze")
+          .should("have.attr", "href", "https://app.vidjil.org/analyze")
     })
 
 

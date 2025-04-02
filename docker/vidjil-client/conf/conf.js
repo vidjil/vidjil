@@ -97,5 +97,5 @@ var config = {
   available_tips: [],
   //                 [ 'T01', 'T02', 'T03', 'T30', 'T31', 'T32' ],
 
-  server_version: "2024.12",
+  server_version: "dev",
 };

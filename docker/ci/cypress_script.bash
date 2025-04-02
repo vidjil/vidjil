@@ -28,6 +28,8 @@ else
 		sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://db.vidjil.org/vidjil/\"|g" "/app/vidjil/browser/js/conf.js"
 	fi
 
+	sed -i "s/server_version: \".*\"/server_version: \"test\"/g" "/app/vidjil/browser/js/conf.js"
+
 	echo "===== conf.js content ===\n"
 	cat /app/vidjil/browser/js/conf.js
 	echo "=====\n"
