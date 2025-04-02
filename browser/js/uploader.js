@@ -157,7 +157,7 @@ class Uploader {
     } else {
       // We need to add the file to resumable
       if (id in this.queue) {
-        var file = this.queue[id].file;
+        file = this.queue[id].file;
         this.queue[id].status = "queued";
         this.fileIdMatch[file] = this.queue[id].sequenceId;
         this.resumable.addFile(file);
