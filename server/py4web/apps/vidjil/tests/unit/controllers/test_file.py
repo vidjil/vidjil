@@ -1,11 +1,13 @@
 import collections
+import io
 import json
 import logging
 import os
 import pathlib
+import shutil
 import unittest
 
-from py4web import request
+from py4web import HTTP, request
 from py4web.core import Session, _before_request
 
 from .... import settings
@@ -595,6 +597,221 @@ class TestFileController(unittest.TestCase):
             settings.FILE_SOURCE = save_file_source
 
     ##################################
+    # Tests on file_controller.resumable_upload_get()
+    ##################################
+
+    def test_resumable_upload_get_existing_chunk(self):
+        """
+        Test resumable_upload_get to ensure it correctly checks the existence of an existing chunk.
+        """
+        # Given : Logged as a user with the necessary permissions
+        db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        resumableIdentifier = "test_identifier"
+        resumableChunkNumber = 1
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            chunk_dir = pathlib.Path(
+                settings.UPLOAD_FOLDER,
+                file_controller.PARTS_FOLDER,
+                resumableIdentifier,
+            )
+            chunk_dir.mkdir(parents=True, exist_ok=True)
+            chunk_path = (
+                chunk_dir / f"{resumableChunkNumber}{file_controller.PART_SUFFIX}"
+            )
+            chunk_path.write_bytes(b"chunk data")
+
+            # When : Calling resumable_upload_get for an existing chunk
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "resumableIdentifier": resumableIdentifier,
+                    "resumableChunkNumber": resumableChunkNumber,
+                    "format": "json",
+                },
+            ):
+                response = file_controller.resumable_upload_get()
+                assert response == "OK"
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
+            if chunk_path.exists():
+                chunk_path.unlink()
+            if chunk_dir.exists():
+                chunk_dir.rmdir()
+
+    ##################################
+    # Tests on file_controller.resumable_upload_post()
+    ##################################
+
+    def test_resumable_upload_post(self):
+        """
+        Test resumable_upload_post to ensure chunks are correctly uploaded and merged.
+        """
+        # Given : Logged as a user with the necessary permissions
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        db_manipulation_utils.add_sequence_file(sample_set_id, user_id)
+        filename = "plop"
+        chunk_data = b"chunk data"
+        resumableIdentifier = "test_identifier"
+        resumableTotalChunks = 3
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            # Upload chunks
+            for chunk_number in range(1, resumableTotalChunks + 1):
+                with Omboddle(
+                    self.session,
+                    keep_session=True,
+                    params={
+                        "resumableIdentifier": resumableIdentifier,
+                        "resumableChunkNumber": chunk_number,
+                        "resumableTotalChunks": resumableTotalChunks,
+                        "resumableFilename": filename,
+                        "format": "json",
+                    },
+                ):
+                    request.files["file"] = test_utils.UploadHelper(
+                        io.BytesIO(chunk_data), f"{filename}.part{chunk_number}"
+                    )
+                    json_result = file_controller.resumable_upload_post()
+                    assert json_result == "OK"
+
+            # Check if the final merged file exists
+            final_path = pathlib.Path(
+                settings.UPLOAD_FOLDER,
+                f"{resumableIdentifier}{file_controller.MERGED_SUFFIX}",
+            )
+            assert final_path.exists()
+            with final_path.open("rb") as f:
+                merged_data = f.read()
+                assert merged_data == chunk_data * resumableTotalChunks
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
+            if final_path.exists():
+                final_path.unlink()
+
+    def test_resumable_upload_get_missing_chunk(self):
+        """
+        Test resumable_upload_get to ensure it correctly handles a missing chunk.
+        """
+        # Given : Logged as a user with the necessary permissions
+        db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        resumableIdentifier = "test_identifier"
+        resumableChunkNumber = 1
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            chunk_dir = pathlib.Path(
+                settings.UPLOAD_FOLDER,
+                file_controller.PARTS_FOLDER,
+                resumableIdentifier,
+            )
+            chunk_dir.mkdir(parents=True, exist_ok=True)
+            chunk_path = (
+                chunk_dir / f"{resumableChunkNumber}{file_controller.PART_SUFFIX}"
+            )
+            chunk_path.write_bytes(b"chunk data")
+
+            # When : Calling resumable_upload_get for a non-existing chunk
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "resumableIdentifier": resumableIdentifier,
+                    "resumableChunkNumber": resumableChunkNumber + 1,
+                    "format": "json",
+                },
+            ):
+                with self.assertRaises(HTTP) as cm:
+                    file_controller.resumable_upload_get()
+                assert cm.exception.status == 204
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
+            if chunk_path.exists():
+                chunk_path.unlink()
+            if chunk_dir.exists():
+                chunk_dir.rmdir()
+
+    ##################################
+    # Tests on file_controller.resumable_upload_process()
+    ##################################
+
+    def test_resumable_upload_process(self):
+        # Given : Logged as other user, and add corresponding config, ...
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+        filename = "plop"
+        save_upload_folder = settings.UPLOAD_FOLDER
+        save_data_file_upload_folder = db.sequence_file.data_file.uploadfolder
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+            shutil.copy(
+                pathlib.Path(
+                    test_utils.get_resources_path(), "analysis-example.vidjil"
+                ),
+                pathlib.Path(
+                    db.sequence_file.data_file.uploadfolder,
+                    f"{sequence_file_id}-{filename}{file_controller.MERGED_SUFFIX}",
+                ),
+            )
+            # When : Calling upload
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "resumableIdentifier": f"{sequence_file_id}-{filename}",
+                    "sequence_id": sequence_file_id,
+                    "filename": filename,
+                    "file_number": 1,
+                    "format": "json",
+                },
+            ):
+                json_result = file_controller.resumable_upload_process()
+
+            # Then : Check result
+            result = json.loads(json_result)
+            assert (
+                result["message"]
+                == f"file {filename}({sequence_file_id})  (35.6 kB) upload finished"
+            )
+            result_file = pathlib.Path(
+                test_utils.get_results_path(),
+                db.sequence_file[sequence_file_id].data_file,
+            )
+            assert result_file.exists()
+            os.remove(result_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_data_file_upload_folder
+            settings.UPLOAD_FOLDER = save_upload_folder
+
+    ##################################
     # Tests on file_controller.upload()
     ##################################
 
@@ -614,11 +831,12 @@ class TestFileController(unittest.TestCase):
             test_utils.get_resources_path(), "analysis-example.vidjil"
         )
         with file_to_upload.open("rb") as file:
-            upload_helper = test_utils.UploadHelper(file, "plopapou")
+            filename = "plop"
+            upload_helper = test_utils.UploadHelper(file, filename)
             save_upload_folder = db.sequence_file.data_file.uploadfolder
             try:
                 db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
-                # When : Calling uplaod
+                # When : Calling upload
                 with Omboddle(
                     self.session,
                     keep_session=True,
@@ -629,8 +847,9 @@ class TestFileController(unittest.TestCase):
 
                 # Then : Check result
                 result = json.loads(json_result)
-                assert result["message"].startswith(
-                    f" file {{{sequence_file_id}}} upload finished (plopapou)"
+                assert (
+                    result["message"]
+                    == f"file {filename}({sequence_file_id})  (35.6 kB) upload finished"
                 )
                 result_file = pathlib.Path(
                     test_utils.get_results_path(),

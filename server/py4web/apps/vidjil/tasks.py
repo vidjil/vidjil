@@ -36,6 +36,11 @@ TASK_NAME_PRE_PROCESS = "pre_process"
 QUEUE_SHORT = "short"
 QUEUE_LONG = "long"
 
+# Reschedule
+# Total wait of (10*9)/2 = 45 * 60s = 45 minutes max
+RESCHEDULE_MAX_NUMBER = 10
+RESCHEDULE_BASE_DELAY = 60
+
 # REGEX
 SEGMENTED_REGEX = re.compile(r"==> segmented (\d+) reads \((\d*\.\d+|\d+)%\)")
 WINDOWS_REGEX = re.compile(
@@ -135,6 +140,7 @@ def run_vidjil(
     id_config,
     id_data,
     grep_reads,
+    reschedule_number=0,
     clean_before=False,
     clean_after=False,
 ):
@@ -157,11 +163,18 @@ def run_vidjil(
         sequence_file.pre_process_flag
         and sequence_file.pre_process_flag != STATUS_COMPLETED
     ):
-        log.info("Pre-process is still pending, re-schedule")
-        args = [id_file, id_config, id_data, grep_reads]
+        reschedule_number += 1
+        if reschedule_number < 1:
+            reschedule_number = 1
+        if reschedule_number > RESCHEDULE_MAX_NUMBER:
+            log.error("Pre-process is still pending, reschedule limit reached, drop it")
+            update_task(task_id, STATUS_FAILED)
+            return
+        log.info(f"Pre-process is still pending, re-schedule ({reschedule_number=})")
+        args = [id_file, id_config, id_data, grep_reads, reschedule_number]
         run_process.apply_async(
             (task_id, "vidjil", args),
-            countdown=60,
+            countdown=reschedule_number * RESCHEDULE_BASE_DELAY,
             queue=get_celery_queue_to_use(id_file),
         )
         update_task(task_id, STATUS_WAITING)
@@ -1043,8 +1056,18 @@ def run_process(task_id, program, args):
     log.debug(f"run_process starts for {task_id=} {program=} {args=}")
     db._adapter.reconnect()
     try:
+        reschedule_number = 0
+        if len(args) >= 5:
+            reschedule_number = args[4]
         if program == "vidjil":
-            run_vidjil(task_id, args[0], args[1], args[2], args[3])
+            run_vidjil(
+                task_id,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                reschedule_number=reschedule_number,
+            )
         elif program == "none":
             run_copy(task_id, args[0], args[1], args[2], args[3])
     except:

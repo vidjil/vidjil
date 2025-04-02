@@ -80,10 +80,7 @@ DIR_BINARIES = os.getenv("DIR_BINARIES", default="/binaries/")
 DIR_LOG = os.getenv("DIR_LOG", default="/var/vidjil/")
 LOG_INFO = os.getenv("LOG_INFO", default=f"{DIR_LOG}vidjil.log")
 LOG_DEBUG = os.getenv("LOG_DEBUG", default=f"{DIR_LOG}vidjil-debug.log")
-### logger settings
-LOGGERS = [
-    "warning:stdout"
-]  # syntax "severity:filename" filename can be stderr or stdout
+LOG_LEVEL = os.getenv("LOG_LEVEL", default="INFO")
 
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py

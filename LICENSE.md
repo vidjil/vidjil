@@ -148,6 +148,13 @@ x is "current version" at time of release
 * @link             <https://github.com/select2/select2>
 * @license          MIT
 
+**resumable.js**       : A JavaScript library for providing multiple simultaneous, stable, fault-tolerant and resumable/restartable uploads via the HTML5 File API. 
+
+* @author           Steffen Fagerström Christensen + external contributors
+* @version          1.1.0
+* @link             <https://github.com/23/resumable.js>
+* @license          MIT
+
 ### Client base docker image
 
 **nginx**               : docker image used as base for vidjil-client docker image
