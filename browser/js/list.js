@@ -547,6 +547,11 @@ List.prototype = {
                 document.getElementById("cluster"+cloneID).style.display = "none";
             }
 
+            // update star icon
+            var span_star = cloneDom.getElement("starBox")
+            if (typeof clone.tag != 'undefined')
+                span_star.style.color = this.m.tags.getColor(clone.getTag())
+
             var info_list   = document.getElementById(`clone_infoBox_${clone.index}`)
             var dom_content = clone.getWarningsDom()
             if (info_list != null) {
