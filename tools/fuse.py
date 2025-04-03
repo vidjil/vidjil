@@ -1676,7 +1676,7 @@ def get_preset_of_distributions():
     return LIST_DISTRIBUTIONS
 
 
-def exec_command(command, directory, input_file):
+def exec_command(command, directory, input_file, index=None):
     '''
     Execute the command `command` from the directory
     `directory`. The executable must exist in
@@ -1691,6 +1691,9 @@ def exec_command(command, directory, input_file):
         soft = call.split()[0]
         args = "" if soft == call else call[len(soft):]
         print( "soft: '%s'; args: %s" % (soft, args))
+        
+        indexpos = f"--index {index}" if "--index" in args else None
+        args = args.replace("--index", "")
 
         # Security
         assert (not os.path.sep in call), "No {} allowed in the command name".format(os.path.sep)
@@ -1698,7 +1701,9 @@ def exec_command(command, directory, input_file):
         ff = tempfile.NamedTemporaryFile(suffix='.vidjil', delete=False)
         basedir = os.path.dirname(os.path.abspath(sys.argv[0]))
         command_fullpath = basedir+os.path.sep+directory+os.path.sep+soft
-        com = '%s %s -i %s -o %s' % (quote(command_fullpath), args, quote(os.path.abspath(input_file)), ff.name)
+        com = f'{quote(command_fullpath)} {args} -i {quote(os.path.abspath(input_file))} -o {ff.name} '
+        if indexpos != None:
+            com += f" {indexpos}"
         print("Pre/Post process command: \n%s" % com)
         os.system(com)
         print()
@@ -1783,8 +1788,9 @@ def main():
     if args.pre:
         print("Pre-processing files...")
         pre_processed_files = []
-        for f in files:
-            out_name = exec_command(args.pre, defs.DIR_FUSE_PRE, f)
+
+        for index, f in enumerate(files):
+            out_name = exec_command(args.pre, defs.DIR_FUSE_PRE, f, index)
             pre_processed_files.append(out_name)
         files = pre_processed_files
 
