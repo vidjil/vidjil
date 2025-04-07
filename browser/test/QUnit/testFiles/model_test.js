@@ -170,6 +170,46 @@ QUnit.test("select/focus", function(assert) {
 });
 
 
+QUnit.test("removed clonotypes", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data,100);
+    m.initClones();
+
+    // Set removed_clonotypes tag to clones 0 and 2
+    m.clone(0).changeTag("removed_clonotypes");
+    m.clone(2).changeTag("removed_clonotypes");
+
+    // Test that argument removed is set to true
+    assert.equal(m.clone(0).isRemoved(), true, "Clone has now attrivute removed set to true");
+    assert.equal(m.clone(2).isRemoved(), true, "Clone has now attrivute removed set to true");
+    
+    // Test that getSize() return 0 for removed clones
+    assert.equal(m.clone(0).getSize(), 0, "Clone size is 0");
+    assert.equal(m.clone(2).getSize(), 0, "Clone size is 0");
+
+    // Test proper computation of removed_clones_reads with all germlines
+    m.computeRemovedClonesReads();
+    var c0_Reads = m.clone(0).getReads(); //TRG
+    var c2_Reads = m.clone(2).getReads(); //IGH
+
+    assert.equal(m.removed_clones_reads, c0_Reads + c2_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_total, c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
+
+    // Test proper computation of removed_clones_reads with only TRG germline
+    m.keep_one_active_system('TRG');
+    assert.equal(m.removed_clones_reads, c0_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_total, c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
+
+    // Test proper return of removed_clones_reads to 0 when no clone is removed
+    m.toggle_system('IGH');
+    m.clone(0).changeTag("none");
+    m.clone(2).changeTag("none");
+    m.computeRemovedClonesReads();
+
+    assert.equal(m.removed_clones_reads, 0, "removed_clones_reads is now 0");
+    assert.equal(m.removed_clones_reads_total, 0, "removed_clones_reads_total is now O");
+});
+
 
 QUnit.test("correlate", function(assert) {
     var m = new Model();
