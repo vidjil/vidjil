@@ -1378,8 +1378,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         this.filter.apply()
         
-        this.computeOtherSize();
-        this.computeRemovedSize();
+        this.computeOtherAndRemovedSize();
 
         for (var n = 0; n < this.clones.length; n++) {
             this.clone(n).updateColor()
@@ -1539,86 +1538,77 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
-     * sum all the unsegmented/undisplayed clones reads and put them in the 'other' clone
-     * */
-    computeOtherSize: function () {
+    * sum all the unsegmented/undisplayed clones reads and put them in the 'other' clone
+    * sum all the removed clones reads and put them in the 'removed' clone
+    **/
+    computeOtherAndRemovedSize: function () {
         var newOthers = {};
+        var newRemoved = {};
 
-        // Creation of newOthers dict by germlines & timestamp
-        for (var elt in this.system_available){
+        // Initialize newOthers and newRemoved by germlines & timestamps
+        for (var elt in this.system_available) {
             var locus = this.system_available[elt];
             newOthers[locus] = [];
+            newRemoved[locus] = [];
             for (var sample = 0; sample < this.samples.number; sample++) {
                 newOthers[locus][sample] = this.reads.germline[locus][sample];
-                }
+                newRemoved[locus][sample] = 0;
+            }
         }
 
-        // compute size for each germlines of newOthers
-        other_quantifiable_clones = [];
+        var otherQuantifiableOthers = [];
+        var otherQuantifiableRemoved = [];
+
+        // Process each clone to update both newOthers and newRemoved.
         for (var pos = 0; pos < this.clones.length; pos++) {
-            var c = this.clone(pos)
-            if (c.hasSizeOther() && c.id.includes("other")){
-                other_quantifiable_clones.push(pos);
-            } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() || c.isRemoved()) { 
-                for (var s = 0; s < this.samples.number ; s++) {
+            var c = this.clone(pos);
+
+            // For computing newOthers:
+            if (c.hasSizeOther() && c.id.includes("other")) {
+                otherQuantifiableOthers.push(pos);
+            } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() || c.isRemoved()) {
+                for (var s = 0; s < this.samples.number; s++) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
                         newOthers[c.germline][s] -= this.clone(this.clusters[pos][k]).get('reads', s);
                     }
                 }
             }
+
+            // For computing newRemoved:
+            if (c.hasSizeOther() && c.id.includes("removed")) {
+                otherQuantifiableRemoved.push(pos);
+            } else if (c.isRemoved()) {
+                for (var s = 0; s < this.samples.number; s++) {
+                    for (var k = 0; k < this.clusters[pos].length; k++) {
+                        var clusterClone = this.clone(this.clusters[pos][k]);
+                        if (clusterClone.get('reads', s) !== 0) {
+                            newRemoved[c.germline][s] += clusterClone.get('reads', s);
+                        }
+                    }
+                }
+            }
         }
-        // values assignation of other
-        //for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) {
-        other_quantifiable_clones.forEach((pos) => {
+
+        // Values assignation of other
+        otherQuantifiableOthers.forEach((pos) => {
             var c = this.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clonotypes";
             if (this.filter && this.filter.check("Clonotype", "hide") != -1) {
                 c.name += " + filtered clonotypes";
             }
-        });  
-    },
-    
-    // merge with computeOtherSize
-    computeRemovedSize: function () {
-        var newRemoved = {};
+        });
 
-        // Creation of newRemoved dict by germlines & timestamp
-        for (var elt in this.system_available){
-            var locus = this.system_available[elt];
-            newRemoved[locus] = [];
-            for (var sample = 0; sample < this.samples.number; sample++) {
-                newRemoved[locus][sample] = 0;
-            }
-        }
-
-        // compute size for each germlines of newRemoved
-        other_quantifiable_clones = [];
-        for (var pos = 0; pos < this.clones.length; pos++) {
-            var c = this.clone(pos)
-            if (c.hasSizeOther() && c.id.includes("removed") ){
-                other_quantifiable_clones.push(pos);
-            } else if (c.isRemoved()) { 
-                for (var s = 0; s < this.samples.number ; s++) {
-                    for (var k = 0; k < this.clusters[pos].length; k++) {
-                        if (this.clone(this.clusters[pos][k]).get('reads', s) !== 0) {
-                            newRemoved[c.germline][s] += this.clone(this.clusters[pos][k]).get('reads', s)
-                            //newRemoved[c.germline][s] += 1;
-                        }
-                    }
-                }
-            }
-        }
-        // values assignation of other
-        other_quantifiable_clones.forEach((pos) => {
+        // values assignation of removed
+        otherQuantifiableRemoved.forEach((pos) => {
             var c = this.clone(pos);
-            var time = this.getTime()
+            var time = this.getTime();
             c.reads = newRemoved[c.germline];
             c.name = c.germline + " removed (% of total selected loci reads)";
             if (c.getReads(time) == 0) {
                 c.hide();
             }
-        });  
+        });
     },
 
 
