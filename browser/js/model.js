@@ -1567,8 +1567,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             if (c.hasSizeOther() && c.id.includes("other")) {
                 otherQuantifiableOthers.push(pos);
             } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() || c.isRemoved()) {
-                for (var s = 0; s < this.samples.number; s++) {
-                    for (var k = 0; k < this.clusters[pos].length; k++) {
+                for (let s = 0; s < this.samples.number; s++) {
+                    for (let k = 0; k < this.clusters[pos].length; k++) {
                         newOthers[c.germline][s] -= this.clone(this.clusters[pos][k]).get('reads', s);
                     }
                 }
@@ -1578,8 +1578,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             if (c.hasSizeOther() && c.id.includes("removed")) {
                 otherQuantifiableRemoved.push(pos);
             } else if (c.isRemoved()) {
-                for (var s = 0; s < this.samples.number; s++) {
-                    for (var k = 0; k < this.clusters[pos].length; k++) {
+                for (let s = 0; s < this.samples.number; s++) {
+                    for (let k = 0; k < this.clusters[pos].length; k++) {
                         var clusterClone = this.clone(this.clusters[pos][k]);
                         if (clusterClone.get('reads', s) !== 0) {
                             newRemoved[c.germline][s] += clusterClone.get('reads', s);
