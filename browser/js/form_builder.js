@@ -234,7 +234,9 @@ function validateFileNames(fileId) {
       const file1_cleared = upload_1.files[0].name.replace("_R1", "");
       const file2_cleared = upload_2.files[0].name.replace("_R2", "");
       if (file1_cleared != file2_cleared) {
-        error.push("Files should have the same name except from '_R1' and '_R2'");
+        error.push(`Files should have the same name except from '_R1' and '_R2'`)
+        error.push(`  - ${upload_1.files[0].name}`)
+        error.push(`  - ${upload_2.files[0].name}`);
         warning1 = true;
         warning2 = true;
       }
