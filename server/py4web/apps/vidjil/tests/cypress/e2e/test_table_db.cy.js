@@ -73,8 +73,8 @@ describe("Manipulate patient, sample and launch analysis", function () {
     cy.goToPatientPage();
     cy.dbPageFilter("john");
     const initialFilterNumberJohn_return = cy.getTableLength("#db_table_container");
-    cy.dbPageFilter("fname:john");
-    const initialFilterNumberFnameJohn_return = cy.getTableLength("#db_table_container");
+    cy.dbPageFilter("first_name:john");
+    const initialFilterNumberFirstNameJohn_return = cy.getTableLength("#db_table_container");
 
     // Create, edit patients
     var id = "";
@@ -141,9 +141,9 @@ describe("Manipulate patient, sample and launch analysis", function () {
     initialFilterNumberJohn_return.then((initialFilterNumberJohn) => {
       cy.getTableLength("#db_table_container").should("eq", initialFilterNumberJohn + 2);
     })
-    cy.dbPageFilter("fname:john");
-    initialFilterNumberFnameJohn_return.then((initialFilterNumberFnameJohn) => {
-      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberFnameJohn + 1);
+    cy.dbPageFilter("first_name:john");
+    initialFilterNumberFirstNameJohn_return.then((initialFilterNumberFirstNameJohn) => {
+      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberFirstNameJohn + 1);
     })
 
     // Create run

@@ -83,8 +83,8 @@ class Generic(SampleSet):
 
 
 class Patient(SampleSet):
-    FIRST_NAME_FILTER = "fname:"
-    LAST_NAME_FILTER = "lname:"
+    FIRST_NAME_FILTER = "first_name:"
+    LAST_NAME_FILTER = "last_name:"
     BIRTH_DATE_FILTER = "birth:"
 
     def __init__(self, type):
