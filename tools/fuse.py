@@ -1682,7 +1682,7 @@ def exec_command(command, directory, input_file, index=None):
     `directory`. The executable must exist in
     this directory. No path changes are allowed in `command`.
     Multiple command can be chained with a '&&' separator
-    Returns the output filename (a .vidjil).
+    Returns the output filename (a .vidjil). 
     '''
     # split commands
     calls = command.split("&&")
