@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import List
 
 from yatl.helpers import SPAN, XML, A
 
@@ -338,6 +339,10 @@ class SampleSet(object):
 
     @abstractmethod
     def get_filtered_fields(self, search):
+        pass
+
+    @abstractmethod
+    def get_filter_strings(self) -> List[str]:
         pass
 
 

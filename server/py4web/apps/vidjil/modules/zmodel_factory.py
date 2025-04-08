@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 from enum import Enum
+from typing import List
 
 from yatl.helpers import SPAN
 
@@ -11,6 +12,8 @@ from ..common import auth, db
 
 
 class Generic(SampleSet):
+    NAME_FILTER = "name:"
+
     def __init__(self, type):
         super(Generic, self).__init__(type)
         self.auth = auth
@@ -57,12 +60,33 @@ class Generic(SampleSet):
         table = self.db[self.type]
         return [table.name]
 
-    def get_filtered_fields(self, search):
+    def get_filtered_fields(self, search: str):
+        search_array = search.split()
         table = self.db[self.type]
-        return table.name.contains(search)
+        queries = []
+        for sub_search in search_array:
+            if sub_search.startswith(Generic.NAME_FILTER):
+                sub_search = sub_search[len(Run.NAME_FILTER) :]
+                queries.append(table.name.contains(sub_search))
+            else:
+                queries.append(table.name.contains(sub_search))
+        query = None
+        for sub_query in queries:
+            if query is None:
+                query = sub_query
+            else:
+                query &= sub_query
+        return query
+
+    def get_filter_strings(self) -> List[str]:
+        return [Generic.NAME_FILTER]
 
 
 class Patient(SampleSet):
+    FIRST_NAME_FILTER = "first_name:"
+    LAST_NAME_FILTER = "last_name:"
+    BIRTH_DATE_FILTER = "birth:"
+
     def __init__(self, type):
         super(Patient, self).__init__(type)
         self.auth = auth
@@ -179,23 +203,32 @@ class Patient(SampleSet):
         table = self.db[self.type]
         return [table.first_name, table.last_name, table.birth]
 
-    def get_filtered_fields(self, search):
+    def get_filtered_fields(self, search: str):
         search_array = search.split()
         table = self.db[self.type]
-        query = None
-        for subsearch in search_array:
-            if query is None:
-                query = (
-                    table.birth.like(subsearch)
-                    | table.first_name.contains(subsearch)
-                    | table.last_name.contains(subsearch)
-                )
+        queries = []
+        for sub_search in search_array:
+            if sub_search.startswith(Patient.FIRST_NAME_FILTER):
+                sub_search = sub_search[len(Patient.FIRST_NAME_FILTER) :]
+                queries.append(table.first_name.contains(sub_search))
+            elif sub_search.startswith(Patient.LAST_NAME_FILTER):
+                sub_search = sub_search[len(Patient.LAST_NAME_FILTER) :]
+                queries.append(table.last_name.contains(sub_search))
+            elif sub_search.startswith(Patient.BIRTH_DATE_FILTER):
+                sub_search = sub_search[len(Patient.BIRTH_DATE_FILTER) :]
+                queries.append(table.birth.like(sub_search))
             else:
-                query &= (
-                    table.birth.like(subsearch)
-                    | table.first_name.contains(subsearch)
-                    | table.last_name.contains(subsearch)
+                queries.append(
+                    table.birth.like(sub_search)
+                    | table.first_name.contains(sub_search)
+                    | table.last_name.contains(sub_search)
                 )
+        query = None
+        for sub_query in queries:
+            if query is None:
+                query = sub_query
+            else:
+                query &= sub_query
         return query
 
     def get_name_filter_query(self, query):
@@ -205,8 +238,18 @@ class Patient(SampleSet):
             self.db[self.type].last_name.like("%" + query + "%")
         )
 
+    def get_filter_strings(self) -> List[str]:
+        return [
+            Patient.FIRST_NAME_FILTER,
+            Patient.LAST_NAME_FILTER,
+            Patient.BIRTH_DATE_FILTER,
+        ]
+
 
 class Run(SampleSet):
+    NAME_FILTER = "name:"
+    DATE_FILTER = "date:"
+
     def __init__(self, type):
         super(Run, self).__init__(type)
         self.auth = auth
@@ -310,9 +353,31 @@ class Run(SampleSet):
         table = self.db[self.type]
         return [table.name]
 
-    def get_filtered_fields(self, search):
+    def get_filtered_fields(self, search: str):
+        search_array = search.split()
         table = self.db[self.type]
-        return table.name.contains(search)
+        queries = []
+        for sub_search in search_array:
+            if sub_search.startswith(Run.NAME_FILTER):
+                sub_search = sub_search[len(Run.NAME_FILTER) :]
+                queries.append(table.name.contains(sub_search))
+            elif sub_search.startswith(Run.DATE_FILTER):
+                sub_search = sub_search[len(Run.DATE_FILTER) :]
+                queries.append(table.run_date.like(sub_search))
+            else:
+                queries.append(
+                    table.run_date.like(sub_search) | table.name.contains(sub_search)
+                )
+        query = None
+        for sub_query in queries:
+            if query is None:
+                query = sub_query
+            else:
+                query &= sub_query
+        return query
+
+    def get_filter_strings(self) -> List[str]:
+        return [Run.NAME_FILTER, Run.DATE_FILTER]
 
 
 class FactoryEnum(Enum):

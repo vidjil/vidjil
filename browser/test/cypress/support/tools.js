@@ -4,7 +4,13 @@ Cypress.Commands.add("text", { prevSubject: true }, (subject, options) => {
 });
 
 Cypress.Commands.add("getTableLength", (dataTable) => {
-  return cy.get(dataTable).find('tbody').find('tr').then(elm => elm.length)
+  cy.get(dataTable).then($dataTable => {
+    if ($dataTable.find('tbody').length > 0) {   
+      return $dataTable.find('tbody').find('tr').length;
+    } else {
+      return 0;
+    }
+  })
 });
 
 
