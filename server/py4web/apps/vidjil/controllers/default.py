@@ -406,8 +406,8 @@ def get_data():
     if not auth.user:
         res = {
             "redirect": URL(
-                "default",
-                "user",
+                "auth",
+                "login",
                 args="login",
                 scheme=True,
                 vars=dict(
