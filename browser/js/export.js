@@ -924,6 +924,7 @@ Report.prototype = {
         this.w.onload = function(){
             self.w.document.title = text
             self.w.document.getElementById("header-title").innerHTML = text
+            self.w.document.getElementById("logospan_report").innerHTML = `(${config.server_version})`
             
             if (self.settings.blocks)
                 self.settings.blocks.forEach(function(block){

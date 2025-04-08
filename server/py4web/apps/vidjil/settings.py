@@ -181,3 +181,11 @@ PUBLIC_GROUP_NAME = os.getenv("PUBLIC_GROUP_NAME", default="public")
 
 ### Tag prefix
 TAG_PREFIX = os.getenv("TAG_PREFIX", default="#")
+
+
+### Personalization
+WELCOME_LOGINPAGE_MESSAGE = os.getenv(
+    "WELCOME_LOGINPAGE_MESSAGE", default="Welcome to Vidjil server!"
+)
+
+SERVER_URL = os.getenv("SERVER_URL", default="app.vidjil.org")

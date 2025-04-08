@@ -1788,6 +1788,7 @@ def main():
     if args.pre:
         print("Pre-processing files...")
         pre_processed_files = []
+
         for index, f in enumerate(files):
             out_name = exec_command(args.pre, defs.DIR_FUSE_PRE, f, index)
             pre_processed_files.append(out_name)
