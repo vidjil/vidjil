@@ -82,7 +82,7 @@ Contact us if you want help on converting such data.
 œ
 - You can change the number of displayed clonotypes by moving the slider “number of clonotypes” (menu “filter”).
   The maximal number of clonotypes that can be displayed depends on the processing step before.
-  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads-)".
+  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
 
 - clonotypes can be selected by clicking on them either in the list, on the sample graph,
   or the grid (simple selection or rectangle selection).
@@ -213,7 +213,7 @@ It shows the most frequent clonotypes of each sample, tracked into every sample.
 - The current sample is highlighted with a vertical gray bar. You can select another sample by clicking on it or using `←` and `→`.
 
 - By default, the graph shows clonotypes present in the top 20 of any sample.
-  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads-)".
+  See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
   You can instead choose to show only the clonotypes present in the current sample
   with “filter \> focus on clonotypes of one sample“.
 
@@ -307,7 +307,7 @@ and/or to select them for the next report.
 
 The sequence panel shows, for the selected clonotypes:
 
-- the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clonotype-)"
+- the nucleotide or amino acid *sequences* -- see below "[What is the sequence displayed for each clone ?](#what-is-the-sequence-displayed-for-each-clonotype)"
 - some *features* on these sequences
 
 <figure markdown>
@@ -758,7 +758,7 @@ In **MiXCR**, clonotypes are defined based on the amino-acid CDR3 sequence, on t
 gene used and on the hypermutations.
 Other software may have other definitions, see also [What is a clone ?](vidjil-format.md#what-is-a-clone).
 
-### What is the sequence displayed for each clonotype ?
+### What is the sequence displayed for each clonotype?
 
 The sequences displayed for each clonotype are not individual reads.
 The clonotypes may gather thousands of reads, and all these reads can have
@@ -824,7 +824,7 @@ some of them may actually have different mutations or lengths even if they share
 This can also be due to clustering results of different analysis programs, for example
 with different releases of vidjil-algo.
 
-## Can I see all the clones and all the reads ?
+## Can I see all the clones and all the reads?
 
 The interest of NGS/RepSeq studies is to provide a deep view of any
 V(D)J repertoire. The underlying analysis softwares (such as vidjil-algo)
@@ -941,7 +941,7 @@ Parsing the `.vidjil` files gives then all information computed on each clonotyp
 
 ### Going back to the analyzed reads
 
-The web application displays one consensus sequence per clonotype (see [Representative](#what-is-the-sequence-displayed-for-each-clonotype-) above).
+The web application displays one consensus sequence per clonotype (see [Representative](#what-is-the-sequence-displayed-for-each-clonotype) above).
 In some situations, one may want to go back to the reads.
 
 For **vidjil-algo**, analyzing a dataset with the *default + extract reads* process
@@ -1029,7 +1029,7 @@ In **vidjil-algo**,
 the clonotype coverage is the ratio of the length of the clonotype consensus sequence
 to the median read length in the clonotype.
 A consensus sequence is
-displayed for each clonotype (see [What is the sequence displayed for each clonotype?](#what-is-the-sequence-displayed-for-each-clonotype-)).
+displayed for each clonotype (see [What is the sequence displayed for each clonotype?](#what-is-the-sequence-displayed-for-each-clonotype)).
 Its length should be representative of the read lengths among that clonotype. A
 clonotype can be constituted of thousands of reads of various lengths. We
 expect the consensus sequence to be close to the median read length of the
