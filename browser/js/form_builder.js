@@ -214,7 +214,7 @@ function validateFileNames(fileId) {
   var warning1 = false;
   var warning2 = false;
 
-  var num_files = $("select#pre_process").find(':selected').attr("required_files"); // number of files requested by pre_process
+  const num_files = $("select#pre_process").find(':selected').attr("required_files"); // number of files requested by pre_process
   if (num_files == 2) {
     if (upload_1.files.length > 0) {
       const file1 = upload_1.files[0].name;
@@ -234,8 +234,8 @@ function validateFileNames(fileId) {
       const file1_cleared = upload_1.files[0].name.replace("_R1", "");
       const file2_cleared = upload_2.files[0].name.replace("_R2", "");
       if (file1_cleared != file2_cleared) {
-        error.push(`Files should have the same name except from '_R1' and '_R2'`)
-        error.push(`  - ${upload_1.files[0].name}`)
+        error.push(`Files should have the same name except from '_R1' and '_R2'`);
+        error.push(`  - ${upload_1.files[0].name}`);
         error.push(`  - ${upload_2.files[0].name}`);
         warning1 = true;
         warning2 = true;
@@ -244,17 +244,14 @@ function validateFileNames(fileId) {
   }
 
   if (error.length > 0) {
-    console.log("show error");
     warning.style.display = "block";
     warning.title = error.join("\n");
   }
 
   if (warning1) {
-    console.log("warning1");
-    upload_1.style.border= "1px solid red";
+    upload_1.style.border = "1px solid red";
   }
   if (warning2) {
-    console.log("warning1");
     upload_2.style.border = "1px solid red";
   }
 }
