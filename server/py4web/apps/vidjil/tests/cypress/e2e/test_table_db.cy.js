@@ -69,7 +69,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
   });
 
   it("03-Sets and samples creations, associations, deletions", function () {
-    // filter initial number
+    // Get filter initial number
     cy.goToPatientPage();
     cy.dbPageFilter("john");
     const initialFilterNumberJohn_return = cy.getTableLength("#db_table_container");
@@ -150,14 +150,16 @@ describe("Manipulate patient, sample and launch analysis", function () {
     cy.createRun(id, "run", "2023-01-01", "cy", group);
 
     // Add samples and multi-samples with association
-    var preprocess = undefined;
-    var filename1 = "Demo-X5.fa";
-    var filename2 = undefined;
-    var sampling_date = "2024-01-01";
-    var sample_information = "cy";
+    const no_preprocess = undefined;
+    const storage_nfs = "nfs";
+    const storage_computer = "computer";
+    const filename1 = "Demo-X5.fa";
+    const filename2 = undefined;
+    const sampling_date = "2024-01-01";
+    const sample_information = "cy";
     cy.addSample(
-      preprocess,
-      "nfs",
+      no_preprocess,
+      storage_nfs,
       filename1,
       filename2,
       sampling_date,
@@ -165,8 +167,8 @@ describe("Manipulate patient, sample and launch analysis", function () {
       first_name + "1"
     ).as("sample_1");
     var sample_to_add_2 = [
-      preprocess,
-      "nfs",
+      no_preprocess,
+      storage_nfs,
       filename1,
       filename2,
       sampling_date,
@@ -174,8 +176,8 @@ describe("Manipulate patient, sample and launch analysis", function () {
       first_name + "2",
     ];
     var sample_to_add_3 = [
-      preprocess,
-      "nfs",
+      no_preprocess,
+      storage_nfs,
       filename1,
       filename2,
       sampling_date,
@@ -183,6 +185,80 @@ describe("Manipulate patient, sample and launch analysis", function () {
       first_name + "4",
     ];
     cy.multiSamplesAdd([sample_to_add_2, sample_to_add_3]);
+
+    // add samples with preprocess
+    const otherPreprocess = "5";
+    const preProcessInfo = "pre";
+    const noCommonSet = undefined;
+    const resources_path = "cypress/resources/";
+    const patient1_r1 = resources_path + "patient1_R1.fastq.gz";
+    const patient1_r2 = resources_path + "patient1_R2.fastq.gz";
+    const patient1_no_suffix = resources_path + "patient1.fastq.gz";
+    const patient2_r2 = resources_path + "patient2_R2.fastq.gz";
+    // check error if no filename2
+    var expected_r1_r2_message = undefined;
+    var click_submit = true;
+    var expected_flash_message = "missing file: please ensure all file fields are filled before submitting.";
+    cy.addSample(
+      otherPreprocess,
+      storage_nfs,
+      filename1,
+      filename2,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
+    // check warning if no suffix
+    expected_r1_r2_message = "File 2 should contain '_R2'";
+    click_submit = false;
+    expected_flash_message = undefined;
+    cy.addSample(
+      otherPreprocess,
+      storage_computer,
+      patient1_r1,
+      patient1_no_suffix,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
+    // check warning if r1 r2 filenames are not matching
+    expected_r1_r2_message = "Files should have the same name except from '_R1' and '_R2'";
+    click_submit = false;
+    expected_flash_message = undefined;
+    cy.addSample(
+      otherPreprocess,
+      storage_computer,
+      patient1_r1,
+      patient2_r2,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
+    // check no warning if r1 r2 filenames are matching
+    expected_r1_r2_message = undefined;
+    click_submit = false;
+    expected_flash_message = undefined;
+    cy.addSample(
+      otherPreprocess,
+      storage_computer,
+      patient1_r1,
+      patient1_r2,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
 
     cy.get("@sample_1").then((sample_id1) => {
       // Jump

@@ -132,3 +132,8 @@ Cypress.Commands.add('changePreset', (sp_id, value) => {
     .trigger('change', {force: true})
   cy.update_icon(0, 10000)
 })
+
+Cypress.Commands.add('clickBackButton', () => {
+  cy.get('#db_back').click();
+  cy.wait("@getActivities");
+})

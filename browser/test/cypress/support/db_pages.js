@@ -391,7 +391,10 @@ Cypress.Commands.add(
     filename2,
     sampling_date,
     info,
-    common_set
+    common_set,
+    expected_r1_r2_message = undefined,
+    click_submit = true,
+    expected_flash_message = undefined,
   ) => {
     cy.multiSamplesAdd([
       [
@@ -402,8 +405,9 @@ Cypress.Commands.add(
         sampling_date,
         info,
         common_set,
+        expected_r1_r2_message,
       ],
-    ]).then((sample_ids) => {
+    ], click_submit, expected_flash_message).then((sample_ids) => {
       return cy.wrap(sample_ids[0]);
     });
   }
@@ -431,19 +435,20 @@ Cypress.Commands.add("openSampleAddPage", () => {
  * Parameter is an array of array inherited from fillSampleLine function (see below)
  * Example: [[preprocess, storage, filename1, filename2, sampling_date, info, common_set), ...]
  **/
-Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
+Cypress.Commands.add("multiSamplesAdd", (array_samples, click_submit = true, expected_flash_message = undefined) => {
   cy.openSampleAddPage();
 
   var pos_sample = 0;
   array_samples.forEach((sample, index) => {
     cy.log(`multiSamplesAdd; iter ${pos_sample}; index ${index}; ${sample}`);
-    var preprocess = sample[0];
-    var storage = sample[1];
-    var filename1 = sample[2];
-    var filename2 = sample[3];
-    var sampling_date = sample[4];
-    var info = sample[5];
-    var common_set = sample[6];
+    const preprocess = sample[0];
+    const storage = sample[1];
+    const filename1 = sample[2];
+    const filename2 = sample[3];
+    const sampling_date = sample[4];
+    const info = sample[5];
+    const common_set = sample[6];
+    var expected_r1_r2_message = sample[7];
     cy.fillSampleLine(
       pos_sample,
       preprocess,
@@ -452,68 +457,79 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples) => {
       filename2,
       sampling_date,
       info,
-      common_set
+      common_set,
+      expected_r1_r2_message,
     );
     pos_sample += 1;
   });
 
-  cy.get("#submit_samples_btn").click();
-  cy.wait("@getActivities");
+  if (click_submit == true) {
+    cy.get("#submit_samples_btn").click();
+    cy.wait("@getActivities");
+    if (typeof expected_flash_message === 'undefined') {
+      // No error message expected, check the samples were correctly added
+      cy.get("#db_table_container")
+        .find("tbody")
+        .find("tr")
+        .last()
+        .invoke("text")
+        .then((filename) => {
+          var last_id = Number(filename.split("(")[1].split(")")[0]);
+          const sample_ids = [];
+          array_samples.reverse().forEach((sample, index) => {
+            // Get current id for given sample
+            var current_id = last_id - index;
+            cy.log(`Sample number: ${current_id}`);
+            sample_ids.push(current_id);
 
-  cy.get("#db_table_container")
-    .find("tbody")
-    .find("tr")
-    .last()
-    .invoke("text")
-    .then((filename) => {
-      var last_id = Number(filename.split("(")[1].split(")")[0]);
-      const sample_ids = [];
-      array_samples.reverse().forEach((sample, index) => {
-        // Get current id for given sample
-        var current_id = last_id - index;
-        cy.log(`Sample number: ${current_id}`);
-        sample_ids.push(current_id);
+            // Control values
+            var filename1 = sample[2];
+            var filename2 = sample[3];
+            var sampling_date = sample[4];
+            var info = sample[5];
+            var common_set = sample[6];
 
-        // Control values
-        var filename1 = sample[2];
-        var filename2 = sample[3];
-        var sampling_date = sample[4];
-        var info = sample[5];
-        var common_set = sample[6];
+            cy.get("#db_table_container")
+              .find(`#row_sequence_file_${current_id}`)
+              .should("contain", filename1);
 
-        cy.get("#db_table_container")
-          .find(`#row_sequence_file_${current_id}`)
-          .should("contain", filename1);
+            if (common_set != undefined) {
+              cy.get("#db_table_container")
+                .find(`#row_sequence_file_${current_id}`)
+                .should("contain", common_set);
+            }
 
-        if (common_set != undefined) {
-          cy.get("#db_table_container")
-            .find(`#row_sequence_file_${current_id}`)
-            .should("contain", common_set);
-        }
+            // Work only if one file given (else filename will be changed)
+            // Allow to get current number if case of upload position modification
+            if (filename2 == undefined) {
+              cy.get("#db_table_container")
+                .find(`#row_sequence_file_${current_id}`)
+                .contains(filename1)
+                .invoke("text")
+                .then((filename) => {
+                  cy.log(
+                    `sample added number: ${filename.split("(")[1].split(")")[0]}`
+                  );
+                });
+              cy.get("#db_table_container")
+                .find(`#row_sequence_file_${current_id}`)
+                .contains(sampling_date);
+              cy.get("#db_table_container")
+                .find(`#row_sequence_file_${current_id}`)
+                .contains(info);
+            }
+          });
 
-        // Work only if one file given (else filename will be changed)
-        // Allow to get current number if case of upload position modification
-        if (filename2 == undefined) {
-          cy.get("#db_table_container")
-            .find(`#row_sequence_file_${current_id}`)
-            .contains(filename1)
-            .invoke("text")
-            .then((filename) => {
-              cy.log(
-                `sample added number: ${filename.split("(")[1].split(")")[0]}`
-              );
-            });
-          cy.get("#db_table_container")
-            .find(`#row_sequence_file_${current_id}`)
-            .contains(sampling_date);
-          cy.get("#db_table_container")
-            .find(`#row_sequence_file_${current_id}`)
-            .contains(info);
-        }
-      });
-
-      return cy.wrap(sample_ids);
-    });
+          return cy.wrap(sample_ids);
+        });
+    } else {
+      // Error message expected, check it
+      cy.get(".flash_2").should("be.visible").contains(expected_flash_message);
+      cy.clickBackButton();
+    }
+  } else {
+    cy.clickBackButton();
+  }
 });
 
 /**
@@ -543,10 +559,11 @@ Cypress.Commands.add(
     filename2,
     sampling_date,
     info,
-    common_set
+    common_set,
+    expected_r1_r2_message = undefined,
   ) => {
     cy.log(
-      `iter: ${iter}\n preprocess: ${preprocess}\n storage: ${storage}\n filename1: ${filename1}\n filename2: ${filename2}\n sampling_date: ${sampling_date}\n info: ${info}\n common_set: ${common_set}\n`
+      `iter: ${iter}\n preprocess: ${preprocess}\n storage: ${storage}\n filename1: ${filename1}\n filename2: ${filename2}\n sampling_date: ${sampling_date}\n info: ${info}\n common_set: ${common_set}\n expected_r1_r2_message: ${expected_r1_r2_message}`
     );
     if (iter > 0) {
       // Create a new sample line
@@ -579,6 +596,19 @@ Cypress.Commands.add(
 
     if (common_set != undefined) {
       cy.fillCommonSet(iter, common_set); // a value to search a common set
+    }
+
+    // check r1 r2 warning
+    if (typeof expected_r1_r2_message === 'undefined') {
+      cy.get("#file_names_errors_0")
+        .should('have.css', 'display', 'none')
+    } else {
+      cy.get("#file_names_errors_0")
+        .should('have.css', 'display', 'block')
+        .should('have.attr', 'title')
+        .then(title => {
+          expect(title).to.contain(expected_r1_r2_message)
+      });
     }
   }
 );
@@ -668,6 +698,7 @@ Cypress.Commands.add("fillCommonSet", (iter, common_set) => {
 });
 
 Cypress.Commands.add("selectPreprocess", (preprocess) => {
+  cy.log("Selecting preprocess " + preprocess)
   cy.get("#pre_process")
     .select(preprocess, { force: true })
     .should("have.value", preprocess);
