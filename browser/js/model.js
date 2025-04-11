@@ -2179,12 +2179,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.saveClusters()
         
         var tmp = {}
-        for (var i = 0; i < this.clones.length - this.system_available.length; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
 
             //detect key value
             var key = "undefined"
 
+            if (!this.clones[i].isClusterizable()) {
+                continue
+            }
             key = fct(i)
+
 
             //store clones with same key together
             if (key === "") key = "undefined"
