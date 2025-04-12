@@ -22,8 +22,6 @@ services:
             - ../tools:/usr/share/vidjil/tools
             # CloneDB
             - ../../clonedb:/usr/share/clonedb
-            # Data
-            - ../../data:/opt/clonedb-index/
             # Use contrib folder
             - ../../contrib:/usr/share/vidjil/tools/scripts
             - ../../contrib/third-party-softwares/compiled:/binaries
