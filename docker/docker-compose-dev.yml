@@ -24,8 +24,6 @@ services:
             - ../../clonedb:/usr/share/clonedb
             # Data
             - ../../data:/opt/clonedb-index/
-            # BWA
-            - /usr/bin/bwa:/usr/bin/bwa
             # Use contrib folder
             - ../../contrib:/usr/share/vidjil/tools/scripts
             - ../../contrib/third-party-softwares/compiled:/binaries

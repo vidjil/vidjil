@@ -50,7 +50,7 @@ var config = {
   segmenter_address: "https://localhost/vidjil/segmenter",
 
   /* Do we have access to a CloneDB ? */
-  clonedb: true,
+  clonedb: false,
 
   /****************
     /* Access to .vidjil files
