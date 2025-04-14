@@ -176,10 +176,18 @@ TagManager.prototype = {
         }
 
         for (var k in this.tag) {
+            if (k === "removed_clonotypes" && this.m.clone(clonesIDs[0]).hasSizeOther()) {
+                continue;
+            }
+            if (k === "removed_clonotypes") {
+                var div_removedtag = $('<div/>').html("<hr>").appendTo($(this.tagSelectorList));
+                $('<span/>', {
+                    text: "Set to none to restore clonotype"
+                }).appendTo(div_removedtag);
+            }
             buildTagSelector(k);
         }
         
-
         // add to report button
         var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
         var report_button = $('<div/>', { text: 'add clone(s) to next report ', title: '(r to add / shift+r to remove all)'
