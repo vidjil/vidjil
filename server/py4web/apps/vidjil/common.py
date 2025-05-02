@@ -364,8 +364,8 @@ mail = Mailer(
     server=settings.SMTP_SERVER,
     sender=settings.SMTP_FROM_EMAIL,
     login=settings.SMTP_CREDENTIALS,
-    # tls=settings.SMTP_SMTP_TLS,
-    # ssl=settings.SMTP_SMTP_SSL
+    # tls=settings.SMTP_TLS,
+    # ssl=settings.SMTP_SSL,
 )
 
 

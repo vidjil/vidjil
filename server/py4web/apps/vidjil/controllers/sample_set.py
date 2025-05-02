@@ -9,7 +9,7 @@ from py4web import URL, action, request
 
 from .. import settings
 from ..common import T, auth, db, log, session
-from ..modules import sampleSet, stats_qc_utils, tag_utils, vidjil_utils
+from ..modules import mailer_utils, sampleSet, stats_qc_utils, tag_utils, vidjil_utils
 from ..modules.controller_utils import error_message
 from ..modules.permission_enum import PermissionEnum
 from ..modules.sampleSet import get_set_group
@@ -396,6 +396,10 @@ def form():
     }
     # We add a None object to the desired set type to initialise an empty form in the template.
     sets[set_type].append(sample_set)
+    mailer_utils.send_mail(
+        "clement.chesnin@gmail.com", "test utils", "utils is great !"
+    )
+
     log.info("load form " + message, extra=extra)
     return dict(
         message=T(message),
