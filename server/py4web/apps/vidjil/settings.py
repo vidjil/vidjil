@@ -39,7 +39,7 @@ UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", default="/mnt/upload/uploads/")
 FILE_SOURCE = os.getenv("FILE_SOURCE", default="")
 FILE_TYPES = json.loads(
     os.getenv(
-        "FILE_TYPES']",
+        "FILE_TYPES",
         default='["fasta", "fastq", "fastq.gz", "fa", "tsv", "airr", "AIRR"]',
     )
 )
@@ -157,7 +157,7 @@ CELERY_SIZE_LIMIT_FOR_LONG_JOB = int(
 )
 
 ### Email notifications for server errors
-SMTP_SERVER = os.getenv("SMTP_SERVER", default="postfix")
+SMTP_SERVER = os.getenv("SMTP_SERVER", default=None)
 SMTP_CREDENTIALS = os.getenv(
     "SMTP_CREDENTIALS", default="vidjil:smtp_pass"
 )  # set to None if no auth required

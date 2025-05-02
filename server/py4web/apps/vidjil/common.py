@@ -3,12 +3,14 @@ This file defines cache, session, and translator T object for the app
 These are fixtures that every app needs so probably you will not be editing this file
 """
 
+import email
 import logging
 import os
 import sys
+from typing import List
 
 from py4web import DAL, Cache, Flash, Session, Translator, action
-from py4web.core import HTTP, Fixture, request, response
+from py4web.core import HTTP, URL, ErrorLogger, Fixture, error_logger, request, response
 from py4web.utils.downloader import downloader
 from py4web.utils.factories import ActionFactory
 from py4web.utils.mailer import Mailer
@@ -235,18 +237,6 @@ auth.__prerequisites__.insert(0, cors)
 auth.define_tables()
 
 # #######################################################
-# Configure email sender for auth
-# #######################################################
-if settings.SMTP_SERVER:
-    auth.sender = Mailer(
-        server=settings.SMTP_SERVER,
-        sender=settings.SMTP_FROM_EMAIL,
-        login=settings.SMTP_CREDENTIALS,
-        # tls=settings.SMTP_SMTP_TLS,
-        # ssl=settings.SMTP_SMTP_SSL,
-    )
-
-# #######################################################
 # Create a table to tag users as group members
 # #######################################################
 if auth.db:
@@ -360,13 +350,75 @@ except Exception:
 # #######################################################
 # Configure mail
 # #######################################################
-mail = Mailer(
-    server=settings.SMTP_SERVER,
-    sender=settings.SMTP_FROM_EMAIL,
-    login=settings.SMTP_CREDENTIALS,
-    # tls=settings.SMTP_TLS,
-    # ssl=settings.SMTP_SSL,
-)
+mail = None
+if settings.SMTP_SERVER is not None:
+    mail = Mailer(
+        server=settings.SMTP_SERVER,
+        sender=settings.SMTP_FROM_EMAIL,
+        login=settings.SMTP_CREDENTIALS,
+        tls=settings.SMTP_TLS,
+        ssl=settings.SMTP_SSL,
+    )
+
+    # #######################################################
+    # Configure email sender for auth
+    # #######################################################
+    auth.sender = mail
+
+    # #######################################################
+    # Mail on error
+    # #######################################################
+    class MyErrorLogger:
+        def __init__(self, error_logger: ErrorLogger):
+            self._error_logger = error_logger
+
+        def log(self, app_name: str, error_snapshot):
+            base_logger = (
+                self._error_logger.database_logger or self._error_logger.fallback_logger
+            )
+            uuid = base_logger.log(app_name, error_snapshot)
+            ticket_url = (
+                f"{URL('_dashboard/ticket', uuid, scheme=True, use_appname=False)}"
+            )
+            _, _, domain = ticket_url.split("/", 3)[:3]
+
+            send_mail(
+                to=settings.SMTP_ADMIN_EMAILS,
+                subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Server {domain} error",
+                body=(
+                    f"""Path: {request.path}
+                    Error: {error_snapshot["exception_value"]}
+                    User: {f"({str(auth.user_id)}) {db.auth_user[auth.user_id].first_name} {db.auth_user[auth.user_id].last_name}" if auth.user_id else "N/A"}
+                    Client IP: {request.environ.get("REMOTE_ADDR")}
+                    Ticket: {ticket_url}""",
+                    f"""<html>
+                        Path: {request.path}<br>
+                        Error: {error_snapshot["exception_value"]}<br>
+                        User: {f"({str(auth.user_id)}) {db.auth_user[auth.user_id].first_name} {db.auth_user[auth.user_id].last_name}" if auth.user_id else "N/A"}<br>
+                        Client IP: {request.environ.get("REMOTE_ADDR")}<br>
+                        Ticket: <a href="{ticket_url}">{uuid}</a>
+                    </html>""",
+                ),
+            )
+
+    error_logger.plugins[settings.APP_NAME] = MyErrorLogger(error_logger)
+
+
+def send_mail(to: str | List[str], subject: str, body: str):
+    try:
+        if mail is not None:
+            mail.send(
+                to=to,
+                subject=subject,
+                body=body,
+                headers={
+                    "Message-ID": email.utils.make_msgid(domain=settings.SMTP_DOMAIN)
+                },
+            )
+        else:
+            log.info(f"Mail not defined, mail not sent - {to=} / {subject=} / {body=}")
+    except Exception as exception:
+        log.error(f"Error when sending mail: {exception=}")
 
 
 # #######################################################
