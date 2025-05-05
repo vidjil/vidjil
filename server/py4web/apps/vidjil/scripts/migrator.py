@@ -448,11 +448,11 @@ def export_group_data(filesrc, filepath, groupids, log):
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
-    with open(filepath + "/export.json", "w", encoding='utf-8') as outfile:
+    with open(filepath + "/export.json", "w", encoding="utf-8") as outfile:
         json.dump(tables, outfile, ensure_ascii=False)
-    with open(filepath + "/config.json", "w", encoding='utf-8') as outfile:
+    with open(filepath + "/config.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_configs, outfile, ensure_ascii=False)
-    with open(filepath + "/pprocess.json", "w", encoding='utf-8') as outfile:
+    with open(filepath + "/pprocess.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False)
 
     files_filepath = get_files_filepath(filepath)
@@ -480,11 +480,11 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log):
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
-    with open(filepath + "/export.json", "w", encoding='utf-8') as outfile:
+    with open(filepath + "/export.json", "w", encoding="utf-8") as outfile:
         json.dump(tables, outfile, ensure_ascii=False)
-    with open(filepath + "/config.json", "w", encoding='utf-8') as outfile:
+    with open(filepath + "/config.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_configs, outfile, ensure_ascii=False)
-    with open(filepath + "/pprocess.json", "w", encoding='utf-8') as outfile:
+    with open(filepath + "/pprocess.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False)
 
     files_filepath = get_files_filepath(filepath)
@@ -505,7 +505,7 @@ def import_data(
 ):
     log.info("importing data")
     data = {}
-    with open(filesrc + "/export.json", "r", encoding='utf-8') as infile:
+    with open(filesrc + "/export.json", "r", encoding="utf-8") as infile:
         data = json.load(infile)
         # data = reencode_dict(tmp)
 

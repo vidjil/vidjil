@@ -60,7 +60,7 @@ def segment_sequences(sequences):
             result_path = folder_path + "/sequences.vidjil"
 
             if os.path.isfile(result_path):
-                with open(result_path, "r", encoding='utf-8') as myfile:
+                with open(result_path, "r", encoding="utf-8") as myfile:
                     text_result = myfile.read()
             else:
                 res = {"success": "false", "message": "Error while processing the file"}
