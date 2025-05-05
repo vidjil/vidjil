@@ -423,7 +423,7 @@ Model_loader.prototype = {
         var system;
 
         // Add system if at least one reads is present for a locus
-        for (germline in this.reads.germline) {
+        for (var germline in this.reads.germline) {
             const sum_system = this.reads.germline[germline].reduce((accumulator, currentValue) => accumulator + currentValue, 0);
             if (typeof germline != "undefined" && sum_system > 0 && self.system_available.indexOf(germline) ==-1){
                 self.system_available.push(germline)
