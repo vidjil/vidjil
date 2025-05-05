@@ -83,4 +83,16 @@ describe('Test sandbox', function () {
     cy.get('#download_info_0_airr').should("be.visible")
   })
 
+    
+  it('5462 - Load smaller clones for each locus', function() {
+    // Even if no clone present with locus with some reads/clonotypes, a smaller clone is present 
+    cy.openAnalysis("demo/Demo-X5-no-clone.vidjil")
+    cy.get('#listElem_10 > .nameBox')
+      .should("exist")
+    cy.get('#listElem_10 > .axisBox')
+      .should("exist")
+      .should('have.attr', 'title', "0 nt, 2 reads  reads")
+  
+  });
+
 })

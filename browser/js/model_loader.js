@@ -421,12 +421,15 @@ Model_loader.prototype = {
         self.system_selected = [];
         self.system_available = [];
         var system;
-        for (var p = 0; p < this.clones.length; p++) {
-            system = this.clone(p).get('germline')
-            if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
-                self.system_available.push(system)
+
+        // Add system if at least one reads is present for a locus
+        for (germline in this.reads.germline) {
+            const sum_system = this.reads.germline[germline].reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+            if (typeof germline != "undefined" && sum_system > 0 && self.system_available.indexOf(germline) ==-1){
+                self.system_available.push(germline)
             }
         }
+
         self.system_available.sort(locus_cmp)
 
         for (var sa in self.system_available){
