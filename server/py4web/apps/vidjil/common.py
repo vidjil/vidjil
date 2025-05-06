@@ -131,6 +131,7 @@ class MsgUserAdapter(logging.LoggerAdapter):
         else:
             ip = "N/A"
 
+        user_id = "N/A"
         try:
             # Set level of default logger to ERROR to prevent messages from py4web
             previous_level = logging.getLogger().getEffectiveLevel()
@@ -222,13 +223,29 @@ def _init_log() -> logging.LoggerAdapter:
 
 log = _init_log()
 
+
 # #######################################################
 # Instantiate the object and actions that handle auth
 # #######################################################
+def two_factor_required(user, request):
+    return settings.TWO_FACTOR_REQUIRED
+
+
+def send_two_factor_email(user, code):
+    send_mail(
+        to=[user.email],
+        subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Two factor login verification code",
+        body=f"Your verification code is {code}",
+    )
+    return code
+
+
 auth = VidjilAuth(log, session, db, define_tables=False)
 auth.use_username = False
 auth.param.registration_requires_confirmation = settings.VERIFY_EMAIL
 auth.param.registration_requires_approval = settings.REQUIRES_APPROVAL
+auth.param.two_factor_required = two_factor_required
+auth.param.two_factor_send = send_two_factor_email
 auth.param.allowed_actions = ["all"]
 auth.param.login_expiration_time = settings.LOGIN_EXPIRATION_TIME
 auth.param.password_complexity = {"entropy": 50}

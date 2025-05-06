@@ -105,12 +105,13 @@ LOCUS = [
     "IGL",
 ]
 
+### Auth configuration
 # send email on registration
-VERIFY_EMAIL = False
-
+VERIFY_EMAIL = string_to_bool(os.getenv("VERIFY_EMAIL", default="False"))
 # account requires to be approved ?
-REQUIRES_APPROVAL = False
-
+REQUIRES_APPROVAL = string_to_bool(os.getenv("REQUIRES_APPROVAL", default="False"))
+# 2 factor authentication required ?
+TWO_FACTOR_REQUIRED = string_to_bool(os.getenv("TWO_FACTOR_REQUIRED", default="False"))
 # login expiration time
 LOGIN_EXPIRATION_TIME = int(os.getenv("LOGIN_EXPIRATION_TIME", default="7200"))
 
@@ -119,34 +120,27 @@ SESSION_TYPE = "cookies"
 SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY", default="<my secret key>")
 MEMCACHE_CLIENTS = ["127.0.0.1:11211"]
 REDIS_SERVER = "redis:6379"
-
 # single sign on Google (will be used if provided)
-OAUTH2GOOGLE_CLIENT_ID = None
-OAUTH2GOOGLE_CLIENT_SECRET = None
-
+OAUTH2GOOGLE_CLIENT_ID = os.getenv("OAUTH2GOOGLE_CLIENT_ID", default=None)
+OAUTH2GOOGLE_CLIENT_SECRET = os.getenv("OAUTH2GOOGLE_CLIENT_SECRET", default=None)
 # single sign on Okta (will be used if provided. Please also add your tenant
 # name to py4web/utils/auth_plugins/oauth2okta.py. You can replace the XXX
 # instances with your tenant name.)
-OAUTH2OKTA_CLIENT_ID = None
-OAUTH2OKTA_CLIENT_SECRET = None
-
+OAUTH2OKTA_CLIENT_ID = os.getenv("OAUTH2OKTA_CLIENT_ID", default=None)
+OAUTH2OKTA_CLIENT_SECRET = os.getenv("OAUTH2OKTA_CLIENT_SECRET", default=None)
 # single sign on Google (will be used if provided)
-OAUTH2FACEBOOK_CLIENT_ID = None
-OAUTH2FACEBOOK_CLIENT_SECRET = None
-
+OAUTH2FACEBOOK_CLIENT_ID = os.getenv("OAUTH2FACEBOOK_CLIENT_ID", default=None)
+OAUTH2FACEBOOK_CLIENT_SECRET = os.getenv("OAUTH2FACEBOOK_CLIENT_SECRET", default=None)
 # enable PAM
-USE_PAM = False
-
+USE_PAM = string_to_bool(os.getenv("USE_PAM", default="False"))
 # enable LDAP
-USE_LDAP = False
+USE_LDAP = string_to_bool(os.getenv("USE_LDAP", default="False"))
 # online test server available for test purposes
 # account:  euler@ldap.forumsys.com
 # password: password
-LDAP_SETTINGS = {
-    "mode": "ad",
-    "server": "my.domain.controller",
-    "base_dn": "ou=Users,dc=domain,dc=com",
-}
+LDAP_SETTINGS = json.loads(
+    '{"mode": "ad","server": "my.domain.controller","base_dn": "ou=Users,dc=domain,dc=com"}'
+)
 
 # i18n settings
 T_FOLDER = os.path.join(APP_FOLDER, "translations")
