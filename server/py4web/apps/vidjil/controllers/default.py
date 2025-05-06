@@ -20,7 +20,7 @@ from ombott import static_file
 from py4web import URL, action, request, response
 
 from .. import settings, tasks
-from ..common import T, auth, cors, db, log, mail, scheduler, session
+from ..common import T, auth, cors, db, log, scheduler, session
 from ..controllers.group import add_default_group_permissions
 from ..modules import sampleSet, vidjil_utils, zmodel_factory
 from ..modules.analysis_file import get_analysis_data
@@ -940,42 +940,6 @@ def save_analysis():
         res = {"success": "false", "message": error}
         log.error(res)
         return json.dumps(res, separators=(",", ":"))
-
-
-#########################################################################
-def error():
-    """
-    Custom error handler that returns correct status codes,
-    adapted from http://www.web2pyslices.com/slice/show/1529/custom-error-routing
-    """
-
-    code = request.query.code
-    request_url = request.query.request_url
-    requested_uri = request.query.requested_uri
-    ticket = request.query.ticket
-    response.status = int(code)
-
-    assert response.status == 500 and request_url != request.url  # avoid infinite loop
-
-    ticket_url = (
-        '<a href="https://%(host)s/admin/default/ticket/%(ticket)s">%(ticket)s</a>'
-        % {"host": request.env.http_host, "ticket": ticket}
-    )
-    log.error("Server error // %s" % ticket_url)
-
-    user_str, x = log.process("", None)
-    user_str = user_str.replace("<", "").replace(">", "").strip()
-
-    mail.send(
-        to=settings.ADMIN_EMAILS,
-        subject=f"{settings.EMAIL_SUBJECT_START} Server error - {user_str}",
-        body=(
-            f"Ticket: {ticket_url} - At: {requested_uri} - User: {user_str}",
-            f"<html>Ticket: {ticket_url}<br/>At: {requested_uri}<br />User: {user_str}</html>",
-        ),
-    )
-
-    return "Server error"
 
 
 # @action("/vidjil/default/user/<path>", method=["POST", "GET"])

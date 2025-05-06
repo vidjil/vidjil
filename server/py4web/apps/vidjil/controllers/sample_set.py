@@ -494,9 +494,9 @@ def submit():
                     action = "add"
 
                     # if (p['id'] % 100) == 0:
-                    #    mail.send(to=settings.ADMIN_EMAILS,
-                    #    subject=settings.EMAIL_SUBJECT_START+" %d" % p['id'],
-                    #    message="The %dth %s has just been created." % (p['id'], set_type))
+                    #    send_mail(to=settings.SMTP_ADMIN_EMAILS,
+                    #    subject=settings.SMTP_EMAIL_SUBJECT_START+" %d" % p['id'],
+                    #    body="The %dth %s has just been created." % (p['id'], set_type))
 
                 else:
                     p["error"].append("permission denied")

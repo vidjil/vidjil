@@ -3,7 +3,7 @@ import os
 from collections import defaultdict
 
 from .. import settings
-from ..common import db, mail
+from ..common import db, send_mail
 from ..modules import controller_utils, vidjil_utils
 
 
@@ -209,9 +209,9 @@ def check_space(directory, what):
     """
     enough_space = vidjil_utils.check_enough_space(directory)
     if not enough_space:
-        mail.send(
-            to=settings.ADMIN_EMAILS,
-            subject=f"{settings.EMAIL_SUBJECT_START} Server space",
+        send_mail(
+            to=settings.SMTP_ADMIN_EMAILS,
+            subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Server space",
             body=f"The space in directory {directory} has passed below {settings.FS_LOCK_THRESHOLD}%.",
         )
         return controller_utils.error_message(
