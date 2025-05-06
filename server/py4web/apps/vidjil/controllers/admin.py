@@ -8,7 +8,7 @@ import redis
 from py4web import action, request
 
 from .. import settings, tasks
-from ..common import auth, db, log, scheduler
+from ..common import auth, db, log, scheduler, send_mail
 from ..modules import vidjil_utils
 
 ##################################
@@ -170,6 +170,36 @@ def showlog():
             break
 
     return {"lines": lines, "format": log_format, "auth": auth, "db": db}
+
+
+@action("/vidjil/admin/send_test_email", method=["POST", "GET"])
+@action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
+def send_test_email():
+    if not auth.is_admin():
+        res = {
+            "success": "false",
+            "message": ACCESS_DENIED,
+            "redirect": vidjil_utils.get_patient_redirect_url(),
+        }
+        log.info(res)
+        return json.dumps(res, separators=(",", ":"))
+
+    success = send_mail(
+        to=settings.SMTP_ADMIN_EMAILS,
+        subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Test email",
+        body="This is a test email to check configuration",
+    )
+
+    res = {
+        "redirect": "reload",
+        "success": success,
+        "message": "Email sent to admin"
+        if success
+        else "Error when sending email to admin, check logs for details",
+    }
+    log.info(res)
+    return json.dumps(res, separators=(",", ":"))
 
 
 # to use after change in the upload folder

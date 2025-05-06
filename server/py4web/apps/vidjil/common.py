@@ -404,7 +404,7 @@ if settings.SMTP_SERVER is not None:
     error_logger.plugins[settings.APP_NAME] = MyErrorLogger(error_logger)
 
 
-def send_mail(to: str | List[str], subject: str, body: str):
+def send_mail(to: str | List[str], subject: str, body: str) -> bool:
     try:
         if mail is not None:
             mail.send(
@@ -417,8 +417,12 @@ def send_mail(to: str | List[str], subject: str, body: str):
             )
         else:
             log.info(f"Mail not defined, mail not sent - {to=} / {subject=} / {body=}")
+            return False
     except Exception as exception:
         log.error(f"Error when sending mail: {exception=}")
+        return False
+
+    return True
 
 
 # #######################################################
