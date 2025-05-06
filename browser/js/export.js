@@ -1201,7 +1201,8 @@ Report.prototype = {
          var div = $('<div/>', {'class': 'flex'}).appendTo(sampleInfo);
          var content = [
             {'label': "Analysis software:" , value : this.m.getSoftVersionTime(time)},
-            {'label': "Parameters:" , value : this.m.getCommandTime(time)}
+            {'label': "Algorithm parameters:" , value : this.m.getCommandAlgoTime(time)},
+            {'label': "Fuse parameters:" , value : this.m.getCommandFuse()}
          ];
 
          var table = $('<table/>', {'class': 'info-table'}).appendTo(div);
