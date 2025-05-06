@@ -31,8 +31,8 @@ $ IGH  should become IGK: TRG
 0:TRG
 $ IGH  should become IGK: IGH
 0:IGH
-$ IGH  should become IGK: IGK 
-3:IGK
+$ IGH  should become IGK: IGK + IGK in fuse commandline
+4:IGK
 
 
 

@@ -512,7 +512,7 @@ class Samples:
         utils.concatenate_with_padding(obj.d,
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
-                                 ['number', 'pre_process'],
+                                 ['number', 'pre_process', "commandline_fuse"],
                                  recursive=True)
         if "pre_process" in self.d.keys() or "pre_process" in other.d.keys():
             # init if needed
