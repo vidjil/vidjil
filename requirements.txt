@@ -13,3 +13,5 @@ requests
 ijson
 beautifulsoup4
 tabulate
+biopython
+numpy
