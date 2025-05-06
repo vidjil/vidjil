@@ -82,4 +82,21 @@ describe('Colors', function () {
     
   })
 
+  it('5281 - fuse commandline in info panel',  function() {
+    cy.openAnalysis("demo/Demo-X5-no-clone.vidjil")
+
+    // After that, do some action ...
+    cy.get('.button > .icon-info').click()
+
+    cy.get('#modal_line_title_info_timepoint_fuse_parameters')
+      .should("exist")
+      .should("contain", "fuse parameters")
+
+      cy.get('#modal_line_value_info_timepoint_fuse_parameters')
+      .should("exist")
+      .should("contain", "fuse.py -o Demo-X5-no-clone.vidjil -t 100 Demo-X5-XXX.vidjil")
+    return
+  })
+
+
 })
