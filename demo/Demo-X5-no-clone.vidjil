@@ -110,7 +110,8 @@
     ],
     "run_timestamp": [
       "2020-02-03 16:29:22"
-    ]
+    ],
+    "commandline_fuse": "fuse.py -o Demo-X5-no-clone.vidjil -t 100 Demo-X5-XXX.vidjil"
   },
   "vidjil_json_version": "2016b"
 }

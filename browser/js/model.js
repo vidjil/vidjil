@@ -680,7 +680,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     getSampleTime: function(time) {
         time = typeof time !== 'undefined' ? time : this.t
-        var value = "–"
+        var value = "-"
         if (typeof this.samples.timestamp != 'undefined'){
             if (typeof this.samples.timestamp[time] != 'undefined'){
                 value = this.samples.timestamp[time]
@@ -695,7 +695,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     getSoftVersionTime: function(time) { 
         time = typeof time !== 'undefined' ? time : this.t
-        var soft_version = "–"
+        var soft_version = "-"
         if (typeof this.samples.producer != 'undefined')
             soft_version = this.samples.producer[time]
         return soft_version;
@@ -705,11 +705,22 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * return commandline used to produce sample result given a time/sample index <br>
      * @return {string} command - sample command
      * */
-    getCommandTime: function(time) {
+    getCommandAlgoTime: function(time) {
         time = typeof time !== 'undefined' ? time : this.t
-        var command = "–"
+        var command = "-"
         if (typeof this.samples.commandline != 'undefined')
             command = this.samples.commandline[time]
+        return command;
+    },
+
+    /**
+     * return commandline used by fuse
+     * @return {string} fuse commandline
+     * */
+    getCommandFuse: function() {
+        var command = "-"
+        if (typeof this.samples.commandline_fuse != 'undefined')
+            command = this.samples.commandline_fuse
         return command;
     },
 
@@ -1925,7 +1936,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         data.push([row_1, "analyzed reads", analyzed_reads, 'info_timepoint_analyzed_reads', 1])
 
         data.push([row_1, "analysis software", this.getSoftVersionTime(timeID),  'info_timepoint_analysis_software', 1])
-        data.push([row_1, "parameters",        this.getCommandTime(timeID),      'info_timepoint_parameters', 1])
+        data.push([row_1, "algorithm parameters",        this.getCommandAlgoTime(timeID),      'info_timepoint_algorithm_parameters', 1])
+        data.push([row_1, "fuse parameters",        this.getCommandFuse(),      'info_timepoint_fuse_parameters', 1])
         data.push([row_1, "timestamp",         this.getTimestampTime(timeID),    'info_timepoint_timestamp', 1])
         data.push([row_1, "analysis log",      "<pre>"+ this.getSegmentationInfo(timeID)+"</pre>", 'info_timepoint_log', 1])
 
