@@ -1937,8 +1937,10 @@ def main():
         # reload post processed file
         jlist_fused = ListWindows()
         jlist_fused.load(post_out_name, args.pipeline)
-        jlist_fused.build_stat()
         os.system("rm %s" % post_out_name)
+
+    # Export fuse commandline in data
+    jlist_fused.d["samples"].d["commandline_fuse"] = f"{' '.join(sys.argv)}"
 
     if args.export_airr:
         output = args.output.replace(".vidjil", ".airr")
