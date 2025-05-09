@@ -111,24 +111,8 @@ describe("Test specific bugs", function () {
         // Re-open analysis
         cy.goToPatientPage()
         cy.openSet(sample_set_id)
-        cy.openAnalysisFromSetPage(sample_set_id, config_id)
-
-        // Check renaming of clone
-        cy.get('#listElem_4 > .nameBox')
-          .should("contain", "un clone")
-        // check that clone have a tag color
-        cy.selectClone(1) // Made a selection between load of analysis and assertion control
-
-        // Commented because it fail on some browser version. Seem to be independent of this issue as other clonotype are well colored
-        //cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)', {timeout: 12000})
-
-        cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
-        cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
 
         // 5069_download_link_of_result
-        // Test Link
-        cy.goToPatientPage()
-        cy.openSet(sample_set_id)
         let config_regexp = new RegExp("config=" + config_id)
         let sample_set_regexp = new RegExp("sample_set_id=" + sample_set_id)
         cy.get('.db_fixed_footer > tr > :nth-child(13) > a')
@@ -142,6 +126,21 @@ describe("Test specific bugs", function () {
           .and("match", /get_analysis\?/)
           .and("match", config_regexp)
           .and("match", sample_set_regexp)
+
+        // 5213 - open analysis without bug
+        cy.openAnalysisFromSetPage(sample_set_id, config_id)
+
+        // Check renaming of clone
+        cy.get('#listElem_4 > .nameBox')
+          .should("contain", "un clone")
+        // check that clone have a tag color
+        cy.selectClone(1) // Made a selection between load of analysis and assertion control
+
+        // Commented because it fail on some browser version. Seem to be independent of this issue as other clonotype are well colored
+        //cy.getCloneInList(4).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)', {timeout: 12000})
+
+        cy.getCloneInList(5).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
+        cy.getCloneInList(6).scrollIntoView().should('have.css', 'color', 'rgb(55, 145, 73)')
       })
     })
   });
