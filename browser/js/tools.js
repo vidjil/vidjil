@@ -646,7 +646,7 @@ function discard_float_approximation(float) {
  * nice_min_max_steps(0, 7, 4) -> {min: 0, max:8, step: 2}
  **/
 
-function nice_min_max_steps(min, max, nb_max_steps)
+function nice_min_max_steps(min, max, nb_max_steps, mode)
 {
     if (min == max)
     {
@@ -661,6 +661,9 @@ function nice_min_max_steps(min, max, nb_max_steps)
     var n_max = nice_ceil(max, basic_step)
 
     var step = nice_1_2_5_ceil((n_max - n_min) / nb_max_steps)
+    if (mode == "log" && step < 1){
+        step = 1
+    }
     var nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
 
     // In some rare cases, we try another loop of rounding

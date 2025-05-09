@@ -241,7 +241,7 @@ Axis.prototype = {
 
             if (this.scale.mode == "linear"){
                 
-                var nice_linear = nice_min_max_steps(smin, smax, max_number_of_labels)
+                var nice_linear = nice_min_max_steps(smin, smax, max_number_of_labels, "linear")
                 if (typeof this.min_step == "undefined") this.min_step = nice_linear.step
                 this.step = Math.max(nice_linear.step, this.min_step)
                 this.precision = nice_number_digits(this.step, 1)
@@ -291,7 +291,7 @@ Axis.prototype = {
                 // Fix min/max/step for nice axis
                 var max_number_of_decimals = Math.log10(Math.abs(nmax))
                 var min_number_of_decimals = Math.log10(Math.abs(nmin))
-                var nice_log = nice_min_max_steps(min_number_of_decimals, max_number_of_decimals, max_number_of_labels)
+                var nice_log = nice_min_max_steps(min_number_of_decimals, max_number_of_decimals, max_number_of_labels, "log")
                 nmax = Math.pow(10, nice_log.max)
                 nmin = Math.pow(10, nice_log.min)
                 if (this.useCustomScale) {
