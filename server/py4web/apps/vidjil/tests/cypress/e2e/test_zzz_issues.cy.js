@@ -15,7 +15,6 @@ describe("Test specific bugs", function () {
     cy.get("#upload_sample_form > :nth-child(1)")
       .should("contain", "Add samples")
       .click();
-    cy.wait("@getActivities");
 
     cy.get("#jstree_field_1_0").click();
     cy.get(".jstree-anchor").contains(filename1).click({ force: true });
@@ -151,10 +150,7 @@ describe("Test specific bugs", function () {
     let uuidPatient = Date.now();
 
     cy.goToPatientPage();
-    cy.get("#db_filter_input")
-      .type("fn " + uuidPatient + " 2000-01-02")
-      .type("{enter}");
-    cy.wait(["@postAllSampleSets", "@getActivities"]);
+    cy.dbPageFilter("fn " + uuidPatient + " 2000-01-02");
 
     // patient don't exist for the moment, no empty db table, no tbody present
     cy.get("#db_table_container").find("tbody").should("not.exist");
@@ -163,17 +159,11 @@ describe("Test specific bugs", function () {
 
     // patient now exists, so a line in table is present, so tbody exist
     cy.goToPatientPage();
-    cy.get("#db_filter_input")
-      .type("fn " + uuidPatient + " 2000-01-02")
-      .type("{enter}");
-    cy.wait(["@postAllSampleSets", "@getActivities"]);
+    cy.dbPageFilter("fn " + uuidPatient + " 2000-01-02");
     cy.get("#db_table_container").find("tbody").should("exist");
 
     // Bad birth date, so should be empty
-    cy.get("#db_filter_input")
-      .type("fn " + uuidPatient + " 2000-01-03")
-      .type("{enter}");
-    cy.wait(["@postAllSampleSets", "@getActivities"]);
+    cy.dbPageFilter("fn " + uuidPatient + " 2000-01-03");
     cy.get("#db_table_container").find("tbody").should("not.exist");
   });
 });

@@ -75,16 +75,18 @@ describe("Manipulate patient, sample and launch analysis", function () {
     const initialFilterNumberJohn_return = cy.getTableLength("#db_table_container");
     cy.dbPageFilter("first_name:john");
     const initialFilterNumberFirstNameJohn_return = cy.getTableLength("#db_table_container");
+    cy.dbPageFilter("id:john");
+    const initialFilterNumberIdJohn_return = cy.getTableLength("#db_table_container");
 
     // Create, edit patients
-    var id = "";
+    var emptyId = "";
     var first_name = "fn";
     var last_name = "ln";
     var birthday = "";
     var patient_information = "cy";
     var group = "public";
     cy.createPatient(
-      id,
+      emptyId,
       first_name + "1",
       last_name + "1",
       birthday,
@@ -93,7 +95,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).as("patient1");
     const patient1_display_name = last_name + "1" + " " + first_name + "1";
     cy.createPatient(
-      id,
+      emptyId,
       first_name + "2",
       last_name + "2",
       birthday,
@@ -101,7 +103,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
       group
     );
     cy.createPatient(
-      id,
+      emptyId,
       first_name + "3",
       last_name + "3",
       birthday,
@@ -110,7 +112,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).then((uid) => {
       cy.editPatient(
         uid,
-        id,
+        emptyId,
         first_name + "4",
         last_name + "4",
         birthday,
@@ -119,7 +121,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
     });
 
     cy.createPatient(
-      id,
+      emptyId,
       "John",
       "Peter",
       birthday,
@@ -127,9 +129,17 @@ describe("Manipulate patient, sample and launch analysis", function () {
       group
     );
     cy.createPatient(
-      id,
+      emptyId,
       "peter",
       "john",
+      birthday,
+      patient_information,
+      group
+    );
+    cy.createPatient(
+      "john",
+      "peter",
+      "peter",
       birthday,
       patient_information,
       group
@@ -139,15 +149,19 @@ describe("Manipulate patient, sample and launch analysis", function () {
     cy.goToPatientPage();
     cy.dbPageFilter("john");
     initialFilterNumberJohn_return.then((initialFilterNumberJohn) => {
-      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberJohn + 2);
+      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberJohn + 3);
     })
     cy.dbPageFilter("first_name:john");
     initialFilterNumberFirstNameJohn_return.then((initialFilterNumberFirstNameJohn) => {
       cy.getTableLength("#db_table_container").should("eq", initialFilterNumberFirstNameJohn + 1);
     })
+    cy.dbPageFilter("id:john");
+    initialFilterNumberIdJohn_return.then((initialFilterNumberIdJohn) => {
+      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberIdJohn + 1);
+    })
 
     // Create run
-    cy.createRun(id, "run", "2023-01-01", "cy", group);
+    cy.createRun(emptyId, "run", "2023-01-01", "cy", group);
 
     // Add samples and multi-samples with association
     const no_preprocess = undefined;
@@ -283,9 +297,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
   });
 
   it("04-Sets and samples with tags", function () {
-    cy.goToPatientPage();
-
-    // Add a patient with some with tags
+    // Add patients with some with tags
     const id = "";
     const first_name = "ft";
     const last_name = "lt";
@@ -303,8 +315,10 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).then((patient_id) => {
       // Get initial number
       cy.goToPatientPage();
+      cy.clearInterceptList("@getActivities");
+      cy.clearInterceptList("@postAllSampleSets");
       cy.get(
-        `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(4) > span > a`
+        `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(5) > span > a`
       )
         .should("exist")
         .should("have.attr", "data-linkable-name", "#t1")
@@ -333,6 +347,8 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).then((patient_id) => {
       initialFilterNumber_return.then((initialFilterNumber) => {
         // From inside the patient
+        cy.clearInterceptList("@getActivities");
+        cy.clearInterceptList("@postAllSampleSets");
         cy.get(".tag-link") // works only if one tag available
           .should("contain", "#t1")
           .click();
@@ -344,8 +360,10 @@ describe("Manipulate patient, sample and launch analysis", function () {
 
         // From the patients page
         cy.goToPatientPage();
+        cy.clearInterceptList("@getActivities");
+        cy.clearInterceptList("@postAllSampleSets");
         cy.get(
-          `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(4) > span > a`
+          `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(5) > span > a`
         )
           .should("exist")
           .should("have.attr", "data-linkable-name", "#t1")

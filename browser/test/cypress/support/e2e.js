@@ -107,6 +107,8 @@ beforeEach(() => {
     // cy.initTestDb(Cypress.env("host"));
     cy.visitpage(Cypress.env("host"));
     cy.closeFlashAll();
+    cy.clearInterceptList("@getActivities");
+    cy.clearInterceptList("@postAllSampleSets");
   }
 });
 

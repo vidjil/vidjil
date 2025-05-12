@@ -86,6 +86,7 @@ class Patient(SampleSet):
     FIRST_NAME_FILTER = "first_name:"
     LAST_NAME_FILTER = "last_name:"
     BIRTH_DATE_FILTER = "birth:"
+    ID_FILTER = "id:"
 
     def __init__(self, type):
         super(Patient, self).__init__(type)
@@ -95,7 +96,18 @@ class Patient(SampleSet):
     def get_fields(self):
         fields = super(Patient, self).get_fields()
         fields.insert(
-            1,
+            0,
+            {
+                "name": "Id",
+                "sort": "id_label",
+                "call": self.get_id_label_string,
+                "sort_call": self.get_id_label,
+                "width": "80px",
+                "public": True,
+            },
+        )
+        fields.insert(
+            2,
             {
                 "name": "Birth date",
                 "sort": "birth",
@@ -144,8 +156,26 @@ class Patient(SampleSet):
     def get_birth(self, data):
         return "%s" % str(data["birth"]) if data["birth"] is not None else ""
 
+    def get_id_label(self, data):
+        id_label = data["id_label"]
+        if id_label is None:
+            id_label = ""
+        return id_label
+
+    def get_id_label_string(self, data):
+        id_label = self.get_id_label(data)
+        return SPAN(id_label, _title=id_label)
+
     def filter(self, filter_str, data):
-        keys = ["last_name", "first_name", "confs", "groups", "birth", "info"]
+        keys = [
+            "id_label",
+            "last_name",
+            "first_name",
+            "confs",
+            "groups",
+            "birth",
+            "info",
+        ]
         self.create_filter_string(data, keys)
         return filter(
             lambda row: vidjil_utils.advanced_filter(row["string"], filter_str), data
@@ -153,11 +183,7 @@ class Patient(SampleSet):
 
     def get_info_dict(self, data):
         name = self.get_display_name(data)
-
-        label = data["id_label"]
-        if data["id_label"] is None:
-            label = ""
-
+        label = self.get_id_label(data)
         return dict(
             name=name,
             filename=self.get_name(data),
@@ -197,11 +223,12 @@ class Patient(SampleSet):
             table.first_name.with_alias("first_name"),
             table.last_name.with_alias("last_name"),
             table.birth.with_alias("birth"),
+            table.id_label.with_alias("id_label"),
         ]
 
     def get_dedicated_group(self):
         table = self.db[self.type]
-        return [table.first_name, table.last_name, table.birth]
+        return [table.first_name, table.last_name, table.birth, table.id_label]
 
     def get_filtered_fields(self, search: str):
         search_array = search.split()
@@ -217,11 +244,15 @@ class Patient(SampleSet):
             elif sub_search.startswith(Patient.BIRTH_DATE_FILTER):
                 sub_search = sub_search[len(Patient.BIRTH_DATE_FILTER) :]
                 queries.append(table.birth.like(sub_search))
+            elif sub_search.startswith(Patient.ID_FILTER):
+                sub_search = sub_search[len(Patient.ID_FILTER) :]
+                queries.append(table.id_label.contains(sub_search))
             else:
                 queries.append(
                     table.birth.like(sub_search)
                     | table.first_name.contains(sub_search)
                     | table.last_name.contains(sub_search)
+                    | table.id_label.contains(sub_search)
                 )
         query = None
         for sub_query in queries:
@@ -243,12 +274,14 @@ class Patient(SampleSet):
             Patient.FIRST_NAME_FILTER,
             Patient.LAST_NAME_FILTER,
             Patient.BIRTH_DATE_FILTER,
+            Patient.ID_FILTER,
         ]
 
 
 class Run(SampleSet):
     NAME_FILTER = "name:"
     DATE_FILTER = "date:"
+    ID_FILTER = "id:"
 
     def __init__(self, type):
         super(Run, self).__init__(type)
@@ -258,7 +291,18 @@ class Run(SampleSet):
     def get_fields(self):
         fields = super(Run, self).get_fields()
         fields.insert(
-            1,
+            0,
+            {
+                "name": "Id",
+                "sort": "id_label",
+                "call": self.get_id_label_string,
+                "sort_call": self.get_id_label,
+                "width": "80px",
+                "public": True,
+            },
+        )
+        fields.insert(
+            2,
             {
                 "name": "Run date",
                 "sort": "run_date",
@@ -301,8 +345,18 @@ class Run(SampleSet):
     def get_run_date(self, data):
         return "%s" % str(data["run_date"]) if data["run_date"] is not None else ""
 
+    def get_id_label(self, data):
+        id_label = data["id_label"]
+        if id_label is None:
+            id_label = ""
+        return id_label
+
+    def get_id_label_string(self, data):
+        id_label = self.get_id_label(data)
+        return SPAN(id_label, _title=id_label)
+
     def filter(self, filter_str, data):
-        keys = ["name", "confs", "groups", "run_date", "info"]
+        keys = ["id_label", "name", "confs", "groups", "run_date", "info"]
         self.create_filter_string(data, keys)
         return filter(
             lambda row: vidjil_utils.advanced_filter(row["string"], filter_str), data
@@ -347,11 +401,12 @@ class Run(SampleSet):
         return [
             table.name.with_alias("name"),
             table.run_date.with_alias("run_date"),
+            table.id_label.with_alias("id_label"),
         ]
 
     def get_dedicated_group(self):
         table = self.db[self.type]
-        return [table.name]
+        return [table.name, table.id_label]
 
     def get_filtered_fields(self, search: str):
         search_array = search.split()
@@ -364,9 +419,14 @@ class Run(SampleSet):
             elif sub_search.startswith(Run.DATE_FILTER):
                 sub_search = sub_search[len(Run.DATE_FILTER) :]
                 queries.append(table.run_date.like(sub_search))
+            elif sub_search.startswith(Run.ID_FILTER):
+                sub_search = sub_search[len(Run.ID_FILTER) :]
+                queries.append(table.id_label.contains(sub_search))
             else:
                 queries.append(
-                    table.run_date.like(sub_search) | table.name.contains(sub_search)
+                    table.run_date.like(sub_search)
+                    | table.name.contains(sub_search)
+                    | table.id_label.contains(sub_search)
                 )
         query = None
         for sub_query in queries:
@@ -377,7 +437,11 @@ class Run(SampleSet):
         return query
 
     def get_filter_strings(self) -> List[str]:
-        return [Run.NAME_FILTER, Run.DATE_FILTER]
+        return [
+            Run.NAME_FILTER,
+            Run.DATE_FILTER,
+            Run.ID_FILTER,
+        ]
 
 
 class FactoryEnum(Enum):

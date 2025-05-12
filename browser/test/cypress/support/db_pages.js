@@ -55,13 +55,15 @@ Cypress.Commands.add("isDbPageVisible", () => {
 Cypress.Commands.add("openDBPage", () => {
   cy.isDbPageVisible().then((val) => {
     if (val == false) {
+      cy.clearInterceptList("@getActivities");
+      cy.clearInterceptList("@postAllSampleSets");
       cy.get("#db_menu div")
         .first()
         .invoke("show")
         .contains("open list")
         .should("be.visible")
         .click({ force: true });
-      cy.wait("@getActivities");
+      cy.wait(["@postAllSampleSets", "@getActivities"]);
 
       cy.get('[data-cy="db_div"]').should("be.visible");
     }
@@ -91,6 +93,8 @@ Cypress.Commands.add("goToTokenPage", (token) => {
   cy.log("goToTokenPage " + token);
 
   cy.openDBPage().then(() => {
+    cy.clearInterceptList("@getActivities");
+    cy.clearInterceptList("@postAllSampleSets");
     cy.get("#db_menu > ." + token + "_token")
       .contains("" + token + "s")
       .click({ force: true });
@@ -440,7 +444,6 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples, click_submit = true, exp
 
   var pos_sample = 0;
   array_samples.forEach((sample, index) => {
-    cy.log(`multiSamplesAdd; iter ${pos_sample}; index ${index}; ${sample}`);
     const preprocess = sample[0];
     const storage = sample[1];
     const filename1 = sample[2];
@@ -465,9 +468,9 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples, click_submit = true, exp
 
   if (click_submit == true) {
     cy.get("#submit_samples_btn").click();
-    cy.wait("@getActivities");
     if (typeof expected_flash_message === 'undefined') {
       // No error message expected, check the samples were correctly added
+      cy.wait("@getActivities");
       cy.get("#db_table_container")
         .find("tbody")
         .find("tr")
@@ -479,7 +482,6 @@ Cypress.Commands.add("multiSamplesAdd", (array_samples, click_submit = true, exp
           array_samples.reverse().forEach((sample, index) => {
             // Get current id for given sample
             var current_id = last_id - index;
-            cy.log(`Sample number: ${current_id}`);
             sample_ids.push(current_id);
 
             // Control values
@@ -562,9 +564,6 @@ Cypress.Commands.add(
     common_set,
     expected_r1_r2_message = undefined,
   ) => {
-    cy.log(
-      `iter: ${iter}\n preprocess: ${preprocess}\n storage: ${storage}\n filename1: ${filename1}\n filename2: ${filename2}\n sampling_date: ${sampling_date}\n info: ${info}\n common_set: ${common_set}\n expected_r1_r2_message: ${expected_r1_r2_message}`
-    );
     if (iter > 0) {
       // Create a new sample line
       cy.createNewSampleLine(iter);
@@ -817,7 +816,7 @@ Cypress.Commands.add("deleteSet", (set_type, set_id, name) => {
  */
 Cypress.Commands.add(
   "waitAnalysisCompleted",
-  (config_id, sequence_file_id, start, nb_retry = 120, iter = 0) => {
+  (config_id, sequence_file_id, start, nb_retry = 600, iter = 0) => {
     if (start == undefined) {
       var start = new Date().getTime();
     }
@@ -828,6 +827,7 @@ Cypress.Commands.add(
       } seconds elapsed`
     );
 
+    cy.clearInterceptList("@getActivities")
     cy.get("#db_reload").click();
     cy.wait("@getActivities");
 
@@ -902,13 +902,29 @@ Cypress.Commands.add("openAnalysisFromDbPage", (sample_set_id, config_id) => {
  * Open an analysis by direct link inside set page
  */
 Cypress.Commands.add("openAnalysisFromSetPage", (sample_set_id, config_id) => {
-  cy.get(`#result_sample_set_id_${sample_set_id}_config_${config_id}`)
-    .should("exist")
-    .click({ force: true });
-  cy.update_icon();
+  // Wait for element to appear if not appeared yet
+  const ifElementExists = (selector, attempt = 0) => {
+    if (attempt === 100) return null
+    if (Cypress.$(selector).length === 0) {
+      cy.wait(100, {log:false})
+        .then(() => {
+          cy.clearInterceptList("@getActivities")
+          cy.get("#db_reload").click();
+          cy.wait("@getActivities");
+          ifElementExists(selector, ++attempt)
+        })
+    }
+    return cy.get(selector, {log:false})
+  };
+
+  ifElementExists(`#result_sample_set_id_${sample_set_id}_config_${config_id}`).then($el => {
+    $el.trigger("click")
+  });
 });
 
 Cypress.Commands.add("dbPageFilter", (value) => {
+  cy.clearInterceptList("@getActivities");
+  cy.clearInterceptList("@postAllSampleSets");
   cy.get("#db_filter_input")
     .should("exist")
     .clear()
