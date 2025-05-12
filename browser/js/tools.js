@@ -646,7 +646,7 @@ function discard_float_approximation(float) {
  * nice_min_max_steps(0, 7, 4) -> {min: 0, max:8, step: 2}
  **/
 
-function nice_min_max_steps(min, max, nb_max_steps)
+function nice_min_max_steps(min, max, nb_max_steps, mode)
 {
     if (min == max)
     {
@@ -661,6 +661,9 @@ function nice_min_max_steps(min, max, nb_max_steps)
     var n_max = nice_ceil(max, basic_step)
 
     var step = nice_1_2_5_ceil((n_max - n_min) / nb_max_steps)
+    if (mode == "log" && step < 1){
+        step = 1
+    }
     var nb_steps = Math.ceil(discard_float_approximation((n_max - n_min) / step))
 
     // In some rare cases, we try another loop of rounding
@@ -698,6 +701,28 @@ function nice_number_digits(x, sd)
     }
 }
 
+/**
+ * 
+ * @param {float} x Value to display nicely
+ * @param {*} precision Precision to use. use -1 to force exponential value; under 6, return x.toFiuxed, and under, compute exponential precision
+ * @returns X value nicely displayed to be print in scale ticks
+ */
+function nice_display(x, precision)
+{
+    if (precision == -1) {
+        return x.toExponential()
+    } else if (precision <= 6) {
+        return x.toFixed(precision)
+    } else {
+        if (x<=0) {
+            exponential_precision = 0
+        } else {
+            var number_of_decimals = -1*Math.floor(Math.log10(x))
+            exponential_precision = Math.max(0, precision-number_of_decimals)
+        }
+        return x.toExponential(exponential_precision)
+    }
+}
 
 /**
  * Sends error to the specified database reference.

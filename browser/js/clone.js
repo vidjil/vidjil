@@ -95,6 +95,7 @@ function Clone(data, model, index, attributes) {
     this.m.clones[index]=this
     this.tag = this.getTag();
 
+
     // .warn, client computed warnings
     this.computeWarnings()
 }
@@ -145,8 +146,8 @@ Clone.prototype = {
         if (this.getCoverage() < this.COVERAGE_WARN)
             this.warn.push({'code': 'W51', 'level': warnLevels[WARN], 'msg': 'Low coverage (' + this.coverage.toFixed(3) + ')'}) ;
 
-        if (typeof(this.getEValue()) != 'undefined' && this.eValue > this.EVALUE_WARN)
-            this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.eValue + ')' });
+        if (this.getEValue() != undefined && this.getEValue() > this.EVALUE_WARN)
+            this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.getEValue() + ')' });
     },
 
     /**
@@ -1167,16 +1168,32 @@ Clone.prototype = {
         return true
     },
 
-    getEValue: function () {
-        if (this.eValue) return this.eValue
+    getEValue: function (type) {
+        e = undefined
+        switch (type) {
+            case "evalue_left" :
+                if (this.seg != undefined && this.seg.evalue_left != undefined){
+                    e = this.seg.evalue_left;
+                }
+                break;
+            case "evalue_right" :
+                if (this.seg != undefined && this.seg.evalue_right != undefined){
+                    e = this.seg.evalue_right;
+                }
+                break;
+            default :
+            if (this.seg != undefined && this.seg.evalue != undefined){
+                    e = this.seg.evalue;
+                }
+        }
 
-        var e = this.seg.evalue;
-        if (typeof(e) != 'undefined')
-            this.eValue = parseFloat(e.val)
-        else
-            this.eValue = undefined
+        if (e != undefined){
+            // Evalue can be direct float values as hash {"val": value}
+            if (typeof(e) == "object" && e.val != undefined){ e = e.val }
+            e = parseFloat(e)
+        } 
 
-        return this.eValue
+        return e
     },
 
     getGene: function (type, withAllele) {
@@ -1583,9 +1600,9 @@ Clone.prototype = {
         this.seg[segment].stop  = 0
 
         // TODO : insert real value for stats (start, end, evalue, ...)
-        this.seg.evalue       = 0
-        this.seg.evalue_left  = 0
-        this.seg.evalue_right = 0
+        this.seg.evalue       = {"val": undefined}
+        this.seg.evalue_left  = {"val": undefined}
+        this.seg.evalue_right = {"val": undefined}
         this.m.analysisHasChanged = true;
         this.segEdited = true;
         this.m.update();
@@ -1738,9 +1755,9 @@ Clone.prototype = {
         if (typeof this.getEValue() != 'undefined') {
             html += row_1("e-value",
                           "<span " +
-                          (this.eValue > this.EVALUE_WARN ? "class='warning'" : "") +
+                          (this.getEValue() > this.EVALUE_WARN ? "class='warning'" : "") +
                           ">" +
-                          this.eValue + "</span>", undefined, time_length, undefined, undefined, undefined)
+                          this.getEValue() + "</span>", undefined, time_length, undefined, undefined, undefined)
         }
 
         // abundance info

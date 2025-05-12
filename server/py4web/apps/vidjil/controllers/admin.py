@@ -104,7 +104,7 @@ def showlog():
         return json.dumps(res, separators=(",", ":"))
 
     lines = []
-    file = open(settings.DIR_LOG + request.query["file"])
+    file = open(settings.DIR_LOG + request.query["file"], encoding='utf-8')
     log_format = request.query["format"] if "format" in request.query else ""
 
     if log_format == "raw":
@@ -202,7 +202,7 @@ def _backup_database(stream):
 
 def make_backup():
     if auth.is_admin():
-        _backup_database(open(settings.DB_BACKUP_FILE, "wb"))
+        _backup_database(open(settings.DB_BACKUP_FILE, "wb", encoding='utf-8'))
 
         res = {
             "success": "true",
@@ -214,7 +214,7 @@ def make_backup():
 
 def load_backup():
     if auth.is_admin():
-        db.import_from_csv_file(open(settings.DB_BACKUP_FILE, "rb"))
+        db.import_from_csv_file(open(settings.DB_BACKUP_FILE, "rb", encoding='utf-8'))
 
 
 def repair():

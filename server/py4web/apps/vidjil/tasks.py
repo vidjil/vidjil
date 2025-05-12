@@ -210,7 +210,7 @@ def run_vidjil(
         if sequence_file.pre_process_file:
             # reads json preprocess file to get number of reads
             preprocess_data = json.load(
-                open(settings.DIR_RESULTS + "/" + sequence_file.pre_process_file)
+                open(settings.DIR_RESULTS + "/" + sequence_file.pre_process_file, encoding='utf-8')
             )
             if (
                 "pre_process" in preprocess_data
@@ -246,7 +246,7 @@ def run_vidjil(
             log.info("========================")
             sys.stdout.flush()
 
-            with open(out_log, "w") as vidjil_log_file:
+            with open(out_log, "w", encoding='utf-8') as vidjil_log_file:
                 p = Popen(
                     cmd,
                     shell=True,
@@ -302,7 +302,7 @@ def run_vidjil(
                     break
 
         # Insert in database
-        with open(results_filepath, "rb") as stream:
+        with open(results_filepath, "rb", encoding='utf-8') as stream:
             ts = time.time()
             db.results_file[id_data].update_record(
                 run_date=datetime.datetime.fromtimestamp(ts).strftime(
@@ -361,7 +361,7 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
         log.info("========================")
         sys.stdout.flush()
 
-        with open(out_log, "w") as log_file:
+        with open(out_log, "w", encoding='utf-8') as log_file:
             p = Popen(
                 cmd,
                 shell=True,
@@ -388,18 +388,18 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
         raise
 
     original_name = row[0].data_file
-    with open(results_filepath, "r") as json_file:
+    with open(results_filepath, "r", encoding='utf-8') as json_file:
         my_json = json.load(json_file)
         fill_field(my_json, original_name, "original_names", "samples")
         fill_field(my_json, cmd, "commandline", "samples")
 
     # TODO fix this dirty hack to get around bad file descriptor error
-    new_file = open(results_filepath, "w")
+    new_file = open(results_filepath, "w", encoding='utf-8')
     json.dump(my_json, new_file)
     new_file.close()
 
     # insertion dans la base de donnée
-    with open(results_filepath, "rb") as stream:
+    with open(results_filepath, "rb", encoding='utf-8') as stream:
         ts = time.time()
         db.results_file[id_data].update_record(
             status="ready",
@@ -500,7 +500,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         log.info("========================")
         sys.stdout.flush()
 
-        with open(out_log, "w") as log_file:
+        with open(out_log, "w", encoding='utf-8') as log_file:
             p = Popen(
                 cmd,
                 shell=True,
@@ -531,7 +531,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     reports = align_report + assembly_report
     original_name = row[0].data_file
     totalReads = extract_total_reads(assembly_report)
-    with open(results_filepath, "r") as json_file:
+    with open(results_filepath, "r", encoding='utf-8') as json_file:
         my_json = json.load(json_file)
         fill_field(my_json, reports, "log", "samples", True)
         fill_field(my_json, original_name, "original_names", "samples")
@@ -539,11 +539,11 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         fill_field(my_json, totalReads, "total", "reads")
 
     # TODO fix this dirty hack to get around bad file descriptor error
-    with open(results_filepath, "w") as new_file:
+    with open(results_filepath, "w", encoding='utf-8') as new_file:
         json.dump(my_json, new_file)
 
     # insertion dans la base de donnée
-    with open(results_filepath, "rb") as stream:
+    with open(results_filepath, "rb", encoding='utf-8') as stream:
         ts = time.time()
         db.results_file[id_data].update_record(
             status="ready",
@@ -598,7 +598,7 @@ def run_copy(
             raise IOError(results_filepath)
 
         # insertion dans la base de donnée
-        with open(results_filepath, "rb") as stream:
+        with open(results_filepath, "rb", encoding='utf-8') as stream:
             ts = time.time()
             db.results_file[id_data].update_record(
                 status="ready",
@@ -717,7 +717,7 @@ def run_fuse(
             sys.stdout.flush()
 
             fuse_log_file_path = out_folder + "/" + output_filename + ".fuse.log"
-            with open(fuse_log_file_path, "w") as fuse_log_file:
+            with open(fuse_log_file_path, "w", encoding='utf-8') as fuse_log_file:
                 p = Popen(
                     cmd,
                     shell=True,
@@ -753,7 +753,7 @@ def run_fuse(
             )
             db.commit()
 
-        with open(fuse_filepath, "rb") as stream:
+        with open(fuse_filepath, "rb", encoding='utf-8') as stream:
             ts = time.time()
             db.fused_file[id_fuse].update_record(
                 fuse_date=datetime.datetime.fromtimestamp(ts).strftime(
@@ -830,7 +830,7 @@ def custom_fuse(file_list):
         )
         fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
 
-        with open(fuse_filepath, "rb") as fuse_file:
+        with open(fuse_filepath, "rb", encoding='utf-8') as fuse_file:
             data = json.loads(fuse_file.read())
     except:
         res = {"message": "'custom fuse' -> IOError"}
@@ -943,7 +943,7 @@ def run_pre_process(
         log.info("===============")
         sys.stdout.flush()
 
-        with open(out_log, "w") as log_file:
+        with open(out_log, "w", encoding='utf-8') as log_file:
             completed_process = subprocess.run(
                 cmd,
                 shell=True,
@@ -963,11 +963,11 @@ def run_pre_process(
         # We forget the initial data_file (and possibly data_file2)
         pre_process_filepath = "%s/pre_process.vidjil" % out_folder
         try:
-            pre_process_output = open(pre_process_filepath, "rb")
+            pre_process_output = open(pre_process_filepath, "rb", encoding='utf-8')
         except FileNotFoundError:
             pre_process_output = None
         new_size = os.path.getsize(filepath)
-        with open(filepath, "rb") as stream:
+        with open(filepath, "rb", encoding='utf-8') as stream:
             db.sequence_file[sequence_file_id].update_record(
                 data_file=stream,
                 size_file=new_size,
@@ -1141,7 +1141,7 @@ def compute_extra(id_file, id_config, min_threshold):
     )
 
     filename = pathlib.Path(settings.DIR_RESULTS, results_file.data_file)
-    with open(filename, "rb") as file:
+    with open(filename, "rb", encoding='utf-8') as file:
         try:
             data = json.load(file)
             loci_min = {}
@@ -1167,7 +1167,7 @@ def compute_extra(id_file, id_config, min_threshold):
             return "FAIL"
 
     data["reads"]["distribution"] = result
-    with open(filename, "w") as extra_file:
+    with open(filename, "w", encoding='utf-8') as extra_file:
         json.dump(data, extra_file)
     return "SUCCESS"
 
@@ -1199,7 +1199,7 @@ def set_tasks_status_for_sequence_file(sequence_file_id: int, status: str):
 
 def get_file_content(filename):
     content = ""
-    with open(filename, "rb") as my_file:
+    with open(filename, "rb", encoding='utf-8') as my_file:
         content = my_file.read()
     return content
 

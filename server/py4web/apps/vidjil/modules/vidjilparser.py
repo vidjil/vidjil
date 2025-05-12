@@ -103,7 +103,7 @@ class VidjilFileWriter(VidjilWriter):
         self.file = None
 
     def __enter__(self):
-        self.file = open(self._filepath, "wb")
+        self.file = open(self._filepath, "wb", encoding='utf-8')
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -146,14 +146,14 @@ class VidjilParser(object):
         self.prefixes = []
 
     def initModel(self, model_path):
-        with open(model_path, "rb") as model:
+        with open(model_path, "rb", encoding='utf-8') as model:
             parser = ijson.parse(model)
             for prefix, event, value in parser:
                 if (prefix, event) not in self._model_prefixes:
                     self._model_prefixes.append((prefix, event))
 
     def validate(self, filepath):
-        with open(filepath, "rb") as vfile:
+        with open(filepath, "rb", encoding='utf-8') as vfile:
             parser = ijson.parse(vfile)
             model = list(self._model_prefixes)
             for prefix, event, value in parser:
@@ -175,7 +175,7 @@ class VidjilParser(object):
         self._writer.purgeBuffer()
 
     def extract(self, filepath):
-        vidjilfile = open(filepath, "rb")
+        vidjilfile = open(filepath, "rb", encoding='utf-8')
         parser = ijson.parse(vidjilfile)
         with self.writer() as writer:
             return self._extract(parser, writer)
