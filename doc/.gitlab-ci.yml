@@ -4,7 +4,6 @@ build_doc:
   stage: build_doc
   before_script:
     - pip install -r doc/requirements.txt
-    - pip install requests
   script:
     - make -C doc html
     - cd tools; python validate-links.py
