@@ -1144,7 +1144,7 @@ def compute_extra(id_file, id_config, min_threshold):
     )
 
     filename = pathlib.Path(settings.DIR_RESULTS, results_file.data_file)
-    with open(filename, "rb", encoding="utf-8") as file:
+    with open(filename, "rb") as file:
         try:
             data = json.load(file)
             loci_min = {}
@@ -1202,7 +1202,7 @@ def set_tasks_status_for_sequence_file(sequence_file_id: int, status: str):
 
 def get_file_content(filename):
     content = ""
-    with open(filename, "rb", encoding="utf-8") as my_file:
+    with open(filename, "rb") as my_file:
         content = my_file.read()
     return content
 
