@@ -9,7 +9,7 @@ import settings
 def fuse(cmd, output_dir, filename):
     print(f"Start fuse with command {cmd}")
 
-    fuse_log_file = open(f"{output_dir}/{filename}.fuse.log", "w", encoding='utf-8')
+    fuse_log_file = open(f"{output_dir}/{filename}.fuse.log", "w", encoding="utf-8")
     output_file = output_dir + "/" + filename + ".fused"
 
     # Start fuse

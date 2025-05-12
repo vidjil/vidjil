@@ -170,7 +170,7 @@ def init_from_csv():
         log.info(res)
 
         try:
-            db.import_from_csv_file(open(settings.DB_BACKUP_FILE, "rb", encoding='utf-8'))
+            db.import_from_csv_file(open(settings.DB_BACKUP_FILE, "rb"))
             # db.scheduler_task.truncate()
             # db.scheduler_run.truncate()
         except Exception as e:
@@ -467,7 +467,7 @@ def get_data():
         error += "file not found"
 
     if error == "":
-        f = open(fused_file, "r", encoding='utf-8')
+        f = open(fused_file, "r", encoding="utf-8")
         data = json.loads(f.read())
         f.close()
 

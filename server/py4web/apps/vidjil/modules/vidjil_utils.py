@@ -266,9 +266,9 @@ def put_properties_in_dict(src_dict, dest_dict, properties):
 def search_first_regex_in_file(regex, filename, max_nb_line=None):
     try:
         if max_nb_line is None:
-            results = open(filename, encoding='utf-8').readlines()
+            results = open(filename, encoding="utf-8").readlines()
         else:
-            results = open(filename, encoding='utf-8').readlines(max_nb_line)
+            results = open(filename, encoding="utf-8").readlines(max_nb_line)
     except IOError:
         results = []
 
@@ -417,9 +417,11 @@ def extract_fields_from_json(json_fields, pos_in_list, filename, max_bytes=None)
     """
     try:
         if max_bytes is None:
-            json_dict = json.loads(open(filename, encoding='utf-8').read())
+            json_dict = json.loads(open(filename, encoding="utf-8").read())
         else:
-            json_dict = json.loads(cleanup_json_sample(open(filename, encoding='utf-8').read(max_bytes)))
+            json_dict = json.loads(
+                cleanup_json_sample(open(filename, encoding="utf-8").read(max_bytes))
+            )
     except IOError:
         log.debug("JSON loading failed")
         json_dict = {}

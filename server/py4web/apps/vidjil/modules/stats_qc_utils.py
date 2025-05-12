@@ -265,7 +265,7 @@ def get_fused_stats(fuse):
     fuse_file_path = pathlib.Path(settings.DIR_RESULTS, fuse["fused_file_name"])
     fuse_results_files = fuse["results_files"]
     fused_stats = {}
-    with open(fuse_file_path, "r", encoding='utf-8') as fuse_file:
+    with open(fuse_file_path, "r", encoding="utf-8") as fuse_file:
         fuse_data = json.load(fuse_file)
         top_clones = fuse_data["clones"][: fuse_data["samples"]["number"]]
 
