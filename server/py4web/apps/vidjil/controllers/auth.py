@@ -105,9 +105,7 @@ def submit():
 @action.uses("auth/two_factor.html", db, cors, flash, auth, session)
 @vidjil_utils.jsontransformer
 def two_factor():
-    log.debug("two_factor begin")
     user_id = auth.session.get("auth.2fa_user")
-    log.debug(f"{user_id=}")
 
     if not user_id:
         res = {"redirect": "vidjil/auth/login"}
@@ -144,8 +142,8 @@ def submit_two_factor():
         }
         return json.dumps(res, separators=(",", ":"))
 
-    submitted_code = request.params["verification_code"]
-    code = auth.session.get("auth.2fa_code")
+    submitted_code = str(request.params["verification_code"])
+    code = str(auth.session.get("auth.2fa_code"))
 
     if submitted_code == code:
         # store user id session

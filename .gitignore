@@ -99,6 +99,8 @@ out/
 vidjil-algo
 vidjil-algo/
 
+venv/
+
 # Tests
 /cypress
 cypress.config.js

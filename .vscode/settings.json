@@ -3,6 +3,7 @@
     "python.testing.pytestArgs": [
         "server"
     ],
+    "python.testing.pytestPath": "./venv/bin/pytest",
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.analysis.extraPaths": [
