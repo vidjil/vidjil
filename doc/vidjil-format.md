@@ -54,7 +54,7 @@ or `clusters`, to further cluster some clones, see below).
          "number": 1, 
          "original_names": ["T8045-BC081-Diag.fastq"],
          "commandline": [
-            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 T8045-BC081-Diag.fastq"
+            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 Diag.fastq"
          ]
     },
 
@@ -114,8 +114,8 @@ do a correct gathering.
            "2019-12-27 17:50:04"
          ],
          "commandline": [
-            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 T8045-BC081-Diag.fastq",
-            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 T8045-BC082-fu1.fastq"
+            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 Diag.fastq",
+            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 FollowUp1.fastq"
          ], 
          "commandline_fuse": "fuse.py -o fused.vidjil -t 100 T8045-BC081-Diag.vidjil T8045-BC082-fu1.vidjil"
     },
@@ -214,8 +214,8 @@ do a correct gathering.
 }
 ```
 
-Note that we add a filed in samples part to keep trace of commandline used for fuse call. 
-This allow to get important info on pre-fuse/post-fuse called.
+Note that we add a field in samples part to keep trace of commandline used for fuse call. 
+This allows to get important info on pre-fuse/post-fuse called.
 
 #### `.vidjil` file - pre process data
 
