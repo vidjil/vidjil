@@ -1129,14 +1129,16 @@ Report.prototype = {
             {'label': "Filename:" , 'value' : this.m.dataFileName },
             {'label': "Updated on:" , 'value' : analysis_timestamp},
             {'label': "Software used:" , 'value' : this.m.getSoftVersion()},
-            {'label': "Analysis date:" , 'value' : "" }
         ]
 
-
         if (typeof this.m.db_key != "undefined" &&
-            typeof this.m.db_key.sample_set_id != "undefined"){
+            typeof this.m.db_key.sample_set_id != "undefined") {
             content.push({'label': "Server:"  , 'value' : window.location.hostname});
-            }
+        }
+
+        if ((typeof this.m.user != "undefined") && (this.m.user != "")) {
+            content.push({'label': "Report creator:" , 'value' : this.m.user });
+        }
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
         for ( var key in content ){

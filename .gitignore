@@ -44,6 +44,7 @@ browser/css/*.css
 browser/js/conf.js
 browser/js/germline.js
 browser/js/git-sha1.js
+browser/js/git-sha1.js.tmp
 
 data/Stanford_S22.fasta
 data/Stanford_S22.rc.fasta
@@ -104,12 +105,16 @@ cypress.config.js
 algo/tests/should-get-tests/out/*
 algo/tests/data/analysis-with-windows.analysis.formatted
 algo/tests/data/analysis-with-windows.analysis.new.new.formatted
+algo/tests/data/chimera-fake-VJ-trim.g
+algo/tests/data/Stanford_S22.fasta
+algo/tests/data/Stanford_S22.rc.fasta
 browser/test/cypress/fixtures
 browser/test/cypress/reports
 browser/test/cypress/screenshots
 browser/test/cypress/videos
 browser/test/cypress/logs
 browser/test/*.png
+browser/test/QUnit/tap_output
 browser/test/test/TEST*
 server/py4web/apps/vidjil/controllers/test_controller.py
 server/py4web/apps/vidjil/tests/cypress/logs/*

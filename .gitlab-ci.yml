@@ -202,14 +202,7 @@ test_browser_unit:
   image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION
   stage: test_unit
   script:
-    - npm -v
-    - npm install --save-dev qunit
-    - npm link nightmare --unsafe-perm=true ;
-    - apt-get update && apt-get -y install xvfb grep
-    - make demo data germline
-    - make -C browser sha1
-    - cp -p doc/analysis-example.vidjil browser/
-    - make unit_browser
+    - bash browser/test/unit_browser_test.sh
   artifacts:
     paths:
     - browser/

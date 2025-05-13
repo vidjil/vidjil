@@ -464,6 +464,10 @@ class TestDefaultController:
             assert result["patient_id"] == patient_id
             assert result["sample_set_id"] == sample_set_id
             assert result["config_name"] == db.config[config_id].name
+            assert (
+                result["user"]
+                == f"{db_manipulation_utils.get_indexed_user_first_name(1)} {db_manipulation_utils.get_indexed_user_last_name(1)}"
+            )
             assert result["reads"]["segmented"] == [742377, 0]
             assert result["reads"]["total"] == [786861, 200]
             assert result["samples"]["number"] == 2
