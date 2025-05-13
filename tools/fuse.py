@@ -512,7 +512,7 @@ class Samples:
         utils.concatenate_with_padding(obj.d,
                                  self.d, self.d['number'], 
                                  other.d, other.d['number'],
-                                 ['number', 'pre_process'],
+                                 ['number', 'pre_process', "commandline_fuse"],
                                  recursive=True)
         if "pre_process" in self.d.keys() or "pre_process" in other.d.keys():
             # init if needed
@@ -1937,8 +1937,10 @@ def main():
         # reload post processed file
         jlist_fused = ListWindows()
         jlist_fused.load(post_out_name, args.pipeline)
-        jlist_fused.build_stat()
         os.system("rm %s" % post_out_name)
+
+    # Export fuse commandline in data
+    jlist_fused.d["samples"].d["commandline_fuse"] = f"{' '.join(sys.argv)}"
 
     if args.export_airr:
         output = args.output.replace(".vidjil", ".airr")

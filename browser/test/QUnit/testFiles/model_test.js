@@ -107,8 +107,10 @@ QUnit.test("time control", function(assert) {
     assert.equal(m.getSoftVersionTime(), "ha", "getSoftVersionTime : Ok")
     assert.equal(m.getSoftVersionTime(2), "ho", "getSoftVersionTime : Ok")
     
-    assert.equal(m.getCommandTime(), "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ", "getCommandTime : Ok")
-    assert.equal(m.getCommandTime(2), "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Fu-2.fa ", "getCommandTime : Ok")
+    assert.equal(m.getCommandAlgoTime(), "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ", "getCommandAlgoTime : Ok")
+    assert.equal(m.getCommandAlgoTime(2), "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Fu-2.fa ", "getCommandAlgoTime : Ok")
+
+    assert.equal(m.getCommandFuse(), "fuse.py -o fused.vidjil -t 100 file1.vidjil file2.vidjil", "getCommandAlgoTime : Ok if data present")
 
     assert.equal(m.getTimestampTime(), "2015-10-20 13:59:02", "getTimestampTime : Ok")
     assert.equal(m.getTimestampTime(2), "2015-11-20 14:03:13", "getTimestampTime : Ok")
@@ -142,6 +144,18 @@ QUnit.test("time control", function(assert) {
 
     assert.equal(m.getStrTime(1, "delta_date"), "+5", "get day since diag")
     
+
+    // Tests values returned if keys are not present
+    var m = new Model();
+    m.parseJsonData(json_data)
+    delete m.samples.timestamp // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getSampleTime(2), "-", "getSampleTime : Ok if key not present")
+    delete m.samples.producer // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getSoftVersionTime(2), "-", "getSoftVersionTime : Ok if key not present")
+    delete m.samples.commandline // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getCommandAlgoTime(2), "-", "getCommandAlgoTime : Ok if key not present")
+    delete m.samples.commandline_fuse // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getCommandFuse(), "-", "getCommandAlgoTime : Ok if no value present")
 });
 
 
