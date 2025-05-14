@@ -5,7 +5,7 @@ import re
 import requests
 from py4web import action, request
 
-from ..common import cors
+from ..common import cors, log
 
 ##################################
 # HELPERS
@@ -41,8 +41,17 @@ def proxy_request(url, headers={}, handler=None):
 
         try:
             response = requests.post(url, headers=headers, data=forms, timeout=(3, 180))
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout as timeout_error:
+            log.error(f"Timeout when trying to contact the website: {timeout_error=}")
             return json.dumps("Timeout when trying to contact the website")
+        except requests.exceptions.SSLError as ssl_error:
+            log.error(f"SSL error when trying to contact the website: {ssl_error=}")
+            return json.dumps("SSL error when trying to contact the website")
+        except Exception as exception:
+            log.error(
+                f"Unexpected error when trying to contact the website: {exception=}"
+            )
+            return json.dumps("Unexpected error when trying to contact the website")
         if response.status_code == requests.codes.ok:
             if handler:
                 return handler(response)
@@ -56,10 +65,6 @@ def proxy_request(url, headers={}, handler=None):
 ##################################
 # CONTROLLERS
 ##################################
-@action("/vidjil/proxy/index", method=["POST", "GET"])
-@action.uses(cors)
-def index():
-    return json.dumps("index()")
 
 
 @action("/vidjil/proxy/imgt", method=["POST"])
