@@ -7,10 +7,15 @@
 <div>
     <h3>[[=message]]</h3>
     
-    Are you sure you want to delete this group</br>
+    You are about to delete group [[=group.role]] ([[=group.id]]).</br>
+    Its description is [[=group.description]].<br>
+    It currently contains [[=users_number]] user(s).<br>
+    <br>
+    Are you sure you want to delete group [[=group.role]] ?</br>
 
     <div class="center"> 
-        <button onclick="db.call('group/delete', {'id' :'[[=request.query["id"]]]'} )">continue</button>
+        <button onclick="db.call('group/delete', {'id' :'[[=request.query["id"]]]'} )">delete</button>
+        <button onclick="db.back();">cancel</button>
     </div>
 </div>
     
