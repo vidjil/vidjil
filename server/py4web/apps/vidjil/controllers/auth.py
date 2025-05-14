@@ -24,7 +24,7 @@ ACCESS_DENIED = "access denied"
 
 
 def prevent_open_redirect(url):
-    """url must be a valid absolute URL whithout schema"""
+    """url must be a valid absolute URL without schema"""
     if url and url[0] == "/" and "//" not in url:
         return url
     return None
@@ -53,6 +53,14 @@ def login():
 @action("/vidjil/auth/submit", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
 def submit():
+    if "login" not in request.params or "password" not in request.params:
+        res = {
+            "redirect": URL("vidjil/auth/login"),
+            "success": "false",
+            "message": "Missing required parameter",
+        }
+        return json.dumps(res, separators=(",", ":"))
+
     user, error = auth.login(request.params["login"], request.params["password"])
     if user:
         #  We will process two_factor if two_factor_send is defined and either
@@ -94,9 +102,10 @@ def submit():
 
     res = {
         "redirect": URL("default/home.html"),
-        "error": error,
         "user_id": user["id"] if user is not None else None,
         "user_email": user["email"] if user is not None else None,
+        "success": "true" if user is not None else "false",
+        "message": error,
     }
     return json.dumps(res, separators=(",", ":"))
 
@@ -196,6 +205,7 @@ def logout():
         )
         db.auth_event.insert(**auth_event_data)
 
+    auth.session.clear()
     session.clear()
     res = {"redirect": URL("default/home.html")}
     log.info("Logout")
@@ -207,7 +217,7 @@ def logout():
 @vidjil_utils.jsontransformer
 def register():
     # only authenticated admin user can access register view
-    if auth.user:
+    if auth.is_admin():
         return dict(message=T("Register new user"), auth=auth, db=db)
     else:
         # not authenticated users
@@ -218,7 +228,7 @@ def register():
 @action("/vidjil/auth/register_form", method=["POST", "GET"])
 @action.uses(db, auth)
 def register_form():
-    if not auth.user:
+    if not auth.is_admin():
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(",", ":"))

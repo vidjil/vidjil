@@ -95,8 +95,8 @@ class TestMetricsController(unittest.TestCase):
 
     def test_metrics_users(self):
         # Given
-        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
         db_manipulation_utils.add_user(self.session, "new", "user", USER_TEST, PWD_TEST)
+        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
 
         # When
         result = self.getMetricsByName("users_count")
@@ -331,7 +331,7 @@ class TestMetricsController(unittest.TestCase):
         config_id_1 = db_manipulation_utils.add_config(name="test_config_1")
         config_id_2 = db_manipulation_utils.add_config(name="test_config_2")
         config_id_3 = db_manipulation_utils.add_config(name="test_config_3")
-        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
+
         # Fill user 1
         sample_set_id = db_manipulation_utils.add_patient(1, 2)[1]
         sequence_file_id_1 = db_manipulation_utils.add_sequence_file(sample_set_id)
@@ -343,6 +343,8 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_results_file(sequence_file_id_3, config_id_1)
         db_manipulation_utils.add_results_file(sequence_file_id_3, config_id_2)
         db_manipulation_utils.add_results_file(sequence_file_id_3, config_id_3)
+
+        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
 
         # When
         result = self.getMetricsByName("config_analysis_by_users_patients")
@@ -405,6 +407,8 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_results_file(u2_sequence_file_id_3, config_id_3)
         db_manipulation_utils.add_results_file(u2_sequence_file_id_4, config_id_3)
 
+        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
+
         # When
         result_full = self.getMetricsByName("config_analysis_by_users_patients")
 
@@ -457,11 +461,11 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_config(name="test_config_1")
         db_manipulation_utils.add_config(name="test_config_2")
         db_manipulation_utils.add_config(name="test_config_3")
-        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
         # Fill user 1
         db_manipulation_utils.add_patient(1, 2)
         db_manipulation_utils.add_patient(2, 2)
         db_manipulation_utils.add_patient(3, 2)
+        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
         # When
         result = self.getMetricsByName("set_patients_by_group")
         # Then
@@ -482,6 +486,7 @@ class TestMetricsController(unittest.TestCase):
         db_manipulation_utils.add_patient(4, user_2_id)
         db_manipulation_utils.add_patient(5, user_2_id)
         db_manipulation_utils.add_patient(6, user_2_id)
+        db_manipulation_utils.log_in(self.session, "metrics@vidjil.org", "foobartest")
         # When
         result = self.getMetricsByName("set_patients_by_group")
         # Then

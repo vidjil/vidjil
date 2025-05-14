@@ -464,7 +464,6 @@ class TestPreProcessController(unittest.TestCase):
 
     def test_info_ok(self):
         # Given : Logged as user
-        db_manipulation_utils.log_in_as_default_admin(self.session)
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         sample_set_id = db_manipulation_utils.add_patient(1, user_id)[1]
         sequence_file_id = db_manipulation_utils.add_sequence_file(
@@ -481,6 +480,7 @@ class TestPreProcessController(unittest.TestCase):
         )
         directory1 = settings.DIR_PRE_VIDJIL_ID % sequence_file_id
         os.makedirs(directory1, exist_ok=True)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling info
         # Case 1; no log for this preprocess
@@ -699,13 +699,13 @@ class TestPreProcessController(unittest.TestCase):
 
     def test_change_permission_granted(self):
         # Given : a user and pre_process
-        db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
         user_group_id = auth.user_group(user_1_id)
         assert (
             auth.get_group_access("pre_process", pre_process_id, user_group_id) is False
         )
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling change_permission with no id in params
         with Omboddle(
@@ -728,10 +728,10 @@ class TestPreProcessController(unittest.TestCase):
 
     def test_change_permission_deleted(self):
         # Given : a user and pre_process
-        db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         pre_process_id = db_manipulation_utils.add_pre_process()
         user_group_id = auth.user_group(user_1_id)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         with Omboddle(
             self.session,
             keep_session=True,
