@@ -239,9 +239,22 @@ def edit_form():
 @action.uses("group/confirm.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def confirm():
-    if auth.can_modify_group(int(request.query["id"])):
-        return dict(message=T("confirm group deletion"), auth=auth, db=db)
-    return error_message(ACCESS_DENIED)
+    if "id" not in request.query:
+        return error_message("missing parameter")
+    group_id = int(request.query["id"])
+
+    if auth.can_modify_group(group_id):
+        group = db.auth_group[group_id]
+        users_number = db(db.auth_membership.group_id == group_id).count()
+        return dict(
+            message=T("Confirm group deletion"),
+            auth=auth,
+            db=db,
+            group=group,
+            users_number=users_number,
+        )
+    else:
+        return error_message(ACCESS_DENIED)
 
 
 # delete group

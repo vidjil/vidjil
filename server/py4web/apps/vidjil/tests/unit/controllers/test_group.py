@@ -383,6 +383,19 @@ class TestGroupController(unittest.TestCase):
         exception = context.exception
         assert exception.status == 303
 
+    def test_confirm_missing_id(self):
+        # Given : Logged as admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling confirm without providing an ID
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+            json_result = group_controller.confirm()
+
+        # Then : An error message is returned
+        result = json.loads(json_result)
+        assert result["success"] == "false"
+        assert result["message"] == "missing parameter"
+
     def test_confirm_no_rights(self):
         # Given : Logged as other user, and add corresponding config, ...
         db_manipulation_utils.add_indexed_user(self.session, 1)
@@ -403,28 +416,85 @@ class TestGroupController(unittest.TestCase):
         assert result["success"] == "false"
         assert result["message"] == group_controller.ACCESS_DENIED
 
-    def test_confirm_ok(self):
-        # Given : Logged as other user, and add corresponding config, ...
-        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+    def test_confirm_group_not_found(self):
+        # Given : Logged as admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling confirm with a non-existent group ID
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": 9999},
+        ):
+            json_result = group_controller.confirm()
+
+        # Then : An error message is returned
+        result = json.loads(json_result)
+        assert result["success"] == "false"
+        assert result["message"] == group_controller.ACCESS_DENIED
+
+    def test_confirm_admin_with_users_and_description(self):
+        # Given : Logged as admin and a group with users and a description exists
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        group_id = db.auth_group.insert(
+            role="test_group", description="This is a test group"
+        )
+        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_2_id = db_manipulation_utils.add_indexed_user(self.session, 2)
+        auth.add_membership(group_id, user_1_id)
+        auth.add_membership(group_id, user_2_id)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling confirm with a valid group ID
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": group_id},
+        ):
+            json_result = group_controller.confirm()
+
+        # Then : The confirmation page is returned with group details
+        result = json.loads(json_result)
+        assert result["message"] == "Confirm group deletion"
+        assert result["group"]["id"] == group_id
+        assert result["group"]["role"] == "test_group"
+        assert result["group"]["description"] == "This is a test group"
+        assert result["users_number"] == 2
+
+    def test_confirm_user_with_permission(self):
+        # Given : A user with permission to modify the group
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1),
         )
-        user_group_id = auth.user_group(user_0001_id)
+        group_id = db.auth_group.insert(role="test_group", description="test group")
+        auth.add_permission(
+            user_group_id, PermissionEnum.admin_group.value, db.auth_group, group_id
+        )
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.auth_group, group_id
+        )
 
-        # When : Calling confirm
+        # When : Calling confirm with a valid group ID
         with Omboddle(
             self.session,
             keep_session=True,
             params={"format": "json"},
-            query={"id": user_group_id},
+            query={"id": group_id},
         ):
             json_result = group_controller.confirm()
 
-        # Then : We get an error
+        # Then : The confirmation page is returned
         result = json.loads(json_result)
-        assert result["message"] == "confirm group deletion"
+        assert result["message"] == "Confirm group deletion"
+        assert result["group"]["id"] == group_id
+        assert result["group"]["role"] == "test_group"
+        assert result["users_number"] == 0
 
     ##################################
     # Tests on group_controller.delete()
