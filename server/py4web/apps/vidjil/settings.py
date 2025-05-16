@@ -111,6 +111,9 @@ VERIFY_EMAIL = False
 # account requires to be approved ?
 REQUIRES_APPROVAL = False
 
+# login expiration time
+LOGIN_EXPIRATION_TIME = int(os.getenv("LOGIN_EXPIRATION_TIME", default="7200"))
+
 # session settings
 SESSION_TYPE = "cookies"
 SESSION_SECRET_KEY = "<my secret key>"
