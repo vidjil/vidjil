@@ -229,12 +229,14 @@ auth = VidjilAuth(log, session, db, define_tables=False)
 auth.use_username = False
 auth.param.registration_requires_confirmation = settings.VERIFY_EMAIL
 auth.param.registration_requires_approval = settings.REQUIRES_APPROVAL
-auth.allowed_actions = ["all"]
-auth.login_expiration_time = 3600
-auth.password_complexity = {"entropy": 50}
-auth.block_previous_password_num = 3
+auth.param.allowed_actions = ["all"]
+auth.param.login_expiration_time = settings.LOGIN_EXPIRATION_TIME
+auth.param.password_complexity = {"entropy": 50}
+auth.param.block_previous_password_num = 3
 auth.__prerequisites__.insert(0, cors)
 auth.define_tables()
+
+log.debug(f"{auth.param.login_expiration_time=}")
 
 # #######################################################
 # Create a table to tag users as group members
