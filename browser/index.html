@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="css/lib/select2.min.css" />
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js" integrity="sha512-UWMGINgjUq/2sNur/d2LbiAX6IHmZkkCivoKSdoX+smfB+wB8f96/6Sp8ediwzXBXMXaAqymp6S55SALBk5tNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script data-main="js/app.js" src="js/lib/require.js"></script>
 
 
@@ -450,7 +451,7 @@
             </div>
 
             <div id="upload_summary" class="menu">
-                <span id="upload_summary_label">upload</span>
+                <span id="upload_summary_label">uploads</span>
                 <div id="upload_summary_selector" class="selector">
                     <div>
 
@@ -488,7 +489,7 @@
 
             <div class="menu" id="alert"></div>
             <div id="logo" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil
-                <span class='logo' id='logospan'>(beta)</span></div>
+                <span class='logo' id='logospan_index'></span></div>
             <!--
 	    <div class="menu" style="float: right; margin-right:100px"><span style="padding: 4px 5px; background-color: #fef6e3; font-family: ubuntulight;">
 		<b>Maintenance:</b> Vidjil will be offline Tuesday 7, 11:00 → 13:00 CEST. Thank you for your understanding.
@@ -670,7 +671,7 @@
                             <span id="hide_selected" class="button"     title="Hide selected clonotypes (shift+z)">
                                 <i  class="icon-eye-off"></i></span>
                             <span class="button" id="reset_focus"       title="Reset focus / Hide filters (z)">
-                                <i  class="icon-cancel-circled-outline"></i></span>                                   
+                                <i  class="icon-cancel-circled-outline"></i></span>
                             <span class="button" id="star_selected"     title="Tag selected clonotypes">
                                 <i id="tag_icon__multiple" class="icon-star-2"></i></span>
                     </div>

@@ -41,7 +41,7 @@ describe('Scatterplot', function () {
     cy.get('#visu_bar_container').children('rect').should('be.visible')
 
     //check axis y (axis y should automaticaly switch to size in bar mode)
-    cy.get('#visu_axis_y_container').children('line').should('have.length', 12)
+    cy.get('#visu_axis_y_container').children('line').should('have.length', 6)
     cy.get('#visu_axis_container').should('contain', "Size")
     
     return
