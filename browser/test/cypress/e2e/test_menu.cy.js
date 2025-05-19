@@ -118,16 +118,16 @@ describe('Test menu', function () {
 
     // test color for 3 clones (real, smaller, distrib)
     cy.getCloneInList(0).should('have.css', 'color', 'rgb(101, 123, 131)') // real clone have his standard color (grey)
-    cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone haven't changed color
-    cy.getCloneInList(18).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
+    cy.getCloneInList(17).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone haven't changed color
+    cy.getCloneInList(20).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
 
     // change color method and observe variation or not
     cy.changeColorby("V/5' gene")
     cy.update_icon()
 
     cy.getCloneInList(0).should('have.css', 'color', 'rgb(183, 128, 36)') // real clone should have changed color (diff from grey)
-    cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone shouldn't have changed color
-    cy.getCloneInList(18).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone shouldn't have changed color
+    cy.getCloneInList(17).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone shouldn't have changed color
+    cy.getCloneInList(20).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone shouldn't have changed color
 
   })
 

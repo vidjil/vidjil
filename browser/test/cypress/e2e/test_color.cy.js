@@ -20,8 +20,8 @@ describe('Colors', function () {
     //default axis color used is Tag
     cy.get("#0").find(".nameBox").invoke('css', 'color').then((old_color) => {
 
-      //check correct number of element in info panel (14 boxes / 0 gradient)
-      cy.get('#info').find('.tagColorBox').should('have.length', 14)
+      //check correct number of element in info panel (15 boxes / 0 gradient)
+      cy.get('#info').find('.tagColorBox').should('have.length', 15)
       cy.get('#info').find('.gradient').should('have.length', 0)
 
       //update axis color Size

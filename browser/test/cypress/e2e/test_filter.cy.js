@@ -18,7 +18,7 @@ describe('Filters', function () {
 
     //use color by tag
     cy.get('#color_menu_select').select('Tag')
-    cy.get('#info').find('.tagColorBox').should('have.length', 14)
+    cy.get('#info').find('.tagColorBox').should('have.length', 15)
 
     //change tag of clone0
     cy.get('#listElem_0').find('.starBox').click()
@@ -118,7 +118,7 @@ describe('Filters', function () {
   it('min per locus',  function() {
     cy.openAnalysis("browser/test/data/min_per_locus_100_and_10_clonotypes.vidjil")
 
-    cy.get('#list_clones').find("li").should('have.length', 112)
+    cy.get('#list_clones').find("li").should('have.length', 114)
     return
   })
 

@@ -30,7 +30,7 @@ describe('Load', function () {
       cy.get('#info_segmented').contains("335 662 (76.78%)")
 
       //check number of clones (2)
-      cy.get('#list_clones').children().should('have.length', 2)
+      cy.get('#list_clones').children().should('have.length', 3)
 
       // single sample -> both visu should be scatterplot
       cy.get("#visu2").should('have.class', 'scatterplot')
