@@ -194,19 +194,7 @@ def _reset_two_factor():
 @action("/vidjil/auth/logout", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
 def logout():
-    if "user" in auth.session and "id" in auth.session["user"]:
-        user_id = auth.session["user"]["id"]
-        auth_event_data = dict(
-            time_stamp=str(datetime.now()),
-            client_ip=request.remote_addr,
-            user_id=user_id,
-            origin="auth",
-            description="User " + str(user_id) + " Logged-out",
-        )
-        db.auth_event.insert(**auth_event_data)
-
-    auth.session.clear()
-    session.clear()
+    auth.logout()
     res = {"redirect": URL("default/home.html")}
     log.info("Logout")
     return json.dumps(res, separators=(",", ":"))

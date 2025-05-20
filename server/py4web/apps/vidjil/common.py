@@ -10,7 +10,16 @@ import sys
 from typing import List
 
 from py4web import DAL, Cache, Flash, Session, Translator, action
-from py4web.core import HTTP, URL, ErrorLogger, Fixture, error_logger, request, response
+from py4web.core import (
+    HTTP,
+    URL,
+    ErrorLogger,
+    Field,
+    Fixture,
+    error_logger,
+    request,
+    response,
+)
 from py4web.utils.downloader import downloader
 from py4web.utils.factories import ActionFactory
 from py4web.utils.mailer import Mailer
@@ -251,9 +260,13 @@ auth.param.login_expiration_time = settings.LOGIN_EXPIRATION_TIME
 auth.param.password_complexity = {"entropy": 50}
 auth.param.block_previous_password_num = 3
 auth.__prerequisites__.insert(0, cors)
+auth.extra_auth_user_fields.append(
+    Field(
+        "number_wrong_passwords",
+        "integer",
+    )
+)
 auth.define_tables()
-
-log.debug(f"{auth.param.login_expiration_time=}")
 
 # #######################################################
 # Create a table to tag users as group members

@@ -110,6 +110,8 @@ LOCUS = [
 VERIFY_EMAIL = string_to_bool(os.getenv("VERIFY_EMAIL", default="False"))
 # account requires to be approved ?
 REQUIRES_APPROVAL = string_to_bool(os.getenv("REQUIRES_APPROVAL", default="False"))
+# Max wrong passwords to prevent brute-force
+MAX_WRONG_PASSWORDS = int(os.getenv("MAX_WRONG_PASSWORDS", default="3"))
 # 2 factor authentication required ?
 TWO_FACTOR_REQUIRED = string_to_bool(os.getenv("TWO_FACTOR_REQUIRED", default="False"))
 # login expiration time
