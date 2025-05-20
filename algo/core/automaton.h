@@ -23,10 +23,10 @@ template <class Info>
 class AbstractACAutomaton: public IKmerStore<Info> {
 public:
   Info null_info;
+  float all_index_load;
   
 protected:
   void *initialState;
-  float all_index_load;
   map<Info, size_t> kmers_inserted;
   map<Info, float> index_load;
 
