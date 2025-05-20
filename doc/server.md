@@ -209,14 +209,18 @@ forget to make a backup of any file you replace.)
 ### First configuration and first launch
 
 - Set the [SSL certificates](#network-usage-and-ssl-certificates)
-- Change the mysql root password, mysql user password and the py4web admin password in `.env` file
-- Set the desired mail domain and credentials for the `postfix` container in `.env`
-- Set the number of workers in `.env`. Keep at least one threads not used to not overload server
+- Change the mysql root password, mysql user password and the py4web admin password in `.env.default` file
+  - `MYSQL_ROOT_PASSWORD` is the password for the root user of MySQL
+  - `MYSQL_PASSWORD` is the password for the `vidjil` user of MySQL
+  - `PY4WEB_ADMIN_PASSWORD` is the password for the py4web admin user
+- Set the number of workers and uwsgi threads in `.env.default`. Keep at least one threads not used to not overload server
+  - `WORKERS_POOL` is the number of workers to run. The default value is the number of threads minus 1.
+  - `UWSGI_POOL` is the number of threads to run for uwsgi. The default value is 6.
 - Start the services with `docker-compose up -d`.
 
 Then `docker ps` should display seven running containers for a localhost usage:
 `vidjil-nginx`, `vidjil-uwsgi`, `vidjil-mysql`, `vidjil-fuse`, `vidjil-workers`, `vidjil-flowers`, `vidjil-redis`.
-Services `restic`, `reporter` and `postfix` are useful for backup and email communication and need to be started for regular installation.
+Service `restic` is useful for backup and email communication and need to be started for regular installation.
 
 - Vidjil also need germline files.
   - You can use IMGT germline files if you accept IMGT license.
@@ -270,39 +274,42 @@ NB: modifications done inside the container will be lost if container is destroy
 
 ### Further configuration
 
-The following configuration files are found in the `vidjil/docker` directory:
+Configuration files can be found in the `vidjil/docker` directory. Among them:
 
 - `.env.default` various variables use and transmit by docker to container: path, password, pool of workers, ...
 - `vidjil-client/conf/conf.js` various variables for the vidjil client
+- `vidjil-client/conf/nginx_vidjil` configuration for the nginx server
 - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
-- `vidjil-client/conf/nginx_gzip_static.conf` same as the previous but for static resources
-
-- `vidjil-server/conf/defs.py` various variables for the vidjil server
 - `vidjil-server/conf/uwsgi.ini` configuration required to run vidjil with uwsgi
-- `vidjil-server/scripts/nginx-entrypoint.sh` entrypoint for the nginx
 - `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi service. Ensures the owner of some relevant volumes are correct within the container and starts uwsgi
 
-- `sites/nginx` configuration required when running vidjil with nginx
-- `service` (not currently in use)
+Here are some notable configuration changes you should consider. List of settable variables is in `docker/.env.default`. It can be modified directly in the file or by creating a new `.env.something` file. In this case, you need to update the `env-file` option in the `docker-compose.yml` or `docker-compose.override.yml` file (see [docker compose docs](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-env_file-attribute)).
 
-Here are some notable configuration changes you should consider. List of settable variables is in `docker/.env.default`. Some other should be done in `vidjil-server/conf/defs.py` file.
+- mysql root and vidjil passwords, as well as py4web password should be set as mentioned [above](#first-configuration-and-first-launch).
 
-- mysql root and vidjil password can be set as mentioned above
-
-- Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
-  They are used for admin emails monitoring the server an reporting errors.
-  Change also the `hosting` variable in `vidjil-client/conf/conf.js`.
+- Vidjil is able to send emails to users or admins. You need to configure the mail server to use.
+  You can use an external SMTP server (or set up your own with postfix for example).
+  The configuration should be done in the `docker/.env.default` file:
+  - `SMTP_SERVER` is the SMTP server to use, with format "address:port"
+  - `SMTP_CREDENTIALS` is the credentials to use, with format "user:password"
+  - `SMTP_FROM_EMAIL` is the sender address to use, with format "name@domain". It can be different from the credentials, but in this case, the receiver may consider it as spam.
+  - `SMTP_DOMAIN` is the domain to use, with format "domain".
+  - `SMTP_ADMIN_EMAILS` is the list of admin emails to use when sending emails to admin (in case of errors on the server for example). The format to use is ["name1@domain1", "name2@domain2"] (or ["name1@domain1"] if only one admin).
+  - `SMTP_EMAIL_SUBJECT_START` is the subject prefix to use when sending emails to admin (in case of errors on the server for example). Default is "[Vidjil]".
+  - `SMTP_TLS` defines if TLS should be used, with format "true" or "false". Default is "true".
+  - `SMTP_SSL` defines if SSL should be used, with format "true" or "false". Default is "false".
+  The configuration can be tested in the `admin` page of the web application (see [admin documenation](admin.md#database-maintenance))
 
 - <a name='healthcare'></a>
   If, according yo your local regulations, the server is suitable for hosting clinical data,
-  you may update the `HEALTHCARE_COMPLIANCE` variable in `vidjil-server/conf/defs.py`
+  you may update the `HEALTHCARE_COMPLIANCE` variable in `.env.default` to `true`.
   and the `healthcare` variable in `vidjil-client/conf/conf.js` to remove warnings related to non-healthcare compliance.
   Updating this variable is the sole responsibility of the institution responsible for the server,
   and should be done in accordance with the regulations that apply in your country.
   See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
 
 - To allow users to select files from a mounted volume,
-  set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
+  set `FILE_SOURCE` and `FILE_TYPES` in `.env.default`.
   In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
   Users will still be allowed to upload their own files.
 
