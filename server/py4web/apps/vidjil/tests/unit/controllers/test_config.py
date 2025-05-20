@@ -567,11 +567,11 @@ class TestConfigController(unittest.TestCase):
 
     def test_change_permission_granted(self):
         # Given : a user and config
-        db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         config_id = db_manipulation_utils.add_config()
         user_group_id = auth.user_group(user_1_id)
         assert auth.get_group_access("config", config_id, user_group_id) is False
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling change_permission with no id in params
         with Omboddle(
@@ -592,10 +592,10 @@ class TestConfigController(unittest.TestCase):
 
     def test_change_permission_deleted(self):
         # Given : a user and config
-        db_manipulation_utils.log_in_as_default_admin(self.session)
         user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         config_id = db_manipulation_utils.add_config()
         user_group_id = auth.user_group(user_1_id)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         with Omboddle(
             self.session,
             keep_session=True,

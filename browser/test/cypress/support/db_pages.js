@@ -783,6 +783,7 @@ Cypress.Commands.add("deleteProcess", (config_id, sequence_file_id) => {
 Cypress.Commands.add("openSampleResult", (sequence_file_id) => {
   cy.log(`openSampleResult(${sequence_file_id})`);
   cy.openSampleResultButton(sequence_file_id).click();
+  cy.update_icon(0, 10000);
 });
 
 /**

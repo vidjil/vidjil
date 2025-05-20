@@ -198,6 +198,7 @@ class TestAdminController(unittest.TestCase):
 
     def test_repair_missing_files(self):
         # Given : Logged as admin and a missing file
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         test_file_name = "test_file_zXtRe"
         sequence_file_id = db.sequence_file.insert(
             sampling_date="1978-12-12",

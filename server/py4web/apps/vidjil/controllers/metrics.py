@@ -227,7 +227,7 @@ def getMetricByName(metric_name):
 def getMetricsList(metrics_list, auth):
     if (
         "metrics" in auth.groups or auth.is_admin()
-        # WARNING !!! Iconsistency, switch between mutiple call to admin/not admin. (tested with API)
+        # WARNING !!! Inconsistency, switch between multiple call to admin/not admin. (tested with API)
     ):
         message = "status METRICS"
         start_time = time.time()

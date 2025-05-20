@@ -4,6 +4,11 @@
 This changelog concerns the Vidjil web application, client and server.
 we are using continuous integration and deployment, some features are pushed on our servers between these releases.
 
+## Web 2025-06
+
+??? note "Milestone 2025-06"
+Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
+
 ## Web 2024-12
 
 ??? note "Milestone 2024-12"

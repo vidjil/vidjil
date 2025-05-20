@@ -3,6 +3,7 @@
 
 import calendar
 import json
+import random
 import time
 import uuid
 from datetime import datetime
@@ -23,7 +24,7 @@ ACCESS_DENIED = "access denied"
 
 
 def prevent_open_redirect(url):
-    """url must be a valid absolute URL whithout schema"""
+    """url must be a valid absolute URL without schema"""
     if url and url[0] == "/" and "//" not in url:
         return url
     return None
@@ -52,8 +53,33 @@ def login():
 @action("/vidjil/auth/submit", method=["POST", "GET"])
 @action.uses(db, session, auth, cors, flash)
 def submit():
+    if "login" not in request.params or "password" not in request.params:
+        res = {
+            "redirect": URL("vidjil/auth/login"),
+            "success": "false",
+            "message": "Missing required parameter",
+        }
+        return json.dumps(res, separators=(",", ":"))
+
     user, error = auth.login(request.params["login"], request.params["password"])
     if user:
+        #  We will process two_factor if two_factor_send is defined and either
+        #  - No two_factor_required defined
+        #    OR
+        #  - two_factor_required() returns True
+        #  If two_factor_required exists and returns False,
+        #  then this user bypasses two_factor processing
+        if auth.param.two_factor_send is not None:
+            if not auth.param.two_factor_required or auth.param.two_factor_required(
+                user, request
+            ):
+                auth.session["auth.2fa_user"] = user["id"]
+                auth.session["auth.2fa_next_url"] = URL("default/home.html")
+                res = {
+                    "redirect": URL("auth/two_factor"),
+                }
+                return json.dumps(res, separators=(",", ":"))
+
         auth.session["user"] = {"id": user.get("id")}
         auth.session["recent_activity"] = calendar.timegm(time.gmtime())
         auth.session["uuid"] = str(uuid.uuid1())
@@ -76,11 +102,93 @@ def submit():
 
     res = {
         "redirect": URL("default/home.html"),
-        "error": error,
         "user_id": user["id"] if user is not None else None,
         "user_email": user["email"] if user is not None else None,
+        "success": "true" if user is not None else "false",
+        "message": error,
     }
     return json.dumps(res, separators=(",", ":"))
+
+
+@action("/vidjil/auth/two_factor", method=["POST", "GET"])
+@action.uses("auth/two_factor.html", db, cors, flash, auth, session)
+@vidjil_utils.jsontransformer
+def two_factor():
+    user_id = auth.session.get("auth.2fa_user")
+
+    if not user_id:
+        res = {"redirect": "vidjil/auth/login"}
+        return json.dumps(res, separators=(",", ":"))
+
+    code = auth.session.get("auth.2fa_code")
+    if (not code) and (auth.param.two_factor_send is not None):
+        # generate and send the code
+        code = str(random.randint(100000, 999999))
+        user = db.auth_user(user_id)
+        code = auth.param.two_factor_send(user, code)
+        # store code in session
+        auth.session["auth.2fa_code"] = code
+        auth.session["auth.2fa_tries_left"] = auth.param.two_factor_tries
+
+    return dict(
+        message="Enter verification code sent by email",
+        auth=auth,
+        db=db,
+        settings=settings,
+    )
+
+
+@action("/vidjil/auth/submit_two_factor", method=["POST", "GET"])
+@action.uses(db, cors, flash, auth, session)
+@vidjil_utils.jsontransformer
+def submit_two_factor():
+    if "verification_code" not in request.params:
+        _reset_two_factor()
+        res = {
+            "redirect": "vidjil/auth/login",
+            "success": "false",
+            "message": "Missing required parameter",
+        }
+        return json.dumps(res, separators=(",", ":"))
+
+    submitted_code = str(request.params["verification_code"])
+    code = str(auth.session.get("auth.2fa_code"))
+
+    if submitted_code == code:
+        # store user id session
+        user_id = auth.session.get("auth.2fa_user")
+        auth.store_user_in_session(user_id)
+        # redirect after login
+        next_url = auth.session.get("auth.2fa_next_url")
+        res = {"redirect": next_url}
+        # reset the 2f session
+        _reset_two_factor()
+        return json.dumps(res, separators=(",", ":"))
+    else:
+        # decrease the retries count
+        auth.session["auth.2fa_tries_left"] -= 1
+        # if 0 retries available, reset, and redirect to login
+        if auth.session.get("auth.2fa_tries_left") < 1:
+            _reset_two_factor()
+            res = {
+                "redirect": "vidjil/auth/login",
+                "success": "false",
+                "message": "Two factor max tries exceeded",
+            }
+            return json.dumps(res, separators=(",", ":"))
+        else:
+            res = {
+                "redirect": "vidjil/auth/two_factor",
+                "success": "false",
+                "message": "Verification code does not match",
+            }
+            return json.dumps(res, separators=(",", ":"))
+
+
+def _reset_two_factor():
+    auth.session["auth.2fa_user"] = None
+    auth.session["auth.2fa_code"] = None
+    auth.session["auth.2fa_tries_left"] = auth.param.two_factor_tries
 
 
 @action("/vidjil/auth/logout", method=["POST", "GET"])
@@ -97,6 +205,7 @@ def logout():
         )
         db.auth_event.insert(**auth_event_data)
 
+    auth.session.clear()
     session.clear()
     res = {"redirect": URL("default/home.html")}
     log.info("Logout")
@@ -108,7 +217,7 @@ def logout():
 @vidjil_utils.jsontransformer
 def register():
     # only authenticated admin user can access register view
-    if auth.user:
+    if auth.is_admin():
         return dict(message=T("Register new user"), auth=auth, db=db)
     else:
         # not authenticated users
@@ -119,7 +228,7 @@ def register():
 @action("/vidjil/auth/register_form", method=["POST", "GET"])
 @action.uses(db, auth)
 def register_form():
-    if not auth.user:
+    if not auth.is_admin():
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return json.dumps(res, separators=(",", ":"))

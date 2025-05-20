@@ -181,6 +181,7 @@ In the `Database maintenance` links, admins can use:
 
 - `administration` link to access to a specific dashboard application, which allows to check for some errors in the backend (see [py4web documentation](https://py4web.com/_documentation/static/en/chapter-04.html))
 - `clean workers status` link to purge some jobs that may have freezed in a wrong state. This should not affect currently running tasks. This should not be needed, but we had some instabilities with job statuses.
+- `send test email` link to send a test email to the administrator. This is useful to check if the email server is correctly configured. The email will be sent to the address specified in the `.env` file (see [server documentation for configuration](server.md#further-configuration)).
 
 ### Logs files
 
@@ -207,7 +208,7 @@ As stated.
 As an administrator, to be able to check some users issues, you can impersonate a user in the system. To do so, use the `Impersonate` drop-down list in the top right. After this and until you stop impersonation, you will see the same interface as the chosen user.
 
 !!! warning
-  This feature must be used with care...                                        |
+  This feature must be used with care...
 
 ## Plugins
 

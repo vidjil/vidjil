@@ -3,6 +3,18 @@
     The generic way to update a vidjil server is described in [update vidjil server part](server.md#updating-a-docker-installation). All steps between previously installed version and target version should be followed to adapt configuration correctly.
     In this file, the specific migration parts are described.
 
+## 2025.06 release
+
+### vidjil/server 2025.06
+
+### vidjil/client 2025.06
+
+### Migrating release-2024.12 to release-2025.06
+
+New variables were added in `.env.default` file (see [server doc](server.md#further-configuration) for more information on how to modify them):
+
+- Email configuration variables: see [server doc](server.md#email-configuration)
+
 ## 2024.12 release
 
 ### vidjil/server 2024.12
