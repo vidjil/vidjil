@@ -68,6 +68,12 @@ public:
   std::string getSpecies() const;
 
   /**
+   * @return true iff the affects are compatible, ie. if their corresponding shortcuts return
+   * a non-null Germline to the getGermline() method.
+   */
+  bool isCompatible(std::set<Affect> affects) const;
+
+  /**
    * @return the taxon ID
    */
   int getTaxonId() const;
@@ -183,6 +189,16 @@ std::string MultiGermline<Affect>::getSpecies() const {
 template <typename Affect>
 int MultiGermline<Affect>::getTaxonId() const {
   return species_taxon_id;
+}
+
+template <typename Affect>
+bool MultiGermline<Affect>::isCompatible(std::set<Affect> affects) const {
+  std::set<Tshortcut> shortcuts;
+  for (auto a: affects)
+    try {
+      shortcuts.insert(this->getRepository()->getShortcut(a));
+    } catch(std::invalid_argument &e) {}
+  return this->getGermline(shortcuts) != nullptr;
 }
 
 template <typename Affect>
