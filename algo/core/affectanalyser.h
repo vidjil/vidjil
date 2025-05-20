@@ -398,7 +398,8 @@ class MultipleAffectAnalyser {
    */
   pair <double, double> getLeftRightProbabilityAtLeastOrAbove() const;
 
-  affect_infos getMaximum(const KmerAffect &before, const KmerAffect &after, 
+  affect_infos getMaximum(const KmerAffect &before, const KmerAffect &after,
+                          MultiGermline<KmerAffect> *germlines,
                           float ratioMin=1.9, int maxOverlap=1);
 
   const string &getSequence() const;

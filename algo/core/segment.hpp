@@ -664,7 +664,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
          unique_affect = *(kaa->getAffectations().begin());
          max12 = std::make_tuple(set<KmerAffect>({unique_affect}), set<KmerAffect>({KmerAffect::getUnknown()}), kaa->getProbabilityAtLeastOrAbove(unique_affect, kaa->count(unique_affect)), 1);
        } else {
-         max12 = kaa->max12(forbidden);
+         max12 = kaa->max12(forbidden, germlines);
        }
        if (std::get<0>(max12).size() &&
            std::get<0>(max12).begin()->isAmbiguous()) {
@@ -733,7 +733,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
       this->segmented_germline = Germline<Affect>::getUnseg();
   }
   if (this->because == 0)
-    computeSegmentation(strand, before, after, threshold, multiplier);
+    computeSegmentation(strand, before, after, germlines, threshold, multiplier);
 
   if (out_unsegmented)
   {
@@ -826,12 +826,13 @@ KmerSegmenter<Affect>::~KmerSegmenter() {
 
 template <typename Affect>
 void KmerSegmenter<Affect>::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
+                                                MultiGermline<Affect> *germlines,
                                                 double threshold, double multiplier) {
   // Try to segment, computing 'box_V->end' and 'box_J->start'
   // If not segmented, put the cause of unsegmentation in 'because'
 
   affect_infos max;
-  max = kaa->getMaximum(before, after);
+  max = kaa->getMaximum(before, after, germlines);
 
   // E-values
   pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();

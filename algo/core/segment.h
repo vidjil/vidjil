@@ -392,6 +392,7 @@ class KmerSegmenter : public Segmenter<Affect>
 
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
+                           MultiGermline<Affect> *germlines,
                            double threshold, double multiplier);
 
   /**

@@ -680,7 +680,8 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 }
 
 affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,
-                                                const KmerAffect &after, 
+                                                const KmerAffect &after,
+                                                MultiGermline<KmerAffect> *germlines,
                                                 float ratioMin,
                                                 int maxOverlap) {
   // TODO: Duplicated code from KmerAffectAnalyser -> factorize?
@@ -778,11 +779,16 @@ affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,
     if (bs_before.get(i))
       results.nb_before_right++;
   }
-  
-  left_evalue = kms.getProbabilityAtLeastOrAbove(before,
+
+  KmerAffect b = before, a = after;
+  if (! germlines->isCompatible({before, after}))
+    a = b = KmerAffect::getAmbiguous();
+
+
+  left_evalue = kms.getProbabilityAtLeastOrAbove(b,
                                                  results.nb_before_left,
                                                  1 + results.last_pos_max);
-  right_evalue = kms.getProbabilityAtLeastOrAbove(after,
+  right_evalue = kms.getProbabilityAtLeastOrAbove(a,
                                                   results.nb_after_right,
                                                   seq.size() - 1 - results.first_pos_max);
 
