@@ -4,6 +4,7 @@
 
 #include "kmerstore.h"
 #include "kmeraffect.h"
+#include "multi_germline.hpp"
 #include "BitSet.hpp"
 #include <set>
 #include <vector>
@@ -409,7 +410,7 @@ class MultipleAffectAnalyser {
    */
   pair <set<KmerAffect>, set<KmerAffect>> sortLeftRight(const set<KmerAffect> &ka1_set, const set<KmerAffect> & ka2_set) const;
 
-  std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12(const set<KmerAffect> forbidden) const;
+  std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12(const set<KmerAffect> forbidden, MultiGermline<KmerAffect> *germlines) const;
 
   string toString() const;
 

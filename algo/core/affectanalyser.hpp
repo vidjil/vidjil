@@ -576,7 +576,7 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(co
     return make_pair(ka2_set, ka1_set);
 }
 
-std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
+std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden, MultiGermline<KmerAffect> *germlines) const {
   assert(affectations.size() >= 2);
   set<KmerAffect> best_affect;
   double best_proba = 2;
@@ -635,8 +635,21 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
   for (KmerAffect affect: getAffectations()) {
     if (forbidden.count(affect) == 0) {
       if (best_affect.find(affect) == best_affect.end()) {
+        bool unexpected_germline = true;
+        Tshortcut c = germlines->getRepository()->getShortcut(affect);
+        for (auto b: best_affect) {
+          Tshortcut c2 = germlines->getRepository()->getShortcut(b);
+          std::set<Tshortcut> shortcuts = {c, c2};
+          if (germlines->getGermline(shortcuts) != nullptr) {
+            unexpected_germline = false;
+            break;
+          }
+        }
+        KmerAffect tmp_affect = affect;
+        if (unexpected_germline)
+          tmp_affect = KmerAffect::getAmbiguous();
         uint64_t count = (best_bitset & affectations.find(affect)->second).count();
-        double proba = getProbabilityAtLeastOrAbove(affect, count);
+        double proba = getProbabilityAtLeastOrAbove(tmp_affect, count);
 #ifdef DEBUG
         cerr << affect << "\t" << proba << "\t" << (best_bitset & affectations.find(affect)->second) << endl;
 #endif
