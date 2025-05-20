@@ -13,7 +13,8 @@
 
 New variables were added in `.env.default` file (see [server doc](server.md#further-configuration) for more information on how to modify them):
 
-- Email configuration variables: see [server doc](server.md#email-configuration)
+- login/session configuration variables: see [server doc](server.md#configure-login-and-sessions)
+- Email configuration variables: see [server doc](server.md#configure-email)
 
 ## 2024.12 release
 

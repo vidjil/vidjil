@@ -111,7 +111,7 @@ VERIFY_EMAIL = string_to_bool(os.getenv("VERIFY_EMAIL", default="False"))
 # account requires to be approved ?
 REQUIRES_APPROVAL = string_to_bool(os.getenv("REQUIRES_APPROVAL", default="False"))
 # Max wrong passwords to prevent brute-force
-MAX_WRONG_PASSWORDS = int(os.getenv("MAX_WRONG_PASSWORDS", default="3"))
+MAX_WRONG_PASSWORDS = int(os.getenv("MAX_WRONG_PASSWORDS", default="5"))
 # 2 factor authentication required ?
 TWO_FACTOR_REQUIRED = string_to_bool(os.getenv("TWO_FACTOR_REQUIRED", default="False"))
 # login expiration time
@@ -170,7 +170,7 @@ SMTP_TLS = string_to_bool(os.getenv("SMTP_TLS", default="true"))
 SMTP_SSL = string_to_bool(os.getenv("SMTP_SSL", default="false"))
 
 ### Server healthcare compliance
-### Please see <http://www.vidjil.org/doc/server#healthcare>
+### Please see <http://www.vidjil.org/doc/server#configure-healthcare>
 HEALTHCARE_COMPLIANCE = string_to_bool(
     os.getenv("HEALTHCARE_COMPLIANCE", default="false")
 )
