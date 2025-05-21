@@ -580,6 +580,7 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
   assert(affectations.size() >= 2);
   set<KmerAffect> best_affect;
   double best_proba = 2;
+  int exp1, exp2;
 
   // Get the best affect first (with lowest proba)
   for (KmerAffect affect: getAffectations()) {
@@ -589,7 +590,9 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 #ifdef DEBUG
       cerr << "affect/proba: " << affect << " " << proba << endl;
 #endif
-      if (fabs(proba - best_proba) <= (proba+best_proba)/1e10) {
+      frexp(max(proba, best_proba), &exp1);
+      frexp(min(proba, best_proba), &exp2);
+      if (exp1*1./exp2 >= .9) {
 #ifdef DEBUG
         cerr << "proba = " << proba << ", best_proba = " << best_proba << ", fabs = " << fabs(proba - best_proba)
              << ", threshold = " << (proba+best_proba)/1e10 << endl;
@@ -658,7 +661,10 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 #ifdef DEBUG
         cerr << affect << "\t" << proba << "\t" << (best_bitset & affectations.find(affect)->second) << endl;
 #endif
-        if (fabs(proba - second_best_proba) <= max(sqrt(min(proba, second_best_proba)),(proba+second_best_proba)/1e10)) {
+
+        frexp(max(proba, second_best_proba), &exp1);
+        frexp(min(proba, second_best_proba), &exp2);
+        if (exp1*1./exp2 >= .9) {
           // Test if values are (almost) equal
           second_best_proba = min(proba, second_best_proba);
           second_best_affect.insert(affect);
