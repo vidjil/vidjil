@@ -569,13 +569,8 @@ class TestSampleSetController:
         assert patient_edit_in_db["last_name"] != self.patient_edit_data["last_name"]
 
     def test_submit_add_sample_set_to_nonexistent_group(self):
-        # Given: logged in as a valid user
-        db_manipulation_utils.add_indexed_user(self.session, 1)
-        db_manipulation_utils.log_in(
-            self.session,
-            db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1),
-        )
+        # Given: logged in as an admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
         nonexistent_group_id = 999999  # Assuming this group does not exist
 
         # Prepare data for a new patient sample set

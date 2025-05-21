@@ -400,12 +400,18 @@ class VidjilAuth(Auth):
         Returns:
             bool: true if the user can create sample sets in a given group, false otherwise
         """
-        can_create_sample_set_in_group = self.is_admin(
-            user_id
-        ) or group_id in self.get_groups_with_permission(
-            PermissionEnum.create.value, "sample_set", user_id=user_id
-        )
-        return can_create_sample_set_in_group
+        if self.is_admin(user_id):
+            # only checks if the group exists for admin users
+            group_exists = self.db.auth_group[group_id] is not None
+            return group_exists
+        else:
+            can_create_sample_set_in_group = (
+                group_id
+                in self.get_groups_with_permission(
+                    PermissionEnum.create.value, "sample_set", user_id=user_id
+                )
+            )
+            return can_create_sample_set_in_group
 
     def can_create_config(self, user=None):
         """

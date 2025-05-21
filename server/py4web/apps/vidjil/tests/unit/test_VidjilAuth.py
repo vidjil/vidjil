@@ -163,6 +163,8 @@ class TestVidjilAuth:
         # Test as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
         assert auth.can_create_sample_set_in_group(1)
+        nonexistent_group_id = 999999
+        assert not auth.can_create_sample_set_in_group(nonexistent_group_id)
 
         # Test as other user
         db_manipulation_utils.log_in(
