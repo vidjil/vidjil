@@ -194,8 +194,11 @@ int MultiGermline<Affect>::getTaxonId() const {
 template <typename Affect>
 bool MultiGermline<Affect>::isCompatible(std::set<Affect> affects) const {
   std::set<Tshortcut> shortcuts;
+  int strand = (*affects.begin()).getStrand();
   for (auto a: affects)
     try {
+      if (a.getStrand() != strand)
+        return false;
       shortcuts.insert(this->getRepository()->getShortcut(a));
     } catch(std::invalid_argument &e) {}
   return this->getGermline(shortcuts) != nullptr;
