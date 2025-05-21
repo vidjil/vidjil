@@ -751,17 +751,20 @@ void KmerSegmenter<Affect>::chooseGermline(MultiGermline<Affect> *germlines, set
   std::set<Tshortcut> before_shortcuts, after_shortcuts;
   std::list<Germline<Affect> *> possible_germlines;
   std::list<std::pair<KmerAffect, KmerAffect>> matching_affects;
-  std::map<Tshortcut, KmerAffect> shortcut_affect;
+  std::map<Tshortcut, KmerAffect[2]> shortcut_affect;
+  std::map<Tshortcut, int> shortcut_strand;
 
   for (auto val: before_set) {
     Tshortcut c = germlines->getRepository()->getShortcut(val);
     before_shortcuts.insert(c);
-    shortcut_affect[c] = val;
+    shortcut_affect[c][(val.getStrand()+1)/2] = val;
+    shortcut_strand[c] |= ((val.getStrand()+1)/2) + 1;
   }
   for (auto val: after_set) {
     Tshortcut c = germlines->getRepository()->getShortcut(val);
     after_shortcuts.insert(c);
-    shortcut_affect[c] = val;
+    shortcut_affect[c][(val.getStrand()+1)/2] = val;
+    shortcut_strand[c] |= ((val.getStrand()+1)/2) + 1;
   }
 
   assert(germlines != nullptr);
@@ -771,15 +774,16 @@ void KmerSegmenter<Affect>::chooseGermline(MultiGermline<Affect> *germlines, set
       std::set<Tshortcut> shortcuts = {left, right};
       Germline<Affect> *possible_germline = germlines->getGermline(shortcuts);
       if (possible_germline != nullptr && possible_germline->hasRecombination(shortcuts)) {
-        if (shortcut_affect[left].getStrand() == shortcut_affect[right].getStrand()) {
+        int common_strand = shortcut_strand[left] & shortcut_strand[right];
+        if (common_strand != 0) {
           possible_germlines.push_back(possible_germline);
-          matching_affects.push_back(std::make_pair(shortcut_affect[left], shortcut_affect[right]));
+          matching_affects.push_back(std::make_pair(shortcut_affect[left][(common_strand-1)%2],
+                                                    shortcut_affect[right][(common_strand-1)%2]));
         }
         // TODO: check segment order consistency
       }
     }
   }
-
   if (possible_germlines.size() >= 1) {
     if (possible_germlines.size() > 1) {
       // Select shorter codes as it will favor complete over incomplete recombinations
