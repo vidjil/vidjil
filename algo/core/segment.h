@@ -371,12 +371,16 @@ class KmerSegmenter : public Segmenter<Affect>
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
    * @param index: the index of all the germlines
+   * @param include_unexpected: search for unexpected recombinations?
    * @param segmentation_method: the segmentation method (see enum SEGMENTATION_METHODS)
    * @param germlines: the germlines index in the index
    * @param required_germline: the germline that should be used to segment (null if no requirement and if all the index should be used)
    * @param out_unsegmented: ptr to an output stream for the unsegmented sequences (nullptr if no output needed)
    */
-  KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method, MultiGermline<Affect> *germlines, Germline<Affect> *required_germline=nullptr, ostream *out_unsegmented=nullptr, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
+  KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method,
+                bool include_unexpected,
+                MultiGermline<Affect> *germlines, Germline<Affect> *required_germline=nullptr,
+                ostream *out_unsegmented=nullptr, double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -428,7 +432,8 @@ class FineSegmenter : public Segmenter<Affect>
    * By default this parameter doesn't filter the germline.
    */
   FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_cost,
-                 double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
+                bool include_unexpected,
+                double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
                 int kmer_threshold=NO_LIMIT_VALUE, int alternative_genes=NO_LIMIT_VALUE);
 
    ~FineSegmenter();

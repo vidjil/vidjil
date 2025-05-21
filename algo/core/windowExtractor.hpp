@@ -23,12 +23,13 @@ WindowExtractor<Affect>::WindowExtractor(MultiGermline<Affect> *multigermline)
 
 template <typename Affect>
 WindowsStorage<Affect>* WindowExtractor<Affect>::extract(OnlineBioReader *reads,
-                                                                               size_t w,
-                                                                               map<string, string> &windows_labels, bool only_labeled_windows,
-                                                                               bool keep_unsegmented_as_clone,
-                                                                               double nb_expected, int nb_reads_for_evalue,
-                                                                               VirtualReadScore *scorer,
-                                                                               SampleOutput *output) {
+                                                         size_t w,
+                                                         map<string, string> &windows_labels, bool only_labeled_windows,
+                                                         bool keep_unsegmented_as_clone,
+                                                         double nb_expected, int nb_reads_for_evalue,
+                                                         bool include_unexpected,
+                                                         VirtualReadScore *scorer,
+                                                         SampleOutput *output) {
   init_stats();
 
   WindowsStorage<Affect> *windowsStorage = new WindowsStorage<Affect>(windows_labels);
@@ -66,6 +67,7 @@ WindowsStorage<Affect>* WindowExtractor<Affect>::extract(OnlineBioReader *reads,
 
     KmerSegmenter<Affect> *seg = new KmerSegmenter<Affect>(reads->getSequence(), multigermline->getIndex(),
                                                                                  multigermline->getGermlines().front()->getSegmentationMethod(),
+                                                                                 include_unexpected,
                                                                                  multigermline, nullptr,
                                                                                  out_affects, nb_expected,
                                                                                  multigermline->getGermlines().size()*nb_reads_for_evalue);

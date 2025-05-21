@@ -504,8 +504,8 @@ void CountKmerAffectAnalyser::buildCounts() {
 }
 
 
-MultipleAffectAnalyser::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq)
-  :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)) 
+MultipleAffectAnalyser::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq, bool include_unexpected)
+  :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)), include_unexpected(include_unexpected)
  {
   assert(seq.length() >=  (size_t)kms.getS());
  }
@@ -646,8 +646,13 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
           }
         }
         KmerAffect tmp_affect = affect;
-        if (unexpected_germline)
-          tmp_affect = KmerAffect::getAmbiguous();
+        if (unexpected_germline) {
+          if (! include_unexpected)
+            continue;
+          else {
+            tmp_affect = KmerAffect::getAmbiguous();
+          }
+        }
         uint64_t count = (best_bitset & affectations.find(affect)->second).count();
         double proba = getProbabilityAtLeastOrAbove(tmp_affect, count);
 #ifdef DEBUG

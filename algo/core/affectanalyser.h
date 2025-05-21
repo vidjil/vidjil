@@ -359,14 +359,16 @@ class MultipleAffectAnalyser {
   const string &seq;
   map<KmerAffect, BitSet> affectations;
   double left_evalue, right_evalue;
+  bool include_unexpected;
 
  public:
   /**
    * @param kms: the index storing the affectation for the k-mers
    *             (parameter is not copied)
    * @param seq: the sequence to analyse (parameter is not copied)
+   * @param include_unexpected: include the search for unexpected recombinations?
    */
-  MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq);
+  MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq, bool include_unexpected);
 
   /**
    * Count the number of unique affectations (excluding the unknown one)

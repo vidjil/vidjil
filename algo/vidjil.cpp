@@ -397,7 +397,7 @@ int main(int argc, char **argv) {
         ->type_name("FILE")
         ->level();
 
-    bool multi_germline_unexpected_recombinations_12 = true;
+    bool multi_germline_unexpected_recombinations_12 = false;
     app.add_flag("-2", multi_germline_unexpected_recombinations_12,
                  "try to detect unexpected recombinations")
         ->group(group);
@@ -1418,7 +1418,7 @@ int main(int argc, char **argv) {
 
         WindowsStorage<KmerAffect> *windowsStorage = we.extract(
             reads, wmer_size, windows_labels, only_labeled_windows, keep_unsegmented_as_clone,
-            expected_value_kmer, nb_reads_for_evalue, readScorer, &output);
+            expected_value_kmer, nb_reads_for_evalue, multi_germline_unexpected_recombinations_12, readScorer, &output);
         windowsStorage->setIdToAll();
         size_t nb_total_reads = we.getNbReads();
 
@@ -1764,6 +1764,7 @@ int main(int argc, char **argv) {
                         KmerSegmenter<KmerAffect> *kseg = new KmerSegmenter<KmerAffect>(
                             representative, multigermline->getIndex(),
                             multigermline->getGermlines().front()->getSegmentationMethod(),
+                            multi_germline_unexpected_recombinations_12,
                             multigermline, nullptr, nullptr, expected_value_kmer,
                             multigermline->getGermlines().size() * nb_reads_for_evalue);
                         if (verbose)
@@ -2061,7 +2062,9 @@ int main(int argc, char **argv) {
             Sequence seq = reads->getSequence();
             KmerSegmenter<KmerAffect> *seg = new KmerSegmenter<KmerAffect>(
                 reads->getSequence(), multigermline->getIndex(),
-                multigermline->getGermlines().front()->getSegmentationMethod(), multigermline,
+                multigermline->getGermlines().front()->getSegmentationMethod(),
+                multi_germline_unexpected_recombinations_12,
+                multigermline,
                 nullptr, nullptr, expected_value_kmer,
                 multigermline->getGermlines().size() * nb_reads_for_evalue);
             Germline<KmerAffect> *germline = seg->segmented_germline;

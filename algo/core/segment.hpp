@@ -542,7 +542,10 @@ template <typename Affect>
 KmerSegmenter<Affect>::KmerSegmenter() { kaa = 0 ; }
 
 template <typename Affect>
-KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method, MultiGermline<Affect> *germlines, Germline<Affect> *required_germline, ostream *out_unsegmented, double threshold, double multiplier)
+KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method,
+                                     bool include_unexpected,
+                                     MultiGermline<Affect> *germlines, Germline<Affect> *required_germline,
+                                     ostream *out_unsegmented, double threshold, double multiplier)
 {
   set<KmerAffect> before_set, after_set;
 
@@ -580,7 +583,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
     return ;
   }
 
-  kaa = new MultipleAffectAnalyser(*(index), this->sequence);
+  kaa = new MultipleAffectAnalyser(*(index), this->sequence, include_unexpected);
 
   // Check strand consistency among the affectations.
   int strand=0;
@@ -1114,6 +1117,7 @@ string format_del(int deletions)
 
 template <typename Affect>
 FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_c,
+                                     bool include_unexpected,
                                      double threshold, double multiplier, int kmer_threshold, int alternative_genes)
 {
   this->box_V = new AlignBox<Affect>("5");
@@ -1150,7 +1154,8 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   if ((germline->getSegmentationMethod() == SEG_METHOD_MAX12) || (germline->getSegmentationMethod() == SEG_METHOD_MAX1U))
   {
     // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
-    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
+    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(),
+                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
     if (kseg->isSegmented())
     {
       this->reversed = kseg->isReverse();
@@ -1187,7 +1192,8 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
     // Note that we use only the 'strand' component
     // When the KmerSegmenter fails, continue with positive strand
     // TODO: flag to force a strand / to test both strands ?
-    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
+    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(),
+                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
     this->reversed = kseg->isReverse();
     delete kseg ;
   }
