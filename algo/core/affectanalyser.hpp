@@ -592,7 +592,8 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 #endif
       frexp(max(proba, best_proba), &exp1);
       frexp(min(proba, best_proba), &exp2);
-      if (exp1*1./exp2 >= .9) {
+      if (exp1*1./exp2 >= 0.9) { // The exponent are in base2 but the ratio is identical in base 10
+                                 // as the exponents are just at a constant factor of log10(2)
 #ifdef DEBUG
         cerr << "proba = " << proba << ", best_proba = " << best_proba << ", fabs = " << fabs(proba - best_proba)
              << ", threshold = " << (proba+best_proba)/1e10 << endl;
@@ -661,10 +662,9 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 #ifdef DEBUG
         cerr << affect << "\t" << proba << "\t" << (best_bitset & affectations.find(affect)->second) << endl;
 #endif
-
         frexp(max(proba, second_best_proba), &exp1);
         frexp(min(proba, second_best_proba), &exp2);
-        if (exp1*1./exp2 >= .9) {
+        if (exp1*1./exp2 >= 0.9) {
           // Test if values are (almost) equal
           second_best_proba = min(proba, second_best_proba);
           second_best_affect.insert(affect);
