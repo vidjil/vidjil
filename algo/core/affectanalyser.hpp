@@ -676,8 +676,10 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
     PRINT_VAR(second_best);
 #endif
   if (best_proba == 2 || second_best_proba == 2) {
-    best_affect.clear();
-    best_affect.insert(KmerAffect::getAmbiguous());
+    if (best_proba == 2) {
+      best_affect.clear();
+      best_affect.insert(KmerAffect::getAmbiguous());
+    }
     second_best_affect.clear();
     second_best_affect.insert(KmerAffect::getAmbiguous());
   }
