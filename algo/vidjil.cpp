@@ -2104,12 +2104,12 @@ int main(int argc, char **argv) {
             } else {
                 // Not designated, will output label as 'name' in .vidjil
                 s.code = seq.label;
-                g = Germline<KmerAffect>::getUnseg();
+                g = NULL;
             }
 
             s.toOutput(clone);
             s.checkWarnings(clone);
-            std::string code = PSEUDO_NOT_ANALYZED_CODE;
+            std::string code = PSEUDO_NOT_ANALYZED;
             if (g != NULL) {
                 code = g->getCode();
             }
@@ -2137,8 +2137,8 @@ int main(int argc, char **argv) {
                 output.set("reads", "germline", germline->getCode(),
                            {nb_segmented_by_germline[germline->getCode()]});
         }
-        output.set("reads", "germline", PSEUDO_NOT_ANALYZED_CODE,
-                   {nb_segmented_by_germline[PSEUDO_NOT_ANALYZED_CODE]});
+        output.set("reads", "germline", PSEUDO_NOT_ANALYZED,
+                   {nb_segmented_by_germline[PSEUDO_NOT_ANALYZED]});
 
     } else {
         cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
