@@ -19,8 +19,6 @@ describe('Load', function () {
 
       //check number of clones (0)
       cy.get('#list_clones').children().should('have.length', 0)
-
-      cy.wait(1000)
     })
 
     it('loading-vidjil-file-single-sample',  function() {
@@ -42,9 +40,6 @@ describe('Load', function () {
 
       cy.get('#visu_axis_container').children().contains("V/5' gene")
       cy.get('#visu_axis_container').children().next().contains("J/3' gene")
-
-      cy.wait(10000)
-
     })
 
     it('loading-vidjil-file-multi-samples+analysis',  function() {
