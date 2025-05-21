@@ -502,10 +502,12 @@ function copyTextToClipboard(text, field, elem) {
         return;
     }
     navigator.clipboard.writeText(text).then(function() {
-        var msg_field = (field != undefined) ? ` field: <B>${field}</B>` : ""
+        var msg_field = (field != undefined) ? ` field: <B>${field}</B>` : "";
         console.log({ msg: 'Copied '+msg_field, type: "flash", priority: 1 });
-        elem.title = 'Copied!'
-        setTimeout(function() { elem.title = "Copy to clipboard"}, 3000);
+        if (elem != undefined) {
+            elem.title = 'Copied!';
+            setTimeout(function() { elem.title = "Copy to clipboard"}, 3000);
+        }
 
     }, function(err) {
         console.log({ msg: 'Could not copy to clipboard: '+ err, type: "flash", priority: 2 });

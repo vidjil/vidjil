@@ -2,6 +2,7 @@
 VIDJIL_ALGO_SRC = algo/
 VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
+CYPRESS_BROWSER = browsers/firefox_supported/chrome
 
 TEE = python tools/tee.py -v
 
@@ -63,7 +64,7 @@ functional_browser_cypress:
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
-		--env BROWSER=electron --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
+		--env BROWSER=$(CYPRESS_BROWSER) --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
 
 functional_tutorial_browser_cypress:
 	$(MAKE) -C doc/tutorial build_tutorial_cypress_client
@@ -73,7 +74,7 @@ functional_tutorial_browser_cypress:
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
-		--env BROWSER=electron --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
+		--env BROWSER=$(CYPRESS_BROWSER) --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
 
 functional_browser_external_cypress:
 	docker run --rm \
@@ -82,7 +83,7 @@ functional_browser_external_cypress:
 		-v "`pwd`/docker/ci/cypress_script.bash":"/app/script.bash" \
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
-		--env BROWSER=electron --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/external_*.js"
+		--env BROWSER=$(CYPRESS_BROWSER) --env SERVER=false "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/external_*.js"
 
 functional_server_cypress_open:
 	ln -sf server/py4web/apps/vidjil/tests/cypress/ .
@@ -103,7 +104,8 @@ functional_tutorial_server_cypress:
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
-		--env BROWSER=electron --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
+		--env BROWSER=$(CYPRESS_BROWSER) --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/doc_*.js"
+
 
 functional_server_cypress:
 	# Need to have a local server deploy with the ci data integrated
@@ -114,7 +116,7 @@ functional_server_cypress:
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
-		--env BROWSER=electron --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.js"
+		--env BROWSER=$(CYPRESS_BROWSER) --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_table_db.cy.js"
 
 ###############################
 
