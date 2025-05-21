@@ -1834,7 +1834,8 @@ int main(int argc, char **argv) {
                         double fine_evalue_multiplier = MIN(expected_value_kmer, nb_fine_segmented);
 
                         FineSegmenter<KmerAffect> seg(
-                            representative, segmented_germline, segment_cost, expected_value,
+                            representative, segmented_germline, segment_cost, multi_germline_unexpected_recombinations_12,
+                            expected_value,  expected_value_kmer,
                             fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
                         if (seg.isSegmented()) {
@@ -2071,7 +2072,8 @@ int main(int argc, char **argv) {
             if (!germline) {
                 germline = Germline<KmerAffect>::getUnseg();
             }
-            FineSegmenter<KmerAffect> s(seq, germline, segment_cost, expected_value,
+            FineSegmenter<KmerAffect> s(seq, germline, segment_cost, multi_germline_unexpected_recombinations_12,
+                                        expected_value, expected_value_kmer,
                                         fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
             string id = string_of_int(nb, 6);

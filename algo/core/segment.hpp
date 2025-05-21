@@ -1118,7 +1118,8 @@ string format_del(int deletions)
 template <typename Affect>
 FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_c,
                                      bool include_unexpected,
-                                     double threshold, double multiplier, int kmer_threshold, int alternative_genes)
+                                     double threshold, double threshold_kmer, double multiplier,
+                                     int kmer_threshold, int alternative_genes)
 {
   this->box_V = new AlignBox<Affect>("5");
   this->box_D = new AlignBox<Affect>("4");
@@ -1155,7 +1156,7 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   {
     // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
     KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(),
-                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
+                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
     if (kseg->isSegmented())
     {
       this->reversed = kseg->isReverse();
@@ -1193,7 +1194,7 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
     // When the KmerSegmenter fails, continue with positive strand
     // TODO: flag to force a strand / to test both strands ?
     KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(),
-                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
+                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
     this->reversed = kseg->isReverse();
     delete kseg ;
   }

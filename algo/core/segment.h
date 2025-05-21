@@ -425,6 +425,7 @@ class FineSegmenter : public Segmenter<Affect>
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: germline used
    * @param threshold: threshold of randomly expected segmentation
+   * @param threshold_kmer: threshold for the k-mer segmenter
    * @param kmer_threshold: This threshold is used while filtering the V
    *   BioReader in Germline. If this value is 0, every K-mer from getMultiResults
    *   is used for the filtering. Otherwise if N > 0, the N best K-mers are used
@@ -433,7 +434,8 @@ class FineSegmenter : public Segmenter<Affect>
    */
   FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_cost,
                 bool include_unexpected,
-                double threshold = THRESHOLD_NB_EXPECTED, double multiplier=1.0,
+                double threshold = THRESHOLD_NB_EXPECTED, double threshold_kmer=THRESHOLD_NB_EXPECTED,
+                double multiplier=1.0,
                 int kmer_threshold=NO_LIMIT_VALUE, int alternative_genes=NO_LIMIT_VALUE);
 
    ~FineSegmenter();
