@@ -469,3 +469,26 @@ class TestAuthController:
         assert result["redirect"] == "back"
         assert result["message"].startswith(user_email)
         assert "user_id" in result
+
+        # Verify that the user exists in the database
+        new_user_id = result["user_id"]
+        new_user = db(db.auth_user.id == new_user_id).select().first()
+        assert new_user is not None
+        assert new_user.email == user_email
+
+        # Verify that a group has been assigned to the user
+        user_group_role = auth.user_group_role(new_user_id)
+        user_group = db(db.auth_group.role == user_group_role).select().first()
+        assert user_group is not None
+        assert user_group.description == f"Group of user {new_user_id} - John Doe"
+
+        # Verify that the user is a member of the assigned group
+        membership = (
+            db(
+                (db.auth_membership.user_id == new_user_id)
+                & (db.auth_membership.group_id == user_group.id)
+            )
+            .select()
+            .first()
+        )
+        assert membership is not None

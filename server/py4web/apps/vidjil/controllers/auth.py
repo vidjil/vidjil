@@ -258,7 +258,7 @@ def register_form():
     # create new user default group
     new_user_group_id = db.auth_group.insert(
         role=auth.user_group_role(new_user_id),
-        description="Group uniquely assigned to user %i" % (new_user_id),
+        description=f"Group of user {new_user_id} - {request.params['first_name']} {request.params['last_name']}",
     )
     db.auth_membership.insert(user_id=new_user_id, group_id=new_user_group_id)
     # Default permissions
@@ -271,8 +271,7 @@ def register_form():
     db.auth_membership.insert(user_id=new_user_id, group_id=public_group_id)
 
     log.admin(
-        "User %s <%s> registered, group %s"
-        % (new_user_id, new_user_email, new_user_group_id)
+        f"User {new_user_id} <{new_user_email}> registered, group {new_user_group_id}"
     )
 
     res = {
