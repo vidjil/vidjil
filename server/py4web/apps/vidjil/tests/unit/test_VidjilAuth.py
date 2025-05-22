@@ -163,6 +163,8 @@ class TestVidjilAuth:
         # Test as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
         assert auth.can_create_sample_set_in_group(1)
+        nonexistent_group_id = 999999
+        assert not auth.can_create_sample_set_in_group(nonexistent_group_id)
 
         # Test as other user
         db_manipulation_utils.log_in(
@@ -255,6 +257,18 @@ class TestVidjilAuth:
 
         # THEN user cannot create sample set in parent group
         assert not can_create_sample_set_in_parent_group
+
+    def test_vidjil_auth_can_create_sample_set_in_group_nonexistent_group(self):
+        # Given: a group_id that does not exist in the database
+        nonexistent_group_id = 999999  # Assuming this ID does not exist
+
+        # When: calling can_create_sample_set_in_group with this group_id
+        result = auth.can_create_sample_set_in_group(
+            nonexistent_group_id, self.user1_id
+        )
+
+        # Then: the result should be False
+        assert result is False
 
     ##################################
     # Tests on VidjilAuth.groups

@@ -346,7 +346,7 @@ class TestSampleSetController:
         # Then : We get a redirect
         assert exception.value.status == 303
 
-    def test_submit(self):
+    def test_submit_add_patient(self):
         # Given : logged as other user
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         user_group_id = auth.user_group(user_id)
@@ -405,6 +405,104 @@ class TestSampleSetController:
         assert collections.Counter(tag_names_for_group) == collections.Counter(
             expected_tag_names
         )
+
+    def test_submit_edit_existing_patient(self):
+        # Given: logged in as a valid user with rights
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        patient_id, patient_sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id
+        )
+        auth.add_permission(
+            user_group_id,
+            PermissionEnum.access.value,
+            db.sample_set,
+            patient_sample_set_id,
+        )
+
+        # Prepare data for editing the patient
+        edit_data = {
+            "first_name": "Edited",
+            "last_name": "Patient",
+            "birth": "1990-01-01",
+            "info": "Edited info",
+            "sample_set_id": patient_sample_set_id,
+            "id": patient_id,
+            "error": [],
+        }
+        sets = {
+            "patient": [edit_data],
+            "run": [],
+            "generic": [],
+            "group": user_group_id,
+        }
+        json_submit_data = json.dumps(sets)
+
+        # When: Calling submit
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+        ):
+            json_result = sample_set_controller.submit()
+
+        # Then: The patient is updated in the database
+        result = json.loads(json_result)
+        assert result["message"] == "successfully added/edited set(s)"
+        updated_patient = db.patient[patient_id]
+        assert updated_patient["first_name"] == "Edited"
+        assert updated_patient["last_name"] == "Patient"
+        assert str(updated_patient["birth"]) == "1990-01-01"
+        assert updated_patient["info"] == "Edited info"
+
+    def test_submit_edit_nonexistent_patient(self):
+        # Given: logged in as a valid user with rights
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        # Use a patient_id and sample_set_id that do not exist
+        nonexistent_patient_id = 999999
+        nonexistent_sample_set_id = 999999
+
+        # Prepare data for editing a non-existent patient
+        edit_data = {
+            "first_name": "Ghost",
+            "last_name": "Patient",
+            "birth": "1980-01-01",
+            "info": "Should not exist",
+            "sample_set_id": nonexistent_sample_set_id,
+            "id": nonexistent_patient_id,
+            "error": [],
+        }
+        sets = {
+            "patient": [edit_data],
+            "run": [],
+            "generic": [],
+            "group": user_group_id,
+        }
+        json_submit_data = json.dumps(sets)
+
+        # When: Calling submit
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+        ):
+            json_result = sample_set_controller.submit()
+
+        # Then: We get an error message
+        result = json.loads(json_result)
+        assert result["message"] == "an error occurred"
+        assert "permission denied" in result["sets"]["patient"][0]["error"][0]
 
     def test_submit_access_denied(self):
         # Given : logged as other user
@@ -470,7 +568,126 @@ class TestSampleSetController:
         assert patient_edit_in_db["first_name"] != self.patient_edit_data["first_name"]
         assert patient_edit_in_db["last_name"] != self.patient_edit_data["last_name"]
 
-    # TODO : add tests for other sampleSet.SET_TYPE
+    def test_submit_add_sample_set_to_nonexistent_group(self):
+        # Given: logged in as an admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        nonexistent_group_id = 999999  # Assuming this group does not exist
+
+        # Prepare data for a new patient sample set
+        patient_data = {
+            "first_name": "Ghost",
+            "last_name": "User",
+            "birth": "",
+            "info": "Trying to add to a non-existent group",
+            "sample_set_id": "",
+            "id": "",
+            "error": [],
+        }
+        sets = {
+            "patient": [patient_data],
+            "run": [],
+            "generic": [],
+            "group": nonexistent_group_id,
+        }
+        json_submit_data = json.dumps(sets)
+
+        # When: Calling submit
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+        ):
+            json_result = sample_set_controller.submit()
+
+        # Then: We get an error message
+        result = json.loads(json_result)
+        assert result["message"] == "an error occurred"
+        assert "permission denied" in result["sets"]["patient"][0]["error"]
+
+    def test_submit_add_run(self):
+        # Given: logged in as a valid user
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+
+        # Prepare data for a new run
+        run_data = {
+            "name": "Test Run",
+            "run_date": "",
+            "info": "Run info",
+            "sample_set_id": "",
+            "id": "",
+            "error": [],
+        }
+        sets = {
+            "patient": [],
+            "run": [run_data],
+            "generic": [],
+            "group": user_group_id,
+        }
+        json_submit_data = json.dumps(sets)
+
+        # When: Calling submit
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+        ):
+            json_result = sample_set_controller.submit()
+
+        # Then: The run is added in the database
+        result = json.loads(json_result)
+        assert result["message"] == "successfully added/edited set(s)"
+        # Check that the run exists in the DB
+        run = db(db.run.name == "Test Run").select().first()
+        assert run is not None
+        assert run.info == "Run info"
+
+    def test_submit_add_generic(self):
+        # Given: logged in as a valid user
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+
+        # Prepare data for a new generic set
+        generic_data = {
+            "name": "Test Generic",
+            "info": "Generic info",
+            "sample_set_id": "",
+            "id": "",
+            "error": [],
+        }
+        sets = {
+            "patient": [],
+            "run": [],
+            "generic": [generic_data],
+            "group": user_group_id,
+        }
+        json_submit_data = json.dumps(sets)
+
+        # When: Calling submit
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json", "data": json_submit_data},
+        ):
+            json_result = sample_set_controller.submit()
+
+        # Then: The generic set is added in the database
+        result = json.loads(json_result)
+        assert result["message"] == "successfully added/edited set(s)"
+        # Check that the generic set exists in the DB
+        generic = db(db.generic.name == "Test Generic").select().first()
+        assert generic is not None
+        assert generic.info == "Generic info"
 
     # ##################################
     # # Tests on sample_set_controller.download()
