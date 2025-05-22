@@ -275,7 +275,33 @@ describe("Manipulate patient, sample and launch analysis", function () {
     );
 
     cy.get("@sample_1").then((sample_id1) => {
-      // Jump
+      // copy sample path to clipboard
+      // did not manage to make it work with firefox and chrome legacy, as clipboard permissions cannot be set
+      // add permission for chrome to access clipboard before (see https://github.com/cypress-io/cypress-example-recipes/blob/master/examples/testing-dom__clipboard/cypress/e2e/permissions-spec.cy.js)
+      if ((Cypress.browser.name === "chrome") && (parseInt(Cypress.browser.version.split(".")[0]) >= 81)) {
+        cy.wrap(Cypress.automation('remote:debugger:protocol', {
+          command: 'Browser.grantPermissions',
+          params: {
+            permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+            // make the permission tighter by allowing the current origin only
+            // like "http://localhost:56978"
+            origin: window.location.origin,
+          },
+        }))
+        cy.get(`#copyPathClipboard_${sample_id1}`).click().then(() => {
+          // check that the path is copied to clipboard
+          cy.window().then((win) => {
+            win.navigator.clipboard.readText().then((text) => {
+              expect(text).to.contain('/mnt/upload/uploads/sequence_file.data_file.');
+            });
+          });
+
+          // check flash message is displayed
+          cy.get(".flash_1").should("be.visible").contains("Copied");
+        });
+      }
+
+      // Jump using common sets
       cy.get(
         `#row_sequence_file_${sample_id1} > :nth-child(5) > .patient_token`
       )

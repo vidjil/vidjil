@@ -115,13 +115,13 @@ describe("Test specific bugs", function () {
         // 5069_download_link_of_result
         let config_regexp = new RegExp("config=" + config_id)
         let sample_set_regexp = new RegExp("sample_set_id=" + sample_set_id)
-        cy.get('.db_fixed_footer > tr > :nth-child(13) > a')
+        cy.get('.db_fixed_footer > tr > :nth-child(14) > a')
           .should("have.attr", "href")
           .and("match", /get_data\?/)
           .and("match", config_regexp)
           .and("match", sample_set_regexp)
 
-        cy.get('.db_fixed_footer > tr > :nth-child(14) > a')
+        cy.get('.db_fixed_footer > tr > :nth-child(15) > a')
           .should("have.attr", "href")
           .and("match", /get_analysis\?/)
           .and("match", config_regexp)

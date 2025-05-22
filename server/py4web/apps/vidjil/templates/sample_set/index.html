@@ -57,6 +57,7 @@
                 <td class="column_20"> </td>
                 <td class="column_20"> </td>
                 <td class="column_20"> </td>
+                [[if auth.is_admin():]] <td class="column_20"> </td>[[pass]]
 
                 <td class="column_sep"></td>
 
@@ -81,6 +82,7 @@
                 <td class="column5"> </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
+                [[if auth.is_admin():]] <td class="column5"> </td> [[pass]]
 
                 <td class="column_sep"></td>
 
@@ -189,6 +191,9 @@
                         </td>
                     [[pass]]
 
+                    [[if auth.is_admin():]]
+                        <td id="copyPathClipboard_[[=row.sequence_file.id]]" class="pointer" onclick="copyTextToClipboard('[[=db.sequence_file.data_file.uploadfolder + row.sequence_file.data_file]]')" > <i class="icon-newspaper" title="copy sample path in uwsgi docker to clipboard"></i></td>
+                    [[pass]]
                     [[if can_modify:]]
                         <td class="pointer" onclick="db.call('file/form', {'file_id' :'[[=row.sequence_file.id]]', 'sample_type': '[[=sample_type]]'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
                     [[else:]]
