@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from enum import Enum
 
 from py4web import Field
-from py4web.core import Flash
+from py4web.core import Flash, request
 from py4web.utils.auth import Auth
 from pydal.objects import Query, Set
 from pydal.validators import (
@@ -47,82 +48,131 @@ class VidjilAuth(Auth):
     def define_tables(self):
         """Defines the auth_user table"""
         db = self.db
-        if "auth_user" not in db.tables:
-            ne = IS_NOT_EMPTY()
-            if self.param.password_complexity:
-                requires = [IS_STRONG(**self.param.password_complexity), CRYPT()]
-            else:
-                requires = [CRYPT()]
-            auth_fields = [
+        ne = IS_NOT_EMPTY()
+        if self.param.password_complexity:
+            requires = [IS_STRONG(**self.param.password_complexity), CRYPT()]
+        else:
+            requires = [CRYPT()]
+        auth_fields = [
+            Field(
+                "email",
+                requires=(IS_EMAIL(), IS_NOT_IN_DB(db, "auth_user.email")),
+                # unique=True,
+                label=self.param.messages["labels"].get("email"),
+            ),
+            Field(
+                "password",
+                "password",
+                requires=requires,
+                readable=False,
+                writable=False,
+                label=self.param.messages["labels"].get("password"),
+            ),
+            Field(
+                "first_name",
+                requires=ne,
+                label=self.param.messages["labels"].get("first_name"),
+            ),
+            Field(
+                "last_name",
+                requires=ne,
+                label=self.param.messages["labels"].get("last_name"),
+            ),
+            Field("sso_id", readable=False, writable=False),
+            Field("action_token", readable=False, writable=False),
+            Field(
+                "last_password_change",
+                "datetime",
+                default=None,
+                readable=False,
+                writable=False,
+            ),
+        ]
+        if self.use_username:
+            auth_fields.insert(
+                0,
                 Field(
-                    "email",
-                    requires=(IS_EMAIL()),
-                    label=self.param.messages["labels"].get("email"),
+                    "username",
+                    requires=[ne, IS_NOT_IN_DB(db, "auth_user.username")],
+                    unique=True,
+                    label=self.param.messages["labels"].get("username"),
                 ),
+            )
+        if self.use_phone_number:
+            auth_fields.insert(
+                2,
                 Field(
-                    "password",
-                    "password",
-                    requires=requires,
-                    readable=False,
+                    "phone_number",
+                    requires=[
+                        ne,
+                        IS_MATCH(r"^[+]?(\(\d+\)|\d+)(\(\d+\)|\d+|[ -])+$"),
+                    ],
+                    label=self.param.messages["labels"].get("phone_number"),
+                ),
+            )
+        if self.param.block_previous_password_num is not None:
+            auth_fields.append(
+                Field(
+                    "past_passwords_hash",
+                    "list:string",
                     writable=False,
-                    label=self.param.messages["labels"].get("password"),
-                ),
-                Field(
-                    "first_name",
-                    requires=ne,
-                    label=self.param.messages["labels"].get("first_name"),
-                ),
-                Field(
-                    "last_name",
-                    requires=ne,
-                    label=self.param.messages["labels"].get("last_name"),
-                ),
-                Field("sso_id", readable=False, writable=False),
-                Field("action_token", readable=False, writable=False),
-                Field(
-                    "last_password_change",
-                    "datetime",
-                    default=None,
                     readable=False,
-                    writable=False,
-                ),
-                Field("email__tmp", "string"),
-                Field("registration_key", "string"),
-                Field("reset_password_key", "string"),
-                Field("registration_id", "string"),
-            ]
-            if self.use_username:
-                auth_fields.insert(
-                    0,
-                    Field(
-                        "username",
-                        requires=[ne, IS_NOT_IN_DB(db, "auth_user.username")],
-                        unique=True,
-                        label=self.param.messages["labels"].get("username"),
-                    ),
                 )
-            if self.use_phone_number:
-                auth_fields.insert(
-                    2,
-                    Field(
-                        "phone_number",
-                        requires=[
-                            ne,
-                            IS_MATCH(r"^[+]?(\(\d+\)|\d+)(\(\d+\)|\d+|[ -])+$"),
-                        ],
-                        label=self.param.messages["labels"].get("phone_number"),
-                    ),
-                )
-            if self.param.block_previous_password_num is not None:
-                auth_fields.append(
-                    Field(
-                        "past_passwords_hash",
-                        "list:string",
-                        writable=False,
-                        readable=False,
-                    )
-                )
-            db.define_table("auth_user", *(auth_fields + self.extra_auth_user_fields))
+            )
+        db.define_table("auth_user", *(auth_fields + self.extra_auth_user_fields))
+
+    def login(self, email, password):
+        db = self.db
+        invalid_credential_error = "invalid_credentials"
+
+        # Check for too many fails
+        value = email.lower()
+        field = (
+            db.auth_user.email
+            if "@" in value or not self.use_username
+            else db.auth_user.username
+        )
+        db_user = db(field == value).select().first()
+        if (
+            db_user
+            and db_user.number_wrong_passwords
+            and db_user.number_wrong_passwords >= settings.MAX_WRONG_PASSWORDS
+        ):
+            max_reached_error = "Max number of invalid credentials reached, account is locked. Please contact an administrator."
+            self.log.error(f"{max_reached_error} for email {email}")
+            return (None, max_reached_error)
+
+        # Proceed to login
+        user, error = super().login(email, password)
+
+        # Reset or update number_wrong_passwords
+        if user:
+            # login is successful
+            user.update_record(number_wrong_passwords=0)
+        elif db_user and error == self.param.messages["errors"].get(
+            invalid_credential_error, invalid_credential_error
+        ):
+            updated_number_wrong_passwords = (
+                db_user.number_wrong_passwords + 1
+                if db_user.number_wrong_passwords
+                else 1
+            )
+            db_user.update_record(number_wrong_passwords=updated_number_wrong_passwords)
+
+        return (user, error)
+
+    def logout(self):
+        if "user" in self.session and "id" in self.session["user"]:
+            user_id = self.session["user"]["id"]
+            auth_event_data = dict(
+                time_stamp=str(datetime.now()),
+                client_ip=request.remote_addr,
+                user_id=user_id,
+                origin="auth",
+                description="User " + str(user_id) + " Logged-out",
+            )
+            self.db.auth_event.insert(**auth_event_data)
+        self.session.clear()
 
     def exists(self, object_of_action, object_id):
         db = self.db

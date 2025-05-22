@@ -283,43 +283,65 @@ Configuration files can be found in the `vidjil/docker` directory. Among them:
 - `vidjil-server/conf/uwsgi.ini` configuration required to run vidjil with uwsgi
 - `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi service. Ensures the owner of some relevant volumes are correct within the container and starts uwsgi
 
-Here are some notable configuration changes you should consider. List of settable variables is in `docker/.env.default`. It can be modified directly in the file or by creating a new `.env.something` file. In this case, you need to update the `env-file` option in the `docker-compose.yml` or `docker-compose.override.yml` file (see [docker compose docs](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-env_file-attribute)).
+Below are some notable configuration changes you should consider. List of settable variables is in `docker/.env.default`. It can be modified directly in the file or by creating a new `.env.something` file. In this case, you need to update the `env-file` option in the `docker-compose.yml` or `docker-compose.override.yml` file (see [docker compose docs](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-env_file-attribute)).
 
-- mysql root and vidjil passwords, as well as py4web password should be set as mentioned [above](#first-configuration-and-first-launch).
+#### Configure passwords
 
-- Vidjil is able to send emails to users or admins. You need to configure the mail server to use.
-  You can use an external SMTP server (or set up your own with postfix for example).
-  The configuration should be done in the `docker/.env.default` file:
-  - `SMTP_SERVER` is the SMTP server to use, with format "address:port"
-  - `SMTP_CREDENTIALS` is the credentials to use, with format "user:password"
-  - `SMTP_FROM_EMAIL` is the sender address to use, with format "name@domain". It can be different from the credentials, but in this case, the receiver may consider it as spam.
-  - `SMTP_DOMAIN` is the domain to use, with format "domain".
-  - `SMTP_ADMIN_EMAILS` is the list of admin emails to use when sending emails to admin (in case of errors on the server for example). The format to use is ["name1@domain1", "name2@domain2"] (or ["name1@domain1"] if only one admin).
-  - `SMTP_EMAIL_SUBJECT_START` is the subject prefix to use when sending emails to admin (in case of errors on the server for example). Default is "[Vidjil]".
-  - `SMTP_TLS` defines if TLS should be used, with format "true" or "false". Default is "true".
-  - `SMTP_SSL` defines if SSL should be used, with format "true" or "false". Default is "false".
-  The configuration can be tested in the `admin` page of the web application (see [admin documenation](admin.md#database-maintenance))
+As mentionned [above]((#first-configuration-and-first-launch), he passwords for the MySQL root user, the MySQL vidjil user and the py4web admin user are set in the `.env.default` file. Note that they should be set before the first launch of the server.
 
-- <a name='healthcare'></a>
-  If, according yo your local regulations, the server is suitable for hosting clinical data,
-  you may update the `HEALTHCARE_COMPLIANCE` variable in `.env.default` to `true`.
-  and the `healthcare` variable in `vidjil-client/conf/conf.js` to remove warnings related to non-healthcare compliance.
-  Updating this variable is the sole responsibility of the institution responsible for the server,
-  and should be done in accordance with the regulations that apply in your country.
-  See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
+- `MYSQL_ROOT_PASSWORD` is the password for the root user of MySQL
+- `MYSQL_PASSWORD` is the password for the `vidjil` user of MySQL
+- `PY4WEB_ADMIN_PASSWORD` is the password for the py4web admin user
+- `MYSQL_BACKUP_PASSWORD` is the password for the backup user of MySQL
+- `VIDJIL_ADMIN_PASSWORD` is the password for the admin user of Vidjil
 
-- To allow users to select files from a mounted volume,
-  set `FILE_SOURCE` and `FILE_TYPES` in `.env.default`.
-  In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
-  Users will still be allowed to upload their own files.
+#### Configure login and sessions
 
-- By default path directory for files that require saving outside of the containers (the database, third party binaries, uploads, vidjil results and log files) is settable in `.env.default` file. Default path is set in `.env.default` at `VOLUME_PATH` variable. Default value is `./volumes/vidjil/` relative to docker directory. Change can also be done directly in `volumes` in `docker-compose.yml` for various services or in `docker-compose.override.yml`. See also [Requirements / Storage](#storage) above.
+Login and sessions can be configured (especially regarding security). It is based on py4web authentication system. Note that other authentication systems are available, such as LDAP, but they are not documented here.
 
-- Configure the reporter. Ideally this container should be positioned
-  on a remote server in order to be able to report on a down server,
-  but we have packed it here for convenience.
-  You will also
-  need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
+- `TWO_FACTOR_REQUIRED` is a boolean variable that indicates if two factor authentication is required. Default is `false`. If it is activated, the user will need to enter a code sent by email to log in. In this case, the SMTP configuration must be set (see below).
+- `MAX_WRONG_PASSWORDS` is the maximum number of wrong passwords before the account is blocked, in order to prevent brute-force attacks. Default is 5.
+- `LOGIN_EXPIRATION_TIME` is the time in seconds before a login expires. Default is 7200 seconds (2 hours).
+- `SESSION_SECRET_KEY` is the secret key used to encrypt the session cookie:
+  It should be a random string of at least 32 characters ideally.
+  You can generate it with `openssl rand -base64 32`.
+
+#### Configure email
+
+Vidjil is able to send emails to users or admins. You need to configure the mail server to use.
+You can use an external SMTP server (or set up your own with postfix for example).
+Note that if you activate two factor authentication (see [above](#configure-login-and-sessions)), you need to configure the SMTP server.
+
+- `SMTP_SERVER` is the SMTP server to use, with format "address:port"
+- `SMTP_CREDENTIALS` is the credentials to use, with format "user:password"
+- `SMTP_FROM_EMAIL` is the sender address to use, with format "name@domain". It can be different from the credentials, but in this case, the receiver may consider it as spam.
+- `SMTP_DOMAIN` is the domain to use, with format "domain".
+- `SMTP_ADMIN_EMAILS` is the list of admin emails to use when sending emails to admin (in case of errors on the server for example). The format to use is ["name1@domain1", "name2@domain2"] (or ["name1@domain1"] if only one admin).
+- `SMTP_EMAIL_SUBJECT_START` is the subject prefix to use when sending emails to admin (in case of errors on the server for example). Default is "[Vidjil]".
+- `SMTP_TLS` defines if TLS should be used, with format "true" or "false". Default is "true".
+- `SMTP_SSL` defines if SSL should be used, with format "true" or "false". Default is "false".
+
+The configuration can be tested in the `admin` page of the web application (see [admin documenation](admin.md#database-maintenance)).
+
+#### Configure healthcare
+
+If, according yo your local regulations, the server is suitable for hosting clinical data,
+you may update the `HEALTHCARE_COMPLIANCE` variable in `.env.default` to `true`.
+and the `healthcare` variable in `vidjil-client/conf/conf.js` to remove warnings related to non-healthcare compliance.
+Updating this variable is the sole responsibility of the institution responsible for the server,
+and should be done in accordance with the regulations that apply in your country.
+See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
+
+#### Configure network file upload
+
+To allow users to select files from a mounted volume,
+set `FILE_SOURCE` and `FILE_TYPES` in `.env.default`.
+In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
+Users will still be allowed to upload their own files.
+
+#### Configure save path directories
+
+- Path directories for files that require saving outside of the containers (the database, third party binaries, uploads, vidjil results and log files) is settable in `.env.default` file. Default path is set in `.env.default` at `VOLUME_PATH` variable. Default value is `./volumes/vidjil/` relative to docker directory. Change can also be done directly in `volumes` in `docker-compose.yml` for various services or in `docker-compose.override.yml`. See also [Requirements / Storage](#storage) above.
 
 ### Adding external software
 
