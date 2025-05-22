@@ -539,6 +539,33 @@ Do not copy any header row, but only the data rows.
 | CohortCLL | Retrospective 2015-2019 |
 | Mouse1604 |                         |
 
+## First analysis
+
+First analysis is launched by us and provides a help to users in need. 
+It helps new users to interpret data and detect some notable things about their samples with your support.
+This is also a good starting point if you have specific data or protocols and 
+require a particular configuration or setup for work on the server.
+
+
+<figure markdown>
+  ![Image title](./pictures/user_request_analysis.png)
+  <figcaption>
+    A button labeled "request analysis" is present in each set until you don't meet the requirements. 
+    It allows you to send us an email with relevant information to launch the first analysis.
+  </figcaption>
+</figure>
+
+After a first analysis, we give you the right to launch your own pipelines on the vidjil server.
+Then, you can choose from a list of configurations that suit your data and launch analysis by clicking on the gear icon.
+
+<figure markdown>
+  ![Image title](./pictures/user_request_analysis_2.png)
+  <figcaption>
+    Once you have the right to launch analysis, a new dropdown menu is presented at the end of the table
+    It allows you to choose specific configurations to launch your own analysis.
+  </figcaption>
+</figure>
+
 ### Permanent address (URL) to a set of samples
 
 Addresses such as <https://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
