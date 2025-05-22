@@ -614,11 +614,17 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
   for (auto best: best_affect)
     PRINT_VAR(best);
 #endif
-  
+
   // Now get the second best proba but removes positions that are common with the best (we can only take the first one
   // as all should have the same bitset).
   double second_best_proba = 2;
   set<KmerAffect> second_best_affect;
+  if (best_proba == 2) {
+    best_affect.insert(KmerAffect::getAmbiguous());
+    second_best_affect.insert(KmerAffect::getAmbiguous());
+    return std::tuple<std::set<KmerAffect>, std::set<KmerAffect>, double, double>(best_affect, second_best_affect, best_proba, second_best_proba);
+  }
+
   BitSet best_bitset = (affectations.find(*(best_affect.begin()))->second);
   uint64_t best_bitset_count = best_bitset.count();
   for (auto it = best_affect.begin(); it != best_affect.end(); ) {

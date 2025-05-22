@@ -120,7 +120,11 @@ GermlineElement<Affect>* Germline<Affect>::getGermlineElement(const Tshortcut &s
 
 template <typename Affect>
 std::set<GermlineElement<Affect>*> Germline<Affect>::getGermlineElements(const std::string &code) const {
-  return germline_elements.at(code);
+  try {
+    return germline_elements.at(code);
+  } catch (std::out_of_range &e) {
+    return {};
+  }
 }
 
 template <typename Affect>
