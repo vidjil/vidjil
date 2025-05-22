@@ -577,7 +577,6 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(co
 }
 
 std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden, MultiGermline<KmerAffect> *germlines) const {
-  assert(affectations.size() >= 2);
   set<KmerAffect> best_affect;
   double best_proba = 2;
   int exp1, exp2;
