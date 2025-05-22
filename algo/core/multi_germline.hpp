@@ -34,9 +34,10 @@ public:
   std::set<std::string> getCodes() const;
 
   /**
+   * @param nb_match: minimal number of shortcuts to match
    * @return the germline that has a recombination involving the provided shortcuts or nullptr if no such germline exists
    */
-  Germline<Affect> *getGermline(const std::set<Tshortcut> &shortcuts) const;
+  Germline<Affect> *getGermline(const std::set<Tshortcut> &shortcuts, size_t nb_match=2) const;
   
   /**
    * @return the germline that has the provided code (eg. IGH) or nullptr if no such germline exists
@@ -142,9 +143,9 @@ std::set<std::string> MultiGermline<Affect>::getCodes() const {
 }
 
 template <typename Affect>
-Germline<Affect> *MultiGermline<Affect>::getGermline(const std::set<Tshortcut> &shortcuts) const {
+Germline<Affect> *MultiGermline<Affect>::getGermline(const std::set<Tshortcut> &shortcuts, size_t nb_match) const {
   for (const auto& germline : germlines) {
-    if (germline->hasRecombination(shortcuts)) {
+    if (germline->hasRecombination(shortcuts, nb_match)) {
       return germline;
     }
   }

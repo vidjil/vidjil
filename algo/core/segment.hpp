@@ -601,22 +601,19 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
 
   this->reversed = (nb_strand[0] > nb_strand[1]) ;
 
-
-
   if (segmentation_method == SEG_METHOD_ONE) {
 
-    KmerAffectAnalyser ka(*(index), this->sequence);
+    std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> res = kaa->max12({}, germlines);
+    KmerAffect kmer = *(std::get<0>(res).begin());
+    if (kmer.isAmbiguous()) {
+      this->because = UNSEG_TOO_FEW_ZERO ;
+      return ;
+    }
 
-    std::set<GermlineElement<Affect>*> elements = required_germline->getGermlineElements("4");
-    GermlineElement<Affect> *element = *(elements.begin());
-    if (elements.size() > 1)
-      std::cerr << "WARNING: only one Germline element from segment 4 will be taken into account ("
-                << element->getFilename() << ")" << std::endl;
-    KmerAffect kmer = KmerAffect(element->getAffect(), 1, element->getSeed().size());
-    int c = ka.count(kmer);
+    int c = kaa->count(kmer);
 
     // E-value
-    double pvalue = ka.getProbabilityAtLeastOrAbove(kmer, c);
+    double pvalue = kaa->getProbabilityAtLeastOrAbove(kmer, c);
     this->evalue = pvalue * multiplier ;
 
     if (this->evalue >= threshold)
@@ -624,7 +621,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
       this->because = UNSEG_TOO_FEW_ZERO ;
       return ;
     }
-
+    KmerAffectAnalyser ka(*(index), this->sequence);
     int pos = ka.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
 
     if (pos == NO_MINIMIZING_POSITION)
@@ -641,6 +638,9 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
     // getJunction() will be centered on pos
     this->box_V->end = pos;
     this->box_J->start = pos;
+    std::set<Tshortcut> shortc = {germlines->getRepository()->getShortcut(kmer)};
+    this->segmented_germline = germlines->getGermline(shortc, 1);
+    before = after = kmer;
     this->finishSegmentation();
 
     return ;
@@ -1156,19 +1156,18 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   bool reverse_J = false ;
   GermlineElement<Affect> *g_left=NULL, *g_right=NULL;
 
+  // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
+  KmerSegmenter<Affect> kseg(seq, germline->getIndex(), germline->getSegmentationMethod(),
+                                                          include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
   if ((germline->getSegmentationMethod() == SEG_METHOD_MAX12) || (germline->getSegmentationMethod() == SEG_METHOD_MAX1U))
   {
-    // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
-    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(),
-                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
-    if (kseg->isSegmented())
+    if (kseg.isSegmented())
     {
-      this->reversed = kseg->isReverse();
+      this->reversed = kseg.isReverse();
 
-      KmerAffect left = this->reversed ? KmerAffect(kseg->after, true) : kseg->before ;
-         KmerAffect right = this->reversed ? KmerAffect(kseg->before, true) : kseg->after ;
+      KmerAffect left = this->reversed ? KmerAffect(kseg.after, true) : kseg.before ;
+         KmerAffect right = this->reversed ? KmerAffect(kseg.before, true) : kseg.after ;
 
-         delete kseg ;
 
          reverse_V = (left.getStrand() == -1);
          reverse_J = (right.getStrand() == -1);
@@ -1189,7 +1188,6 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
     }
     else
     {
-      delete kseg ;
       return ;
     }
   } else {
@@ -1197,10 +1195,9 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
     // Note that we use only the 'strand' component
     // When the KmerSegmenter fails, continue with positive strand
     // TODO: flag to force a strand / to test both strands ?
-    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(),
-                                                            include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
-    this->reversed = kseg->isReverse();
-    delete kseg ;
+    KmerSegmenter<Affect> kseg(seq, germline->getIndex(), germline->getSegmentationMethod(),
+                               include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
+    this->reversed = kseg.isReverse();
   }
 
   this->sequence_or_rc = revcomp(this->sequence, this->reversed); // sequence, possibly reversed
@@ -1209,8 +1206,10 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   double standardised_threshold_evalue = threshold / multiplier;
 
   /* Read mapping */
-  if (germline->getSegmentationMethod() == SEG_METHOD_ONE)
+  if (germline->getSegmentationMethod() == SEG_METHOD_ONE && kseg.isSegmented())
   {
+    KmerAffect left = kseg.before;
+    g_left = *(germline->getIndex()->getLabel(left).begin());
     std::shared_ptr<BioReader> leftReader = g_left->getReader();
     align_against_collection(this->sequence_or_rc, leftReader, NO_FORBIDDEN_ID, false, false,
                              true, // local
