@@ -48,6 +48,7 @@ void testSegmentationBug1(IndexTypes index) {
     KmerSegmenter<KmerAffect> *segment = new KmerSegmenter<KmerAffect>(input.getSequence(),
                                                                        germline->getIndex(),
                                                                        SEG_METHOD_MAX12,
+                                                                       false,
                                                                        &multig);
 
     if (strand == 2 

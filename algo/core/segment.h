@@ -433,7 +433,7 @@ class FineSegmenter : public Segmenter<Affect>
    * By default this parameter doesn't filter the germline.
    */
   FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_cost,
-                bool include_unexpected,
+                bool include_unexpected=false,
                 double threshold = THRESHOLD_NB_EXPECTED, double threshold_kmer=THRESHOLD_NB_EXPECTED,
                 double multiplier=1.0,
                 int kmer_threshold=NO_LIMIT_VALUE, int alternative_genes=NO_LIMIT_VALUE);
