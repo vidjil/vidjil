@@ -56,7 +56,7 @@ def search_clonedb(sequences, sample_set_id):
         raise FileNotFoundError(f"The server directory {server_path} does not exist.")
 
     sys.path.insert(1, server_path)
-    import grep_clones
+    import grep_clones  # type: ignore  # noqa: I001
 
     spec = importlib.util.spec_from_file_location(
         "clonedb", os.path.join(server_path, "clonedb.py")
