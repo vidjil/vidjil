@@ -365,8 +365,8 @@ Info.prototype = {
             }
         }
 
-        for (var k in key_list) {
-            key = key_list[k];
+        for (let k in key_list) {
+            let key = key_list[k];
 
             // Are we at the start of a new group of locus ?
             if (key.substring(0,2) != last_key.substring(0,2)) {
@@ -391,10 +391,19 @@ Info.prototype = {
 
             checkbox.onchange = checkbox_onchange;
             var span_system = this.m.systemBox(key);
+            span_system.removeAttribute('title');
 
-            var span = document.createElement('span');
+            let span = document.createElement('span');
             span.className = "systemBoxNameMenu "+key;
             span.id = "toogleLocusSystemBox_"+key;
+            span.addEventListener('mouseenter', (event) => {
+                // On hover, update title content with sizes of current time
+                var time = self.m.getTime()
+                let size_in_all = (self.m.systemSize(key)*100).toFixed(2)
+                let size_in_system = self.m.reads.germline[key][time] ? (((self.m.reads.germline[key][time]*100) / self.m.systemGroupSize(key)).toFixed(2)) : (0).toFixed(2);
+                span.title = `Locus ${key}; ${size_in_system}% of system, ${size_in_all}% of segmented reads`
+            });
+
             if (this.m.system_selected.indexOf(key) == -1)
                 span.className = "systemBoxNameMenu unchecked " + key;
             span.appendChild(span_system);

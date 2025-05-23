@@ -99,4 +99,22 @@ describe('Colors', function () {
   })
 
 
+  it('5476-info title with size on locus span',  function() {
+
+    // Open a simple sample, with 2 locus only, but present in multiple time
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
+
+    cy.get('#toogleLocusSystemBox_TRD')
+      .trigger('mouseenter')  // simulate hover
+      .invoke('attr', 'title')
+      .should('contain', "Locus TRD; 100.00% of system, 20.00% of segmented reads")
+
+    cy.get('#toogleLocusSystemBox_IGH')
+      .trigger('mouseenter')  // simulate hover
+      .invoke('attr', 'title')
+      .should('contain', "Locus IGH; 100.00% of system, 80.00% of segmented reads")
+
+  })
+
+
 })
