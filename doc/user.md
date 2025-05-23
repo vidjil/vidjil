@@ -100,6 +100,9 @@ Contact us if you want help on converting such data.
   - either with “samples”/“save analysis” if you are connected to a sample database
   - or with “file”/“export .analysis”
 
+- You can focus on a particular locus by clicking on locus label in sample information panel (see below).
+  This allow to see size of a clonotype in it own locus.
+
 You are advised to go through to the tutorial available from <https://www.vidjil.org/doc>
 to learn the essential features of Vidjil.
 
@@ -608,17 +611,16 @@ been created beforehand.
 
 #### Pre-processing
 
-The sample files may be preprocessed, by selecting a *pre-process scenario* when adding a sample.
-At the moment the only preprocess available on the [public server](https://app.vidjil.org) are the paired-end read merging.
+The sample files may be preprocessed, by selecting a *pre-process scenario* when adding a sample.  
+This will definitivly modify original sample file and change of it will enforce to reupload dat a ofr this sample.
+At the moment, we offer 4 kind of preprocess.
 
-1. Read merging
-
+1. **Read merging**  
   People using Illumina sequencers may sequence paired-end R1/R2 fragments. It is
   **highly** recommended to merge those reads in order to have a read that consists
   of the whole DNA fragment instead of split fragments.
   To merge R1/R2 fragments, select an adapted *pre-process scenario* and provide both R1/R2 files at once when adding a sample.
-  On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.
-  
+  On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.  
   There are two scenarios to merge reads. Indeed in case the merging is not
   possible for some paired-end reads we must keep only one of the fragments (either R1 or
   R2). We cannot keep both because it would bias the quantification (as there
@@ -626,6 +628,41 @@ At the moment the only preprocess available on the [public server](https://app.v
   strategy it could be better to keep R1 or R2 in such a case. Therefore it
   really depends on users and their sequencing protocols. You must choose to keep the fragment that most
   probably contains both a part of the V and the J genes.
+
+1. **UMI demultiplexing**  
+  For people using UMI to debias amplficiation, we include a UMI demultiplexing process. 
+  It use calib software and are set to use 2x3nt UMI by default.
+
+1. **VDJ prefilter**  
+  Some people use now Capture or WGS sequencing. 
+  In such cases, VDJ data represent only a very few part of the original file.
+  So we include a process that will make a first and very quick prefilter of vdj reads and keep every reads that have at least some kmer from germline database.
+  This step allow to keep a small dataset for further analysis pipeline, that will be greatly improve in time, and to save disk space on server.
+
+1. **Primer dimer prefilter**  
+  Sometimes, user have primer dimers in there dataset that will contaminate sample analysis.
+  In this case, we put a simple filter on reads that are under 60nt that are mainly artifact sequence. 
+
+Note that we can also mix some of these preprocess at the same time in one preprocess configuration.  
+Preprocess in this case follow this order:
+
+``` mermaid
+graph LR
+    
+    A[UMI demultiplexing];
+    B[Reads Merging R1/R2];
+    C[VDJ prefiltering];
+    D[Primer dimer prefiltering];
+    
+    A --> B;
+    B --> C;
+    C --> D;
+```
+
+These preprocess follow scripts available in [contributions repository](https://gitlab.inria.fr/vidjil/contrib).
+If you already have some local preprocess not listed here that you want to include in your vidjil pipeline, 
+or that you want to share it with community, don't hesite to concat us. 
+
 
 ### Processing samples and process configurations
 
