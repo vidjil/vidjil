@@ -68,4 +68,23 @@ QUnit.test("read details", function(assert) {
     var reads = document.getElementsByClassName('reads_details')[0]
     assert.includes(reads.outerHTML, 'analyzed reads</span><span>200 (100.00%)', 'read details: analyzed reads (same than before)')
     assert.includes(reads.outerHTML, 'selected locus</span><span>200 (100.00%)', 'read details: selected locus (TRG + IGH again)')
+
+    // Removed reads count
+    m.clone(0).changeTag("removed_clonotypes"); // TRG
+    info.update();
+    var reads = document.getElementsByClassName('reads_details')[0]
+    assert.includes(reads.outerHTML, 'analyzed reads</span><span>190 (95.00%)', 'read details: analyzed reads (minus removed reads count)')
+    assert.includes(reads.outerHTML, 'selected locus</span><span>190 (95.00%)', 'read details: selected locus (TRG + IGH minus removed reads count)')
+
+    m.keep_one_active_system('IGH')
+    info.update();
+    var reads = document.getElementsByClassName('reads_details')[0]
+    assert.includes(reads.outerHTML, 'analyzed reads</span><span>190 (95.00%)', 'read details: analyzed reads (minus removed reads count)')
+    assert.includes(reads.outerHTML, 'selected locus</span><span>100 (50.00%)', 'read details: selected locus (IGH)')
+
+    m.keep_one_active_system('TRG')
+    info.update();
+    var reads = document.getElementsByClassName('reads_details')[0]
+    assert.includes(reads.outerHTML, 'analyzed reads</span><span>190 (95.00%)', 'read details: analyzed reads (minus removed reads count)')
+    assert.includes(reads.outerHTML, 'selected locus</span><span>90 (45.00%)', 'read details: selected locus (TRG minus removed reads count)')
 });

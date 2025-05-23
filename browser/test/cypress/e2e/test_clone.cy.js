@@ -26,9 +26,9 @@ describe('Test sandbox', function () {
 
     // Define clones ids
     var clone_real        = 0
-    var clone_igh_distrib_preset_length = 17
-    var clone_trb_distrib_preset_length = 20
-    var clone_igh_preset_VJ             = 29
+    var clone_igh_distrib_preset_length = 19
+    var clone_trb_distrib_preset_length = 22
+    var clone_igh_preset_VJ             = 31
 
 
     cy.getCloneInScatterplot(clone_real,  "bar").should("be.visible") // 'real' clone exist in sp

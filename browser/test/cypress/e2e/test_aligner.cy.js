@@ -282,7 +282,7 @@ describe('Aligner', function () {
       .trigger('change',{ force: true })
 
     // Select only distrib clonotypes
-    cy.selectCloneMulti([20, 21, 22])
+    cy.selectCloneMulti([22, 23, 24])
     cy.update_icon()
 
     cy.get('.stats_content').should("have.text", "+5 clonotypes, 50 reads (20.00%) ")
@@ -294,7 +294,7 @@ describe('Aligner', function () {
     cy.get('.stats_content').should("have.text", "1+5 clonotypes, 100 reads (40.00%) ")
 
     // large selection
-    cy.selectCloneMulti([0, 1, 2, 3, 4, 17, 18, 19])
+    cy.selectCloneMulti([0, 1, 2, 3, 4, 19, 20, 21])
     cy.update_icon()
 
     cy.get('.stats_content').should("have.text", "5+5 clonotypes, 200 reads (80.00%) ")

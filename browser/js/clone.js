@@ -780,18 +780,22 @@ Clone.prototype = {
      * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
      * @param {boolean} ignore_expected_normalisation - Return size with no normalisation for scatterplot usage
+     * @param {boolean} true_size_removed - Return size without substracting removed clonotypes from total
      * @return {float} size
      * */
-    getSize: function (time, ignore_expected_normalisation) {
-        if (ignore_expected_normalisation == undefined) { ignore_expected_normalisation=false}
-
-        if (!this.quantifiable)
-            return this.NOT_QUANTIFIABLE_SIZE
+    getSize: function (time, ignore_expected_normalisation=false, true_size_removed=false) {
+        if (!this.quantifiable) return this.NOT_QUANTIFIABLE_SIZE
 
         time = this.m.getTime(time);
-        
         if (this.m.reads.segmented[time] === 0 ) return 0;
-        var result     = this.getReads(time) / this.m.reads.segmented[time];
+        if (this.isRemoved() && !true_size_removed) return 0;
+        
+        // Compute size based on whether removed clones should be considered
+        var reads = this.getReads(time);
+        var total_reads = this.m.reads.segmented[time];
+        var result = true_size_removed ? (reads / total_reads) : (reads / (total_reads - this.m.removed_clones_reads));
+        if (this.id && this.id.includes("removed")) return (reads / total_reads)
+
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){
             // special getSize for scatterplot (ignore constant/expected normalization)
             return result
@@ -835,7 +839,7 @@ Clone.prototype = {
     getMaxSize: function () {
         var max=0;
         for (var i in this.m.samples.order){
-            var tmp=this.getSize(this.m.samples.order[i]);
+            var tmp=this.getSize(this.m.samples.order[i], undefined, true_size_removed=true);
             if (tmp>max) max=tmp;
         }
         return max;
@@ -848,7 +852,7 @@ Clone.prototype = {
         var max=0;
         var maxTime=0;
         for (var i in this.m.samples.order){
-            var tmp=this.getSize(this.m.samples.order[i]);
+            var tmp=this.getSize(this.m.samples.order[i], undefined, true_size_removed=true);
             if (tmp>max){ 
                 max=tmp;
                 maxTime=this.m.samples.order[i];
@@ -857,7 +861,6 @@ Clone.prototype = {
         return maxTime;
     }, 
     
-
     /**
      * @return {string} the global size ratio of the clone at the given time
      */
@@ -1370,7 +1373,7 @@ Clone.prototype = {
         newTag = newTag.replace("tag", "");
         console.log("changeTag() (clonotype " + this.index + " <<" + newTag + ")");
         this.tag = newTag;
-        this.m.updateElem([this.index]);
+        this.m.update();
         this.m.analysisHasChanged = true;
     },
     
@@ -1997,9 +2000,11 @@ Clone.prototype = {
     enable: function (top) {
         this.active = true
         this.hidden = false
-
+        this.removed = false
         if (this.getTag() == "smaller_clonotypes" && this.m.filter.check("Tag", "=", "smaller_clonotypes") != -1){
             this.active = false
+        } else if (this.getTag() == "removed_clonotypes" && !this.hasSizeOther()){
+            this.removed = true
         }
     },
 
@@ -2047,6 +2052,10 @@ Clone.prototype = {
         return this.index == this.m.focus
     },
     
+    isRemoved: function () {
+        return this.removed;
+    },
+
     get: function (field_name, time) {
         var field;
         if (typeof this[field_name] != 'undefined'){
@@ -2173,6 +2182,7 @@ Clone.prototype = {
     },
 
     isInteractable: function() {
+        if (this.isRemoved()) return false
         var comp = (C_INTERACTABLE == (this.attributes & C_INTERACTABLE))
         return comp
     },

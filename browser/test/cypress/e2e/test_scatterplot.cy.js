@@ -16,7 +16,7 @@ describe('Scatterplot', function () {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //check visibility
-    cy.get('#visu_plot_container').children('circle').should('have.length', 8)
+    cy.get('#visu_plot_container').children('circle').should('have.length', 9)
     cy.get('#visu_plot_container').children('circle').should('be.visible')
     cy.get('#visu_bar_container').children('rect').should('not.be.visible')
 
@@ -36,7 +36,7 @@ describe('Scatterplot', function () {
     cy.get('#visu').find('.sp_menu_icon_bar').click({ force: true })
 
     //check visibility
-    cy.get('#visu_bar_container').children('rect').should('have.length', 8)
+    cy.get('#visu_bar_container').children('rect').should('have.length', 9)
     cy.get('#visu_plot_container').children('circle').should('not.be.visible')
     cy.get('#visu_bar_container').children('rect').should('be.visible')
 
