@@ -379,6 +379,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     dclone.current_reads = JSON.parse(JSON.stringify(raw_data.reads))
     dclone.defineCompatibleClones()
     dclone.updateReadsDistribClones()
+    m.computeRemovedClonesReads();
     html = m.clones[0].getHtmlInfo();
     // Representative
     var include = html.includes("<td class='header' colspan='2'>representative sequence</td>")

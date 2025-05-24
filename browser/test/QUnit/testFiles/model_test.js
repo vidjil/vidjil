@@ -174,6 +174,7 @@ QUnit.test("removed clonotypes", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data,100);
     m.initClones();
+    time = m.getTime();
 
     // Set removed_clonotypes tag to clones 0 and 2
     m.clone(0).changeTag("removed_clonotypes");
@@ -192,13 +193,13 @@ QUnit.test("removed clonotypes", function(assert) {
     var c0_Reads = m.clone(0).getReads(); //TRG
     var c2_Reads = m.clone(2).getReads(); //IGH
 
-    assert.equal(m.removed_clones_reads, c0_Reads + c2_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
-    assert.equal(m.removed_clones_reads_total, c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
+    assert.equal(m.removed_clones_reads[time], c0_Reads + c2_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_total[time], c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
 
     // Test proper computation of removed_clones_reads with only TRG germline
     m.keep_one_active_system('TRG');
-    assert.equal(m.removed_clones_reads, c0_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
-    assert.equal(m.removed_clones_reads_total, c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
+    assert.equal(m.removed_clones_reads[time], c0_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_total[time], c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
 
     // Test proper return of removed_clones_reads to 0 when no clone is removed
     m.toggle_system('IGH');
@@ -206,8 +207,8 @@ QUnit.test("removed clonotypes", function(assert) {
     m.clone(2).changeTag("none");
     m.computeRemovedClonesReads();
 
-    assert.equal(m.removed_clones_reads, 0, "removed_clones_reads is now 0");
-    assert.equal(m.removed_clones_reads_total, 0, "removed_clones_reads_total is now O");
+    assert.equal(m.removed_clones_reads[time], 0, "removed_clones_reads is now 0");
+    assert.equal(m.removed_clones_reads_total[time], 0, "removed_clones_reads_total is now O");
 });
 
 

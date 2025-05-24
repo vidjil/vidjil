@@ -91,9 +91,7 @@ function Model() {
     setInterval(function(){return self.updateIcon()}, 100); 
 
     this.trimming_before_external = false
-
-    this.removed_clones_reads = 0;
-    this.removed_clones_reads_total = 0;
+    
 }
 
 
@@ -851,34 +849,38 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
     },
     /* 
-    compute total removed reads for the selected germline and the total at the curent time
+    compute total removed reads for the selected germline and the total at the all time
      */
-    computeRemovedClonesReads: function(time){
-        var removed_clones_reads = 0;
-        var removed_clones_reads_total = 0;
-        time = this.getTime();
-        var germline = []
-
+    computeRemovedClonesReads: function() {
+        var removed_clones_reads = new Array(this.reads.segmented.length).fill(0);
+        var removed_clones_reads_total = new Array(this.reads.segmented.length).fill(0);
+        var germline = [];
+    
         if (!this.system_selected || this.system_selected.length === 0) {
-            germline = "undefined";
+            germline = ["undefined"];
         } else {
             for (var i = 0; i < this.system_selected.length; i++) {
                 germline[i] = this.system_selected[i];
             }
         }
-        for (var j= 0; j < this.clones.length; j++) {
+    
+        for (var j = 0; j < this.clones.length; j++) {
             if (this.clones[j].isRemoved()) {
-                var reads = this.clones[j].getReads(time);
-                removed_clones_reads_total += reads;
-                if (germline.includes(this.clones[j].get('germline'))) {
-                    removed_clones_reads += reads;
+                for (var t = 0; t < this.reads.segmented.length; t++) {
+                    var reads = this.clones[j].getReads(t);
+                    removed_clones_reads_total[t] += reads;
+    
+                    if (germline.includes(this.clones[j].get('germline'))) {
+                        removed_clones_reads[t] += reads;
+                    }
                 }
             }
         }
+    
         this.removed_clones_reads = removed_clones_reads;
         this.removed_clones_reads_total = removed_clones_reads_total;
-        },
-
+    },
+    
     /**
      * [changeNormalisation description]
      * @param  {String} mode - some this.NORM_*
