@@ -139,6 +139,7 @@ for another one, and \texttt{bone \#marrow \#B-ALL} for the last one.}
     cy.get('#object_form > .btn')
       .should("have.value", "save")
       .click()
+    cy.wait("@getActivities");
 
     // land on patient page
     cy.get('tr').contains("Last_name_1 First_name_1 ")
