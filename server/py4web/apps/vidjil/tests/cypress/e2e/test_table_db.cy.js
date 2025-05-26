@@ -43,7 +43,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
       // Open result
       cy.openSampleResult(sample_id);
       // Check number of clones found
-      cy.get("#list_clones").children().should("have.length", 26);
+      cy.get("#list_clones").children().should("have.length", 38);
 
       // Delete process
       cy.get("@patient_id").then((patient_id) => {
