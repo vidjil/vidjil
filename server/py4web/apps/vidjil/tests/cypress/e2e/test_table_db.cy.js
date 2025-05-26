@@ -44,7 +44,14 @@ describe("Manipulate patient, sample and launch analysis", function () {
       cy.openSampleResult(sample_id);
       // Check number of clones found
       cy.get("#list_clones").children().should("have.length", 38);
-
+      // Check number of clones found without removed clonotypes
+      cy.get("#list_clones")
+      .children()
+      .filter((index, el) => {
+        return Cypress.$(el).css("display") !== "none";
+      })
+      .should("have.length", 26);
+    
       // Delete process
       cy.get("@patient_id").then((patient_id) => {
         cy.openDBPage();
