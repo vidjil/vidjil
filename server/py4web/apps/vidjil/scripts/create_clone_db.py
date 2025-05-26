@@ -1,6 +1,6 @@
-import importlib.util
 import os
 import sys
+from subprocess import PIPE, STDOUT, Popen
 
 sys.path.append("../../../")
 
@@ -23,7 +23,7 @@ def get_last_results(sequence_file, config_ids=None):
     # First get the max run dates for the good result files
     select_max_run = db(
         (db.results_file.sequence_file_id == sequence_file)
-        & (not db.results_file.hidden)
+        & (db.results_file.hidden == False)  # noqa: E712
         & (select_on_config)
     )._select(
         db.results_file.run_date.max().with_alias("max"),
@@ -37,11 +37,7 @@ def get_last_results(sequence_file, config_ids=None):
 
 
 def create_clone_db_for_sequences(sequences, output_file):
-    vidjil_to_fasta_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-    vidjil_to_fasta_path = os.path.join(
-        vidjil_to_fasta_path, "..", "..", "..", "..", "..", "tools"
-    )
-    sys.path.insert(1, vidjil_to_fasta_path)
+    print(f"create_clone_db_for_sequences for {sequences=} in {output_file}")
 
     vtf_metadata = []
     vtf_result_files = []
@@ -54,25 +50,39 @@ def create_clone_db_for_sequences(sequences, output_file):
             if result.data_file is not None:
                 vtf_metadata += [
                     "-d",
-                    " ".join(
+                    '"'
+                    + " ".join(
                         ["sample_set=" + str(s.sample_set_id) for s in sample_sets]
                     )
                     + " "
                     + "config_id="
-                    + str(result.config_id),
+                    + str(result.config_id)
+                    + '"',
                 ]
                 vtf_result_files.append(settings.DIR_RESULTS + result.data_file)
 
-    spec = importlib.util.spec_from_file_location(
-        "vidjil_to_fasta", vidjil_to_fasta_path
+    vidjil_to_fasta_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+    vidjil_to_fasta_path = os.path.join(
+        vidjil_to_fasta_path,
+        "../../../../..",
+        "tools",
+        "vidjil-to-fasta.py",
     )
-    vidjil2fasta = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(vidjil2fasta)
 
-    args = vidjil2fasta.parser.parse_args(
-        vtf_metadata + ["-w", "-o", output_file] + vtf_result_files
-    )
-    vidjil2fasta.process_files(args)
+    cmd = f"python {vidjil_to_fasta_path} {' '.join(vtf_metadata)} -w -o {output_file} {' '.join(vtf_result_files)}"
+    log_file_path = f"{output_file}.log"
+    print(f"Run command {cmd}")
+    print(f"Output log in {log_file_path}")
+    with open(log_file_path, "w", encoding="utf-8") as fuse_log_file:
+        p = Popen(
+            cmd,
+            shell=True,
+            stdin=PIPE,
+            stdout=fuse_log_file,
+            stderr=STDOUT,
+            close_fds=True,
+        )
+        p.communicate()
 
 
 if __name__ == "__main__":

@@ -80,12 +80,13 @@ def search_clonedb(sequences, sample_set_id):
         f"Searching {len(sequences)} sequences in CloneDB for group {parent_group}"
     )
     try:
-        occurrences = grep_clones.launch_search(args)
         # Get occurrences for each sample with information on its corresponding sample sets
-    except ValueError:
-        # return error_message(str(e))
+        occurrences = grep_clones.launch_search(args)
+    except ValueError as e:
+        log.error(f"Value error when running clonedb: {e}")
         return error_message("Are you sure your account has an enabled CloneDB?")
     except Exception as e:
+        log.error(f"Error when running clonedb: {e}")
         return error_message(str(e))
 
     sample_set_ids = [
