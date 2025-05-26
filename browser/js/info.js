@@ -414,7 +414,7 @@ Info.prototype = {
         var val = "no read";
         var warning_title = false;
         var warning_class = '' ;
-        var removed_reads = this.m.removed_clones_reads[time];
+        var removed_reads = this.m.removed_clones_reads_of_active_locus[time];
         var removed_reads_total = this.m.removed_clones_reads_total[time];
         var percent;
 

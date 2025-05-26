@@ -188,36 +188,39 @@ QUnit.test("removed clonotypes", function(assert) {
     assert.equal(m.clone(0).getSize(), 0, "Clone size is 0");
     assert.equal(m.clone(2).getSize(), 0, "Clone size is 0");
 
-    // Test proper computation of removed_clones_reads with all germlines
+    // Test proper computation of removed_clones_reads_of_active_locus with all germlines
     m.computeRemovedClonesReads();
     var c0_Reads = m.clone(0).getReads(); //TRG
     var c2_Reads = m.clone(2).getReads(); //IGH
 
-    assert.equal(m.removed_clones_reads[time], c0_Reads + c2_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_of_active_locus[time], c0_Reads + c2_Reads, "removed_clones_reads_of_active_locus is the sum of removed clones reads for selected locus");
     assert.equal(m.removed_clones_reads_total[time], c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
 
-    // Test proper computation of removed_clones_reads with only TRG germline
+    // Test proper computation of removed_clones_reads_of_active_locus with only TRG germline
     m.keep_one_active_system('TRG');
-    assert.equal(m.removed_clones_reads[time], c0_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_of_active_locus[time], c0_Reads, "removed_clones_reads_of_active_locus is the sum of removed clones reads for selected locus");
     assert.equal(m.removed_clones_reads_total[time], c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
 
-    // Test proper computation of removed_clones_reads with only one germline (TRG) at all times
-    assert.equal(m.removed_clones_reads[0], m.clone(0).getReads(0), "removed_clones_reads has the correct value at each time point");
-    assert.equal(m.removed_clones_reads_total[0], m.clone(0).getReads(0) + m.clone(2).getReads(0), "removed_clones_reads_total has the correct value at each time point");
-    assert.equal(m.removed_clones_reads[1], m.clone(0).getReads(1), "removed_clones_reads has the correct value at each time point");
-    assert.equal(m.removed_clones_reads_total[1], m.clone(0).getReads(1) + m.clone(2).getReads(1), "removed_clones_reads_total has the correct value at each time point");
-    assert.equal(m.removed_clones_reads[2], m.clone(0).getReads(2), "removed_clones_reads has the correct value at each time point");
-    assert.equal(m.removed_clones_reads_total[2], m.clone(0).getReads(2) + m.clone(2).getReads(2), "removed_clones_reads_total has the correct value at each time point");
-    assert.equal(m.removed_clones_reads[3], m.clone(0).getReads(3), "removed_clones_reads has the correct value at each time point");
-    assert.equal(m.removed_clones_reads_total[3], m.clone(0).getReads(3) + m.clone(2).getReads(3), "removed_clones_reads_total has the correct value at each time point");
+    // Test proper computation of removed_clones_reads_of_active_locus with only one germline (TRG) at all times
+    assert.equal(m.removed_clones_reads_of_active_locus[0], m.clone(0).getReads(0), "removed_clones_reads_of_active_locus has the correct value at time point 0");
+    assert.equal(m.removed_clones_reads_total[0], m.clone(0).getReads(0) + m.clone(2).getReads(0), "removed_clones_reads_total has the correct value at time point 0");
+
+    assert.equal(m.removed_clones_reads_of_active_locus[1], m.clone(0).getReads(1), "removed_clones_reads_of_active_locus has the correct value at time point 1");
+    assert.equal(m.removed_clones_reads_total[1], m.clone(0).getReads(1) + m.clone(2).getReads(1), "removed_clones_reads_total has the correct value at time point 1");
     
-    // Test proper return of removed_clones_reads to 0 when no clone is removed
+    assert.equal(m.removed_clones_reads_of_active_locus[2], m.clone(0).getReads(2), "removed_clones_reads_of_active_locus has the correct value at time point 2");
+    assert.equal(m.removed_clones_reads_total[2], m.clone(0).getReads(2) + m.clone(2).getReads(2), "removed_clones_reads_total has the correct value at time point 2");
+    
+    assert.equal(m.removed_clones_reads_of_active_locus[3], m.clone(0).getReads(3), "removed_clones_reads_of_active_locus has the correct value at time point 3");
+    assert.equal(m.removed_clones_reads_total[3], m.clone(0).getReads(3) + m.clone(2).getReads(3), "removed_clones_reads_total has the correct value at time point 3");
+    
+    // Test proper return of removed_clones_reads_of_active_locus to 0 when no clone is removed
     m.toggle_system('IGH');
     m.clone(0).changeTag("none");
     m.clone(2).changeTag("none");
     m.computeRemovedClonesReads();
 
-    assert.equal(m.removed_clones_reads[time], 0, "removed_clones_reads is now 0");
+    assert.equal(m.removed_clones_reads_of_active_locus[time], 0, "removed_clones_reads_of_active_locus is now 0");
     assert.equal(m.removed_clones_reads_total[time], 0, "removed_clones_reads_total is now O");
 
 });

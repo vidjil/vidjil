@@ -792,7 +792,7 @@ Clone.prototype = {
         // Compute size based on whether removed clones should be considered
         var reads = this.getReads(time);
         var total_reads = this.m.reads.segmented[time];
-        var result = true_size_removed ? (reads / total_reads) : (reads / (total_reads - this.m.removed_clones_reads[time]));
+        var result = true_size_removed ? (reads / total_reads) : (reads / (total_reads - this.m.removed_clones_reads_of_active_locus[time]));
         if (this.id && this.id.includes("removed")) return (reads / total_reads)
 
         if ( (ignore_expected_normalisation == true && this.m.normalization_mode == this.m.NORM_EXPECTED) || this.hasSizeDistrib()){

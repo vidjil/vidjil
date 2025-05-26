@@ -852,7 +852,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     compute total removed reads for the selected germline and the total at the all time
      */
     computeRemovedClonesReads: function() {
-        var removed_clones_reads = new Array(this.reads.segmented.length).fill(0);
+        var removed_clones_reads_of_active_locus = new Array(this.reads.segmented.length).fill(0);
         var removed_clones_reads_total = new Array(this.reads.segmented.length).fill(0);
         var germline = [];
     
@@ -871,13 +871,13 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                     removed_clones_reads_total[t] += reads;
     
                     if (germline.includes(this.clones[j].get('germline'))) {
-                        removed_clones_reads[t] += reads;
+                        removed_clones_reads_of_active_locus[t] += reads;
                     }
                 }
             }
         }
     
-        this.removed_clones_reads = removed_clones_reads;
+        this.removed_clones_reads_of_active_locus = removed_clones_reads_of_active_locus;
         this.removed_clones_reads_total = removed_clones_reads_total;
     },
     
