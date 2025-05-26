@@ -201,6 +201,16 @@ QUnit.test("removed clonotypes", function(assert) {
     assert.equal(m.removed_clones_reads[time], c0_Reads, "removed_clones_reads is the sum of removed clones reads for selected locus");
     assert.equal(m.removed_clones_reads_total[time], c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
 
+    // Test proper computation of removed_clones_reads with only one germline (TRG) at all times
+    assert.equal(m.removed_clones_reads[0], m.clone(0).getReads(0), "removed_clones_reads has the correct value at each time point");
+    assert.equal(m.removed_clones_reads_total[0], m.clone(0).getReads(0) + m.clone(2).getReads(0), "removed_clones_reads_total has the correct value at each time point");
+    assert.equal(m.removed_clones_reads[1], m.clone(0).getReads(1), "removed_clones_reads has the correct value at each time point");
+    assert.equal(m.removed_clones_reads_total[1], m.clone(0).getReads(1) + m.clone(2).getReads(1), "removed_clones_reads_total has the correct value at each time point");
+    assert.equal(m.removed_clones_reads[2], m.clone(0).getReads(2), "removed_clones_reads has the correct value at each time point");
+    assert.equal(m.removed_clones_reads_total[2], m.clone(0).getReads(2) + m.clone(2).getReads(2), "removed_clones_reads_total has the correct value at each time point");
+    assert.equal(m.removed_clones_reads[3], m.clone(0).getReads(3), "removed_clones_reads has the correct value at each time point");
+    assert.equal(m.removed_clones_reads_total[3], m.clone(0).getReads(3) + m.clone(2).getReads(3), "removed_clones_reads_total has the correct value at each time point");
+    
     // Test proper return of removed_clones_reads to 0 when no clone is removed
     m.toggle_system('IGH');
     m.clone(0).changeTag("none");
@@ -209,6 +219,7 @@ QUnit.test("removed clonotypes", function(assert) {
 
     assert.equal(m.removed_clones_reads[time], 0, "removed_clones_reads is now 0");
     assert.equal(m.removed_clones_reads_total[time], 0, "removed_clones_reads_total is now O");
+
 });
 
 
