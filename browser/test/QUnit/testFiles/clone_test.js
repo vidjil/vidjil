@@ -379,6 +379,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     dclone.current_reads = JSON.parse(JSON.stringify(raw_data.reads))
     dclone.defineCompatibleClones()
     dclone.updateReadsDistribClones()
+    m.computeRemovedClonesReads();
     html = m.clones[0].getHtmlInfo();
     // Representative
     var include = html.includes("<td class='header' colspan='2'>representative sequence</td>")
@@ -562,8 +563,13 @@ QUnit.test("size", function(assert) {
     m.clone(2).changeTag("removed_clonotypes");
     m.computeRemovedClonesReads();
     assert.equal(c1.getSize().toFixed(3), 0.105, "cluster c1+c2 size with c3 removed from total : 0.105");
-    
-    // testgetSize with no norm for scatterplot usage
+
+    // test getSize at different time points
+    assert.equal(c1.getSize(1).toFixed(3), 0.222, "cluster c1+c2 size with c3 removed from total : 0.222");
+    assert.equal(c1.getSize(2).toFixed(3), 0.162, "cluster c1+c2 size with c3 removed from total : 0.162");
+    assert.equal(c1.getSize(3).toFixed(3), 0.353, "cluster c1+c2 size with c3 removed from total : 0.353");
+
+    // test getSize with no norm for scatterplot usage
     m.clone(2).changeTag("none");
     m.computeRemovedClonesReads();
     m.set_normalization(m.NORM_EXPECTED)
@@ -571,7 +577,7 @@ QUnit.test("size", function(assert) {
     assert.equal(c1.getSize().toFixed(2), 0.20, "c1 get correct size after normalisation");
     assert.equal(c1.getSize(undefined, true), 0.10, "c1 return size with no norm if parameter is setted for");
 
-    
+
 });
 
 QUnit.test("system", function(assert) {

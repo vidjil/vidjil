@@ -410,11 +410,12 @@ Info.prototype = {
     },
 
     build_line_read_number: function (id, label, qualifier, read_number, total=true) {
+        time = this.m.getTime();
         var val = "no read";
         var warning_title = false;
         var warning_class = '' ;
-        var removed_reads = this.m.removed_clones_reads;
-        var removed_reads_total = this.m.removed_clones_reads_total;
+        var removed_reads = this.m.removed_clones_reads_of_active_locus[time];
+        var removed_reads_total = this.m.removed_clones_reads_total[time];
         var percent;
 
         if (read_number[this.m.t] > 0) {

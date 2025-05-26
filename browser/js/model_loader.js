@@ -401,6 +401,11 @@ Model_loader.prototype = {
             this.reads.segmented_all[o] = this.reads.segmented[o]
         }
         
+        // initialize removed reads
+            
+        this.removed_clones_reads_of_active_locus = new Array(this.reads.segmented.length).fill(0);
+        this.removed_clones_reads_total = new Array(this.reads.segmented.length).fill(0);
+
         this.compute_average_quality();
 
         

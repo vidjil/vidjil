@@ -1661,9 +1661,9 @@ Graph.prototype = {
         tooltip    += ( (sampling_date != "-/-") ? (breakChar + sampling_date) : "" )
         tooltip    += ( (delta_date != "-/-") ? (breakChar + delta_date) : "" )
         // duplicate from info; refactor
-        var read_number = this.m.reads.segmented
-        var percent = (read_number[time] / this.m.reads.total[time]) * 100;
-        var reads   = this.m.toStringThousands(read_number[time]) + " reads (" + percent.toFixed(2) + "%)";
+        var read_number = this.m.reads.segmented[time] - this.m.removed_clones_reads_of_active_locus[time];
+        var percent = (read_number / this.m.reads.total[time]) * 100;
+        var reads   = this.m.toStringThousands(read_number) + " reads (" + percent.toFixed(2) + "%)";
         tooltip    += breakChar + reads
         return tooltip
     },
