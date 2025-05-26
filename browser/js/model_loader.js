@@ -422,12 +422,29 @@ Model_loader.prototype = {
         self.system_available = [];
         var system;
 
+        
         // Add system if at least one reads is present for a locus
+        let threshold = 0.01;
         for (var germline in this.reads.germline) {
-            const sum_system = this.reads.germline[germline].reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-            if (typeof germline != "undefined" && sum_system > 0 && self.system_available.indexOf(germline) ==-1){
-                self.system_available.push(germline)
+            const systemReads = this.reads.germline[germline];
+            const segmentedReads = this.reads.segmented;
+
+            if (systemReads == undefined || self.system_available.includes(germline)) continue;
+
+            let above = false;
+            for (let i = 0; i < systemReads.length; i++) {
+                const val = systemReads[i];
+                const segmented = segmentedReads[i] || 0;
+
+                const ratio = segmented > 0 ? val / segmented : 0;
+
+                if (ratio > threshold) {
+                    above = true;
+                    break;
+                }
             }
+
+            if (above == true) { self.system_available.push(germline) }
         }
 
         self.system_available.sort(locus_cmp)
