@@ -107,12 +107,12 @@ describe('Colors', function () {
     cy.get('#toogleLocusSystemBox_TRD')
       .trigger('mouseenter')  // simulate hover
       .invoke('attr', 'title')
-      .should('contain', "Locus TRD; 100.00% of system, 20.00% of segmented reads")
+      .should('contain', "Locus TRD; 100.00% of system, 20.00% of total segmented reads")
 
     cy.get('#toogleLocusSystemBox_IGH')
       .trigger('mouseenter')  // simulate hover
       .invoke('attr', 'title')
-      .should('contain', "Locus IGH; 100.00% of system, 80.00% of segmented reads")
+      .should('contain', "Locus IGH; 100.00% of system, 80.00% of total segmented reads")
 
   })
 

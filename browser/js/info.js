@@ -401,7 +401,7 @@ Info.prototype = {
                 var time = self.m.getTime()
                 let size_in_all = (self.m.systemSize(key)*100).toFixed(2)
                 let size_in_system = self.m.reads.germline[key][time] ? (((self.m.reads.germline[key][time]*100) / self.m.systemGroupSize(key)).toFixed(2)) : (0).toFixed(2);
-                span.title = `Locus ${key}; ${size_in_system}% of system, ${size_in_all}% of segmented reads`
+                span.title = `Locus ${key}; ${size_in_system}% of system, ${size_in_all}% of total segmented reads`
             });
 
             if (this.m.system_selected.indexOf(key) == -1)
