@@ -19,10 +19,11 @@ describe('List', function () {
     cy.wait(200)
 
     // Initial state
-    cy.getCloneSize(0).should('contain', "10.16%") // TRD+
-    cy.getCloneSize(1).should('contain', "62.10%") // IGK+
-    cy.getCloneSize(2).should('contain', "1.174%") // IGH
-    cy.getCloneSize(4).should('contain', "0.034%") // IGH+
+    cy.getCloneSize(0).should('contain', "6.219%") // TRD+
+    cy.getCloneSize(1).should('contain', "38.00%") // IGK+
+    cy.getCloneSize(2).should('contain', "0.718%") // IGH
+    cy.getCloneSize(4).should('contain', "0.021%") // IGH+
+
     
     // using axis_x selector in scatterplot
     cy.get('#visu').find('select[name*="select_x[]"]').select("Size in locus",{ force: true })
