@@ -125,6 +125,7 @@ class VidjilAuth(Auth):
     def login(self, email, password):
         db = self.db
         invalid_credential_error = "invalid_credentials"
+        max_reached_error = "Max number of invalid credentials reached, account is locked. Please contact an administrator."
 
         # Check for too many fails
         value = email.lower()
@@ -139,7 +140,6 @@ class VidjilAuth(Auth):
             and db_user.number_wrong_passwords
             and db_user.number_wrong_passwords >= settings.MAX_WRONG_PASSWORDS
         ):
-            max_reached_error = "Max number of invalid credentials reached, account is locked. Please contact an administrator."
             self.log.error(f"{max_reached_error} for email {email}")
             return (None, max_reached_error)
 
@@ -160,6 +160,7 @@ class VidjilAuth(Auth):
             )
             db_user.update_record(number_wrong_passwords=updated_number_wrong_passwords)
             if updated_number_wrong_passwords >= settings.MAX_WRONG_PASSWORDS:
+                error = max_reached_error
                 message = (
                     f"Account {db_user.email} locked for too many invalid credentials"
                 )
@@ -170,6 +171,11 @@ class VidjilAuth(Auth):
                         subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Account locked",
                         body=message,
                     )
+            else:
+                number_of_tries_left = (
+                    settings.MAX_WRONG_PASSWORDS - updated_number_wrong_passwords
+                )
+                error = f"Invalid credentials - {number_of_tries_left} tries left"
 
         return (user, error)
 

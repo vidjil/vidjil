@@ -95,7 +95,7 @@ class TestAuthController:
         # Then : We get an error message
         result = json.loads(json_result)
         assert result["success"] == "false"
-        assert result["message"] == "Invalid Credentials"
+        assert "Invalid credentials" in result["message"]
 
     def test_submit_valid_credentials_no_2fa(self):
         # Given : Valid login and password, and no 2FA required
