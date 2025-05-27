@@ -237,7 +237,24 @@ log = _init_log()
 # Instantiate the object and actions that handle auth
 # #######################################################
 def two_factor_required(user, request):
-    return settings.TWO_FACTOR_REQUIRED
+    if settings.TWO_FACTOR_REQUIRED:
+        if settings.TWO_FACTOR_EMAIL_LIST:
+            # 2 factor authentication not required for specific users
+            if user.email not in settings.TWO_FACTOR_EMAIL_LIST:
+                return True
+            else:
+                return False
+        else:
+            return True
+    else:
+        if settings.TWO_FACTOR_EMAIL_LIST:
+            # required 2 factor authentication only for specific users
+            if user.email in settings.TWO_FACTOR_EMAIL_LIST:
+                return True
+            else:
+                return False
+        else:
+            return False
 
 
 def send_two_factor_email(user, code):
