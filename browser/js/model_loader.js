@@ -422,7 +422,13 @@ Model_loader.prototype = {
         self.system_available = [];
         var system;
 
-        
+        for (var p = 0; p < this.clones.length; p++) {
+            system = this.clone(p).get('germline')
+            if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
+                self.system_available.push(system)
+            }
+        }
+
         // Add system if at least one reads is present for a locus
         let threshold = 0.01;
         for (var germline in this.reads.germline) {

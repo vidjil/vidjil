@@ -19,9 +19,9 @@ describe('List', function () {
     cy.wait(200)
 
     // Initial state
-    cy.getCloneSize(0).should('contain', "6.219%") // TRD+
-    cy.getCloneSize(1).should('contain', "38.00%") // IGK+
-    cy.getCloneSize(2).should('contain', "0.718%") // IGH
+    cy.getCloneSize(0).should('contain', "6.225%") // TRD+
+    cy.getCloneSize(1).should('contain', "38.03%") // IGK+
+    cy.getCloneSize(2).should('contain', "0.719%") // IGH
     cy.getCloneSize(4).should('contain', "0.021%") // IGH+
 
     

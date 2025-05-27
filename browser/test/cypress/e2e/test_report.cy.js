@@ -24,8 +24,10 @@ describe('Report', function () {
     cy.get('#export_fasta').click({force:true});
 
     // check result
-    cy.get('body').contains(">clone-001    119 nt, 243 241 reads (97.29%)")
-    cy.get('body').contains("clone2    6 nt, 153 reads (0.061%)")
+    cy.get('body').contains(">clone-001")
+    cy.get('body').contains("119 nt, 243 241 reads (72.46%, 97.29% of TRG)")
+    cy.get('body').contains(">clone2")
+    cy.get('body').contains("6 nt, 153 reads (0.045%, 0.061% of TRG)")
 
     //aligned fasta
     cy.get('#align').click()

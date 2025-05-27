@@ -101,11 +101,11 @@ describe('Graph', function () {
                     .should('not.have.class','graph_time2');
 
     //drag drop (reorder samples)
-    cy.get('#time0').invoke('attr', 'x').should('eq', '242')
+    cy.get('#time0').invoke('attr', 'x').should('eq', '264')
     cy.get('#time0').trigger('mousedown', { which: 1 })
                     .trigger('mousemove', { clientX: 1200, clientY: 200 })
                     .trigger('mouseup', {force: true})
-    cy.get('#time0').invoke('attr', 'x').should('eq', '588')
+    cy.get('#time0').invoke('attr', 'x').should('eq', '653')
 
     //dblclick on header (hide sample)
     cy.get("#time1").dblclick()

@@ -18,7 +18,8 @@ describe('Load', function () {
       cy.get('#info_segmented').contains("14 (100.00%)")
 
       //check number of clones (0)
-      cy.get('#list_clones').children().should('have.length', 0)
+      cy.get('#list_clones').children().should('have.length', 24)
+      // 24 ==> 12 smaller clones and 12 removed clones
     })
 
     it('loading-vidjil-file-single-sample',  function() {
@@ -28,7 +29,7 @@ describe('Load', function () {
       cy.get('#info_segmented').contains("335 662 (76.78%)")
 
       //check number of clones (2)
-      cy.get('#list_clones').children().should('have.length', 3)
+      cy.get('#list_clones').children().should('have.length', 5) // 1 real clone, 2 smaller and 2 removed
 
       // single sample -> both visu should be scatterplot
       cy.get("#visu2").should('have.class', 'scatterplot')

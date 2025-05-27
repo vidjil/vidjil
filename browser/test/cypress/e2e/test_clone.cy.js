@@ -87,9 +87,10 @@ describe('Test sandbox', function () {
   it('5462 - Load smaller clones for each locus', function() {
     // Even if no clone present with locus with some reads/clonotypes, a smaller clone is present 
     cy.openAnalysis("demo/Demo-X5-no-clone.vidjil")
-    cy.get('#listElem_10 > .nameBox')
+    cy.get('#listElem_20 > .nameBox')
       .should("exist")
-    cy.get('#listElem_10 > .axisBox')
+      .should('have.attr', 'title', "IGK+ smaller clonotypes")
+    cy.get('#listElem_20 > .axisBox')
       .should("exist")
       .should('have.attr', 'title', "0 nt, 2 reads  reads")
   
