@@ -29,10 +29,9 @@ Here is an example with a fictive paired-end merger: "mymerger".
   by the server. This step will depend of you installation of the server. If you use
   a plain installation, you only need the add the executable to the path use by
   www-data user (if it is the one choose to serve the server). If you choose to use
-  the docker installation, you need to uncomment the binaries volume into the
-  docker-compose.yml file (service fuse); and copy the executable into the
-  corresponding local directory (by default vidjil/docker/binaries/). After this, you should
-  inquire the path into the **defs.py** file (relative path start from server/py4web/apps/vidjil).
+  the docker installation, you need to mount a folder to the binaries folder (check
+  `DIR_BINARIES` value in .env files, by default /binaries/) and copy the executable
+  into the corresponding local directory .
 - After that, you will need to adapt the function "run<sub>preprocess</sub>" of task.py.
   The goal here is to add some shortcut that will be use by the server to adapt the
   calling of preprocess to replace the file names or path of the executable. For
@@ -81,8 +80,7 @@ See [`contrib` repository](https://gitlab.inria.fr/vidjil/contrib) for examples.
 - Your script needs to take as an input a `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
   such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples.vidjil`
 
-- The script should be available in the path referenced as `PRE_PROCESS_DIR` in `tools/defs.py`.
-  The default path is relative to the `defs.py` file, so `.`  will be interpreted as `tools/` directory.
+- The script should be available in the path referenced as `DIR_PREPROCESS` in .env files (`/usr/share/vidjil/tools/scripts/preprocess/` by default).
 
 - The script should be referenced in the `Fuse command` field of one "config" in the `processes config` page,
   as for example in `-t 100 --pre spike-normalization.py`.

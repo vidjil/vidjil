@@ -1,4 +1,4 @@
-!!! note
+!!! note <!-- markdownlint-disable-line first-line-h1 -->
     This is the help of the Vidjil server.  
     This help is intended for server administrators.  
     Users should consult the [web application manual](https://www.vidjil.org/doc/user/)  
@@ -90,7 +90,7 @@ See `FILE_SOURCE` below.
 
 By default, accounts are local to the Vidjil server.
 
-An experimental integration to LDAP servers is now available (`LDAP` variable in defs.py).
+An experimental integration to LDAP servers is now available (`USE_LDAP` variable in .env files).
 Contact us if you need help in setting up such an authentication.
 
 ### Network
@@ -378,27 +378,7 @@ add_header 'Access-Control-Allow-Origin' 'your_other_domain';
 The mysql container is not fully launched. This can happen especially at the first launch.
 You may relaunch the containers.
 
-If restarting the containers does not resolve the issue, there are a couple of things
-you can look into:
-
-- Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
-  the mysql user: `vidjil`.
-  If you are not sure, you can check with the following:
-
-  ```sh
-  docker exec -it vidjil-mysql bash
-  mysql -u vidjil -p vidjil
-  ```
-
-  or reset it:
-
-  ```sh
-  docker exec -it vidjil-mysql bash
-  mysql -u root -p
-  SET PASSWORD FOR vidjil = PASSWORD('<new password>');
-  ```
-
-- Ensure the database was created correctly. This should have been done automatically,
+If restarting the containers does not resolve the issue, ensure the database was created correctly. This should have been done automatically,
   but just in case, you can check the console output, or check the database:
 
   ```sh
@@ -421,7 +401,7 @@ The password should be given in the docker `.env` environment file.
 
 1. Adapt the config for the new version (see [docker changelog](https://www.vidjil.org/doc/changelog-docker))
     1. See if modifications are needed in `.env` files
-    1. See if modifications are needed in other specific configuration file (`docker-compose.yml`, `conf.js`, `defs.py`, ...). **Be careful**: do not apply the config right now, wait for the new version to be deployed.
+    1. See if modifications are needed in other specific configuration file (`docker-compose.yml`, `conf.js`, .env files, ...). **Be careful**: do not apply the config right now, wait for the new version to be deployed.
 1. Set-up a warning message on your front end server if it is separated (otherwise, the front will be shutdown and the server will not answer):
     1. Connect to the front-end server.
     1. In `conf.js` file, set `use_database` to `false`. This will deactivate db access. In order to display an explicit message, uncomment the `alert:` part, setting explicit `title` and `msg`.
@@ -843,26 +823,17 @@ Note that some metrics are more computational intensive than others. We chose to
 
 ## Using CloneDB [Under development]
 
-!!! note
-  This documentation is not suitable for py4web version of server.
-  Please wait for release 2025.06 to be fixed.
-  If you need to use it until this date, please [contact us](mailto:support@vidjil.org).
-
 The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
 independently of the Vidjil platform.
 
 Then one can easily extract data to be used with CloneDB. A script is provided
-(`server/scripts-web2py/create_clone_db.py`) which
+(`server/py4web/apps/vidjil/scripts/create_clone_db.py`) which
 produces a FASTA file to be indexed with CloneDB. This script takes as
 parameter the FASTA output file and one (or many) group IDs, which correspond
-to the groups having access to the datasets. Note that for the moment the Vidjil platform only allow a per group access to the CloneDB.
+to the groups having access to the datasets. Note that for the moment the Vidjil platform only allows a per group access to the CloneDB.
 
-The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX`
-is replaced with the group ID.
+The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX` is replaced with the group ID.
 
-Make sure that the `DIR_CLONEDB` variable is set in `defs.py` and points to
-the CloneDB server directory. Make sure that in this directory the
-`clonedb_defs.py` has been filled correctly.
+Make sure that the `DIR_CLONEDB` variable points to the CloneDB server directory (default is `/usr/share/clonedb/` and can be overriden in .env files). Make sure that in this directory the `clonedb_defs.py` has been filled correctly.
 
-Then index the created FASTA file with the CloneDB index (follow the
-instructions from CloneDB).
+Then index the created FASTA file with the CloneDB index (follow the instructions from CloneDB).

@@ -7,6 +7,8 @@
 
 ### vidjil/server 2025.06
 
+- `defs.py` file was removed. All configuration variables are now retrieved from `settings.py` file, which is now the only configuration file to be used. The `settings.py` file is now generated from the `.env.default` file. This `.env.default` file is now the only file to be used to set environment variables. Way to set environment variables is described in [server doc](server.md#further-configuration).
+
 ### vidjil/client 2025.06
 
 ### Migrating release-2024.12 to release-2025.06
