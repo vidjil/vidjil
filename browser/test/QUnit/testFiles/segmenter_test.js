@@ -142,7 +142,7 @@ QUnit.test("segmenter", function(assert) {
     }, delay+=step);
 
     setTimeout( function() {
-        assert.equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clonotype, 3 reads ", "stats (1 clone with few reads) : Ok")
+        assert.equal(document.getElementsByClassName("stats_content")[1].innerHTML, "1 clonotype, 3 reads ", "stats (1 clone with few reads) : Ok")
         
         m.unselectAll()
         m.select(2)
