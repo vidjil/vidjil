@@ -114,6 +114,8 @@ REQUIRES_APPROVAL = string_to_bool(os.getenv("REQUIRES_APPROVAL", default="False
 MAX_WRONG_PASSWORDS = int(os.getenv("MAX_WRONG_PASSWORDS", default="5"))
 # 2 factor authentication required ?
 TWO_FACTOR_REQUIRED = string_to_bool(os.getenv("TWO_FACTOR_REQUIRED", default="False"))
+# 2 factor authentication list: white list if TWO_FACTOR_REQUIRED is true, black list otherwise
+TWO_FACTOR_EMAIL_LIST = json.loads(os.getenv("TWO_FACTOR_LIST", default="[]"))
 # login expiration time
 LOGIN_EXPIRATION_TIME = int(os.getenv("LOGIN_EXPIRATION_TIME", default="7200"))
 

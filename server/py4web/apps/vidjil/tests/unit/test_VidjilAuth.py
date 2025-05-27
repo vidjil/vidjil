@@ -59,10 +59,36 @@ class TestVidjilAuth:
 
         # Then: no user, error message, number of fail updated
         assert user is None
-        assert error is not None
-        assert error == "Invalid Credentials"
+        number_of_tries_left = settings.MAX_WRONG_PASSWORDS - (
+            initial_number_wrong_passwords + 1
+        )
+        assert error == f"Invalid credentials - {number_of_tries_left} tries left"
         user = db(db.auth_user.email == email).select().first()
         assert user.number_wrong_passwords == initial_number_wrong_passwords + 1
+
+    def test_vidjil_auth_login_account_locked_sends_mail(self, mocker):
+        # Given: a user with too many failed logins and a mocked send_mail
+        email = db_manipulation_utils.get_indexed_user_email(1)
+        password = "wrong_password"
+        user = db(db.auth_user.email == email).select().first()
+        user.update_record(number_wrong_passwords=settings.MAX_WRONG_PASSWORDS - 1)
+
+        # Patch send_mail to track calls
+        mock_send_mail = mocker.Mock()
+        auth.send_mail = mock_send_mail
+
+        # When: calling login with wrong password to trigger lock
+        _, error = auth.login(email, password)
+
+        # Then: login is blocked and send_mail is called
+        assert (
+            error
+            == "Max number of invalid credentials reached, account is locked. Please contact an administrator."
+        )
+        assert mock_send_mail.called
+        args, kwargs = mock_send_mail.call_args
+        assert "Account locked" in kwargs["subject"]
+        assert email in kwargs["body"] or str(user.id) in kwargs["body"]
 
     def test_vidjil_auth_login_account_locked(self):
         # Given: a user with too many failed logins
@@ -76,7 +102,6 @@ class TestVidjilAuth:
 
         # Then: login is blocked
         assert user is None
-        assert error is not None
         assert (
             error
             == "Max number of invalid credentials reached, account is locked. Please contact an administrator."
