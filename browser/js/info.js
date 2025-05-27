@@ -343,11 +343,10 @@ Info.prototype = {
         return function(event) {
             var time = self.m.getTime();
             let size_in_all = ((self.m.reads.germline[key][time]/self.m.reads.segmented_all[time])*100).toFixed(2);
-            let size_in_system = self.m.reads.germline[key][time] ?
-                self.m.systemGroupSize(key) ? 
-                    ((self.m.reads.germline[key][time]*100) / self.m.systemGroupSize(key)).toFixed(2) : 
-                    (0).toFixed(2) : 
-                (0).toFixed(2);
+            let size_in_system = self.m.reads.germline[key][time] && self.m.systemGroupSize(key) ?
+                ((self.m.reads.germline[key][time]*100) / self.m.systemGroupSize(key)).toFixed(2) : 
+                (0).toFixed(2)
+            
             span.title = `Locus ${key}; ${size_in_system}% of system, ${size_in_all}% of total segmented reads`;
         };
     },
