@@ -87,4 +87,24 @@ QUnit.test("read details", function(assert) {
     var reads = document.getElementsByClassName('reads_details')[0]
     assert.includes(reads.outerHTML, 'analyzed reads</span><span>190 (95.00%)', 'read details: analyzed reads (minus removed reads count)')
     assert.includes(reads.outerHTML, 'selected locus</span><span>90 (45.00%)', 'read details: selected locus (TRG minus removed reads count)')
+
+    })
+
+
+QUnit.test("locus details in info panel", function(assert) {
+
+    var m = new Model()
+    m.parseJsonData(json_data, 10)
+    m.loadGermline()
+    m.initClones()
+
+    var builder = new Builder(m)
+    var info = new Info("info", m, builder)
+    info.init()
+
+    var span_locus_trg = document.getElementById('toogleLocusSystemBox_TRG')
+    const event = new MouseEvent('mouseenter', {bubbles: false, cancelable: true, view: window});
+    span_locus_trg.dispatchEvent(event);
+
+    assert.includes(span_locus_trg.outerHTML, 'Locus TRG; 100.00% of system, 50.00% of total segmented reads', 'locus info span contains correct title attri content')
 });
