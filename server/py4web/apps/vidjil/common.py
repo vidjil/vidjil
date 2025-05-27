@@ -474,6 +474,9 @@ def send_mail(to: str | List[str], subject: str, body: str) -> bool:
     return True
 
 
+auth.send_mail = send_mail
+
+
 # #######################################################
 # try to create an index on these un-indexed columns
 # #######################################################

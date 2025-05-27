@@ -35,6 +35,7 @@ class VidjilAuth(Auth):
         self.log = log
         self.flash = Flash()
         self.user_groups = {}
+        self.send_mail = None
         super(VidjilAuth, self).__init__(session, db, define_tables)
 
     @property
@@ -158,6 +159,17 @@ class VidjilAuth(Auth):
                 else 1
             )
             db_user.update_record(number_wrong_passwords=updated_number_wrong_passwords)
+            if updated_number_wrong_passwords >= settings.MAX_WRONG_PASSWORDS:
+                message = (
+                    f"Account {db_user.email} locked for too many invalid credentials"
+                )
+                self.log.error(message)
+                if self.send_mail:
+                    self.send_mail(
+                        to=settings.SMTP_ADMIN_EMAILS,
+                        subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Account locked",
+                        body=message,
+                    )
 
         return (user, error)
 
