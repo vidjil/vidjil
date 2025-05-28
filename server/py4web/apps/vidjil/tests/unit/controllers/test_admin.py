@@ -225,4 +225,4 @@ class TestAdminController(unittest.TestCase):
 
     # TODO: add more tests for repair_missing_files
 
-    # TODO: add tests for make_backup, load_backup, repair and reset_workers
+    # TODO: add tests for make_backup, load_backup, repair

@@ -286,23 +286,6 @@ def repair():
         return json.dumps(res, separators=(",", ":"))
 
 
-def reset_workers():
-    if auth.is_admin():
-        running_jobs = db(db.scheduler_task.status == tasks.STATUS_RUNNING).count()
-        if running_jobs == 0:
-            db(db.scheduler_worker.id > 0).delete()
-            scheduler.die()
-            db.commit()
-            res = {"success": "true", "message": "Workers have been reset "}
-        else:
-            res = {
-                "success": "false",
-                "message": "Jobs are currently running or assigned. I don't want to restart workers",
-            }
-        log.admin(res)
-        return json.dumps(res, separators=(",", ":"))
-
-
 @action("/vidjil/admin/clean_workers_status", method=["POST", "GET"])
 @action.uses(db, auth.user)
 @vidjil_utils.jsontransformer
