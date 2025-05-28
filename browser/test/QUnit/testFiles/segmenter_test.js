@@ -136,7 +136,7 @@ QUnit.test("segmenter", function(assert) {
         assert.ok(fasta.indexOf('> test2') < fasta.indexOf('> test1'));
         
         m.unselectAll()
-        m.select(3)
+        m.select(2)
         m.changeTime(3)
         done()
     }, delay+=step);
