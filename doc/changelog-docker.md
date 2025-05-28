@@ -1,4 +1,4 @@
-!!! note
+!!! note <!-- markdownlint-disable-line first-line-h1 -->
     This CHANGELOG concerns the Docker images of vidjil.  
     The generic way to update a vidjil server is described in [update vidjil server part](server.md#updating-a-docker-installation). All steps between previously installed version and target version should be followed to adapt configuration correctly.
     In this file, the specific migration parts are described.
