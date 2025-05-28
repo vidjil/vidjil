@@ -7,107 +7,12 @@ from py4web import action, request
 
 from .. import settings
 from ..common import T, auth, db, log
-from ..modules import sampleSet, vidjil_utils
+from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
 from ..modules.sampleSet import get_sample_set_id_from_results_file
-from ..tasks import schedule_fuse, schedule_run
+from ..tasks import schedule_fuse
 
 ACCESS_DENIED = "access denied"
-
-
-# return admin_panel
-@action("/vidjil/results_file/index", method=["POST", "GET"])
-@action.uses("results_file/index.html", db, auth.user)
-@vidjil_utils.jsontransformer
-def index():
-    if not auth.is_admin():
-        return error_message(ACCESS_DENIED)
-
-    query = db(
-        (db.results_file.sequence_file_id == db.sequence_file.id)
-        & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-        & (db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
-        & (db.results_file.config_id == db.config.id)
-        & (db.results_file.hidden == False)  # noqa: E712
-    ).select(orderby=~db.results_file.run_date)
-
-    for row in query:
-        if row.results_file.scheduler_task_id is None:
-            row.status = ""
-        else:
-            row.status = db.scheduler_task[row.results_file.scheduler_task_id].status
-        pass
-
-    # sort result
-    reverse = False
-    if request.query["reverse"] == "true":
-        reverse = True
-    if request.query["sort"] == "name":
-        query = query.sort(lambda row: row.patient.last_name, reverse=reverse)
-    elif request.query["sort"] == "run_date":
-        query = query.sort(lambda row: row.results_file.run_date, reverse=reverse)
-    elif request.query["sort"] == "config":
-        query = query.sort(lambda row: row.config.name, reverse=reverse)
-    elif request.query["sort"] == "patient":
-        query = query.sort(lambda row: row.patient.last_name, reverse=reverse)
-    elif request.query["sort"] == "status":
-        query = query.sort(lambda row: row.status, reverse=reverse)
-    elif "sort" in request.query and request.query["sort"] != "":
-        query = query.sort(
-            lambda row: row.sequence_file[request.query["sort"]], reverse=reverse
-        )
-
-    # filter
-    # filter
-    if "filter" not in request.query:
-        request.query["filter"] = ""
-
-    for row in query:
-        row.string = [
-            row.sequence_file.filename,
-            row.config.name,
-            row.patient.last_name,
-            row.patient.first_name,
-            row.sequence_file.producer,
-            str(row.results_file.run_date),
-            row.status,
-        ]
-    query = query.find(
-        lambda row: vidjil_utils.advanced_filter(row.string, request.query["filter"])
-    )
-
-    log.info(
-        "access results file admin panel",
-        extra={
-            "user_id": auth.user_id,
-            "record_id": None,
-            "table_name": "results_file",
-        },
-    )
-    return dict(query=query, reverse=reverse, auth=auth, db=db)
-
-
-@action("/vidjil/results_file/run_all_patients", method=["POST", "GET"])
-@action.uses(db, auth.user)
-def run_all_patients():
-    if not auth.is_admin():
-        return error_message(ACCESS_DENIED)
-
-    query = db(
-        (db.sample_set.sample_type == sampleSet.SET_TYPE_PATIENT)
-        & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-        & (
-            db.sample_set_membership.sequence_file_id
-            == db.results_file.sequence_file_id
-        )
-    ).select(db.sample_set.id, db.results_file.sequence_file_id, db.results_file.id)
-
-    for row in query:
-        schedule_run(row.results_file.sequence_file_id, row.results_file.config_id)
-
-    res = {"success": "true", "message": "rerun all"}
-    log.warning(res)
-    return json.dumps(res, separators=(",", ":"))
 
 
 # display run page result
