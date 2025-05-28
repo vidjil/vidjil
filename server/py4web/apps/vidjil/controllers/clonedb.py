@@ -8,7 +8,6 @@ from .. import settings
 from ..common import auth, db, log
 from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
-from ..modules.permission_enum import PermissionEnum
 from ..modules.sampleSets import SampleSets
 from ..user_groups import get_default_creation_group
 
@@ -66,8 +65,11 @@ def search_clonedb(sequences, sample_set_id):
 
     results = []
     parent_group = get_default_creation_group(auth)[1]
-    auth.load_permissions(PermissionEnum.read.value, "sample_set")
-    auth.load_permissions(PermissionEnum.anon.value, "sample_set")
+    # Do not call load_permissions any longer as the cache is not active with py4web
+    # If there are perf issues, check if we should re-create a cache or
+    # in our case use load_permission to replace calls to get_info_of_viewable_sample_set later
+    # auth.load_permissions(PermissionEnum.read.value, "sample_set")
+    # auth.load_permissions(PermissionEnum.anon.value, "sample_set")
     options = clonedb.build_grep_clones_options(
         {
             "sequence": sequences[0] + " -sample_set:%d" % sample_set_id,
