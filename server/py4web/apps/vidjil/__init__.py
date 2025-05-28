@@ -21,6 +21,7 @@ from .modules import (
 from .controllers import (
     admin,
     auth,
+    clonedb,
     config,
     default,
     file,

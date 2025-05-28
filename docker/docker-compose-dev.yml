@@ -20,6 +20,8 @@ services:
             - ./:/usr/share/vidjil/docker
             - ../server/:/usr/share/vidjil/server/
             - ../tools:/usr/share/vidjil/tools
+            # CloneDB
+            - ../../clonedb:/usr/share/clonedb
             # Use contrib folder
             - ../../contrib:/usr/share/vidjil/tools/scripts
             - ../../contrib/third-party-softwares/compiled:/binaries

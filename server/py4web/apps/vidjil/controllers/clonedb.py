@@ -1,13 +1,13 @@
+import importlib.util
 import os
 import sys
 
-from py4web import request, response
+from py4web import action, request
 
 from .. import settings
 from ..common import auth, db, log
-from ..modules import stats_decorator
+from ..modules import vidjil_utils
 from ..modules.controller_utils import error_message
-from ..modules.permission_enum import PermissionEnum
 from ..modules.sampleSets import SampleSets
 from ..user_groups import get_default_creation_group
 
@@ -21,6 +21,9 @@ ACCESS_DENIED = "access denied"
 ##################################
 # CONTROLLERS
 ##################################
+@action("/vidjil/clonedb/index", method=["POST", "GET"])
+@action.uses(db, auth.user)
+@vidjil_utils.jsontransformer
 def index():
     """
     The request should receive two parameters:
@@ -28,52 +31,65 @@ def index():
     - sample_set_id: the sample set we're coming from
     """
     if not auth.user:
-        return response.json({"error": "Access denied"})
+        return {"error": "Access denied"}
 
+    # request.query -> request.form (POST)
     if (
-        request.query["sequences"] is None
-        or request.query["sequences"] == ""
-        or request.query["sample_set_id"] is None
+        request.forms.get("sequences") is None
+        or request.forms.get("sequences") == ""
+        or request.forms.get("sample_set_id") is None
     ):
         return error_message("Malformed request")
 
     return search_clonedb(
-        request.query["sequences"].split(","), int(request.query["sample_set_id"])
+        request.forms.get("sequences").split(","),
+        int(request.forms.get("sample_set_id")),
     )
 
 
 def search_clonedb(sequences, sample_set_id):
-    sys.path.insert(1, os.path.abspath(settings.DIR_CLONEDB))
-    import grep_clones  # type: ignore
+    # /clonedb mounted on usr/share/clonedb
+    clone_db_path = os.path.abspath(settings.DIR_CLONEDB)
+    server_path = os.path.join(clone_db_path, "server")
+    if not os.path.isdir(server_path):
+        raise FileNotFoundError(f"The server directory {server_path} does not exist.")
 
-    clonedb = stats_decorator.imp.load_source(
-        "clonedb", settings.DIR_CLONEDB + os.path.sep + "clonedb.py"
+    sys.path.insert(1, server_path)
+    import grep_clones  # type: ignore  # noqa: I001
+
+    spec = importlib.util.spec_from_file_location(
+        "clonedb", os.path.join(server_path, "clonedb.py")
     )
+    clonedb = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(clonedb)
 
     results = []
     parent_group = get_default_creation_group(auth)[1]
-    auth.load_permissions(PermissionEnum.read.value, "sample_set")
-    auth.load_permissions(PermissionEnum.anon.value, "sample_set")
+    # Do not call load_permissions any longer as the cache is not active with py4web
+    # If there are perf issues, check if we should re-create a cache or
+    # in our case use load_permission to replace calls to get_info_of_viewable_sample_set later
+    # auth.load_permissions(PermissionEnum.read.value, "sample_set")
+    # auth.load_permissions(PermissionEnum.anon.value, "sample_set")
     options = clonedb.build_grep_clones_options(
         {
             "sequence": sequences[0] + " -sample_set:%d" % sample_set_id,
-            "index": "clonedb_{}".format(parent_group),
+            "index": f"clonedb_{parent_group}",
         }
     )
     options += sequences[1:]
     args = grep_clones.parser.parse_args(options)
     log.debug(
-        "Searching {} sequences in CloneDB for group {}".format(
-            len(sequences), parent_group
-        )
+        f"Searching {len(sequences)} sequences in CloneDB for group {parent_group}"
     )
     try:
-        occurrences = grep_clones.launch_search(args)
         # Get occurrences for each sample with information on its corresponding sample sets
-    except ValueError:
+        occurrences = grep_clones.launch_search(args)
+    except ValueError as e:
+        log.error(f"Value error when running clonedb: {e}")
         return error_message("Are you sure your account has an enabled CloneDB?")
     except Exception as e:
-        return error_message(e.message)
+        log.error(f"Error when running clonedb: {e}")
+        return error_message(str(e))
 
     sample_set_ids = [
         sid
@@ -102,7 +118,7 @@ def search_clonedb(sequences, sample_set_id):
                 config_db = db.config[occ["tags"]["config_id"][0]]
                 occ["tags"]["config_name"] = [config_db.name if config_db else None]
         results.append(occurrences_one_seq)
-    return response.json(results)
+    return results
 
 
 def get_info_of_viewable_sample_set(sample_sets, config, sample_names, sample_tags):

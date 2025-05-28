@@ -2,7 +2,7 @@ FROM python:3.12-slim AS builder
 
 # Install system requirements for build
 RUN apt-get update && \
-    apt-get install --no-install-recommends --no-install-suggests -y wget make gcc build-essential
+    apt-get install --no-install-recommends --no-install-suggests -y wget make gcc build-essential git libz-dev
 
 # Prepare install directories
 RUN mkdir -p /usr/share/vidjil/ /var/www/ && chown www-data:www-data -R /usr/share/vidjil/ /var/www/
@@ -10,6 +10,12 @@ RUN mkdir -p /usr/share/vidjil/ /var/www/ && chown www-data:www-data -R /usr/sha
 # Switch to www-data user
 USER www-data:www-data
 WORKDIR /usr/share/vidjil/
+
+# Build bwa for clonedb
+COPY docker/vidjil-server/bwa.diff /tmp
+RUN git clone https://github.com/lh3/bwa.git
+RUN cd bwa && git reset --hard 3ddd7b8 && patch bwa.c /tmp/bwa.diff
+RUN cd bwa && make
 
 # Install python requirements in venv
 ENV PATH="$PATH:/usr/share/vidjil/venv/bin/"
@@ -27,11 +33,11 @@ RUN rm -Rf server/py4web/apps/vidjil/databases && mkdir server/py4web/apps/vidji
 # Setup py4web
 RUN cd server/py4web && py4web setup -Y apps && rm -Rf apps/_default apps/_minimal apps/_scaffold apps/_documentation apps/showcase 
 
-# Install latest vidjil algo and build stuffs
+# Install latest vidjil algo
 RUN wget http://www.vidjil.org/releases/vidjil-latest_x86_64 && mv vidjil-latest_x86_64 vidjil-algo && chmod +x vidjil-algo
+# Build relevant tools
 RUN cd germline/ && make && \
     cd ../demo/ && make light
-
 
 FROM python:3.12-slim AS vidjil-server
 
@@ -63,6 +69,7 @@ COPY --from=builder --chown=www-data:www-data /usr/share/vidjil/tools/ tools/
 COPY --from=builder --chown=www-data:www-data /usr/share/vidjil/germline/ germline/
 COPY --from=builder --chown=www-data:www-data /usr/share/vidjil/demo/ demo/
 COPY --from=builder --chown=www-data:www-data /usr/share/vidjil/vidjil-algo vidjil-algo
+COPY --from=builder --chown=www-data:www-data /usr/share/vidjil/bwa/bwa /usr/bin
 COPY --chown=www-data:www-data docker/vidjil-server/conf/uwsgi.ini /etc/uwsgi/sites/uwsgi.ini
 COPY --chown=www-data:www-data docker/vidjil-server/scripts/* /entrypoints/
 RUN touch /var/vidjil/vidjil.log && touch /var/vidjil/vidjil-debug.log
