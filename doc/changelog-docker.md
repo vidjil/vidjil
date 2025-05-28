@@ -1,4 +1,4 @@
-!!! note <!-- markdownlint-disable-line first-line-h1 -->
+!!! note
     This CHANGELOG concerns the Docker images of vidjil.  
     The generic way to update a vidjil server is described in [update vidjil server part](server.md#updating-a-docker-installation). All steps between previously installed version and target version should be followed to adapt configuration correctly.
     In this file, the specific migration parts are described.
@@ -48,30 +48,30 @@ The mysql version was bumped in this release. The easiest way to migrate the dat
 Docker images, docker-compose files and env files have been modified in this release:
 
 - Regarding env files, we had a confusion between the way env files are used in docker-compose, either to [load environnement variables in the container](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-env_file-attribute), or directly in the [docker-compose.yml file interpolation](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/). We tried to be cleaner around this:
-  - we now have default values for interpolation in `docker-compose.yml`. It can still be override using `.env` file, using `.env.docker-compose-interpolation` as a base file.
-  - Variables to be used in containers are now listed in `.env.default` file. Most of your custom values are now located here. You can either modify `.env.default`, or in a cleaner way create a `.env.override` (or whatever name) file. In this last case, one can only override the needed variables, and load the file in `docker-compose.yml` directly, or in a `docker-compose.override.yml` file.
+    - we now have default values for interpolation in `docker-compose.yml`. It can still be override using `.env` file, using `.env.docker-compose-interpolation` as a base file.
+    - Variables to be used in containers are now listed in `.env.default` file. Most of your custom values are now located here. You can either modify `.env.default`, or in a cleaner way create a `.env.override` (or whatever name) file. In this last case, one can only override the needed variables, and load the file in `docker-compose.yml` directly, or in a `docker-compose.override.yml` file.
 - New variables were introduced in `.env.default` file:
-  - Some variables linked to the new metrics feature (see #5156)
-  - `CHANGE_OWNER`, true by default, to change the rights of the data files. This can takes some time at first start after migration, but this allows files rights management to be cleaner.
-  - `SHORT_JOBS_WORKERS_POOL` and `CELERY_SIZE_LIMIT_FOR_LONG_JOB`: as described in `.env.default` file, allow admin to configure some dedicated workers to allow short jobs to run even if many long jobs are already running. In most deployments, this won't be needed.
+    - Some variables linked to the new metrics feature (see #5156)
+    - `CHANGE_OWNER`, true by default, to change the rights of the data files. This can takes some time at first start after migration, but this allows files rights management to be cleaner.
+    - `SHORT_JOBS_WORKERS_POOL` and `CELERY_SIZE_LIMIT_FOR_LONG_JOB`: as described in `.env.default` file, allow admin to configure some dedicated workers to allow short jobs to run even if many long jobs are already running. In most deployments, this won't be needed.
 - `docker-compose.yml` was cleaned. To migrate, compare it with the version you had built before or use it as a base for a `docker-compose.override.yml` file.
 
 Big changes were made in the way [external files used for example for preprocess](https://gitlab.inria.fr/vidjil/contrib) are organized. If you plan on using the up-to-date version from `master` branch, here are some steps for the migration:
 
 - Run `git checkout` or `git pull` to get the new version from [contrib repo](https://gitlab.inria.fr/vidjil/contrib)
 - Compile the binaries
-  - Edit `third-party-softwares/Makefile` to correctly set `VIDJIL_IMAGE_VERSION` to use to build the tools (latest by default)
-  - Run
+    - Edit `third-party-softwares/Makefile` to correctly set `VIDJIL_IMAGE_VERSION` to use to build the tools (latest by default)
+    - Run
 
-    ```bash
-    cd third-party-softwares
-    # Get the submodules
-    make fetch_submodules
-    # Compile only the tools you need, for example:
-    make flash2
-    # Or compile all tools at once (may last a while)
-    make binaries
-    ```
+      ```bash
+      cd third-party-softwares
+      # Get the submodules
+      make fetch_submodules
+      # Compile only the tools you need, for example:
+      make flash2
+      # Or compile all tools at once (may last a while)
+      make binaries
+      ```
 
 - Edit `docker-compose.yml` or `docker-compose.override.yml` to point to the contrib repo, edit `uwsgi.volumes` to set these mount points
 
@@ -92,13 +92,13 @@ Big changes were made in the way [external files used for example for preprocess
 
 - Do not forget to mount specific `defs.py` to `/usr/share/vidjil/server/py4web/apps/vidjil/defs.py` if not already done in `docker-compose.yml` or `docker-compose.override.yml`.
 - Add preprocess configurations, or modify existing ones (they won't work any longer as defined before)
-  - Preprocess is now run by calling `classed_preprocess.py` with `--` + name of the preprocess to apply
-  - Here are typical configurations:
-    - M+R2: Merge paired-end read: `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2`
-    - Merge + R2, Large files (capture/rnaseq): `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2 --vdj --keep`
-    - UMI demultiplexing + Flash2 merger (keep R2): `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --umi --keep-r2 --flash2`
-    - (beta) Merge + primers dimers filters: `python classed_preprocess.py --binaries  &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2 --dimers`
-    - (beta) Primers dimers filters: `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --output &result& --dimers`
+    - Preprocess is now run by calling `classed_preprocess.py` with `--` + name of the preprocess to apply
+    - Here are typical configurations:
+        - M+R2: Merge paired-end read: `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2`
+        - Merge + R2, Large files (capture/rnaseq): `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2 --vdj --keep`
+        - UMI demultiplexing + Flash2 merger (keep R2): `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --umi --keep-r2 --flash2`
+        - (beta) Merge + primers dimers filters: `python classed_preprocess.py --binaries  &flash2& --file-r1 &file1& --file-r2 &file2& --output &result& --keep-r2 --flash2 --dimers`
+        - (beta) Primers dimers filters: `python classed_preprocess.py --binaries &flash2& --file-r1 &file1& --output &result& --dimers`
 - Run some tests to check everything is OK
 
 ## 2024.05 release
@@ -226,11 +226,13 @@ To do so, change `vidjil-server:latest` to `vidjil-server:release-2024.01`. Do t
 - Default backup service now use a volume for initialisation
 Please ensure to update both your docker-compose.yml and backup/Dockerfile if you want to rebuild the backup service
 - New variable in defs.py: `HEALTHCARE_COMPLIANCE`
+
 ## 2020-06-22
 
 **vidjil/server**: 6ec207d2
 
- - vidjil-algo updated to 2020.06 (from 2019.05)
+- vidjil-algo updated to 2020.06 (from 2019.05)
+
 ## 2020-06-15
 
 **vidjil/server**: 6ec207d2
@@ -240,6 +242,7 @@ Please ensure to update both your docker-compose.yml and backup/Dockerfile if yo
   Please customize the ADMIN_EMAILS in the vidjil-server/conf/defs.py file also.
 
 ## 2020-04-21
+
 **vidjil/server**: 8190bd6c
 
 - Adding a new field in the database
@@ -255,20 +258,24 @@ Please ensure to update both your docker-compose.yml and backup/Dockerfile if yo
 - Warning this image contains bugs that have been corrected in the following versions
 
 ## 2019-12-12
+
 **vidjil/server**: 2ef3187e
 
 - Fix issues with CloneDB with several sample sets
 
 ## 2019-11-27
+
 **vidjil/server**: b19f850b
 
 - The web2py password is now provided through an environment
   variable in the docker-compos.yml file.
 
 ## 2018-10-19
+
 **vidjil/server**: 3a690203
 
 ## 2018-10-18
+
 **vidjil/client**: f959661a
 
 - Tag initialization while creating the database
@@ -277,9 +284,9 @@ Please ensure to update both your docker-compose.yml and backup/Dockerfile if yo
 - Corrected and updated documentation
 
 ## 2018-10-15
+
 **vidjil/server**: f0df4cd9
 
-## 2018-10-15
 **vidjil/client**: f0df4cd9
 
 - Initial release, following refactor of the containers and of the documentation

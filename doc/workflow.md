@@ -14,15 +14,14 @@ Note that vidjil-algo (and the Vidjil server) also accept uncompressed `.fastq` 
 and even `.bam` files (but the added information of `.bam` files is not taken into account,
 so uploading such files is not optimal).
 
-
 ## Pre-filtering of large datasets
 
 On large capture or RNA-seq datasets, very few reads, are expected to have V(D)J recombinations, typically as few as 0.01%, 0.001%, or even 0.0001%. Vidjil-algo was designed to efficiently find such a few needles in a stack of needles.
 
-Large files may be hard to upload and to store. 
-To save bandwidth and disk space, it is thus advised to locally pre-process reads 
-to merge them (when applicable) and to filter them, with a first iteration of Vidjil-algo, 
-before uploading to a Vidjil server. 
+Large files may be hard to upload and to store.
+To save bandwidth and disk space, it is thus advised to locally pre-process reads
+to merge them (when applicable) and to filter them, with a first iteration of Vidjil-algo,
+before uploading to a Vidjil server.
 This filtering will produce much smaller files that could also be used by other software.
 
 We offer two versions:
@@ -51,18 +50,18 @@ You may copy `vidjil-algo` and `flash2`  binaries to folders available from your
 ### Usage
 
 `flash2` outputs several files: merged reads, unmerged reads from R1 file, unmerged reads from R2, and histogram.
-You can concatenate merged reads and one of the unmerged files 
-to keep the same number of reads that in the inital fastq file
-(as the [pre-processing](user.md#pre-processing) on the Vidjil server). 
-The following command line thus keeps `out.notCombined_1`, from R1, 
+You can concatenate merged reads and one of the unmerged files
+to keep the same number of reads that in the initial fastq file
+(as the [pre-processing](user.md#pre-processing) on the Vidjil server).
+The following command line thus keeps `out.notCombined_1`, from R1,
 supposing that R1 reads are "more centered" on the V(D)J junction than R2 reads.
 
 Starting from `R1.fastq` and `R2.fastq` (`flash2` only works with `.fastq` files):
 
- - Merge:  `flash2   R1.fastq R2.fastq -M 300 -t 4 -z`   (`-t 4` : run on 4 threads)
- - Concatenate the files you want to keep, as for example  `cat out.extendedFrags.fastq  out.notCombined_1.fastq.gz > merged-reads.fastq.gz`
- - Filter:  `vidjil-algo --filter-reads --gz -g germline/homo-sapiens.g merged-reads.fastq.gz`
-   (`germline/` is the path to the gene repertoires directory, in `vidjil-algo-.../`)
+- Merge: `flash2 R1.fastq R2.fastq -M 300 -t 4 -z` (`-t 4` : run on 4 threads)
+- Concatenate the files you want to keep, as for example  `cat out.extendedFrags.fastq  out.notCombined_1.fastq.gz > merged-reads.fastq.gz`
+- Filter:  `vidjil-algo --filter-reads --gz -g germline/homo-sapiens.g merged-reads.fastq.gz`
+ (`germline/` is the path to the gene repertoires directory, in `vidjil-algo-.../`)
 
 The resulting `merged-reads.detected.vdj.fa.gz` file can be uploaded on any Vidjil server,
 or re-analyzed with `vidjil-algo` or with other software.
@@ -70,10 +69,9 @@ or re-analyzed with `vidjil-algo` or with other software.
 Once the filtering has begun, interrupting `vidjil-algo` with `Ctrl-C` (`SIGINT`) gracefully stops execution while still producing (partial) files.
 It can be used to check how the filtering works before a full run.
 
-
 ## Read trimming, sequencing indexes, primers
 
-1. It is esssential to upload to Vidjil reads *without any sequencing index*.
+1. It is essential to upload to Vidjil reads *without any sequencing index*.
    When they are not removed, these indexes may impact the analysis,
    yielding spurious hypermutations or wrong V(D)J designations.
    The sequencer workflows usually provide tools to output files without these indexes.

@@ -1,5 +1,5 @@
 
-!!! note <!-- markdownlint-disable-line first-line-h1 -->
+!!! note
 
 This changelog concerns the Vidjil web application, client and server.
 we are using continuous integration and deployment, some features are pushed on our servers between these releases.

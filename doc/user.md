@@ -1,6 +1,4 @@
-<!-- markdownlint-disable no-inline-html -->
-
-## Web platform, user manual <!-- markdownlint-disable-line first-line-h1 -->
+## Web platform, user manual
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
 [V(D)J recombinations](https://en.wikipedia.org/wiki/V\(D\)J_recombination) in lymphocytes are essential for immunological diversity.
@@ -76,12 +74,12 @@ Otherwise, such `.vidjil` files can be obtained either:
 
 - Open data by:
   
-  - either with “samples”/“open samples” if you are connected to a sample database, such as on <https://app.vidjil.org/> or <https://health.vidjil.org/>.
-    In these cases, there are always some "Demo" datasets for demonstration purposes.
-    Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
+    - either with “samples”/“open samples” if you are connected to a sample database, such as on <https://app.vidjil.org/> or <https://health.vidjil.org/>.
+      In these cases, there are always some "Demo" datasets for demonstration purposes.
+      Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
 
-  - or with “file”/“import/export”, manually selecting a `.vidjil` file
-œ
+    - or with “file”/“import/export”, manually selecting a `.vidjil` file
+
 - You can change the number of displayed clonotypes by moving the slider “number of clonotypes” (menu “filter”).
   The maximal number of clonotypes that can be displayed depends on the processing step before.
   See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
@@ -92,15 +90,15 @@ Otherwise, such `.vidjil` files can be obtained either:
 - There are often very similar clonotypes, coming from either somatic hypermutations or from sequencing errors.
   You can select such clonotypes (for example those sharing a same V and a same J), then:
   
-  - inspect the sequences in the lower panel (possibly using the “align” function),
-  - remove some of these sequences from the selection (clicking on their name in the lower panel)
-  - cluster them (button “cluster”) in a unique clonotype.
-    Once several clonotypes are clustered, you can still visualize them by clicking on “+” in the list of clonotypes.
+    - inspect the sequences in the lower panel (possibly using the “align” function),
+    - remove some of these sequences from the selection (clicking on their name in the lower panel)
+    - cluster them (button “cluster”) in a unique clonotype.
+      Once several clonotypes are clustered, you can still visualize them by clicking on “+” in the list of clonotypes.
 
 - Your analysis (clonotype tagging, renaming, clustering) can be saved:
   
-  - either with “samples”/“save analysis” if you are connected to a sample database
-  - or with “file”/“export .analysis”
+    - either with “samples”/“save analysis” if you are connected to a sample database
+    - or with “file”/“export .analysis”
 
 - You can focus on a particular locus by clicking on locus label in sample information panel (see below).
   This allows to see size of a clonotype in it own locus.
@@ -113,20 +111,21 @@ to learn the essential features of Vidjil.
 ### The info panel (upper left panel)
 
 - *patient/run/set information.*
-- *locus.* Germline(s) used for analyzing the data. In case of multi-locus
+
+- *locus:* Germline(s) used for analyzing the data. In case of multi-locus
   data, you can select what locus should be displayed (see [Libraries and recombinations](libraries-recombinations.md))
-- *analysis.*   Name (without extension) of the loaded file.
-- *sample.* Name of the current sample.
 
-<!-- The name can be edited (“edit”). -->
+- *analysis:* Name (without extension) of the loaded file.
 
-- *date.* Date of the current sample
+- *sample:* Name of the current sample.
+
+- *date:* Date of the current sample
   (can be edited in the database, on the patient/run/set tab).
   When displaying multiple samples from a same patient/run/set,
   you can change the sample viewed by clicking on the `←` and `→` buttons,
   or cycle through them by clicking on the "▶" button.
 
-- *analyzed reads.* Number of reads where the underlying RepSeq algorithm
+- *analyzed reads:* Number of reads where the underlying RepSeq algorithm
   found a V(D)J recombination, for that sample.
   See *Number of analyzed reads* below.
   By hovering the mouse, one also sees the *total*
@@ -141,7 +140,7 @@ to learn the essential features of Vidjil.
   ![Information panel](./pictures/panel_info.png){ align=right }
   <figcaption>
       The information panel.
-      The patient/run/set or sample information may contain tags such as `#T-ALL`.
+      The patient/run/set or sample information may contain tags such as `#T-ALL` (see [default tags](tags.md)).
       In this sample, V(D)J recombinations were detected in about 82% of the reads.
   </figcaption>
 </figure>
@@ -174,12 +173,12 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
   their DNA sequence, their (partial) CDR3 amino acid sequence.
 
 - The concentration of some clonotypes may not be displayed.
-  - A clonotype with a plus symbol `+` has been detected in that sample,
-    but with only a few reads, typically less than five.
-    Its concentration ratio is thus not significant, and
-    this clonotype would appear in the gray zone in the sample graph.
-  - A clonotype with a minus symbol `−` has not been detected in that sample,
-    but has been detected in another sample that is not currently displayed.
+    - A clonotype with a plus symbol `+` has been detected in that sample,
+      but with only a few reads, typically less than five.
+      Its concentration ratio is thus not significant, and
+      this clonotype would appear in the gray zone in the sample graph.
+    - A clonotype with a minus symbol `−` has not been detected in that sample,
+      but has been detected in another sample that is not currently displayed.
 
 <figure markdown>
   ![List of clonotypes](./pictures/panel_list.png)

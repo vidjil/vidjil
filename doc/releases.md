@@ -7,11 +7,11 @@ See also our [roadmap](roadmap.md).
 - We target [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery)
   on the public server [app.vidjil.org](https://app.vidjil.org).
   As of 2021,
-  - the client is intended to be semi-automatically deployed through Gitlab,
-  - the server is manually deployed,
-  - the analysis engine [vidjil-algo](vidjil-algo.md), which follows his own release cycles, is manually deployed.
-  New releases with incremental changes may thus be deployed on-the-fly, but a notification is issued on the server.
-  However, we announce the most significant features impacting data analysis with a 2-week notice.
+    - the client is intended to be semi-automatically deployed through Gitlab,
+    - the server is manually deployed,
+    - the analysis engine [vidjil-algo](vidjil-algo.md), which follows his own release cycles, is manually deployed.
+      New releases with incremental changes may thus be deployed on-the-fly, but a notification is issued on the server.
+      However, we announce the most significant features impacting data analysis with a 2-week notice.
   
 - The [healthcare servers](healthcare.md) get a major release twice a year, in June and December,
   of all their components (client, server, analysis engine).
