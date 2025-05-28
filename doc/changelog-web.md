@@ -1,5 +1,5 @@
 
-!!! note
+!!! note <!-- markdownlint-disable-line first-line-h1 -->
 
 This changelog concerns the Vidjil web application, client and server.
 we are using continuous integration and deployment, some features are pushed on our servers between these releases.
@@ -8,6 +8,13 @@ we are using continuous integration and deployment, some features are pushed on 
 
 ??? note "Milestone 2025-06"
 Complete list of issue and change of this release can be found [here](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
+
+**Reports**
+
+- We added a comment section by clonotype in reports, allowing to add specific information on a clonotype [#5414](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5414)
+- We added user that generated the report in the report [#5450](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5450)
+- Display associated sets names in reports if a sample is associated to multiple sets [#5413](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5413)
+- Various [shortcuts](user.md#keyboard-shortcuts) and little improvements in reports [See issues descriptions](https://gitlab.inria.fr/vidjil/vidjil/-/issues/?sort=updated_desc&state=closed&label_name%5B%5D=client-rapport&milestone_title=Web%202025.06&first_page_size=20)
 
 ## Web 2024-12
 
