@@ -91,6 +91,7 @@ QUnit.test("sort", function(assert) {
     assert.notEqual(clone_list[1].innerHTML.indexOf("smaller"), -1, "sortByTop: pos 1; smaller present (TRG or IGH)");
     assert.notEqual(clone_list[2].innerHTML.indexOf("removed"), -1, "sortByTop: pos 2; removed present (TRG or IGH)");
     assert.notEqual(clone_list[3].innerHTML.indexOf("smaller"), -1, "sortByTop: pos 3; smaller present (TRG or IGH)");
+    
     assert.notEqual(clone_list[4].innerHTML.indexOf("test1"),   -1, "sortByTop: pos 4; test1");
     assert.notEqual(clone_list[5].innerHTML.indexOf("test2"),   -1, "sortByTop: pos 5; test2");
     assert.notEqual(clone_list[6].innerHTML.indexOf("test3"),   -1, "sortByTop: pos 6; test3");

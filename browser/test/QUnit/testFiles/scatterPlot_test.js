@@ -212,7 +212,7 @@ QUnit.test("axes productivity detailed", function(assert) {
     var sp = new ScatterPlot("visu",m);
     sp.init();
 
-    assert.equal(sp.returnActiveclones(), 7, "returnActiveClones -> 7");
+    assert.equal(sp.returnActiveclones(), 8, "returnActiveClones -> 8"); // 6 clones + 2 smaller (IGH and TRG)
     sp.changeSplitMethod("Productivity+", "Productivity+", "grid");
 
     var axes_legend = document.getElementById("visu_axis_x_container").childNodes

@@ -421,12 +421,38 @@ Model_loader.prototype = {
         self.system_selected = [];
         self.system_available = [];
         var system;
+
         for (var p = 0; p < this.clones.length; p++) {
             system = this.clone(p).get('germline')
             if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
                 self.system_available.push(system)
             }
         }
+
+        // Add locus to system with at least 1% if no clonotype is present in loaded data
+        let threshold = THRESHOLD_LOCUS_IN_SYSTEM;
+        for (var germline in this.reads.germline) {
+            const systemReads = this.reads.germline[germline];
+            const segmentedReads = this.reads.segmented;
+
+            if (systemReads == undefined || self.system_available.includes(germline)) continue;
+
+            let above = false;
+            for (let i = 0; i < systemReads.length; i++) {
+                const val = systemReads[i];
+                const segmented = segmentedReads[i] || 0;
+
+                const ratio = segmented > 0 ? val / segmented : 0;
+
+                if (ratio > threshold) {
+                    above = true;
+                    break;
+                }
+            }
+
+            if (above == true) { self.system_available.push(germline) }
+        }
+
         self.system_available.sort(locus_cmp)
 
         for (var sa in self.system_available){

@@ -16,7 +16,14 @@ describe('Scatterplot', function () {
     cy.openAnalysis("doc/analysis-example2.vidjil")
 
     //check visibility
-    cy.get('#visu_plot_container').children('circle').should('have.length', 9)
+    cy.get('#visu_plot_container').children('circle').should('have.length', 11)
+    cy.get('#visu_plot_container')
+      .children('circle')
+      .filter((index, el) => {
+        return Cypress.$(el).css("display") !== "none";
+      })
+      .should("have.length", 7);
+
     cy.get('#visu_plot_container').children('circle').should('be.visible')
     cy.get('#visu_bar_container').children('rect').should('not.be.visible')
 
@@ -36,12 +43,12 @@ describe('Scatterplot', function () {
     cy.get('#visu').find('.sp_menu_icon_bar').click({ force: true })
 
     //check visibility
-    cy.get('#visu_bar_container').children('rect').should('have.length', 9)
+    cy.get('#visu_bar_container').children('rect').should('have.length', 11)
     cy.get('#visu_plot_container').children('circle').should('not.be.visible')
     cy.get('#visu_bar_container').children('rect').should('be.visible')
 
     //check axis y (axis y should automaticaly switch to size in bar mode)
-    cy.get('#visu_axis_y_container').children('line').should('have.length', 6)
+    cy.get('#visu_axis_y_container').children('line').should('have.length', 9)
     cy.get('#visu_axis_container').should('contain', "Size")
     
     return
@@ -157,7 +164,7 @@ describe('Scatterplot', function () {
     cy.get('#time1')
       .trigger('mouseover')
     cy.get("#visu2_tooltip") // tooltip text don't have '\n'
-      .should("have.text", "T8045-BC082-fu12019-12-27+10300 000 reads (65.53%)") //Correct text in tshe sample tooltip
+      .should("have.text", "T8045-BC082-fu12019-12-27+10310 124 reads (67.74%)") //Correct text in tshe sample tooltip
 
     // mouseover_without_dates
     cy.openAnalysis("doc/analysis-example.vidjil")

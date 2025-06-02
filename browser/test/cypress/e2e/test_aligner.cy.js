@@ -49,7 +49,7 @@ describe('Aligner', function () {
     //cluster
     cy.get('#cluster').click()
     cy.get('#seq0').contains('clone-001') 
-    cy.get('#seq0').contains('97.56%') 
+    cy.get('#seq0').contains('72.66%') 
     
     //unselect
     cy.get('#seq0').find('.delBox').click({force:true})

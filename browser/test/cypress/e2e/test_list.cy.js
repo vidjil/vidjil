@@ -15,9 +15,9 @@ describe('List', function () {
 
   it('00-Open a simple vidjil file',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
-    cy.get('#list_clones').children().should('have.length', 9) // removed TRG clonotype is hidden
+    cy.get('#list_clones').children().should('have.length', 11) // removed TRG clonotype is hidden
     cy.get('#listElem_5 > .nameBox').should('have.text', "clone_cluster1")
-    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.408%")
+    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.304%")
 
     return
   })
@@ -29,7 +29,7 @@ describe('List', function () {
 
     cy.get('#listElem_5 > .nameBox').should('have.text', "clone_cluster1")
     // second sample open with analysis, so size is smaller
-    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.014%")
+    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.013%")
     cy.get('#listElem_6 > .nameBox').should('not.visible');
     return
   })
@@ -57,6 +57,8 @@ describe('List', function () {
       cy.get('#list_clones').children().eq(0)
         .should("contain", "Main ALL clone")
       cy.get('#list_clones').children().eq(1)
+        .should("contain", "IGH smaller clonotype")
+      cy.get('#list_clones').children().eq(2)
         .should("contain", "TRG smaller clonotype")
 
       // change order by 'size'
@@ -133,7 +135,7 @@ describe('List', function () {
 
     // default axis; size
     cy.get('#listElem_4 > .axisBox')
-      .should('have.attr', 'title', '16 nt, 1021 reads (0.408%) reads')
+      .should('have.attr', 'title', '16 nt, 1021 reads (0.304%, 0.408% of TRG) reads')
 
     cy.changeListAxix("Top")
     cy.get('#listElem_4 > .axisBox')
@@ -318,7 +320,7 @@ describe('List', function () {
       .should('have.class', "icon-lock-1 list_lock_on")
       .should('have.attr', 'title', "Release sort as '-' on sample T8045-BC081-Diag")
     cy.get('#list_clones').children()
-      .should('have.length', 9)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child should be clone 0
 
     cy.changeSortList("size")
@@ -328,7 +330,7 @@ describe('List', function () {
       .should('have.attr', 'title', "Release sort as 'size' on sample T8045-BC081-Diag")
 
     cy.get('#list_clones').children()
-      .should('have.length', 9)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child still should be clone 0
 
     cy.get('#time1').click() // change timepoint
@@ -338,7 +340,7 @@ describe('List', function () {
       .should('have.class', "icon-lock-1 list_lock_on")
       .should('have.attr', 'title', "Release sort as 'size' on sample T8045-BC081-Diag")
     cy.get('#list_clones').children()
-      .should('have.length', 9)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child should be clone 0
 
     // Remove lock
@@ -347,12 +349,12 @@ describe('List', function () {
       .should('have.attr', 'title', "Freeze list as '-' on sample T8045-BC082-fu1")
 
     cy.get('#list_clones').children()
-      .should('have.length', 9)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child should still be clone 0 (as no change in order at this moment)
 
     cy.changeSortList("size")
     cy.get('#list_clones').children()
-      .should('have.length', 9)
+      .should('have.length', 11)
       .should('have.attr', 'id', "7") // change order, new first child is clone 7 (other)
     cy.get('#div_sortLock') //lock in good state after change of sort method (locked)
       .should('have.class', "icon-lock-1 list_lock_on")
@@ -361,7 +363,7 @@ describe('List', function () {
     cy.get('#time0').click() // change timepoint
 
     cy.get('#list_clones').children()
-      .should('have.length', 9)
+      .should('have.length', 11)
       .should('have.attr', 'id', "7") // No lock, should reorder
   })
 

@@ -62,31 +62,32 @@ var lib_vidjil = [  //"js/conf",
                     "js/warnings_data"
                 ];
 
-var test_files = [  "testFiles/form_test",
-                    "testFiles/dbscan_test",
-                    "testFiles/model_test",
-                    "testFiles/model_loader_test",
-                    "testFiles/filter_test",
-                    "testFiles/color_test",
-                    "testFiles/clone_test",
-                    "testFiles/scatterPlot_test",
-                    "testFiles/axis_test",
-                    "testFiles/graph_test",
-                    "testFiles/com_test",
-                    "testFiles/info_test",
-                    "testFiles/list_test",
-                    "testFiles/indexedDom_test",
-                    "testFiles/segmenter_test",
-                    "testFiles/tools_test",
-                    "testFiles/germline_test",
-                    "testFiles/url_test",
-                    "testFiles/shortcut_test",
-                    "testFiles/speed_test",
-                    "testFiles/tokeniser_test",
-                    "testFiles/report_test",
-                    "testFiles/warnings_test",
-                    "testFiles/lib/bioseq_test"
-                ];
+var test_files = [  
+    "testFiles/axis_test",
+    "testFiles/clone_test",
+    "testFiles/color_test",
+    "testFiles/com_test",
+    "testFiles/dbscan_test",
+    "testFiles/filter_test",
+    "testFiles/form_test",
+    "testFiles/germline_test",
+    "testFiles/graph_test",
+    "testFiles/indexedDom_test",
+    "testFiles/info_test",
+    "testFiles/list_test",
+    "testFiles/model_loader_test",
+    "testFiles/model_test",
+    "testFiles/report_test",
+    "testFiles/scatterPlot_test",
+    "testFiles/segmenter_test",
+    "testFiles/shortcut_test",
+    "testFiles/speed_test",
+    "testFiles/tokeniser_test",
+    "testFiles/tools_test",
+    "testFiles/url_test",
+    "testFiles/warnings_test",
+    "testFiles/lib/bioseq_test"
+];
 
 
 

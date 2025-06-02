@@ -614,7 +614,7 @@ QUnit.test("export", function(assert) {
     assert.equal(c3.getPrintableSegSequence(), "aaaaaa\naaaattttt\ntttt", "c3.getPrintableSegSequence() : Ok");
     assert.equal(c4.getPrintableSegSequence(), "ATGGGTCCAGTCGTGA\nACTGTGCAT\nGCCGATAGACGAGTACGATGCCAGGTATTACC", "c4.getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
-    assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaaa\naaaattttt\ntttt\n", "getFasta() : Ok");
+    assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%, 10.00% of TRG)\naaaaaa\naaaattttt\ntttt\n", "getFasta() : Ok");
 
     var res3 = [
         "0", "custom name", "id3",
@@ -626,7 +626,7 @@ QUnit.test("export", function(assert) {
         "AAAAAAAAAATTTTTTTTT",
         10, 10, 15, 15,
         0.05, 0.1, 0.075, 0.15,
-        "19 nt; 10 reads (5.000%)", "19 nt; 10 reads (10.00%)", "19 nt; 15 reads (7.500%)", "19 nt; 15 reads (15.00%)"
+        "19 nt; 10 reads (5.000%; 10.00% of TRG)", "19 nt; 10 reads (10.00%; 20.00% of TRG)", "19 nt; 15 reads (7.500%; 15.00% of TRG)", "19 nt; 15 reads (15.00%; 30.00% of TRG)"
     ]
     assert.deepEqual(c3.toCSV(), res3, ".toCSV()")
     assert.equal(c3.toCSVheader(m).length, c3.toCSV().length, ".toCSVheader() length")
@@ -641,7 +641,7 @@ QUnit.test("export", function(assert) {
         "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTATTACC",
         10, 10, 15, 15,
         0.05, 0.1, 0.075, 0.15,
-        "57 nt; 10 reads (5.000%)", "57 nt; 10 reads (10.00%)", "57 nt; 15 reads (7.500%)", "57 nt; 15 reads (15.00%)"
+                "57 nt; 10 reads (5.000%; 10.00% of TRG)", "57 nt; 10 reads (10.00%; 20.00% of TRG)", "57 nt; 15 reads (7.500%; 15.00% of TRG)", "57 nt; 15 reads (15.00%; 30.00% of TRG)"
     ]
     assert.deepEqual(c4.toCSV(), res4, "c4.toCSV() - no junctionAA")
 
