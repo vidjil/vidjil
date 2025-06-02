@@ -429,8 +429,8 @@ Model_loader.prototype = {
             }
         }
 
-        // Add system if at least one reads is present for a locus
-        let threshold = 0.01;
+        // Add locus to system with at least 1% if no clonotype is present in loaded data
+        let threshold = THRESHOLD_LOCUS_IN_SYSTEM;
         for (var germline in this.reads.germline) {
             const systemReads = this.reads.germline[germline];
             const segmentedReads = this.reads.segmented;

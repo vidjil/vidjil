@@ -51,6 +51,8 @@ BROWSER_SUPPORTED_UNTIL_NEXT = "April 2026"
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
+THRESHOLD_LOCUS_IN_SYSTEM = 0.01 // add locus to system with at least 1% if no clonotype is present in loaded data
+
 /** Model constructor
  * Used to parse a .vidjil file (local file or from url) and store his content in a more convenient way, <br>
  * provide manipulation function, <br>
