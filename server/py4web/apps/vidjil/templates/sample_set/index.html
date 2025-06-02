@@ -192,7 +192,11 @@
                     [[pass]]
 
                     [[if auth.is_admin():]]
-                        <td id="copyPathClipboard_[[=row.sequence_file.id]]" class="pointer" onclick="copyTextToClipboard('[[=db.sequence_file.data_file.uploadfolder + row.sequence_file.data_file]]')" > <i class="icon-newspaper" title="copy sample path in uwsgi docker to clipboard"></i></td>
+                        [[if row.sequence_file.data_file:]]
+                            <td id="copyPathClipboard_[[=row.sequence_file.id]]" class="pointer" onclick="copyTextToClipboard('[[=db.sequence_file.data_file.uploadfolder + row.sequence_file.data_file]]')" > <i class="icon-newspaper" title="copy sample path in uwsgi docker to clipboard"></i></td>
+                        [[else:]]
+                            <td></td>
+                        [[pass]]
                     [[pass]]
                     [[if can_modify:]]
                         <td class="pointer" onclick="db.call('file/form', {'file_id' :'[[=row.sequence_file.id]]', 'sample_type': '[[=sample_type]]'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
