@@ -2,67 +2,66 @@
 !!! note
 
 This changelog concerns the Vidjil web application, client and server.
-we are using continuous integration and deployment, some features are pushed on our servers between these releases.
+We are using continuous integration and deployment, some features may be pushed on our servers between these releases.
 
 ## Web 2025-06
 
 ??? note "Milestone 2025-06"
-Complete list of issue and change of this release can be found [in gitlab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
+Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
 
 **Improve analysis**
 
-- Add new feature to remove clonotype ([#5386](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5386)) in an analysis.
-- Locus span in samples information panel will show size (globally or by system) at hover [#5476](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5476).
+- Add new feature to remove clonotypes (#5386) in an analysis.
+- Locus span in sample information panel will show size (globally or by system) at hover #5476.
 - New page in documentation for [shortcuts](user.md#keyboard-shortcuts), with direct access from vidjil server with `?` key.
-- Show fuse commandline in log panel [#5281](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5281)
-- Add a new axis to show e-values [#4814](https://gitlab.inria.fr/vidjil/vidjil/-/issues/4814).
-- Improve search fields in database page [#5447](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5447). You can now specified if value is first name or last name of patient, mixed with birthdate.
-- Include sets ids by user in database search [#5396](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5396).
-- New configuration to show missing reads not found by vidjil-algo as clonotype. This reads will be show as `missing` in analysis [#5357](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5357).
-- Locus selection is now saved in analysis [#5345](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5345).
-- New shortcuts to select active sample: shift+click on sample label will keep only clicked sample as active [#5135](https://gitlab.inria.fr/vidjil/vidjil/-/issues/4135)
+- Show fuse commandline in log panel #5281.
+- Add a new axis to show e-values #4814.
+- Improve search fields in database page #5447 and #5396. You can now specify if the searched value is first name or last name of patient, the birthdate or the ID of the patient.
+- New configuration to show missing reads not found by vidjil-algo as clonotype. These reads will be shown as `missing` in analysis #5357.
+- Locus selection is now saved in analysis #5345.
+- New shortcuts to select the active sample: shift+click on a sample label will keep only the clicked sample as active #5135.
 
 **Reports**
 
-- We added a comment section by clonotype in reports, allowing to add specific information on a clonotype [#5414](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5414)
-- We added user that generated the report in the report [#5450](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5450)
-- Display on report creator names [#5450](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5450)
-- Display associated sets names in reports if a sample is associated to multiple sets [#5413](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5413)
-- Various [shortcuts](user.md#keyboard-shortcuts) and little improvements in reports [See issues descriptions](https://gitlab.inria.fr/vidjil/vidjil/-/issues/?sort=updated_desc&state=closed&label_name%5B%5D=client-rapport&milestone_title=Web%202025.06&first_page_size=20)
+- We added a comment section by clonotype in reports, allowing to add specific information on a clonotype #5414.
+- We added user that generated the report in the report #5450.
+- Display creator names in report #5450.
+- Display associated sets names in reports if a sample is associated with multiple sets #5413.
+- Various [shortcuts](user.md#keyboard-shortcuts) and small improvements in reports [See issues descriptions](https://gitlab.inria.fr/vidjil/vidjil/-/issues/?sort=updated_desc&state=closed&label_name%5B%5D=client-rapport&milestone_title=Web%202025.06&first_page_size=20).
 
 **Bug fixes**
 
-- Repair cloneDB interaction with vidjil server [#5325](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5325)
-- Fix error of ASCII character in logs files [#5465](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5465)
-- Fix error in scale for some axis in some case [#5464](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5464), [#5276](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5276).
-- Refactor upload module to improve uploading of large sequence file (>1GB) ([#5356](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5356) and [#5409](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5409)
-- Fix color of tag star after change of value [#5445](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5445)
-- Fix AA sequence show in client with missing R replaced by an erroneous A [#5424](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5424).
+- Repair cloneDB interaction with vidjil server #5325
+- Fix error of ASCII character in log files #5465.
+- Fix error in scale for some axis in some cases #5464, #5276.
+- Refactor upload module to improve uploading of large sequence files (>1GB) (#5356 and #5409).
+- Fix color of tag star after changing value #5445.
+- Fix AA sequence shown in client with missing R replaced by an erroneous A #5424.
 
 **Security**
 
-- Add a new 2FA (double authentication) option for login to server. If activate, a onetime password is send by email to user [#5466](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5466) and [#5479](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5479)
-- Add failed login counter with disabling of account in case of multiple fail.
-- Admin action by API check that group exists before doing action on it [#]
-- Deletion of a group show more information on group content on confirmation page [#5460](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5460)
-- Check that R1/R2 common filenames are equal [#5446](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5446)
-- Block autocompletion in some fields of set form (names) [#5426](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5426)
-- Remove real information exported in server logs [#5439](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5439)
+- Add a new 2FA (double authentication) option for login to server. If activated, a one-time password is sent by email to the user (#5466 and #5479).
+- Add failed login counter with disabling of account in case of multiple failures.
+- Admin actions by API check that the group exists before performing action on it.
+- Deletion of a group shows more information on group content on the confirmation page #5460.
+- Check that R1/R2 common filenames are equal #5446.
+- Block autocompletion in some fields of set form (names) #5426.
+- Remove real information exported in server logs.
 
 **Technical**
 
-- Remove dead code for admin interface [3075](https://gitlab.inria.fr/vidjil/vidjil/-/issues/3075)
-- Admin can now easily copy to clipboard file path as on server to debug [#5467](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5467).
-- Automatic logout is now set to 2h, and can be change by administrator [#5471](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5471) and [#5472](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5472)
-- Admin impersonating, fix redirect error [#5269](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5269)
-- Server can now send emails. Some use case already done (send email to administrator at error ticketing [#5192](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5192))
-- Fuse include order of sample in pre/post-fuse call [#5428](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5428)
-- Add personalization option for server (show message specific of instance) [#5149](https://gitlab.inria.fr/vidjil/vidjil/-/issues/5149).
+- Remove dead code for admin interface #3075.
+- Admin can now easily copy file paths to clipboard to ease debug #5467.
+- Automatic logout is now set to 2 hours and can be changed by the administrator.
+- Admin impersonating: fix redirect error #5269.
+- Server can now send emails. Some use case are already implemented (send email to administrator at error ticketing #5192).
+- Fuse now includes order of sample in pre/post-fuse call #5428.
+- Add personalization options for server (display instance-specific messages) #5149.
 
 ## Web 2024-12
 
 ??? note "Milestone 2024-12"
-Complete list of issue and change of this release can be found [in gitlab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/15).
+Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/15).
 
 **Metrics**
 
@@ -109,7 +108,7 @@ These metrics are pseudonymized.
 ## Web 2024-04
 
 ??? note "Milestone 2024-04"
-Complete list of issue and change of this release can be found [in gitlab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
+Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
 
 **QC stats**
 
@@ -141,7 +140,7 @@ Complete list of issue and change of this release can be found [in gitlab's mile
 ## Web 2024-01
 
 ??? note "Milestone 2024-01"
-    Complete list of issue and change of this release can be found [in gitlab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/8).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/8).
 
 Main change of this release is based under the hood, with conversion of backend server from an old framework `web2py` to a new implementation `py4web`.
 Mains ideas are shared between these frameworks, yet it required a lot of hard work.
@@ -170,7 +169,7 @@ Other improvements of client and server are limited.
 ## Web 2023-03
 
 ??? note "Milestone 2023-04"
-    Complete list of issue and change of this release can be found [in gitlab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/8).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/8).
 
 **Improve analysis**
 
@@ -212,7 +211,7 @@ Other improvements of client and server are limited.
 ## Web 2022-06
 
 ??? note "Milestone 2022-06"
-    Complete list of issue and change of this release can be found [in gitlab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/7).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/7).
 
 **Improve analysis**
 
@@ -250,7 +249,7 @@ Other improvements of client and server are limited.
 ## Web 2021-11
 
 ??? note "Milestone 2021-11"
-    Complete list of issue and change of this release can be found [in gitlab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/4).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/4).
 
 **Improve analysis**
 
