@@ -8,7 +8,7 @@ This software is for research use only and comes with no warranty.
 The development code is available on <https://gitlab.inria.fr/vidjil/vidjil>.
 Bug reports, issues and patches are welcome.
 
-# Licenses for third-party software and databases
+## Licenses for third-party software and databases
 
 Vidjil provide ready-to-use docker containers for a full client/server web application.
 See instructions on <https://www.vidjil.org/doc/server/#docker-installation>.
@@ -148,7 +148,7 @@ x is "current version" at time of release
 * @link             <https://github.com/select2/select2>
 * @license          MIT
 
-**resumable.js**       : A JavaScript library for providing multiple simultaneous, stable, fault-tolerant and resumable/restartable uploads via the HTML5 File API. 
+**resumable.js**       : A JavaScript library for providing multiple simultaneous, stable, fault-tolerant and resumable/restartable uploads via the HTML5 File API.
 
 * @author           Steffen Fagerström Christensen + external contributors
 * @version          1.1.0

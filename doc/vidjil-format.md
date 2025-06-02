@@ -54,7 +54,7 @@ or `clusters`, to further cluster some clones, see below).
          "number": 1, 
          "original_names": ["T8045-BC081-Diag.fastq"],
          "commandline": [
-            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 Diag.fastq"
+            "vidjil-algo -g germline/homo-sapiens.g -Z 100 -r 1 -3 Diag.fastq"
          ]
     },
 
@@ -114,8 +114,8 @@ do a correct gathering.
            "2019-12-27 17:50:04"
          ],
          "commandline": [
-            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 Diag.fastq",
-            "vidjil-algo -g germline/homo-sapien.g -Z 100 -r 1 -3 FollowUp1.fastq"
+            "vidjil-algo -g germline/homo-sapiens.g -Z 100 -r 1 -3 Diag.fastq",
+            "vidjil-algo -g germline/homo-sapiens.g -Z 100 -r 1 -3 FollowUp1.fastq"
          ], 
          "commandline_fuse": "fuse.py -o fused.vidjil -t 100 T8045-BC081-Diag.vidjil T8045-BC082-fu1.vidjil"
     },
@@ -214,7 +214,7 @@ do a correct gathering.
 }
 ```
 
-Note that we add a field in samples part to keep trace of commandline used for fuse call. 
+Note that we add a field in samples part to keep trace of commandline used for fuse call.
 This allows to get important info on pre-fuse/post-fuse called.
 
 #### `.vidjil` file - pre process data
@@ -437,8 +437,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
    "name": "",      // clone custom name [optional]
                     // (the default name, in .vidjil, is computed from V/D/J information)
 
-   "label": "",     // clone labels, separed by spaces [optional]
-                    // These labels may add some information entered with a controled vocabulary
+   "label": "",     // clone labels, separated by spaces [optional]
+                    // These labels may add some information entered with a controlled vocabulary
 
    "sequence": "",  // reference nt sequence [required for .vidjil]
                     // (for .analysis, not really used now in the web application,
@@ -465,10 +465,10 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // Any feature to be highlighted in the sequence.
                     // All those fields are optional (though some minor feature may not properly work in the client)
                     //  - "start"/"stop" : positions on the clone sequence (starting at 1)
-                    //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangment. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
+                    //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangement. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
                     //  - "seq" : a sequence
                     //  - "val" : a numerical value
-                    //  - "info" : a textual vlaue
+                    //  - "info" : a textual value
 
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
@@ -696,7 +696,7 @@ and are arrays containing one value per time point.
 
 Here, field `R2` indicates the Pearson R2 coefficient for the linear
 regression used in this clone; `copy_number` is the estimated copy
-number of this clone, obtained by mutiplying this clone's coefficient
+number of this clone, obtained by multiplying this clone's coefficient
 by its read count; `family` is the clone family; and
 `normalized_reads` is the estimated value of MRD for this clone.
 

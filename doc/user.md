@@ -68,18 +68,18 @@ Otherwise, such `.vidjil` files can be obtained either:
   respecting the `.vidjil` [file format](vidjil-format.md)
 - or by using the [fuse.py](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/tools/fuse.py) script on the standard [AIRR representation](https://docs.airr-community.org/en/latest/datarep/overview.html#format-specification)
 
-Contact us if you want help on converting such data.
+[Contact us](mailto:contact@vidjil.org) if you want help converting such data.
 
 ## First aid
 
 - Open data by:
   
-  - either with “samples”/“open samples” if you are connected to a sample database, such as on <https://app.vidjil.org/> or <https://health.vidjil.org/>.
-    In these cases, there are always some "Demo" datasets for demonstration purposes.
-    Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
+    - either with “samples”/“open samples” if you are connected to a sample database, such as on <https://app.vidjil.org/> or <https://health.vidjil.org/>.
+      In these cases, there are always some "Demo" datasets for demonstration purposes.
+      Once a patient/run/set is selected, you can access the results by clicking on the link near `See results` (bottom right).
 
-  - or with “file”/“import/export”, manually selecting a `.vidjil` file
-œ
+    - or with “file”/“import/export”, manually selecting a `.vidjil` file
+
 - You can change the number of displayed clonotypes by moving the slider “number of clonotypes” (menu “filter”).
   The maximal number of clonotypes that can be displayed depends on the processing step before.
   See below "[Can I see all the clones ?](#can-i-see-all-the-clones-and-all-the-reads)".
@@ -90,15 +90,18 @@ Contact us if you want help on converting such data.
 - There are often very similar clonotypes, coming from either somatic hypermutations or from sequencing errors.
   You can select such clonotypes (for example those sharing a same V and a same J), then:
   
-  - inspect the sequences in the lower panel (possibly using the “align” function),
-  - remove some of these sequences from the selection (clicking on their name in the lower panel)
-  - cluster them (button “cluster”) in a unique clonotype.
-    Once several clonotypes are clustered, you can still visualize them by clicking on “+” in the list of clonotypes.
+    - inspect the sequences in the lower panel (possibly using the “align” function),
+    - remove some of these sequences from the selection (clicking on their name in the lower panel)
+    - cluster them (button “cluster”) in a unique clonotype.
+      Once several clonotypes are clustered, you can still visualize them by clicking on “+” in the list of clonotypes.
 
 - Your analysis (clonotype tagging, renaming, clustering) can be saved:
   
-  - either with “samples”/“save analysis” if you are connected to a sample database
-  - or with “file”/“export .analysis”
+    - either with “samples”/“save analysis” if you are connected to a sample database
+    - or with “file”/“export .analysis”
+
+- You can focus on a particular locus by clicking on locus label in sample information panel (see below).
+  This allows to see size of a clonotype in it own locus.
 
 You are advised to go through to the tutorial available from <https://www.vidjil.org/doc>
 to learn the essential features of Vidjil.
@@ -108,34 +111,36 @@ to learn the essential features of Vidjil.
 ### The info panel (upper left panel)
 
 - *patient/run/set information.*
-- *locus.* Germline(s) used for analyzing the data. In case of multi-locus
+
+- *locus:* Germline(s) used for analyzing the data. In case of multi-locus
   data, you can select what locus should be displayed (see [Libraries and recombinations](libraries-recombinations.md))
-- *analysis.*   Name (without extension) of the loaded file.
-- *sample.* Name of the current sample.
 
-<!-- The name can be edited (“edit”). -->
+- *analysis:* Name (without extension) of the loaded file.
 
-- *date.* Date of the current sample
+- *sample:* Name of the current sample.
+
+- *date:* Date of the current sample
   (can be edited in the database, on the patient/run/set tab).
   When displaying multiple samples from a same patient/run/set,
   you can change the sample viewed by clicking on the `←` and `→` buttons,
-  or cycle trough them by clicking on the "▶" button.
+  or cycle through them by clicking on the "▶" button.
 
-- *analyzed reads.* Number of reads where the underlying RepSeq algorithm
+- *analyzed reads:* Number of reads where the underlying RepSeq algorithm
   found a V(D)J recombination, for that sample.
   See *Number of analyzed reads* below.
   By hovering the mouse, one also sees the *total*
   number of reads for that sample.
 
-- The info “🛈” button opens the *sample information panel*, that includes
+- The info “🛈” button opens the *sample information panel*, which includes
   metadata on the sample and its analysis.
   It includes information on the version and the parameters
   of the analysis software.
 
 <figure markdown>
-  ![Image title](./pictures/panel_info.png){ align=right }
-  <figcaption>The information panel.
-      The patient/run/set or sample information may contain tags such as `#T-ALL`.
+  ![Information panel](./pictures/panel_info.png){ align=right }
+  <figcaption>
+      The information panel.
+      The patient/run/set or sample information may contain tags such as `#T-ALL` (see [default tags](tags.md)).
       In this sample, V(D)J recombinations were detected in about 82% of the reads.
   </figcaption>
 </figure>
@@ -168,16 +173,17 @@ then followed by the J gene `TRGJ1*02`, with `6` nucleotides deleted at its star
   their DNA sequence, their (partial) CDR3 amino acid sequence.
 
 - The concentration of some clonotypes may not be displayed.
-  - A clonotype with a plus symbol `+` has been detected in that sample,
-    but with only a few reads, typically less than five.
-    Its concentration ratio is thus not significant, and
-    this clonotype would appear in the gray zone in the sample graph.
-  - A clonotype with a minus symbol `−` has not been detected in that sample,
-    but has been detected in another sample that is not currently displayed.
+    - A clonotype with a plus symbol `+` has been detected in that sample,
+      but with only a few reads, typically less than five.
+      Its concentration ratio is thus not significant, and
+      this clonotype would appear in the gray zone in the sample graph.
+    - A clonotype with a minus symbol `−` has not been detected in that sample,
+      but has been detected in another sample that is not currently displayed.
 
 <figure markdown>
-  ![Image title](./pictures/panel_list.png)
-  <figcaption>The list of clonotypes.
+  ![List of clonotypes](./pictures/panel_list.png)
+  <figcaption>
+    The list of clonotypes.
     The main clonotype is `IGHV3-9*01 7/CCCGGA/17 IGHJ6*02`,
     with 7 deletions on the 3' side of the V, 17 deletions on the 5' side of the J,
     and a insertion of `CCCGGA` in the N region.  
@@ -236,9 +242,10 @@ It shows the most frequent clonotypes of each sample, tracked into every sample.
 - If your dataset contains sampling dates (for example for diagnosis/follow-up samples), you can switch between sample keys and dates in “settings \> sample key”
 
 <figure markdown>
-  ![Image title](./pictures/panel_graph.png)
-  <figcaption>This sample graph show the evolution of a T-ALL patient relapsing at D+268/D+308 with a clonotype that was not the main one at the diagnosis.  
-  The view was filtered to show only clonotypes of interest.
+  ![Sample graph](./pictures/panel_graph.png)
+  <figcaption>
+    This sample graph show the evolution of a T-ALL patient relapsing at D+268/D+308 with a clonotype that was not the main one at the diagnosis.  
+    The view was filtered to show only clonotypes of interest.
   </figcaption>
 </figure>
 
@@ -260,8 +267,9 @@ When there is only one sample, two such views are shown.
 - On the bar plots, the Y axis corresponds to the order of clonotypes inside each bar.
 
 <figure markdown>
-  ![Image title](./pictures/panel_scatterplot.png){ width="500" }
-  <figcaption>Grid view with the default axes (V/5' and J/3' gene) focusing on the TRG locus.
+  ![Scatterplot](./pictures/panel_scatterplot.png){ width="500" }
+  <figcaption>
+    Grid view with the default axes (V/5' and J/3' gene) focusing on the TRG locus.
     The TRGV10/TRGJP10 clonotype appears in red because it has been tagged as `clone 1` from the clonotype list.  
     Clicking on IGH focus on the IGH locus.
   </figcaption>
@@ -278,12 +286,14 @@ The "Similarity by nucleotides" preset computes the similarity between each pair
     The similarity is computed only on clonotypes present on the current samples. The same clonotypes will thus be displayed further apart on smaller samples with more similar clones.
     In most cases, the more dissimilarity there is among the clonotypes of the sample, the better the clonotypes are grouped.
 
-<figure> <p style="text-align:center">
-    <img src="./pictures/scatterplot_similarity.png"/>
-    <p style="text-align:center">A) Artificial sample with only 5 clonotypes, divergent by only one mismatch, but
-    here displayed far apart. <br/>B)
-    Same clonotypes in a large polyclonal sample with one hundred clonotypes. The five clonotypes are clusterized.</p>
-  </p>
+<figure markdown>
+  ![Scatterplot similarity](./pictures/scatterplot_similarity.png){ width="500" }
+  <figcaption>
+    A) Artificial sample with only 5 clonotypes, divergent by only one mismatch, but
+    here displayed far apart.
+
+    B) Same clonotypes in a large polyclonal sample with one hundred clonotypes. The five clonotypes are clusterized.
+  </figcaption>
 </figure>
 
 Note that when another analysis produce a slightly different list of clonotypes (launching another configuration, adding samples...), the tSNE algorithm will be relaunched and the 2D projection may look slightly different.
@@ -300,7 +310,7 @@ to focus on the clonotypes, then to display them according either to their “cl
 or their “N length” (that is N1-D-N2 in the case of VDJ recombinations).
 
 - The “★” button (status bar, bottom right) allows
-to tag at once all the selected clonotypes
+to tag all the selected clonotypes at once
 and/or to select them for the next report.
 
 ### The sequence panel (bottom panel)
@@ -311,9 +321,9 @@ The sequence panel shows, for the selected clonotypes:
 - some *features* on these sequences
 
 <figure markdown>
-  ![Image title](./pictures/panel_sequence.png)
+  ![Sequence panel(./pictures/panel_sequence.png)
   <figcaption>
-      For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button. You can also choose to show some available features on the sequence as primers, visible here under sequence on 3' extremities.
+      For each clonotype, name and sequences are shown. You can align sequences and see differences between them. Here the two first sequences seem identical on the region displayed though they actually differ. The third and fifth sequences differ by a deletion and an insertion in the junction, within a stretch of cytosine. From here you can remove more divergent clonotypes (using the cross on the left side) and cluster others with the corresponding button. You can also choose to show some available features on the sequence such as primers, visible here under sequence on 3' extremities.
   </figcaption>
 </figure>
 
@@ -334,7 +344,7 @@ Such a cluster will appear as a single clonotype,
 with the first (largest) selected clonotype acting as its representative.
 
 <figure markdown>
-  ![Image title](./pictures/panel_list_merge_2.png)
+  ![Merged clonotype display](./pictures/panel_list_merge_2.png)
   <figcaption>
     The top clonotype is actually a cluster of several sub-clonotypes. It is still possible to access to all the information of such sub-clonotype. Clicking on "x" remove a sub-clonotype from the cluster.
   </figcaption>
@@ -417,8 +427,8 @@ To export reports from your data, you may first select clonotypes and/or plots:
 Then select `export report` inside the menu `import/export`.
 
 <figure markdown>
-  ![Image title](./pictures/report_menu_default.png)
-  <figcaption> The report menu with some default templates. </figcaption>
+  ![Report menu](./pictures/report_menu_default.png)
+  <figcaption>The report menu with some default templates.</figcaption>
 </figure>
 
 The report menu allows to select a *template* and to load a previously saved *report*,
@@ -450,16 +460,15 @@ Both regular and comment sections will be saved when you save the report.
 The warning view (new in release 2023.03) lists global and clonotype warnings.
 Clonotypes with a specific warning can be selected (🔍), either from the current sample or from all samples.
 
-<figure> <p style="text-align:center">
-      <img src="./pictures/warnings_view.png"/>
-  </figure>
-  <i>
+<figure markdown>
+  ![warnings view](./pictures/warnings_view.png)
+  <figcaption>
       The most frequent warning in this sample, W69, tells that some clonotypes
       may have alternate V(D)J designation.
       Clonotypes with this warnings can be selected (🔍):
       here most of them have VXXX or VXX, and that is expected due to the sequences.
       The warning was then muted.
-  </i>
+  </figcaption>
 </figure>
 
 Warnings can be muted by unchecking the checkbox.
@@ -480,9 +489,9 @@ you can process your data and save the results of your analysis.
 ## Patients
 
 <figure markdown>
-  ![Image title](./pictures/table_db_content_patient_list.png)
+  ![Database main page](./pictures/table_db_content_patient_list.png)
   <figcaption>
-    The main page on the sample database show a list of patients, or runs or sets,
+    The main page on the sample database shows a list of patients, or runs or sets,
     with links to the samples, the results, and the preview/quality control.
   </figcaption>
 </figure>
@@ -539,6 +548,32 @@ Do not copy any header row, but only the data rows.
 | CohortCLL | Retrospective 2015-2019 |
 | Mouse1604 |                         |
 
+## First analysis
+
+First analysis is launched by us and provides a help to users in need.
+It helps new users to interpret data and detect some notable things about their samples with your support.
+This is also a good starting point if you have specific data or protocols and
+require a particular configuration or setup for work on the server.
+
+<figure markdown>
+  ![Request analysis](./pictures/user_request_analysis.png)
+  <figcaption>
+    A button labeled "request analysis" is present in each set until you don't meet the requirements.
+    It allows you to send us an email with relevant information to launch the first analysis.
+  </figcaption>
+</figure>
+
+After a first analysis, we give you the right to launch your own pipelines on the vidjil server.
+Then, you can choose from a list of configurations that suit your data and launch analysis by clicking on the gear icon.
+
+<figure markdown>
+  ![Request analysis 2](./pictures/user_request_analysis_2.png)
+  <figcaption>
+    Once you have the right to launch analysis, a new dropdown menu is presented at the end of the table
+    It allows you to choose specific configurations to launch your own analysis.
+  </figcaption>
+</figure>
+
 ### Permanent address (URL) to a set of samples
 
 Addresses such as <https://app.vidjil.org/3241-25> directly target a set of samples (here the public dataset L3), possibly with your saved analysis.
@@ -562,7 +597,7 @@ You can see which samples have been processed with the selected
 process, and access to the results (`See results`, bottom right).
 
 <figure markdown>
-  ![Image title](./pictures/table_db_content_patient_0_multi_config.png)
+  ![Multi config](./pictures/table_db_content_patient_0_multi_config.png)
   <figcaption>
     The demo patient LIL-L3, available from the demo account, has 5 samples
     here analyzed with the default `multi+inc+xxx` configuration.
@@ -581,17 +616,16 @@ been created beforehand.
 
 #### Pre-processing
 
-The sample files may be preprocessed, by selecting a *pre-process scenario* when adding a sample.
-At the moment the only preprocess available on the [public server](https://app.vidjil.org) are the paired-end read merging.
+The sample files may be preprocessed, by selecting a *pre-process scenario* when adding a sample.  
+This will definitivly modify original sample file and change of it will enforce to reupload dat a ofr this sample.
+At the moment, we offer 4 kind of preprocess.
 
-1. Read merging
-
+1. **Read merging**  
   People using Illumina sequencers may sequence paired-end R1/R2 fragments. It is
   **highly** recommended to merge those reads in order to have a read that consists
   of the whole DNA fragment instead of split fragments.
   To merge R1/R2 fragments, select an adapted *pre-process scenario* and provide both R1/R2 files at once when adding a sample.
-  On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.
-  
+  On the public test server, the default scenarios use the [Flash2](https://academic.oup.com/bioinformatics/article/27/21/2957/217265) read merger with the option `-M 300`.  
   There are two scenarios to merge reads. Indeed in case the merging is not
   possible for some paired-end reads we must keep only one of the fragments (either R1 or
   R2). We cannot keep both because it would bias the quantification (as there
@@ -599,6 +633,41 @@ At the moment the only preprocess available on the [public server](https://app.v
   strategy it could be better to keep R1 or R2 in such a case. Therefore it
   really depends on users and their sequencing protocols. You must choose to keep the fragment that most
   probably contains both a part of the V and the J genes.
+
+1. **UMI demultiplexing**  
+  For people using UMI to debias amplficiation, we include a UMI demultiplexing process.
+  It use calib software and are set to use 2x3nt UMI by default.
+
+1. **VDJ prefilter**  
+  Some people use now Capture or WGS sequencing.
+  In such cases, VDJ data represent only a very few part of the original file.
+  So we include a process that will make a first and very quick prefilter of vdj reads and keep every reads that have at least some kmer from germline database.
+  This step allow to keep a small dataset for further analysis pipeline, that will be greatly improve in time, and to save disk space on server.
+
+1. **Primer dimer prefilter**  
+  Sometimes, user have primer dimers in there dataset that will contaminate sample analysis.
+  In this case, we put a simple filter on reads that are under 60nt that are mainly artifact sequence.
+
+Note that we can also mix some of these preprocess at the same time in one preprocess configuration.  
+Preprocess in this case follow this order:
+
+<!-- markdownlint-disable code-block-style -->
+```mermaid
+graph LR
+  A[UMI demultiplexing];
+  B[Reads Merging R1/R2];
+  C[VDJ prefiltering];
+  D[Primer dimer prefiltering];
+  
+  A --> B;
+  B --> C;
+  C --> D;
+```
+<!-- markdownlint-enable code-block-style -->
+
+These preprocess follow scripts available in [contributions repository](https://gitlab.inria.fr/vidjil/contrib).
+If you already have some local preprocess not listed here that you want to include in your vidjil pipeline,
+or that you want to share it with community, don't hesite to concat us.
 
 ### Processing samples and process configurations
 
@@ -646,24 +715,24 @@ This page can be accessed through a button either from a patient/run/set page, o
 The columns (list below) can be showed or hidden using the checkboxes above the table.
 Displayed and hidden columns are saved in your local settings.
 
-| Columns | Explanation |
-| :------ | :---------- |
-| Sets | Patients, runs, sets |
-| Sample name | Sample name |
-| Config name | Analysis configuration (such as `multi+inc+xxx`) |
-| Reads (%) | Percentage of analyzed reads |
-| Reads | Number of analyzed reads / Total number of reads |
-| Mean length | Mean length of the reads |
-| Read length distribution | Read length distribution (between 100bp and 600bp) |
-| Recombinations | Recombinations / loci |
-| Clonotypes ≥5% | Number of clonotypes above 5% in their recombination/locus |
-| Common | Common clonotypes ≥0.01% with other samples of this set. Note that these are the common clonotypes with all samples of the set, even if they are not displayed. |
-| Main clonotype | Main clonotype |
-| Reads (merged) | Number of merged reads |
-| Pre-process | Pre-process |
-| Shannon | Shannon's diversity (0: no diversity, 3-5+: full diversity)|
-| Pielou | Pielou's evenness (0: no diversity, 1: full diversity)|
-| Simpson | Simpson's diversity (0: no diversity, 1: full diversity)|
+| Columns                  | Explanation                                                                                                                                                     |
+| :----------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sets                     | Patients, runs, sets                                                                                                                                            |
+| Sample name              | Sample name                                                                                                                                                     |
+| Config name              | Analysis configuration (such as `multi+inc+xxx`)                                                                                                                |
+| Reads (%)                | Percentage of analyzed reads                                                                                                                                    |
+| Reads                    | Number of analyzed reads / Total number of reads                                                                                                                |
+| Mean length              | Mean length of the reads                                                                                                                                        |
+| Read length distribution | Read length distribution (between 100bp and 600bp)                                                                                                              |
+| Recombinations           | Recombinations / loci                                                                                                                                           |
+| Clonotypes ≥5%           | Number of clonotypes above 5% in their recombination/locus                                                                                                      |
+| Common                   | Common clonotypes ≥0.01% with other samples of this set. Note that these are the common clonotypes with all samples of the set, even if they are not displayed. |
+| Main clonotype           | Main clonotype                                                                                                                                                  |
+| Reads (merged)           | Number of merged reads                                                                                                                                          |
+| Pre-process              | Pre-process                                                                                                                                                     |
+| Shannon                  | Shannon's diversity (0: no diversity, 3-5+: full diversity)                                                                                                     |
+| Pielou                   | Pielou's evenness (0: no diversity, 1: full diversity)                                                                                                          |
+| Simpson                  | Simpson's diversity (0: no diversity, 1: full diversity)                                                                                                        |
 
 ### Groups
 
@@ -910,7 +979,7 @@ Several indices are computed on the full list of clonotypes to assess the divers
   and 1 (full diversity, each analyzed read belongs to a different clonotype).
 
 <figure markdown>
-  ![Image title](./pictures/diversity_splitted_by_locus.png)
+  ![Diversity splitted by locus](./pictures/diversity_splitted_by_locus.png)
   <figcaption>
     The diversity section of sample information panel.
     Since algo release `2022.03`, diversity is also split by locus.
@@ -1129,7 +1198,12 @@ This panel is available at the bottom of settings menu under "manage settings" e
 
 ## Keyboard shortcuts
 
-Note that some shortcuts may not work on some systems or on on some web browsers.
+This section can be displayed by pressing the `?` key on the keyboard. There is also a button in the help menu to display it.
+Note that some shortcuts may not work on some systems or on some web browsers.
+
+|     |                   |
+| --- | ----------------- |
+| `?` | Display this help |
 
 |                         |                                                         |
 | ----------------------- | ------------------------------------------------------- |
@@ -1317,8 +1391,10 @@ Analysis that use other repertoire software or generate with vidjil-algo compati
 
 ##### MiXCR
 
+!!! warning
+  deprecated since MiXCR now requires a licence to run. Please [contact us](mailto:contact@vidjil.org) if you'd like to discuss this with us
+
 MiXCR. Run a version of MixCR from 2018.
-A new version will be release based on AIRR format should be released soon
 
 ??? Parameters
         program: `mixcr`
@@ -1329,13 +1405,13 @@ A new version will be release based on AIRR format should be released soon
 
 Export all clones in the tabular AIRR format.
 A threshold of 5 reads is set to report a clonotype.
-The results can not be browsed online.
+The results cannot be browsed online.
 
 See [documentation](vidjil-algo.md#airr-tsv-output)
 
 Another similar configuration with a limit set to 1 reads is available but only on demand and for small set of sequences.
 
-The results can not be browsed online.
+The results cannot be browsed online.
 
 ??? Parameters
         program: `vidjil`
@@ -1384,7 +1460,6 @@ These configuration may evolve or moved into other groups without notice.
 ##### vidjil-algo-next
 
 Default configuration, beta release of next vidjil-algo engine.
-The last release is 2021.01.
 
 ??? Parameters
         program: `vidjil`
@@ -1413,8 +1488,8 @@ Same as Multi+contigs, but limit to IGH complete locus.
 ##### Export all clones (AIRR), limit 1 read
 
 Export all clones in the tabular AIRR format, from 1 read.
-Use wisely on file with few clonotypes.
-The results can not be browsed online.
+Use wisely on files with few clonotypes.
+The results cannot be browsed online.
 See [documentation](vidjil-algo.md#airr-tsv-output)
 
 ??? Parameters

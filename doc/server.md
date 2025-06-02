@@ -90,7 +90,7 @@ See `FILE_SOURCE` below.
 
 By default, accounts are local to the Vidjil server.
 
-An experimental integration to LDAP servers is now available (`LDAP` variable in defs.py).
+An experimental integration to LDAP servers is now available (`USE_LDAP` variable in .env files).
 Contact us if you need help in setting up such an authentication.
 
 ### Network
@@ -99,12 +99,12 @@ Once installed, the server can run on a private network.
 However, the following network access are recommended:
 
 - outbound access
-  - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
-  - for server maintainers: upgrades and reports to a monitor server
+    - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
+    - for server maintainers: upgrades and reports to a monitor server
 - inbound access
-  - through the [VidjilNet consortium](https://www.vidjil.net),
-    the team may help local server maintainers in some monitoring, maintenance and upgrade tasks,
-    provided a SSH access can be arranged, possibly over VPN.
+    - through the [VidjilNet consortium](https://www.vidjil.net),
+      the team may help local server maintainers in some monitoring, maintenance and upgrade tasks,
+      provided a SSH access can be arranged, possibly over VPN.
 
 ## Installation with docker
 
@@ -159,20 +159,20 @@ Vidjil uses HTTPS by default, and will therefore require SSL certificates.
 You can achieve this with the following steps:
 
 - Configure the SSL certificates
-  - A fast option is to create a self-signed SSL certificate.
-   Note that it will trigger security warnings when accessing the client.
-   From the `docker/` directory:
+    - A fast option is to create a self-signed SSL certificate.
+     Note that it will trigger security warnings when accessing the client.
+     From the `docker/` directory:
 
-   ```sh
-   openssl genrsa 4096 > vidjil.key
-   openssl req -new -x509 -nodes -sha1 -days 1780 -key vidjil.key > vidjil.crt
-   openssl x509 -noout -fingerprint -text < vidjil.crt
-   mkdir -p vidjil-client/ssl
-   mv vidjil.* vidjil-client/ssl/
-   ```
+     ```sh
+     openssl genrsa 4096 > vidjil.key
+     openssl req -new -x509 -nodes -sha1 -days 1780 -key vidjil.key > vidjil.crt
+     openssl x509 -noout -fingerprint -text < vidjil.crt
+     mkdir -p vidjil-client/ssl
+     mv vidjil.* vidjil-client/ssl/
+     ```
 
-  - If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
-    The certificates must bear the name of your mail domain (\<mail-domain\>.crt and \<mail-domain\>.key)
+    - If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
+      The certificates must bear the name of your mail domain (\<mail-domain\>.crt and \<mail-domain\>.key)
 
 - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates.
   One solution is to use `certbot` on the host to generate the certificates and to copy them in the right directory so that the container
@@ -210,12 +210,12 @@ forget to make a backup of any file you replace.)
 
 - Set the [SSL certificates](#network-usage-and-ssl-certificates)
 - Change the mysql root password, mysql user password and the py4web admin password in `.env.default` file
-  - `MYSQL_ROOT_PASSWORD` is the password for the root user of MySQL
-  - `MYSQL_PASSWORD` is the password for the `vidjil` user of MySQL
-  - `PY4WEB_ADMIN_PASSWORD` is the password for the py4web admin user
+    - `MYSQL_ROOT_PASSWORD` is the password for the root user of MySQL
+    - `MYSQL_PASSWORD` is the password for the `vidjil` user of MySQL
+    - `PY4WEB_ADMIN_PASSWORD` is the password for the py4web admin user
 - Set the number of workers and uwsgi threads in `.env.default`. Keep at least one threads not used to not overload server
-  - `WORKERS_POOL` is the number of workers to run. The default value is the number of threads minus 1.
-  - `UWSGI_POOL` is the number of threads to run for uwsgi. The default value is 6.
+    - `WORKERS_POOL` is the number of workers to run. The default value is the number of threads minus 1.
+    - `UWSGI_POOL` is the number of threads to run for uwsgi. The default value is 6.
 - Start the services with `docker-compose up -d`.
 
 Then `docker ps` should display seven running containers for a localhost usage:
@@ -223,12 +223,12 @@ Then `docker ps` should display seven running containers for a localhost usage:
 Service `restic` is useful for backup and email communication and need to be started for regular installation.
 
 - Vidjil also need germline files.
-  - You can use IMGT germline files if you accept IMGT license.
-    For this, from the `vidjil` directory (root of the git repository),
-    run `make germline` to create `germline/` while checking the license.
-  - These germlines are included in the server container with a volume in the fuse block
-    in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
-  - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
+    - You can use IMGT germline files if you accept IMGT license.
+      For this, from the `vidjil` directory (root of the git repository),
+      run `make germline` to create `germline/` while checking the license.
+    - These germlines are included in the server container with a volume in the fuse block
+      in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
+    - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
 - Open a web browser to `https://localhost`, or to your FQDN if you configured it (see [above](#network-usage-and-ssl-certificates)).
 Click on `init database` and create a first account by entering an email.
@@ -378,27 +378,7 @@ add_header 'Access-Control-Allow-Origin' 'your_other_domain';
 The mysql container is not fully launched. This can happen especially at the first launch.
 You may relaunch the containers.
 
-If restarting the containers does not resolve the issue, there are a couple of things
-you can look into:
-
-- Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
-  the mysql user: `vidjil`.
-  If you are not sure, you can check with the following:
-
-  ```sh
-  docker exec -it vidjil-mysql bash
-  mysql -u vidjil -p vidjil
-  ```
-
-  or reset it:
-
-  ```sh
-  docker exec -it vidjil-mysql bash
-  mysql -u root -p
-  SET PASSWORD FOR vidjil = PASSWORD('<new password>');
-  ```
-
-- Ensure the database was created correctly. This should have been done automatically,
+If restarting the containers does not resolve the issue, ensure the database was created correctly. This should have been done automatically,
   but just in case, you can check the console output, or check the database:
 
   ```sh
@@ -421,7 +401,7 @@ The password should be given in the docker `.env` environment file.
 
 1. Adapt the config for the new version (see [docker changelog](https://www.vidjil.org/doc/changelog-docker))
     1. See if modifications are needed in `.env` files
-    1. See if modifications are needed in other specific configuration file (`docker-compose.yml`, `conf.js`, `defs.py`, ...). **Be careful**: do not apply the config right now, wait for the new version to be deployed.
+    1. See if modifications are needed in other specific configuration file (`docker-compose.yml`, `conf.js`, .env files, ...). **Be careful**: do not apply the config right now, wait for the new version to be deployed.
 1. Set-up a warning message on your front end server if it is separated (otherwise, the front will be shutdown and the server will not answer):
     1. Connect to the front-end server.
     1. In `conf.js` file, set `use_database` to `false`. This will deactivate db access. In order to display an explicit message, uncomment the `alert:` part, setting explicit `title` and `msg`.
@@ -843,26 +823,17 @@ Note that some metrics are more computational intensive than others. We chose to
 
 ## Using CloneDB [Under development]
 
-!!! note
-  This documentation is not suitable for py4web version of server.
-  Please wait for release 2025.06 to be fixed.
-  If you need to use it until this date, please [contact us](mailto:support@vidjil.org).
-
 The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
 independently of the Vidjil platform.
 
 Then one can easily extract data to be used with CloneDB. A script is provided
-(`server/scripts-web2py/create_clone_db.py`) which
+(`server/py4web/apps/vidjil/scripts/create_clone_db.py`) which
 produces a FASTA file to be indexed with CloneDB. This script takes as
 parameter the FASTA output file and one (or many) group IDs, which correspond
-to the groups having access to the datasets. Note that for the moment the Vidjil platform only allow a per group access to the CloneDB.
+to the groups having access to the datasets. Note that for the moment the Vidjil platform only allows a per group access to the CloneDB.
 
-The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX`
-is replaced with the group ID.
+The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX` is replaced with the group ID.
 
-Make sure that the `DIR_CLONEDB` variable is set in `defs.py` and points to
-the CloneDB server directory. Make sure that in this directory the
-`clonedb_defs.py` has been filled correctly.
+Make sure that the `DIR_CLONEDB` variable points to the CloneDB server directory (default is `/usr/share/clonedb/` and can be overriden in .env files). Make sure that in this directory the `clonedb_defs.py` has been filled correctly.
 
-Then index the created FASTA file with the CloneDB index (follow the
-instructions from CloneDB).
+Then index the created FASTA file with the CloneDB index (follow the instructions from CloneDB).

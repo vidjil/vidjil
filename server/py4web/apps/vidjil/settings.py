@@ -56,25 +56,24 @@ DIR_PRE_VIDJIL_ID = os.getenv(
 )
 BASENAME_OUT_VIDJIL_ID = os.getenv("BASENAME_OUT_VIDJIL_ID", default="%06d")
 
-# Prevent upload and run when 1% space is left in target disk
-FS_LOCK_THRESHOLD = int(os.getenv("FS_LOCK_THRESHOLD", default="1"))
-
 ### Directory for program used in task.py
-### relative path start from server/web2py
 DIR_VIDJIL = os.getenv("DIR_VIDJIL", default="/usr/share/vidjil/")
 DIR_VIDJIL_NEXT = os.getenv("DIR_VIDJIL_NEXT", default="/usr/share/vidjil/")
+DIR_MIXCR = os.getenv("DIR_MIXCR", default="/usr/share/mixcr/")
+DIR_IGREC = os.getenv("DIR_IGREC", default="/usr/local/bin/")
 DIR_FUSE = os.getenv("DIR_FUSE", default="/usr/share/vidjil/tools/")
 DIR_PREPROCESS = os.getenv(
     "DIR_PREPROCESS", default="/usr/share/vidjil/tools/scripts/preprocess/"
 )
-DIR_MIXCR = os.getenv("DIR_MIXCR", default="/usr/share/mixcr/")
-DIR_IGREC = os.getenv("DIR_IGREC", default="/usr/local/bin/")
+DIR_BINARIES = os.getenv("DIR_BINARIES", default="/binaries/")
+DIR_FLASH2 = os.getenv("DIR_FLASH2", default=DIR_BINARIES)
+DIR_PEAR = os.getenv("DIR_PEAR", default=DIR_BINARIES)
 DIR_GERMLINE = os.getenv("DIR_GERMLINE", default="/usr/share/vidjil/germline")
 DIR_GERMLINE_NEXT = os.getenv("DIR_GERMLINE_NEXT", default="/usr/share/vidjil/germline")
-DIR_PEAR = os.getenv("DIR_PEAR", default="/usr/share/tools/")
-DIR_FLASH2 = os.getenv("DIR_FLASH2", default="/usr/share/tools/")
 DIR_CLONEDB = os.getenv("DIR_CLONEDB", default="/usr/share/clonedb/")
-DIR_BINARIES = os.getenv("DIR_BINARIES", default="/binaries/")
+
+# Prevent upload and run when 1% space is left in target disk
+FS_LOCK_THRESHOLD = int(os.getenv("FS_LOCK_THRESHOLD", default="1"))
 
 ### Log files
 DIR_LOG = os.getenv("DIR_LOG", default="/var/vidjil/")
@@ -180,16 +179,14 @@ HEALTHCARE_COMPLIANCE = string_to_bool(
 ### Limited accounts
 LIMITED_ACCOUNTS = json.loads(os.getenv("LIMITED_ACCOUNTS", default="[]"))
 
-### Limited accounts
+### Public group name
 PUBLIC_GROUP_NAME = os.getenv("PUBLIC_GROUP_NAME", default="public")
 
 ### Tag prefix
 TAG_PREFIX = os.getenv("TAG_PREFIX", default="#")
 
-
 ### Personalization
-WELCOME_LOGINPAGE_MESSAGE = os.getenv(
-    "WELCOME_LOGINPAGE_MESSAGE", default="Welcome to Vidjil server!"
+WELCOME_LOGIN_PAGE_MESSAGE = os.getenv(
+    "WELCOME_LOGIN_PAGE_MESSAGE", default="Welcome to Vidjil server!"
 )
-
 SERVER_URL = os.getenv("SERVER_URL", default="app.vidjil.org")
