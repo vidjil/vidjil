@@ -1,5 +1,5 @@
 # ## Docker-compose
-# You can set variables (as $MYSQL_ROOT_PASSWORD) values inside .env file
+# You can set variables (as $MYSQL_ROOT_PASSWORD) values inside `.env.default` file
 # Path variable and folders trees can be modified to your liking.
 
 services:
@@ -31,7 +31,7 @@ services:
 
     uwsgi:
         container_name: vidjil-uwsgi
-        image: vidjil/server:latest
+        image: vidjil/server:${VIDJIL_SERVER_DOCKER_IMAGE_VERSION:-latest}
         restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} UWSGI
@@ -71,7 +71,7 @@ services:
 
     fuse:
         container_name: vidjil-fuse
-        image: vidjil/server:latest
+        image: vidjil/server:${VIDJIL_SERVER_DOCKER_IMAGE_VERSION:-latest}
         restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} FUSE
@@ -93,7 +93,7 @@ services:
 
     nginx:
         container_name: vidjil-nginx
-        image: vidjil/client:latest
+        image: vidjil/client:${VIDJIL_CLIENT_DOCKER_IMAGE_VERSION:-latest}
         restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} NGINX
@@ -115,7 +115,7 @@ services:
 
     workers-all:
         container_name: vidjil-workers-all
-        image: vidjil/server:latest
+        image: vidjil/server:${VIDJIL_SERVER_DOCKER_IMAGE_VERSION:-latest}
         restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS ALL
@@ -139,7 +139,7 @@ services:
 
     workers-short:
         container_name: vidjil-workers-short
-        image: vidjil/server:latest
+        image: vidjil/server:${VIDJIL_SERVER_DOCKER_IMAGE_VERSION:-latest}
         restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} WORKERS SHORT
@@ -163,7 +163,7 @@ services:
 
     flower:
         container_name: vidjil-flower
-        image: vidjil/server:latest
+        image: vidjil/server:${VIDJIL_SERVER_DOCKER_IMAGE_VERSION:-latest}
         restart: unless-stopped
         environment:
             - SERVICE_NAME=${SERVICE_PREFIX_NAME:-VIDJIL} FLOWER
