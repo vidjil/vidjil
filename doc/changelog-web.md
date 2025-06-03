@@ -13,6 +13,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 
 - Add new feature to remove clonotypes (#5386) in an analysis.
 - Locus span in sample information panel will show size (globally or by system) at hover #5476.
+- Locus over top 100 but above 1% are now show in list of locus in sample information panel #5462.
 - New page in documentation for [shortcuts](user.md#keyboard-shortcuts), with direct access from vidjil server with `?` key.
 - Show fuse commandline in log panel #5281.
 - Add a new axis to show e-values #4814.
