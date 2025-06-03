@@ -1007,5 +1007,4 @@ def get_patient_redirect_url():
         "sample_set",
         "all",
         vars={"type": sampleSet.SET_TYPE_PATIENT, "page": 0},
-        scheme=True,
     )
