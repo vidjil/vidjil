@@ -456,6 +456,21 @@ PART_SUFFIX = ".part"
 MERGED_SUFFIX = ".merged"
 
 
+@action("/vidjil/file/resumable_upload", method=["OPTIONS"])
+@action.uses(auth.user)
+def resumable_upload_options():
+    """
+    Handle OPTIONS requests for resumableJS uploads (see https://github.com/23/resumable.js).
+
+    This endpoint is used by the client to check CORS and upload permissions before starting the upload process.
+    It responds with "OK" to indicate that the resumable upload endpoint is available and ready to accept file chunks.
+
+    Returns:
+        str: "OK" if the endpoint is available.
+    """
+    return "OK"
+
+
 @action("/vidjil/file/resumable_upload", method=["GET"])
 @action.uses(db, auth.user)
 def resumable_upload_get():
@@ -494,15 +509,12 @@ def resumable_upload_get():
     # chunk path based on the parameters
     chunk_name = f"{resumableChunkNumber}{PART_SUFFIX}"
     chunk_path = os.path.join(chunk_dir, chunk_name)
-    log.debug(f"Try getting chunk: {chunk_path}")
 
     if os.path.isfile(chunk_path):
         # Let resumable.js know this chunk already exists
-        log.debug(f"Found chunk: {chunk_path}")
         return "OK"
     else:
         # Let resumable.js know this chunk does not exists and needs to be uploaded
-        log.debug(f"Not found chunk: {chunk_path}")
         raise HTTP(204)
 
 
@@ -561,7 +573,6 @@ def resumable_upload_post():
         chunk_file.write(file.file.read())
 
     mes += f"Chunk {resumableChunkNumber} of {resumableFilename} received."
-    log.debug(mes)
 
     # Check if all chunks are received
     received_chunks = len(os.listdir(chunk_dir))
@@ -582,7 +593,6 @@ def resumable_upload_post():
             os.remove(os.path.join(chunk_dir, f"{i}.part"))
         os.rmdir(chunk_dir)
 
-    log.debug(mes)
     return "OK"
 
 
@@ -591,7 +601,7 @@ def resumable_upload_post():
 def resumable_upload_process():
     """
     Handle POST requests to process the uploaded file after all chunks have been received and merged
-    for resumableJS uploads (see https://github.com/23/resumable.js)..
+    for resumableJS uploads (see https://github.com/23/resumable.js).
 
     This method processes the uploaded file by moving it to the correct location, updating the database,
     and starting the preprocessing task if needed.
