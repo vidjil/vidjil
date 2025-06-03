@@ -53,7 +53,10 @@ class TestProxyController(unittest.TestCase):
                 proxy_controller.IMGT_URL,
                 headers=ANY,
                 data=params,
-                timeout=ANY,
+                timeout=(
+                    proxy_controller.REQUEST_CONNECT_TIMEOUT,
+                    proxy_controller.REQUEST_READ_TIMEOUT,
+                ),
             )
 
     def test_imgt_timeout(self):
@@ -161,7 +164,10 @@ class TestProxyController(unittest.TestCase):
                 proxy_controller.ASSIGN_SUBSET_CGI,
                 headers={"referer": proxy_controller.ASSIGN_SUBSET_URL},
                 data=params,
-                timeout=(3, 180),
+                timeout=(
+                    proxy_controller.REQUEST_CONNECT_TIMEOUT,
+                    proxy_controller.REQUEST_READ_TIMEOUT,
+                ),
             )
 
     def test_assign_subsets_timeout(self):
