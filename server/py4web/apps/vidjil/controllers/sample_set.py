@@ -101,8 +101,15 @@ def index():
     info_file = helper.get_info_dict(data)
 
     if "config_id" in request.query and request.query["config_id"] != "-1":
-        config_id = int(request.query["config_id"])
-        config = True
+        try:
+            config_id = int(request.query["config_id"])
+            config = True
+        except TypeError as error:
+            log.error(
+                f"Error when trying to cast config_id to int for {request.query["config_id"]=}: {error}"
+            )
+            config_id = -1
+            config = False
     elif "config_id" in request.query and request.query["config_id"] == "-1":
         most_used_query = db((db.fused_file.sample_set_id == sample_set.id)).select(
             db.fused_file.config_id.with_alias("id"),
