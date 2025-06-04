@@ -4,6 +4,7 @@ import re
 import requests
 from py4web import action, request
 
+from .. import settings
 from ..common import cors, log
 
 ##################################
@@ -15,9 +16,6 @@ ASSIGN_SUBSET_URL = ASSIGN_SUBSET_WEBSITE + "/arrest/assignsubsets/"
 ASSIGN_SUBSET_CGI = ASSIGN_SUBSET_WEBSITE + "/cgi-bin/arrest/assignsubsets_html.pl"
 
 IMGT_URL = "https://www.imgt.org/IMGT_vquest/analysis"
-
-REQUEST_CONNECT_TIMEOUT = 30  # in seconds, see https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
-REQUEST_READ_TIMEOUT = 180  # in seconds, see https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
 
 
 def assign_subset_response_handler(response):
@@ -46,7 +44,10 @@ def proxy_request(url, headers={}, handler=None):
                 url,
                 headers=headers,
                 data=forms,
-                timeout=(REQUEST_CONNECT_TIMEOUT, REQUEST_READ_TIMEOUT),
+                timeout=(
+                    settings.EXTERNAL_REQUEST_CONNECT_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_READ_TIMEOUT,
+                ),
             )
         except requests.exceptions.Timeout as timeout_error:
             log.error(f"Timeout when trying to contact the website: {timeout_error=}")

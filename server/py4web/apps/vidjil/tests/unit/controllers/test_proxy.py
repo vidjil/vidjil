@@ -6,6 +6,7 @@ from unittest.mock import ANY, MagicMock, patch
 import requests
 from py4web.core import Session, _before_request
 
+from .... import settings
 from ....common import auth, db
 from ....controllers import proxy as proxy_controller
 from ...functional.db_initialiser import DBInitialiser
@@ -54,8 +55,8 @@ class TestProxyController(unittest.TestCase):
                 headers=ANY,
                 data=params,
                 timeout=(
-                    proxy_controller.REQUEST_CONNECT_TIMEOUT,
-                    proxy_controller.REQUEST_READ_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_CONNECT_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_READ_TIMEOUT,
                 ),
             )
 
@@ -165,8 +166,8 @@ class TestProxyController(unittest.TestCase):
                 headers={"referer": proxy_controller.ASSIGN_SUBSET_URL},
                 data=params,
                 timeout=(
-                    proxy_controller.REQUEST_CONNECT_TIMEOUT,
-                    proxy_controller.REQUEST_READ_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_CONNECT_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_READ_TIMEOUT,
                 ),
             )
 
