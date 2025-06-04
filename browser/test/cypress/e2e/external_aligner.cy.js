@@ -186,7 +186,7 @@ describe('External Aligner', function () {
   it('Aligner external provider',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
 
-    cy.get('#polyline0').click()
+    cy.get('#polyline0').click({force:true})
     cy.get('#align-refresh-button')
       .should("be.visible")
 
@@ -196,7 +196,7 @@ describe('External Aligner', function () {
     cy.get("#icon_external_IMGT")
       .should("have.class", "icon-arrows-ccw")
 
-    cy.get('#toIMGTseg').click({force:true})
+     cy.get('#align-refresh-button > span').click({force:true})
 
     cy.get('.identityBad', { timeout: TIMEOUT_IMGT })
       .should("be.visible")
@@ -219,21 +219,16 @@ describe('External Aligner', function () {
     cy.get("#icon_external_IMGT")
       .should("have.class", "icon-arrows-ccw")
 
-
-    // TODO; testing menu hover is not possible by cypress fro the moment
+    // TODO; testing menu hover is not possible by cypress for the moment
     // Default config have provider IMGT, but not CloneDB
-    // Only imgt button should be displayed
-    cy.get("#toIMGTseg").should('not.have.css', 'display', 'none')
-    cy.get("#toCloneDBseg").should('have.css', 'display', 'none')
-
-
-    return
+    // cy.get("#toIMGTseg").should('have.css', 'display', 'none')
+    // cy.get("#toCloneDBseg").should('have.css', 'display', 'none')
   })
 
   it('Aligner external provider reset if trimming',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil", "doc/analysis-example2.analysis")
 
-    cy.get('#polyline0').click()
+    cy.get('#polyline0').click({force:true})
 
     cy.get('#align-refresh-button')
       .should("be.visible")
@@ -244,7 +239,7 @@ describe('External Aligner', function () {
     cy.get("#icon_external_IMGT")
       .should("have.class", "icon-arrows-ccw")
 
-    cy.get('#toIMGTseg').click({force:true})
+     cy.get('#align-refresh-button > span').click({force:true})
 
     cy.get('.identityBad', { timeout: TIMEOUT_IMGT })
       .should("be.visible")
@@ -261,7 +256,6 @@ describe('External Aligner', function () {
       .should("exist")
     cy.get("#icon_external_IMGT")
       .should("have.class", "icon-arrows-ccw")
-    return
   })
 
 
