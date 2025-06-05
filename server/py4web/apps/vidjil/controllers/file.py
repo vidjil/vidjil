@@ -259,7 +259,7 @@ def form():
 
         sample_set_list = db(
             (db.sample_set_membership.sequence_file_id == request.query["file_id"])
-            & (db.sample_set_membership.sample_set_id != None)  # noqa: E711
+            & (db.sample_set_membership.sample_set_id != None)
             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
             & (db.sample_set.sample_type != "sequence_file")
         ).select(
@@ -906,7 +906,7 @@ def delete():
 
 def sequencer_list():
     sequencer_list = []
-    for row in db(db.sequence_file.sequencer != None).select(  # noqa: E711
+    for row in db(db.sequence_file.sequencer != None).select(
         db.sequence_file.sequencer, distinct=True
     ):
         if row.sequencer != "null":
@@ -918,7 +918,7 @@ def sequencer_list():
 
 def pcr_list():
     pcr_list = []
-    for row in db(db.sequence_file.pcr != None).select(  # noqa: E711
+    for row in db(db.sequence_file.pcr != None).select(
         db.sequence_file.pcr, distinct=True
     ):
         if row.pcr != "null":
@@ -930,7 +930,7 @@ def pcr_list():
 
 def producer_list():
     producer_list = []
-    for row in db(db.sequence_file.producer != None).select(  # noqa: E711
+    for row in db(db.sequence_file.producer != None).select(
         db.sequence_file.producer, distinct=True
     ):
         if row.producer != "null":
