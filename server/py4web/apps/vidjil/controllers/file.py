@@ -447,7 +447,7 @@ def submit():
         }
         return json.dumps(res, separators=(",", ":"))
     else:
-        print(f["errors"])
+        log.error(f"add_form() failed - {errors=}")
         return error_message("add_form() failed")
 
 
@@ -959,14 +959,12 @@ def restart_pre_process():
     )
     old_task_id = sequence_file.pre_process_scheduler_task_id
     if db.scheduler_task[old_task_id] is not None:
-        print(f"Delete old preprocess: {old_task_id}")
         scheduler.control.revoke(old_task_id, terminate=True)
         db(db.scheduler_task.id == old_task_id).delete()
         db.commit()
 
     # Launch new preprocess
     pre_process = db.pre_process[sequence_file.pre_process_id]
-    print(f"sequence_file.id: {sequence_file.id}, pre_process.id: {pre_process.id}")
     res = tasks.schedule_pre_process(sequence_file.id, pre_process.id)
 
     log.debug(

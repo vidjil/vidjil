@@ -230,9 +230,6 @@ def run_vidjil(
         cmd += " " + vidjil_cmd + " " + seq_file
 
         if grep_reads is not None:
-            print(f"{grep_reads=}")
-            print(f"{seq_file=}")
-
             if re.match(r"^[acgtnACGTN]+$", grep_reads):
                 zipped = "z" if seq_file.endswith(".gz") else ""
                 get_quality = (

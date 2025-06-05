@@ -218,9 +218,6 @@ def get_fuse_data(sample_set_id: int, results_file_ids: List[int]) -> dict:
 
     # Get set infos
     sample_set = {}
-    print(
-        f"{sample_set_id=} - {query[0]['set_id']=} - {query[0]['set_id'] == sample_set_id}"
-    )
     if len(query) > 0 and query[0]["set_id"] == sample_set_id:
         first_result_fuse = query[0]
         sample_set["set_type"] = first_result_fuse["sample_type"]

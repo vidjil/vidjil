@@ -273,7 +273,7 @@ def metricsAll():
 def metricsByName():
     """Allow to get metrics asked by a given list in url (',' jointure')"""
     metrics = request.params["metric"].split(",")
-    print(f"Ask metrics list: {metrics}")
+    log.info(f"Ask metrics list: {metrics}")
     return getMetricsList(metrics, auth)
 
 
