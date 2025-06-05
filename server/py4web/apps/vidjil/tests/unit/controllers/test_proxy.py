@@ -6,6 +6,7 @@ from unittest.mock import ANY, MagicMock, patch
 import requests
 from py4web.core import Session, _before_request
 
+from .... import settings
 from ....common import auth, db
 from ....controllers import proxy as proxy_controller
 from ...functional.db_initialiser import DBInitialiser
@@ -53,7 +54,10 @@ class TestProxyController(unittest.TestCase):
                 proxy_controller.IMGT_URL,
                 headers=ANY,
                 data=params,
-                timeout=ANY,
+                timeout=(
+                    settings.EXTERNAL_REQUEST_CONNECT_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_READ_TIMEOUT,
+                ),
             )
 
     def test_imgt_timeout(self):
@@ -161,7 +165,10 @@ class TestProxyController(unittest.TestCase):
                 proxy_controller.ASSIGN_SUBSET_CGI,
                 headers={"referer": proxy_controller.ASSIGN_SUBSET_URL},
                 data=params,
-                timeout=(3, 180),
+                timeout=(
+                    settings.EXTERNAL_REQUEST_CONNECT_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_READ_TIMEOUT,
+                ),
             )
 
     def test_assign_subsets_timeout(self):

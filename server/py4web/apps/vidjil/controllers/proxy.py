@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 import json
 import re
 
 import requests
 from py4web import action, request
 
+from .. import settings
 from ..common import cors, log
 
 ##################################
@@ -40,7 +40,15 @@ def proxy_request(url, headers={}, handler=None):
             del forms["Session"]
 
         try:
-            response = requests.post(url, headers=headers, data=forms, timeout=(3, 180))
+            response = requests.post(
+                url,
+                headers=headers,
+                data=forms,
+                timeout=(
+                    settings.EXTERNAL_REQUEST_CONNECT_TIMEOUT,
+                    settings.EXTERNAL_REQUEST_READ_TIMEOUT,
+                ),
+            )
         except requests.exceptions.Timeout as timeout_error:
             log.error(f"Timeout when trying to contact the website: {timeout_error=}")
             return json.dumps("Timeout when trying to contact the website")

@@ -190,3 +190,11 @@ WELCOME_LOGIN_PAGE_MESSAGE = os.getenv(
     "WELCOME_LOGIN_PAGE_MESSAGE", default="Welcome to Vidjil server!"
 )
 SERVER_URL = os.getenv("SERVER_URL", default="app.vidjil.org")
+
+### External calls settings (IMGT, ARReST)
+EXTERNAL_REQUEST_CONNECT_TIMEOUT = int(
+    os.getenv("EXTERNAL_REQUEST_CONNECT_TIMEOUT", default="30")
+)  # in seconds, see https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
+EXTERNAL_REQUEST_READ_TIMEOUT = int(
+    os.getenv("EXTERNAL_REQUEST_READ_TIMEOUT", default="180")
+)  # in seconds, see https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
