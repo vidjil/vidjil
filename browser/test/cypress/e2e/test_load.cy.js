@@ -18,9 +18,8 @@ describe('Load', function () {
       cy.get('#info_segmented').contains("14 (100.00%)")
 
       //check number of clones (0)
-      cy.get('#list_clones').children().should('have.length', 0)
-
-      cy.wait(1000)
+      cy.get('#list_clones').children().should('have.length', 24)
+      // 24 ==> 12 smaller clones and 12 removed clones
     })
 
     it('loading-vidjil-file-single-sample',  function() {
@@ -30,7 +29,7 @@ describe('Load', function () {
       cy.get('#info_segmented').contains("335 662 (76.78%)")
 
       //check number of clones (2)
-      cy.get('#list_clones').children().should('have.length', 2)
+      cy.get('#list_clones').children().should('have.length', 5) // 1 real clone, 2 smaller and 2 removed
 
       // single sample -> both visu should be scatterplot
       cy.get("#visu2").should('have.class', 'scatterplot')
@@ -42,9 +41,6 @@ describe('Load', function () {
 
       cy.get('#visu_axis_container').children().contains("V/5' gene")
       cy.get('#visu_axis_container').children().next().contains("J/3' gene")
-
-      cy.wait(10000)
-
     })
 
     it('loading-vidjil-file-multi-samples+analysis',  function() {

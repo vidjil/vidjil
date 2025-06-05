@@ -379,6 +379,7 @@ QUnit.test("name, informations, getHtmlInfo", function(assert) {
     dclone.current_reads = JSON.parse(JSON.stringify(raw_data.reads))
     dclone.defineCompatibleClones()
     dclone.updateReadsDistribClones()
+    m.computeRemovedClonesReads();
     html = m.clones[0].getHtmlInfo();
     // Representative
     var include = html.includes("<td class='header' colspan='2'>representative sequence</td>")
@@ -557,13 +558,26 @@ QUnit.test("size", function(assert) {
     
     assert.equal(c1.get('reads'), 10, "clone c1 reads : 10");
     assert.equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
-    
-    // testgetSize with no norm for scatterplot usage
+
+    // test getSize with removed clonotypes
+    m.clone(2).changeTag("removed_clonotypes");
+    m.computeRemovedClonesReads();
+    assert.equal(c1.getSize().toFixed(3), 0.105, "cluster c1+c2 size with c3 removed from total : 0.105");
+
+    // test getSize at different time points
+    assert.equal(c1.getSize(1).toFixed(3), 0.222, "cluster c1+c2 size with c3 removed from total : 0.222");
+    assert.equal(c1.getSize(2).toFixed(3), 0.162, "cluster c1+c2 size with c3 removed from total : 0.162");
+    assert.equal(c1.getSize(3).toFixed(3), 0.353, "cluster c1+c2 size with c3 removed from total : 0.353");
+
+    // test getSize with no norm for scatterplot usage
+    m.clone(2).changeTag("none");
+    m.computeRemovedClonesReads();
     m.set_normalization(m.NORM_EXPECTED)
     m.compute_normalization(0,0.20)
     assert.equal(c1.getSize().toFixed(2), 0.20, "c1 get correct size after normalisation");
     assert.equal(c1.getSize(undefined, true), 0.10, "c1 return size with no norm if parameter is setted for");
-    
+
+
 });
 
 QUnit.test("system", function(assert) {
@@ -600,7 +614,7 @@ QUnit.test("export", function(assert) {
     assert.equal(c3.getPrintableSegSequence(), "aaaaaa\naaaattttt\ntttt", "c3.getPrintableSegSequence() : Ok");
     assert.equal(c4.getPrintableSegSequence(), "ATGGGTCCAGTCGTGA\nACTGTGCAT\nGCCGATAGACGAGTACGATGCCAGGTATTACC", "c4.getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
-    assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaaa\naaaattttt\ntttt\n", "getFasta() : Ok");
+    assert.equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%, 10.00% of TRG)\naaaaaa\naaaattttt\ntttt\n", "getFasta() : Ok");
 
     var res3 = [
         "0", "custom name", "id3",
@@ -612,7 +626,7 @@ QUnit.test("export", function(assert) {
         "AAAAAAAAAATTTTTTTTT",
         10, 10, 15, 15,
         0.05, 0.1, 0.075, 0.15,
-        "19 nt; 10 reads (5.000%)", "19 nt; 10 reads (10.00%)", "19 nt; 15 reads (7.500%)", "19 nt; 15 reads (15.00%)"
+        "19 nt; 10 reads (5.000%; 10.00% of TRG)", "19 nt; 10 reads (10.00%; 20.00% of TRG)", "19 nt; 15 reads (7.500%; 15.00% of TRG)", "19 nt; 15 reads (15.00%; 30.00% of TRG)"
     ]
     assert.deepEqual(c3.toCSV(), res3, ".toCSV()")
     assert.equal(c3.toCSVheader(m).length, c3.toCSV().length, ".toCSVheader() length")
@@ -627,7 +641,7 @@ QUnit.test("export", function(assert) {
         "ATGGGTCCAGTCGTGAACTGTGCATGCCGATAGACGAGTACGATGCCAGGTATTACC",
         10, 10, 15, 15,
         0.05, 0.1, 0.075, 0.15,
-        "57 nt; 10 reads (5.000%)", "57 nt; 10 reads (10.00%)", "57 nt; 15 reads (7.500%)", "57 nt; 15 reads (15.00%)"
+                "57 nt; 10 reads (5.000%; 10.00% of TRG)", "57 nt; 10 reads (10.00%; 20.00% of TRG)", "57 nt; 15 reads (7.500%; 15.00% of TRG)", "57 nt; 15 reads (15.00%; 30.00% of TRG)"
     ]
     assert.deepEqual(c4.toCSV(), res4, "c4.toCSV() - no junctionAA")
 

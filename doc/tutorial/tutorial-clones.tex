@@ -115,10 +115,10 @@ slider to its right end.
 \begin{verbatim}
   /////////////////////////////////
   cy.log("// test_B_clones_04_filter_slider")
-  // Igh smaller position: 454
+  // Igh smaller position: 455
 
 
-  cy.getCloneSize("454").should('have.text', "10.11%")
+  cy.getCloneSize("455").should('have.text', "10.11%")
   cy.getCloneInList('308').should("not.visible")
 
   cy.getSliderTop().invoke("val", 65)
@@ -129,13 +129,13 @@ slider to its right end.
   cy.getCloneInList('308').should("exist")
 
   cy.getCloneInList('309').should("not.visible") //"Not all real clones are present in list"
-  cy.getCloneSize("454").should('have.text', "9.828%")
+  cy.getCloneSize("455").should('have.text', "9.828%")
 
 
   cy.getSliderTop().invoke("val", 50)
     .trigger("change", { force: true })
     .click({ force: true })
-  cy.getCloneSize("454").should('have.text', "10.11%")
+  cy.getCloneSize("455").should('have.text', "10.11%")
   cy.getCloneInList('308').should("not.visible")
 
 
@@ -179,7 +179,7 @@ Later you may want to filter clonotypes depending on the tags you have chosen.
   /////////////////////////////////
   cy.log("// test_B_clones_06_filter_by_tag")
 
-  cy.get('#listElem_454 > .nameBox')
+  cy.get('#listElem_455 > .nameBox')
     .scrollIntoView()
 
   cy.get('#listElem_1')
@@ -228,14 +228,14 @@ The menu filter shows the list of currently active filters.
 
   // cy.getCloneInList('0').should("be.visible")
   cy.getCloneInList('1').should("be.visible")
-  cy.getCloneInList('454').should("be.visible")
+  cy.getCloneInList('455').should("be.visible")
 
 
   cy.filterSearch('CCCCGACTCC')
 
   // cy.getCloneInList('0').should("not.be.visible")
   cy.getCloneInList('1').should("not.be.visible")
-  cy.getCloneInList('454').should("not.be.visible")
+  cy.getCloneInList('455').should("not.be.visible")
 
   //clones that should stay present (19 clones, test somes)
   cy.getCloneInList('6').scrollIntoView().should("be.visible")
@@ -246,7 +246,7 @@ The menu filter shows the list of currently active filters.
 
   cy.filterSearchReset()
   cy.getCloneInList('1').scrollIntoView().should("be.visible")
-  cy.getCloneInList('454').scrollIntoView().should("be.visible")
+  cy.getCloneInList('455').scrollIntoView().should("be.visible")
 
 
 \end{verbatim}  

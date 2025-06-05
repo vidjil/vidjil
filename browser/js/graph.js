@@ -1446,7 +1446,21 @@ Graph.prototype = {
 
         this.text_container.selectAll("text")
             .on("click", function (d) {
-                if (d.type == "axis_v" || d.type == "axis_v2") return self.m.changeTime(d.time)
+                if (d.type == "axis_v" || d.type == "axis_v2") {
+                    if (d3.event.shiftKey) {
+                        if (self.m.samples.order.length == 1 && self.m.samples.order[0] == d.time) {
+                            // if this time point is already the only one selected, show all time points
+                            return self.m.showAllTime()
+                        } else {
+                            // Show only this time point
+                            self.m.changeTime(d.time)
+                            return self.m.hideAllTime()
+                        }
+                    } else {
+                        // focus on this time point
+                        return self.m.changeTime(d.time)
+                    }
+                } 
             })
             .on("mousedown", function (d) {
                 if (d.type == "axis_v" || d.type == "axis_v2") return self.startDrag(d.time)
@@ -1647,9 +1661,9 @@ Graph.prototype = {
         tooltip    += ( (sampling_date != "-/-") ? (breakChar + sampling_date) : "" )
         tooltip    += ( (delta_date != "-/-") ? (breakChar + delta_date) : "" )
         // duplicate from info; refactor
-        var read_number = this.m.reads.segmented
-        var percent = (read_number[time] / this.m.reads.total[time]) * 100;
-        var reads   = this.m.toStringThousands(read_number[time]) + " reads (" + percent.toFixed(2) + "%)";
+        var read_number = this.m.reads.segmented[time] - this.m.removed_clones_reads_of_active_locus[time];
+        var percent = (read_number / this.m.reads.total[time]) * 100;
+        var reads   = this.m.toStringThousands(read_number) + " reads (" + percent.toFixed(2) + "%)";
         tooltip    += breakChar + reads
         return tooltip
     },

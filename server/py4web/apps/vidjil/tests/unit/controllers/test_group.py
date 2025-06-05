@@ -1,22 +1,23 @@
-import os
 import json
+import os
 import unittest
 
-from ..utils.omboddle import Omboddle
-from ..utils import db_manipulation_utils, test_utils
-from ...functional.db_initialiser import DBInitialiser
-from py4web.core import _before_request, Session, HTTP
-from ....common import db, auth
-from ....modules.permission_enum import PermissionEnum
+from py4web.core import HTTP, Session, _before_request
+
+from ....common import auth, db
 from ....controllers import group as group_controller
+from ....modules.permission_enum import PermissionEnum
+from ...functional.db_initialiser import DBInitialiser
+from ..utils import db_manipulation_utils
+from ..utils.omboddle import Omboddle
 
 
 class TestGroupController(unittest.TestCase):
-
     def setUp(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
-            os.path.normpath(__file__).split(os.path.sep)[:-5])
+            os.path.normpath(__file__).split(os.path.sep)[:-5]
+        )
         _before_request()
         self.session = Session(secret="a", expiration=10)
         self.session.initialize()
@@ -96,7 +97,8 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling index
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -106,7 +108,7 @@ class TestGroupController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == group_controller.ACCESS_DENIED
         assert result["success"] == "false"
-        assert result["redirect"] == "http://127.0.0.1/vidjil/sample_set/all?type=patient&page=0"
+        assert result["redirect"] == "/vidjil/sample_set/all?type=patient&page=0"
 
     ##################################
     # Tests on group_controller.add()
@@ -148,7 +150,8 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling add
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -184,7 +187,8 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling add_form
         with Omboddle(self.session, keep_session=True, params={"format": "json"}):
@@ -200,8 +204,16 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling add_form
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json", "group_name": "test_group", "info": "test_group info", "group_parent": "None"}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={
+                "format": "json",
+                "group_name": "test_group",
+                "info": "test_group info",
+                "group_parent": "None",
+            },
+        ):
             json_result = group_controller.add_form()
 
         # Then : We get groups list
@@ -212,8 +224,9 @@ class TestGroupController(unittest.TestCase):
         group = db.auth_group[group_id]
         assert group.role == "test_group"
         assert group.description == "test_group info"
-        group_assoc = db(db.group_assoc.second_group_id ==
-                         group_id).select(db.group_assoc.first_group_id)
+        group_assoc = db(db.group_assoc.second_group_id == group_id).select(
+            db.group_assoc.first_group_id
+        )
         assert len(group_assoc) == 0
 
     def test_add_form_parent(self):
@@ -221,8 +234,16 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling add_form
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json", "group_name": "test_group", "info": "test_group info", "group_parent": "1"}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={
+                "format": "json",
+                "group_name": "test_group",
+                "info": "test_group info",
+                "group_parent": "1",
+            },
+        ):
             json_result = group_controller.add_form()
 
         # Then : We get groups list
@@ -233,8 +254,9 @@ class TestGroupController(unittest.TestCase):
         group = db.auth_group[group_id]
         assert group.role == "test_group"
         assert group.description == "test_group info"
-        group_assoc = db(db.group_assoc.second_group_id ==
-                         group_id).select(db.group_assoc.first_group_id)
+        group_assoc = db(db.group_assoc.second_group_id == group_id).select(
+            db.group_assoc.first_group_id
+        )
         assert len(group_assoc) == 1
         assert group_assoc[0]["first_group_id"] == 1
 
@@ -260,11 +282,16 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling edit
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": "1"}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": "1"},
+        ):
             json_result = group_controller.edit()
 
         # Then : We get an error
@@ -277,8 +304,12 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Calling edit
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json"}, query={"id": "1"}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": "1"},
+        ):
             json_result = group_controller.edit()
 
         # Then : We get an error
@@ -308,12 +339,21 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         user_group_id = auth.user_group(user_0001_id)
 
         # When : Calling edit_form
-        with Omboddle(self.session, keep_session=True,
-                      params={"format": "json", "id": user_group_id, "group_name": "modified name", "info": "modified info"}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={
+                "format": "json",
+                "id": user_group_id,
+                "group_name": "modified name",
+                "info": "modified info",
+            },
+        ):
             json_result = group_controller.edit_form()
 
         # Then : We get an error
@@ -340,16 +380,32 @@ class TestGroupController(unittest.TestCase):
         exception = context.exception
         assert exception.status == 303
 
+    def test_confirm_missing_id(self):
+        # Given : Logged as admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling confirm without providing an ID
+        with Omboddle(self.session, keep_session=True, params={"format": "json"}):
+            json_result = group_controller.confirm()
+
+        # Then : An error message is returned
+        result = json.loads(json_result)
+        assert result["success"] == "false"
+        assert result["message"] == "missing parameter"
+
     def test_confirm_no_rights(self):
         # Given : Logged as other user, and add corresponding config, ...
         db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling confirm
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": 1}):
+        with Omboddle(
+            self.session, keep_session=True, params={"format": "json"}, query={"id": 1}
+        ):
             json_result = group_controller.confirm()
 
         # Then : We get an error
@@ -357,22 +413,85 @@ class TestGroupController(unittest.TestCase):
         assert result["success"] == "false"
         assert result["message"] == group_controller.ACCESS_DENIED
 
-    def test_confirm_ok(self):
-        # Given : Logged as other user, and add corresponding config, ...
-        user_0001_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+    def test_confirm_group_not_found(self):
+        # Given : Logged as admin
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling confirm with a non-existent group ID
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": 9999},
+        ):
+            json_result = group_controller.confirm()
+
+        # Then : An error message is returned
+        result = json.loads(json_result)
+        assert result["success"] == "false"
+        assert result["message"] == group_controller.ACCESS_DENIED
+
+    def test_confirm_admin_with_users_and_description(self):
+        # Given : Logged as admin and a group with users and a description exists
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+        group_id = db.auth_group.insert(
+            role="test_group", description="This is a test group"
+        )
+        user_1_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_2_id = db_manipulation_utils.add_indexed_user(self.session, 2)
+        auth.add_membership(group_id, user_1_id)
+        auth.add_membership(group_id, user_2_id)
+        db_manipulation_utils.log_in_as_default_admin(self.session)
+
+        # When : Calling confirm with a valid group ID
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": group_id},
+        ):
+            json_result = group_controller.confirm()
+
+        # Then : The confirmation page is returned with group details
+        result = json.loads(json_result)
+        assert result["message"] == "Confirm group deletion"
+        assert result["group"]["id"] == group_id
+        assert result["group"]["role"] == "test_group"
+        assert result["group"]["description"] == "This is a test group"
+        assert result["users_number"] == 2
+
+    def test_confirm_user_with_permission(self):
+        # Given : A user with permission to modify the group
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
-        user_group_id = auth.user_group(user_0001_id)
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        group_id = db.auth_group.insert(role="test_group", description="test group")
+        auth.add_permission(
+            user_group_id, PermissionEnum.admin_group.value, db.auth_group, group_id
+        )
+        auth.add_permission(
+            user_group_id, PermissionEnum.access.value, db.auth_group, group_id
+        )
 
-        # When : Calling confirm
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": user_group_id}):
+        # When : Calling confirm with a valid group ID
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": group_id},
+        ):
             json_result = group_controller.confirm()
 
-        # Then : We get an error
+        # Then : The confirmation page is returned
         result = json.loads(json_result)
-        assert result["message"] == "confirm group deletion"
+        assert result["message"] == "Confirm group deletion"
+        assert result["group"]["id"] == group_id
+        assert result["group"]["role"] == "test_group"
+        assert result["users_number"] == 0
 
     ##################################
     # Tests on group_controller.delete()
@@ -396,10 +515,13 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling delete
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": 1}):
+        with Omboddle(
+            self.session, keep_session=True, params={"format": "json"}, query={"id": 1}
+        ):
             json_result = group_controller.delete()
 
         # Then : We get an error
@@ -413,19 +535,25 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         user_group_id = auth.user_group(user_0001_id)
-        assert db.auth_group[user_group_id] != None
+        assert db.auth_group[user_group_id] is not None
 
         # When : Calling delete
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": user_group_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": user_group_id},
+        ):
             json_result = group_controller.delete()
 
         # Then : We get an error
         result = json.loads(json_result)
         assert result["redirect"] == "group/index"
         assert result["message"] == f"group '{user_group_id}' deleted"
-        assert db.auth_group[user_group_id] == None
+        assert db.auth_group[user_group_id] is None
 
     ##################################
     # Tests on group_controller.info()
@@ -449,10 +577,13 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
 
         # When : Calling info
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": 1}):
+        with Omboddle(
+            self.session, keep_session=True, params={"format": "json"}, query={"id": 1}
+        ):
             json_result = group_controller.info()
 
         # Then : We get an error
@@ -466,11 +597,17 @@ class TestGroupController(unittest.TestCase):
         db_manipulation_utils.log_in(
             self.session,
             db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1))
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
         user_group_id = auth.user_group(user_0001_id)
 
         # When : Calling info
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"id": user_group_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"id": user_group_id},
+        ):
             json_result = group_controller.info()
 
         # Then : We get an error
@@ -490,7 +627,12 @@ class TestGroupController(unittest.TestCase):
         assert not auth.has_membership(1, user_0001_id)
 
         # When : Calling invite
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"group_id": 1, "user_id": user_0001_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"group_id": 1, "user_id": user_0001_id},
+        ):
             json_result = group_controller.invite()
 
         # Then : user is added in group
@@ -511,7 +653,12 @@ class TestGroupController(unittest.TestCase):
         assert auth.has_membership(1, user_0001_id)
 
         # When : Calling kick
-        with Omboddle(self.session, keep_session=True, params={"format": "json"}, query={"group_id": 1, "user_id": user_0001_id}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={"group_id": 1, "user_id": user_0001_id},
+        ):
             json_result = group_controller.kick()
 
         # Then : user is added in group
@@ -528,36 +675,65 @@ class TestGroupController(unittest.TestCase):
         # Given : logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
         assert not auth.has_permission(
-            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0
+        )
 
         # When : Calling rights
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"id": 1, "value": "true", "right": PermissionEnum.upload.value, "name": "test"}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={
+                "id": 1,
+                "value": "true",
+                "right": PermissionEnum.upload.value,
+                "name": "test",
+            },
+        ):
             json_result = group_controller.rights()
 
         # Then : user is added in group
         result = json.loads(json_result)
         assert result["redirect"] == "group/info"
-        assert result["message"] == f"add '{PermissionEnum.upload.value}' permission on 'test' for group {db.auth_group[1].role}"
+        assert (
+            result["message"]
+            == f"add '{PermissionEnum.upload.value}' permission on 'test' for group {db.auth_group[1].role}"
+        )
         assert auth.has_permission(
-            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0
+        )
 
     def test_rights_remove(self):
         # Given : logged as admin
         db_manipulation_utils.log_in_as_default_admin(self.session)
         assert auth.add_permission(
-            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0
+        )
         assert auth.has_permission(
-            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0
+        )
 
         # When : Calling rights
-        with Omboddle(self.session, keep_session=True, params={"format": "json"},
-                      query={"id": 1, "value": "false", "right": PermissionEnum.upload.value, "name": "test"}):
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={"format": "json"},
+            query={
+                "id": 1,
+                "value": "false",
+                "right": PermissionEnum.upload.value,
+                "name": "test",
+            },
+        ):
             json_result = group_controller.rights()
 
         # Then : user is added in group
         result = json.loads(json_result)
         assert result["redirect"] == "group/info"
-        assert result["message"] == f"remove '{PermissionEnum.upload.value}' permission on 'test' for group {db.auth_group[1].role}"
+        assert (
+            result["message"]
+            == f"remove '{PermissionEnum.upload.value}' permission on 'test' for group {db.auth_group[1].role}"
+        )
         assert not auth.has_permission(
-            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0)
+            group_id=1, name=PermissionEnum.upload.value, table_name="test", record_id=0
+        )

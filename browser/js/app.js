@@ -35,7 +35,7 @@ require(["jquery",
 
 
 // Show git_sha1, when it exists
-// require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) }, function(err) { })
+require(["js/git-sha1"], function () { console.log("Vidjil client " + git_sha1) }, function(err) { })
 
 
 function loadAfterConf() {
@@ -46,12 +46,16 @@ function loadAfterConf() {
         config.use_database = false;
         // External provider to activate by default
         config.IMGT = true
-
+        config.server_version  = ""
         config.load_error   = true;
     } else {
         config.load_error   = false;
     }
 
+    // Print correct version on page
+    if (document.getElementById("logospan_index") != null && config.server_version != undefined){
+        document.getElementById("logospan_index").innerHTML = `(${config.server_version})`
+    }
 
     require(['doctips/tips'],
             function(){},
@@ -91,6 +95,7 @@ function loadAfterConf() {
                                          "js/info",
                                          "js/com",
                                          "js/crossDomain",
+                                         "js/uploader",
                                          "js/database",
                                          "js/shortcut",
                                          "js/notification",

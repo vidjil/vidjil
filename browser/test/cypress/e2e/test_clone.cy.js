@@ -26,9 +26,9 @@ describe('Test sandbox', function () {
 
     // Define clones ids
     var clone_real        = 0
-    var clone_igh_distrib_preset_length = 17
-    var clone_trb_distrib_preset_length = 20
-    var clone_igh_preset_VJ             = 29
+    var clone_igh_distrib_preset_length = 19
+    var clone_trb_distrib_preset_length = 22
+    var clone_igh_preset_VJ             = 31
 
 
     cy.getCloneInScatterplot(clone_real,  "bar").should("be.visible") // 'real' clone exist in sp
@@ -82,5 +82,18 @@ describe('Test sandbox', function () {
     cy.openCloneInfo(0)
     cy.get('#download_info_0_airr').should("be.visible")
   })
+
+    
+  it('5462 - Load smaller clones for each locus', function() {
+    // Even if no clone present with locus with some reads/clonotypes, a smaller clone is present 
+    cy.openAnalysis("demo/Demo-X5-no-clone.vidjil")
+    cy.get('#listElem_20 > .nameBox')
+      .should("exist")
+      .should('have.attr', 'title', "IGK+ smaller clonotypes")
+    cy.get('#listElem_20 > .axisBox')
+      .should("exist")
+      .should('have.attr', 'title', "0 nt, 2 reads  reads")
+  
+  });
 
 })

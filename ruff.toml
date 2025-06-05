@@ -1,0 +1,5 @@
+# In addition to the standard set of exclusions, omit some paths to apply on server py4web only
+extend-exclude = ["algo", "browser", "germline", "packaging", "tools", "server/scripts-web2py", "server/tests"]
+[lint]
+# Add import fix
+extend-select = ["I"]

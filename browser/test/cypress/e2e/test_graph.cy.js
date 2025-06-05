@@ -91,6 +91,15 @@ describe('Graph', function () {
     cy.get('#time0').should('have.class','graph_time2');
     cy.get('#time1').should('not.have.class','graph_time2');
 
+    // shift click on header (select sample)
+    cy.get("#time0").click({shiftKey: true});
+    cy.get('#time0').should('have.class','graph_time2');
+    cy.get('#time1').should('have.length', 0);
+    cy.get("#time0").click({shiftKey: true});
+    cy.get('#time0').should('have.class','graph_time2');
+    cy.get('#time1').should('have.length', 1)
+                    .should('not.have.class','graph_time2');
+
     //drag drop (reorder samples)
     cy.get('#time0').invoke('attr', 'x').should('eq', '242')
     cy.get('#time0').trigger('mousedown', { which: 1 })
@@ -98,7 +107,7 @@ describe('Graph', function () {
                     .trigger('mouseup', {force: true})
     cy.get('#time0').invoke('attr', 'x').should('eq', '588')
 
-    //dblclick on header (shide sample)
+    //dblclick on header (hide sample)
     cy.get("#time1").dblclick()
     cy.get('#time1').should('have.length', 0)
 

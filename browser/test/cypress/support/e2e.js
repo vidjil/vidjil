@@ -27,6 +27,7 @@ import "./info";
 import "./aligner";
 import "./network";
 import "./external";
+import "./report";
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
 Cypress.on("uncaught:exception", (err, runnable) => {
@@ -106,6 +107,8 @@ beforeEach(() => {
     // cy.initTestDb(Cypress.env("host"));
     cy.visitpage(Cypress.env("host"));
     cy.closeFlashAll();
+    cy.clearInterceptList("@getActivities");
+    cy.clearInterceptList("@postAllSampleSets");
   }
 });
 

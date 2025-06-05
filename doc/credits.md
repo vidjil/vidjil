@@ -143,6 +143,7 @@ Haematologica, 2018,
 *Immunoglobulin variable domain high-throughput sequencing reveals specific novel mutational patterns in POEMS syndrome*,
 Blood, 2020,
 <https://doi.org/10.1182/blood.2019004197>
+1. Bordenave et al., *Deciphering bone marrow engraftment after allogeneic stem cell transplantation in humans using single-cell analyses*, The Journal of Clinical Investigation, 2024, <https://www.jci.org/articles/view/180331>
 1. Marie-Laure Boulland et al.,
 *Reliable IGHV status assessment by next generation sequencing in routine practice for chronic lymphocytic leukemia*,
 Leukemia & Lymphoma, 2021,
@@ -183,6 +184,7 @@ Journal of Neuroimmunology, 2015, S0165-5728(15)30065-5,
 *Test trial of spike-in immunoglobulin heavy-chain (IGH) controls for next generation sequencing quantification of minimal residual disease in acute lymphoblastic leukaemia*,
 British Journal of Haematology, 2020, 189: e150-e154,
 <https://doi.org/10.1111/bjh.16571>
+1. Giusti et al., *Characterization of Immunoglobulin Heavy Locus Rearrangements in Molecular Subtypes of Childhood B-Cell Precursor Acute Lymphoblastic Leukemia*, 2025, eJHaem, <https://onlinelibrary.wiley.com/doi/full/10.1002/jha2.70003>
 1. Heraud et al.,
 *Monoclonal B-cell lymphocytosis with a non-CLL immunophenotype–Review of 34 cases*
 Annales de Biologie Clinique, 2023,
@@ -226,6 +228,7 @@ Cytometry Part A, 93(11):1118-1124, 2018,
 *High-Throughput Immunogenetics for Clinical and Research Applications in Immunohematology: Potential and Challenges*,
 Journal of Immunology, 2017, 198(10):3765-3774,
 <https://doi.org/10.4049/jimmunol.1602050>
+1. Latiri et al., *DNA methylation as a new tool for the differential diagnosis between T-LBL and lymphocyte-rich thymoma*, The Journal of Pathology, 2024, <https://pathsocjournals.onlinelibrary.wiley.com/doi/full/10.1002/path.6346>
 1. Le Bris et al.,
 *Single Capture High Throughput Sequencing Assay for Combined V(D)J Clonality Analysis and Oncogene Mutations in the Diagnosis of T and B Lymphoid Malignancies*,
 ASH 2021, Blood, 138(S1):2404,
@@ -254,6 +257,7 @@ Blood Cancer Journal, 10, 108, 2020,
 *Capture Sequencing Is a Useful Method for Comprehensive Clonality Analysis Based on Ig/TCR Gene Rearrangements in Acute Lymphoblastic Leukemia*,
 ASH 2018, Blood, 132(S1):1543,
 <https://doi.org/10.1182/blood-2018-99-115624>
+1. Pedrone et al., *SMaRT M-Seq: an optimized step-by-step protocol for M protein sequencing in monoclonal gammopathies*, Biology Methods & Protocols, 2024, <https://academic.oup.com/biomethods/article/9/1/bpae074/7808849>
 1. Piedrafita et al.,
 *Spectrum of Kidney Disorders Associated with T-Cell Immunoclones*,
 Journal of Clinical Medicine, 2022, 11(3), 604,
@@ -308,6 +312,7 @@ HemaSphere, 2021,
 *One step next generation sequencing of immunoglobulin and T-cell receptor gene recombinations for MRD marker identification in acute lymphoblastic leukemia*,
 ed. Anton W. Langerak, Methods in Molecular Biology, 2022,
 <https://link.springer.com/protocol/10.1007/978-1-0716-2115-8_3>
+1. Wang et al., *Immunoglobulin repertoire sequencing and de novo sequencing – Powerful tools for identifying free light chains from patients with light chain cast nephropathy*, International Immunopharmacology, 2024, <https://www.sciencedirect.com/science/article/pii/S1567576924008221>
 1. Christine Wennerås et al.,
 *Infection with Neoehrlichia mikurensis promotes the development of malignant B-cell lymphomas* ,
 British Journal of Haematology, 2023,

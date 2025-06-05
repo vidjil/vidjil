@@ -1,120 +1,113 @@
-
 site_name: Vidjil
 site_url: https://www.vidjil.org/doc
 
 docs_dir: doc
 
 plugins:
-    - search
-    - gitlab_links:
-         gitlab_url: 'https://gitlab.inria.fr/vidjil/vidjil'
+- search
+- gitlab_links:
+    gitlab_url: 'https://gitlab.inria.fr/vidjil/vidjil'
 
 markdown_extensions:
-  - admonition
-  - pymdownx.details
-  - pymdownx.superfences
-  - attr_list
-  - md_in_html
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - def_list
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - toc:
-      permalink: ⚓︎
-      toc_depth: 4
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
-
-
+- admonition
+- pymdownx.details
+- pymdownx.superfences
+- attr_list
+- md_in_html
+- pymdownx.emoji:
+    emoji_index: !!python/name:material.extensions.emoji.twemoji ""
+    emoji_generator: !!python/name:material.extensions.emoji.to_svg ""
+- def_list
+- pymdownx.tasklist:
+    custom_checkbox: true
+- toc:
+    permalink: ⚓︎
+    toc_depth: 4
+- pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+      format: !!python/name:pymdownx.superfences.fence_code_format ""
 repo_url: https://gitlab.inria.fr/vidjil/vidjil
 repo_name: gitlab
 
 nav:
-    - Summary : index.md
-    - Life scientist:
-        - Web application user manual: user.md
-        - Libraries and recombinations: libraries-recombinations.md
-        - Tutorial "Mastering the Vidjil web application" 🔗: https://www.vidjil.org/doc/tutorial/mastering-vidjil.html
-        - Demo access to app.vidjil.org 🔗: https://app.vidjil.org/
-        - Hosting options, healthcare compliance: healthcare.md
-        - Privacy policy: privacy.md
-    - Bioinformatician:
-        - vidjil-algo, command-line manual: vidjil-algo.md
-        - fuse.py, converting and merging immune repertoire data: tools.md
-        - Server API: api.md
-        - Specification of the .vidjil format: vidjil-format.md
-        - Specification of the warnings: warnings.md
-        - Specification of the .should-vdj.fa tests: should-vdj.md
-        - Post-sequencer workflow: workflow.md
-        - Further developer documentation: https://www.vidjil.org/doc/#further-developer-documentation
-    - Server administrator:
-        - Server administration (web): admin.md
-        - Server installation and maintenance (docker): server.md
-    - Further developer documentation: 
-        - Algorithm: dev-algo.md
-        - Germlines: dev-germline.md
-        - Web client: dev-client.md
-        - Web server: dev-server.md
-    - Quality, roadmap, credits:
-        - Software and development quality: quality.md
-        - Public datasets supporting Vidjil publications 🔗: https://www.vidjil.org/data
-        - Release cycle: releases.md
-        - Roadmap: roadmap.md
-        - Credits, references: credits.md
-        - Open-source and licensing: license.md
-    - Changelogs:
-        - Vidjil-algo: changelog-algo.md
-        - Vidjil-server: changelog-web.md
-        - Docker: changelog-docker.md
+- Summary: index.md
+- Life scientist:
+  - Web application user manual: user.md
+  - Libraries and recombinations: libraries-recombinations.md
+  - Analysis axes: axes.md
+  - Tutorial "Mastering the Vidjil web application" 🔗: https://www.vidjil.org/doc/tutorial/mastering-vidjil.html
+  - Demo access to app.vidjil.org 🔗: https://app.vidjil.org/
+  - Hosting options, healthcare compliance: healthcare.md
+  - Privacy policy: privacy.md
+- Bioinformatician:
+  - vidjil-algo, command-line manual: vidjil-algo.md
+  - fuse.py, converting and merging immune repertoire data: tools.md
+  - Server API: api.md
+  - Specification of the .vidjil format: vidjil-format.md
+  - Specification of the warnings: warnings.md
+  - Specification of the .should-vdj.fa tests: should-vdj.md
+  - List of default tags: tags.md
+  - Post-sequencer workflow: workflow.md
+  - Further developer documentation: https://www.vidjil.org/doc/#further-developer-documentation
+- Server administrator:
+  - Server administration (web): admin.md
+  - Server installation and maintenance (docker): server.md
+- Further developer documentation:
+  - Algorithm: dev-algo.md
+  - Germlines: dev-germline.md
+  - Web client: dev-client.md
+  - Web server: dev-server.md
+- Quality, roadmap, credits:
+  - Software and development quality: quality.md
+  - Public datasets supporting Vidjil publications 🔗: https://www.vidjil.org/data
+  - Release cycle: releases.md
+  - Roadmap: roadmap.md
+  - Credits, references: credits.md
+  - Open-source and licensing: license.md
+- Changelogs:
+  - Vidjil-algo: changelog-algo.md
+  - Vidjil-server: changelog-web.md
+  - Docker: changelog-docker.md
 
 extra_css:
-    - mkdocs-extra.css
+- mkdocs-extra.css
 
 theme:
-    name: material
-    shortcuts:
-        next: 78     # n
-        previous: 80 # p
-        search: 83   # s
-    features:
-      - navigation.tracking
-      - navigation.top
-      # - navigation.footer
-      - navigation.instant
-      - content.code.copy
-      - toc.follow
-    icon:
-        admonition:
-          note: octicons/tag-16
-          abstract: octicons/checklist-16
-          info: octicons/info-16
-          tip: octicons/squirrel-16
-          success: octicons/check-16
-          question: octicons/question-16
-          warning: octicons/alert-16
-          failure: octicons/x-circle-16
-          danger: octicons/zap-16
-          bug: octicons/bug-16
-          example: octicons/beaker-16
-          quote: octicons/quote-16
-
-
+  name: material
+  shortcuts:
+    next: 78 # n
+    previous: 80 # p
+    search: 83 # s
+  features:
+  - navigation.tracking
+  - navigation.top
+  # - navigation.footer
+  - navigation.instant
+  - content.code.copy
+  - toc.follow
+  icon:
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/squirrel-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
 
 extra:
   generator: true
   social:
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/vidjilnet
-    - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/u/vidjil
-    - icon: fontawesome/brands/gitlab
-      link: https://gitlab.inria.fr/vidjil/vidjil
-    - icon: fontawesome/solid/paper-plane
-      link: mailto:contact@vidjil.org
-
-
+  - icon: fontawesome/brands/docker
+    link: https://hub.docker.com/u/vidjil
+  - icon: fontawesome/brands/gitlab
+    link: https://gitlab.inria.fr/vidjil/vidjil
+  - icon: fontawesome/solid/paper-plane
+    link: mailto:contact@vidjil.org

@@ -1,18 +1,18 @@
 import json
-from yatl.helpers import XML
-from datetime import datetime
-from datetime import date 
+from datetime import date, datetime
+
 from py4web import action, request
+from yatl.helpers import XML
+
+from ..common import T, auth, cache, db, log
 from ..modules import vidjil_utils
-from ..common import db, T, cache, auth, log
 
 ##################################
 # HELPERS
 ##################################
 
 ACCESS_DENIED = "access denied"
-NOTIFICATION_CACHE_PREFIX = 'notification_'
-
+NOTIFICATION_CACHE_PREFIX = "notification_"
 
 
 ##################################
@@ -21,101 +21,112 @@ NOTIFICATION_CACHE_PREFIX = 'notification_'
 @action("/vidjil/notification/index", method=["POST", "GET"])
 @action.uses("notification/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
-def index():  
+def index():
     notification = None
     if "id" in request.query:
-        notification = db.notification[request.query['id']]
-        log.debug('read notification %s' % request.query["id"])
+        notification = db.notification[request.query["id"]]
+        log.debug("read notification %s" % request.query["id"])
     else:
-        request.query['id'] = None
-        log.debug('notification list')
+        request.query["id"] = None
+        log.debug("notification list")
 
-    if auth.user and 'redirected' not in request.query:
-        rows = db((db.user_preference.user_id==auth.user_id)
-            &(db.user_preference.preference=='mail')
-            &(db.user_preference.val==request.query['id'])).select()
-        if len(rows) == 0 :
+    if auth.user and "redirected" not in request.query:
+        rows = db(
+            (db.user_preference.user_id == auth.user_id)
+            & (db.user_preference.preference == "mail")
+            & (db.user_preference.val == request.query["id"])
+        ).select()
+        if len(rows) == 0:
             db.user_preference.insert(
-                user_id=auth.user_id,
-                preference='mail',
-                val=request.query['id'])
+                user_id=auth.user_id, preference="mail", val=request.query["id"]
+            )
 
     notifications = db(db.notification).select(orderby=~db.notification.id)
 
-    m_content =""
+    m_content = ""
     if notification and "message_content" in notification:
         m_content = notification["message_content"]
 
-    return dict(message="News",
-                query=notification,
-                m_content=m_content,
-                notifications=notifications,
-                auth=auth,
-                db=db)
+    return dict(
+        message="News",
+        query=notification,
+        m_content=m_content,
+        notifications=notifications,
+        auth=auth,
+        db=db,
+    )
+
 
 # serve for to add a notification
 @action("/vidjil/notification/add", method=["POST", "GET"])
 @action.uses("notification/add.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def add():
-    if (auth.is_admin()):
-        return dict(message=T('add notification'), auth=auth, db=db)
+    if auth.is_admin():
+        return dict(message=T("add notification"), auth=auth, db=db)
     res = {"message": ACCESS_DENIED}
 
     log.error(res)
-    return json.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(",", ":"))
 
 
 # validate the form the user has posted
 @action("/vidjil/notification/add_form", method=["POST", "GET"])
 @action.uses(db, auth.user)
-def add_form(): 
-    if (not auth.is_admin()):
+def add_form():
+    if not auth.is_admin():
         res = {"message": ACCESS_DENIED}
         log.error(res)
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
 
     error = ""
-    if request.params['title'] =="":
+    if request.params["title"] == "":
         error += "title needed, "
-    if request.params["message_content"] == "" :
+    if request.params["message_content"] == "":
         error += "message content needed, "
-    if request.params["message_type"] == "" :
+    if request.params["message_type"] == "":
         error += "type needed, "
-    if request.params["priority"] == "" :
+    if request.params["priority"] == "":
         error += "priority needed, "
-    if request.params["expiration"] == "" :
+    if request.params["expiration"] == "":
         error += "expiration date required"
     else:
         try:
-            datetime.strptime(""+request.params['expiration'], '%Y-%m-%d')
+            datetime.strptime("" + request.params["expiration"], "%Y-%m-%d")
         except ValueError:
             error += "date (wrong format)"
 
-    if error=="" :
-        id = db.notification.insert(title=request.params["title"],
-                            message_content=XML(request.params["message_content"], sanitize=True).xml(),
-                            message_type=request.params["message_type"],
-                            priority=request.params["priority"],
-                            expiration=request.params["expiration"],
-                            creator=auth.user_id,
-                            creation_datetime=datetime.now())
+    if error == "":
+        id = db.notification.insert(
+            title=request.params["title"],
+            message_content=XML(request.params["message_content"], sanitize=True).xml(),
+            message_type=request.params["message_type"],
+            priority=request.params["priority"],
+            expiration=request.params["expiration"],
+            creator=auth.user_id,
+            creation_datetime=datetime.now(),
+        )
 
-        res = {"redirect": "notification/index",
-               "args" : { "id" : id,
-                          "redirected" : True },
-               "message": "notification added"}
-        log.info(res, extra={'user_id': auth.user_id,
-                'record_id': id,
-                'table_name': "notification"})
+        res = {
+            "redirect": "notification/index",
+            "args": {"id": id, "redirected": True},
+            "message": "notification added",
+        }
+        log.info(
+            res,
+            extra={
+                "user_id": auth.user_id,
+                "record_id": id,
+                "table_name": "notification",
+            },
+        )
 
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
 
-    else :
-        res = {"success" : "false",
-               "message" : error}
+    else:
+        res = {"success": "false", "message": error}
         log.error(res)
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
 
 
 # edit existing notification
@@ -123,11 +134,11 @@ def add_form():
 @action.uses("notification/edit.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def edit():
-    if (auth.is_admin()):
-        return dict(message=T('edit notification'), auth=auth, db=db)
+    if auth.is_admin():
+        return dict(message=T("edit notification"), auth=auth, db=db)
     res = {"message": ACCESS_DENIED}
     log.error(res)
-    return json.dumps(res, separators=(',',':'))
+    return json.dumps(res, separators=(",", ":"))
 
 
 # process submitted edit form
@@ -135,97 +146,114 @@ def edit():
 @action.uses("notification/edit_form.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def edit_form():
-    if (not auth.is_admin()):
+    if not auth.is_admin():
         res = {"message": ACCESS_DENIED}
         log.error(res)
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
 
     error = ""
-    if request.params["message_content"] == "" :
+    if request.params["message_content"] == "":
         error += "message body needed, "
-    if request.params["message_type"] == "" :
+    if request.params["message_type"] == "":
         error += "type needed, "
-    if request.params["priority"] == "" :
+    if request.params["priority"] == "":
         error += "priority needed, "
-    if request.params["expiration"] == "" :
+    if request.params["expiration"] == "":
         error += "expiration date required"
     else:
         try:
-            datetime.strptime(""+request.params['expiration'], '%Y-%m-%d')
+            datetime.strptime("" + request.params["expiration"], "%Y-%m-%d")
         except ValueError:
             error += "date (wrong format)"
 
-    if error=="" :
-        db.notification[request.params['id']].update_record(title=request.params["title"],
-                            message_content=XML(request.params["message_content"], sanitize=True).xml(),
-                            message_type=request.params["message_type"],
-                            priority=request.params["priority"],
-                            expiration=request.params["expiration"])
+    if error == "":
+        db.notification[request.params["id"]].update_record(
+            title=request.params["title"],
+            message_content=XML(request.params["message_content"], sanitize=True).xml(),
+            message_type=request.params["message_type"],
+            priority=request.params["priority"],
+            expiration=request.params["expiration"],
+        )
 
-        db((db.user_preference.val==request.params['id'])
-            &(db.user_preference.preference=='mail')).delete()
+        db(
+            (db.user_preference.val == request.params["id"])
+            & (db.user_preference.preference == "mail")
+        ).delete()
 
-        res = {"redirect": "notification/index",
-               "args" : { "id" : request.params['id'],
-                          "redirected" : True },
-               "message": "notification updated"}
-        log.info(res, extra={'user_id': auth.user_id,
-                'record_id': request.params["id"],
-                'table_name': "notification"})
+        res = {
+            "redirect": "notification/index",
+            "args": {"id": request.params["id"], "redirected": True},
+            "message": "notification updated",
+        }
+        log.info(
+            res,
+            extra={
+                "user_id": auth.user_id,
+                "record_id": request.params["id"],
+                "table_name": "notification",
+            },
+        )
 
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
 
-    else :
-        res = {"success" : "false",
-               "message" : error}
+    else:
+        res = {"success": "false", "message": error}
         log.error(res)
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
+
 
 @action("/vidjil/notification/delete", method=["POST", "GET"])
 @action.uses("notification/delete.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def delete():
-    if (not auth.is_admin()):
+    if not auth.is_admin():
         res = {"message": ACCESS_DENIED}
         log.error(res)
-        return json.dumps(res, separators=(',',':'))
+        return json.dumps(res, separators=(",", ":"))
 
-    db(db.notification.id==request.query['id']).delete()
+    db(db.notification.id == request.query["id"]).delete()
     # Cascade the notification deletion onto associated preferences
-    db((db.user_preference.val==request.query['id'])
-        &(db.user_preference.preference=='mail')).delete()
-    res = {"redirect": "notification/index",
-               "success": "true",
-               "message": "notification " + request.query['id'] + " deleted"}
-    log.info(res, extra={'user_id': auth.user_id,
-            'record_id': request.query["id"],
-            'table_name': "notification"})
+    db(
+        (db.user_preference.val == request.query["id"])
+        & (db.user_preference.preference == "mail")
+    ).delete()
+    res = {
+        "redirect": "notification/index",
+        "success": "true",
+        "message": "notification " + request.query["id"] + " deleted",
+    }
+    log.info(
+        res,
+        extra={
+            "user_id": auth.user_id,
+            "record_id": request.query["id"],
+            "table_name": "notification",
+        },
+    )
 
-    return json.dumps(res, separators=(',',':')) 
+    return json.dumps(res, separators=(",", ":"))
 
 
 #
 @action("/vidjil/notification/get_active_notifications", method=["POST", "GET"])
-@action.uses( db, auth.user)
+@action.uses(db, auth.user)
 @cache.memoize(60)
 def get_active_notifications():
     today = date.today()
-    user_id = auth.user_id if auth.user else None    
-    if user_id:
-        key = NOTIFICATION_CACHE_PREFIX + str(user_id)
-    else:
-        key = NOTIFICATION_CACHE_PREFIX
+    user_id = auth.user_id if auth.user else None
 
     query = db(
-        (db.notification.expiration >= today) | (db.notification.expiration == None)
+        (db.notification.expiration >= today) | (db.notification.expiration == None)  # noqa: E711
     ).select(
-        db.notification.ALL, db.user_preference.val,
+        db.notification.ALL,
+        db.user_preference.val,
         left=db.user_preference.on(
-            (db.user_preference.val==db.notification.id)
-            &(db.user_preference.user_id==user_id)))
+            (db.user_preference.val == db.notification.id)
+            & (db.user_preference.user_id == user_id)
+        ),
+    )
 
     query = query.find(lambda row: row.user_preference.val is None)
 
-    #TODO sanitize this response
+    # TODO sanitize this response
     return query.as_json()
-

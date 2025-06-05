@@ -1,0 +1,35 @@
+
+
+<div>
+    <h2 id="welcome_message">
+    [[=settings.WELCOME_LOGIN_PAGE_MESSAGE]]
+    </h2>
+
+    <h3>[[=message]]</h3>
+
+    <form id="data_form" action="DB_ADDRESS/auth/submit_two_factor" enctype="multipart/form-data" method="post">
+        <table>
+            <tbody>
+                <tr>
+                    <td >
+                        <label> Verification code: </label>
+                    </td>
+                    <td >
+                        <input class="string" id="verification_code" name="verification_code" type="text" value="">
+                    </td>
+                    <td >
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                    <td >
+                        <input type="submit" value="submit" class="btn">
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

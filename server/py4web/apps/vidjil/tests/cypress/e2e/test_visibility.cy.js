@@ -8,11 +8,9 @@ describe('Visibility of panels', function () {
         cy.newSet('patient')
         cy.get('.db_div').should("be.visible")
         cy.get('#patient_clipboard > .icon-newspaper').click()
-        cy.wait("@getActivities");
         cy.get('.popup_container').should("be.visible")
 
         cy.get('.popup_container > .closeButton > .icon-cancel').click()
-        cy.wait("@getActivities");
         cy.get('.popup_container').should("not.be.visible")
         cy.get('.db_div > .closeButton > .icon-cancel').click()
         cy.get('.db_div').should("not.be.visible")
@@ -36,11 +34,11 @@ describe('Visibility of panels', function () {
     it('02-title in db table (#4494)',  function() {
         cy.goToPatientPage()
         
-        cy.get('#sample_set_open_22_config_id_-1 > :nth-child(2) > .set_token')
+        cy.get('#sample_set_open_22_config_id_-1 > :nth-child(3) > .set_token')
           .should("have.attr", "title")
           .and("equal", "2 patient (22)")
 
-        cy.get('#sample_set_open_22_config_id_-1 > :nth-child(4) > span')
+        cy.get('#sample_set_open_22_config_id_-1 > :nth-child(5) > span')
           .should("have.attr", "title")
           .and("equal", "set association test #set_assoc_2")
 

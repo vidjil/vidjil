@@ -118,16 +118,16 @@ describe('Test menu', function () {
 
     // test color for 3 clones (real, smaller, distrib)
     cy.getCloneInList(0).should('have.css', 'color', 'rgb(101, 123, 131)') // real clone have his standard color (grey)
-    cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone haven't changed color
-    cy.getCloneInList(18).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
+    cy.getCloneInList(17).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone haven't changed color
+    cy.getCloneInList(20).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone haven't changed color
 
     // change color method and observe variation or not
     cy.changeColorby("V/5' gene")
     cy.update_icon()
 
     cy.getCloneInList(0).should('have.css', 'color', 'rgb(183, 128, 36)') // real clone should have changed color (diff from grey)
-    cy.getCloneInList(16).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone shouldn't have changed color
-    cy.getCloneInList(18).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone shouldn't have changed color
+    cy.getCloneInList(17).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // other clone shouldn't have changed color
+    cy.getCloneInList(20).should('have.css', 'color', 'rgba(150, 150, 150, 0.65)') // distrib clone shouldn't have changed color
 
   })
 
@@ -151,15 +151,22 @@ describe('Test menu', function () {
       .and('eq', 'rgb(221, 221, 221)')
   })
 
-  it('06-Open tab manual',  function() {
-    // Don't work for now
-    // cy.get("#help_manual").invoke('removeAttr', 'target').click({force: true})
+  it('06-Set version',  function() {
+    cy.get('#logospan_index')
+      .should('have.text', '(test)')
+      .click()
 
-    // cy.get('body')
-    //   .should('have.text', 'Web platform, user manual')
+    cy.get('.popup_msg > h2')
+      .should('have.text', 'Vidjil (test)')
 
-    // cy.visit()
-    // cy.get("#help_tutorial").invoke('removeAttr', 'target').click({force: true})
+    cy.get('[style="display: block;"] > .closeButton > .icon-cancel')
+      .click()
+
+    //// Can't check value in report, but should be changed
+    // cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
+    // cy.get('#export_report_menu').click({force: true})
+    // cy.get('#report-menu > :nth-child(4) > button')
+    //   .click()
   })
 
 })

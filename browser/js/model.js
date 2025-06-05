@@ -51,6 +51,8 @@ BROWSER_SUPPORTED_UNTIL_NEXT = "April 2026"
 
 SIZE_MANUALLY_ADDED_CLONE = 100000; // Default size of a manually added clone.
 
+THRESHOLD_LOCUS_IN_SYSTEM = 0.01 // add locus to system with at least 1% if no clonotype is present in loaded data
+
 /** Model constructor
  * Used to parse a .vidjil file (local file or from url) and store his content in a more convenient way, <br>
  * provide manipulation function, <br>
@@ -91,6 +93,7 @@ function Model() {
     setInterval(function(){return self.updateIcon()}, 100); 
 
     this.trimming_before_external = false
+    
 }
 
 
@@ -680,7 +683,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     getSampleTime: function(time) {
         time = typeof time !== 'undefined' ? time : this.t
-        var value = "–"
+        var value = "-"
         if (typeof this.samples.timestamp != 'undefined'){
             if (typeof this.samples.timestamp[time] != 'undefined'){
                 value = this.samples.timestamp[time]
@@ -695,7 +698,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     getSoftVersionTime: function(time) { 
         time = typeof time !== 'undefined' ? time : this.t
-        var soft_version = "–"
+        var soft_version = "-"
         if (typeof this.samples.producer != 'undefined')
             soft_version = this.samples.producer[time]
         return soft_version;
@@ -705,11 +708,22 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * return commandline used to produce sample result given a time/sample index <br>
      * @return {string} command - sample command
      * */
-    getCommandTime: function(time) {
+    getCommandAlgoTime: function(time) {
         time = typeof time !== 'undefined' ? time : this.t
-        var command = "–"
+        var command = "-"
         if (typeof this.samples.commandline != 'undefined')
             command = this.samples.commandline[time]
+        return command;
+    },
+
+    /**
+     * return commandline used by fuse
+     * @return {string} fuse commandline
+     * */
+    getCommandFuse: function() {
+        var command = "-"
+        if (typeof this.samples.commandline_fuse != 'undefined')
+            command = this.samples.commandline_fuse
         return command;
     },
 
@@ -839,6 +853,10 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
         
+        // mark analysis as changed
+        analysisHasChanged = true
+        
+        // update views
         this.updateModel()
         //check if current germline is in the selected_system
         if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
@@ -847,8 +865,39 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.update()
         }
     },
+    /* 
+    compute total removed reads for the selected germline and the total at the all time
+     */
+    computeRemovedClonesReads: function() {
+        var removed_clones_reads_of_active_locus = new Array(this.reads.segmented.length).fill(0);
+        var removed_clones_reads_total = new Array(this.reads.segmented.length).fill(0);
+        var germline = [];
     
-
+        if (!this.system_selected || this.system_selected.length === 0) {
+            germline = ["undefined"];
+        } else {
+            for (var i = 0; i < this.system_selected.length; i++) {
+                germline[i] = this.system_selected[i];
+            }
+        }
+    
+        for (var j = 0; j < this.clones.length; j++) {
+            if (this.clones[j].isRemoved()) {
+                for (var t = 0; t < this.reads.segmented.length; t++) {
+                    var reads = this.clones[j].getReads(t);
+                    removed_clones_reads_total[t] += reads;
+    
+                    if (germline.includes(this.clones[j].get('germline'))) {
+                        removed_clones_reads_of_active_locus[t] += reads;
+                    }
+                }
+            }
+        }
+    
+        this.removed_clones_reads_of_active_locus = removed_clones_reads_of_active_locus;
+        this.removed_clones_reads_total = removed_clones_reads_total;
+    },
+    
     /**
      * [changeNormalisation description]
      * @param  {String} mode - some this.NORM_*
@@ -1348,7 +1397,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
         this.filter.apply()
         
-        this.computeOtherSize();
+        this.computeOtherAndRemovedSize();
 
         for (var n = 0; n < this.clones.length; n++) {
             this.clone(n).updateColor()
@@ -1394,7 +1443,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                 this.view[i].update();
         }
         this.updateIcon();
-        this.computeOrderWithStock()
+        this.computeOrderWithStock();
+        this.computeRemovedClonesReads();
     },
 
     /**
@@ -1507,47 +1557,78 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     },
 
     /**
-     * sum all the unsegmented/undisplayed clones reads and put them in the 'other' clone
-     * */
-    computeOtherSize: function () {
+    * sum all the unsegmented/undisplayed clones reads and put them in the 'other' clone
+    * sum all the removed clones reads and put them in the 'removed' clone
+    **/
+    computeOtherAndRemovedSize: function () {
         var newOthers = {};
+        var newRemoved = {};
 
-        // Creation of newOthers dict by germlines & timestamp
-        for (var elt in this.system_available){
+        // Initialize newOthers and newRemoved by germlines & timestamps
+        for (var elt in this.system_available) {
             var locus = this.system_available[elt];
             newOthers[locus] = [];
+            newRemoved[locus] = [];
             for (var sample = 0; sample < this.samples.number; sample++) {
                 newOthers[locus][sample] = this.reads.germline[locus][sample];
-                }
+                newRemoved[locus][sample] = 0;
+            }
         }
 
-        // compute size for each germlines of newOthers
-        other_quantifiable_clones = [];
+        var otherQuantifiableOthers = [];
+        var otherQuantifiableRemoved = [];
+
+        // Process each clone to update both newOthers and newRemoved.
         for (var pos = 0; pos < this.clones.length; pos++) {
-            var c = this.clone(pos)
-            if (c.hasSizeOther()){
-                other_quantifiable_clones.push(pos);
-            } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() ) {
-                for (var s = 0; s < this.samples.number ; s++) {
-                    for (var k = 0; k < this.clusters[pos].length; k++) {
+            var c = this.clone(pos);
+
+            // For computing newOthers:
+            if (c.hasSizeOther() && c.id.includes("other")) {
+                otherQuantifiableOthers.push(pos);
+            } else if (c.isActive() && c.quantifiable && c.hasSizeConstant() || c.isRemoved()) {
+                for (let s = 0; s < this.samples.number; s++) {
+                    for (let k = 0; k < this.clusters[pos].length; k++) {
                         newOthers[c.germline][s] -= this.clone(this.clusters[pos][k]).get('reads', s);
+                    }
+                }
+            }
+
+            // For computing newRemoved:
+            if (c.hasSizeOther() && c.id.includes("removed")) {
+                otherQuantifiableRemoved.push(pos);
+            } else if (c.isRemoved()) {
+                for (let s = 0; s < this.samples.number; s++) {
+                    for (let k = 0; k < this.clusters[pos].length; k++) {
+                        var clusterClone = this.clone(this.clusters[pos][k]);
+                        if (clusterClone.get('reads', s) !== 0) {
+                            newRemoved[c.germline][s] += clusterClone.get('reads', s);
+                        }
                     }
                 }
             }
         }
 
-        // values assignation of other
-        //for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) {
-        var self = this;
-        other_quantifiable_clones.forEach(function(pos) {
-            var c = self.clone(pos);
+        // Values assignation of other
+        otherQuantifiableOthers.forEach((pos) => {
+            var c = this.clone(pos);
             c.reads = newOthers[c.germline];
             c.name = c.germline + " smaller clonotypes";
-            if (this.filter && this.filter.check("Clonotype", "hide") != -1)
+            if (this.filter && this.filter.check("Clonotype", "hide") != -1) {
                 c.name += " + filtered clonotypes";
-        })
+            }
+        });
+
+        // values assignation of removed
+        otherQuantifiableRemoved.forEach((pos) => {
+            var c = this.clone(pos);
+            var time = this.getTime();
+            c.reads = newRemoved[c.germline];
+            c.name = c.germline + " removed (% of total selected loci reads)";
+            if (c.getReads(time) == 0) {
+                c.hide();
+            }
+        });
     },
-    
 
 
     /**
@@ -1921,7 +2002,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         data.push([row_1, "analyzed reads", analyzed_reads, 'info_timepoint_analyzed_reads', 1])
 
         data.push([row_1, "analysis software", this.getSoftVersionTime(timeID),  'info_timepoint_analysis_software', 1])
-        data.push([row_1, "parameters",        this.getCommandTime(timeID),      'info_timepoint_parameters', 1])
+        data.push([row_1, "algorithm parameters",        this.getCommandAlgoTime(timeID),      'info_timepoint_algorithm_parameters', 1])
+        data.push([row_1, "fuse parameters",        this.getCommandFuse(),      'info_timepoint_fuse_parameters', 1])
         data.push([row_1, "timestamp",         this.getTimestampTime(timeID),    'info_timepoint_timestamp', 1])
         data.push([row_1, "analysis log",      "<pre>"+ this.getSegmentationInfo(timeID)+"</pre>", 'info_timepoint_log', 1])
 
@@ -2117,12 +2199,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         this.saveClusters()
         
         var tmp = {}
-        for (var i = 0; i < this.clones.length - this.system_available.length; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
 
             //detect key value
             var key = "undefined"
 
+            if (!this.clones[i].isClusterizable()) {
+                continue
+            }
             key = fct(i)
+
 
             //store clones with same key together
             if (key === "") key = "undefined"
@@ -2637,6 +2723,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                             result = (diff >= 0 ? '+' : '') + diff;
                         }
                     }
+                }
+                break;
+            case "associated_sets_names":
+                if (typeof this.samples.associated_sets_names !== 'undefined' && 
+                    Array.isArray(this.samples.associated_sets_names[timeID]) &&
+                    this.samples.associated_sets_names[timeID].length > 0) {
+                        result = this.samples.associated_sets_names[timeID].join(";");
+                } else {
+                    result = "/";
                 }
                 break;
             default:

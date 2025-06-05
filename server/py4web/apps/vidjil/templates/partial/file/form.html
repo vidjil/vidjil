@@ -27,11 +27,17 @@
           <input type="hidden" id="is_editing" name="is_editing" value="1" />
         [[pass]]
     </div>
+        
+    <div class="field_div">
+        <span id="file_names_errors_[[=i]]" class="icon-warning-1" style="display: none; color: red"></span>
+    </div>
 
     <div class="field_div">
 
+
         <div id="file_field_1_[[=i]]" class="field_div" [[if network_source:]] style="display: none" [[pass]]>
             <input class="upload_field file_1 form-control" id="file_upload_1_[[=i]]" type="file"
+                onchange="validateFileNames([[=i]])"
             [[if network_source:]]
                 disabled
             [[elif not isEditing:]]
@@ -43,6 +49,7 @@
 
         <div id="file_field_2_[[=i]]" class="field_div" [[if network_source or required_files < 2:]]style="display: none"[[pass]]>
             <input class="upload_field file_2 form-control" id="file_upload_2_[[=i]]" type="file"
+                onchange="validateFileNames([[=i]])"
             [[if network_source:]]
                 disabled
             [[elif not isEditing and required_files >= 2:]]
@@ -77,6 +84,7 @@
         </div>
 
     </div>
+    
     <div class="field_div">
         <input class="date form-control" id="file_sampling_date_[[=i]]" name="[[='file['+str(i)+'][sampling_date]']]" type="text" title="sampling date"
             value="[[if 'sampling_date' in file and file['sampling_date'] is not None:]][[=file['sampling_date']]][[pass]]"

@@ -1,7 +1,3 @@
-// ***********************************************
-// import 'cypress-wait-until';
-var lil_l3 = {"app": {"id":61, "config":2}, "localhost": {"id":3241, "config":25}}
-
 
 
 Cypress.Commands.add('close_disclaimer', () => { 
@@ -131,4 +127,22 @@ Cypress.Commands.add('changePreset', (sp_id, value) => {
     .select(value, {force: true})
     .trigger('change', {force: true})
   cy.update_icon(0, 10000)
+})
+
+Cypress.Commands.add('clickBackButton', () => {
+  cy.get('#db_back').click();
+  cy.wait("@getActivities");
+})
+
+Cypress.Commands.add('clearInterceptList', (interceptAlias) => {
+  // clears the list of intercepted requests by waiting for each one
+  // intercept alias should be in the form '@postExample' etc.
+  // See https://github.com/cypress-io/cypress/issues/23192
+  cy.get(interceptAlias + '.all').then((browserRequests) => {
+    for (let request of browserRequests) {
+      if (request.requestWaited === false && request.state !== "Received") {
+        cy.wait(interceptAlias)
+      }
+    }
+  })
 })

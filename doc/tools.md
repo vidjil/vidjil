@@ -24,7 +24,6 @@ This allows to follow and quantify targeted clones even when there have only a f
 
 The `mrd.vidjil` file can then be fed to the web client.
 
-
 ## Using AIRR data
 
 The AIRR community has published [a standard representation](https://docs.airr-community.org/en/latest/datarep/overview.html#format-specification) to describe results of immune receptor repertoire analysis.
@@ -36,13 +35,14 @@ Conversely, `fuse.py` is able to take one or several AIRR `.tsv` file(s) to get 
 ``` bash
 python tools/fuse.py --output out.vidjil sample1.tsv sample2.tsv
 ```
+
 For a same analysis, you can mix `.vidjil` and AIRR files.
 
 However, the following points should be taken into account:
 
 - The Vidjil web application uses the `duplicate_count` value for each clone in a `.tsv` file
   as the size of each clone. This was discussed on the AIRR mailing list, but other software may use other fields.
-  Note that the AIRR output of `vidjil-algo` uses the same convention. 
+  Note that the AIRR output of `vidjil-algo` uses the same convention.
 
 - Some RepSeq software (such as IgBlast) do not cluster clones at all but only analyze independently each read.
   As `fuse.py` does not add clustering information, the output of these software will be also shown unclustered in the Vidjil web application.

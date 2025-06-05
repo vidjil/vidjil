@@ -7,7 +7,7 @@
 The supported way to install, run, and maintain a Vidjil server
 is to use **Docker containers**.
 We are developing and deploying them since 2018, and,
-as of 2024, these Docker containers are used on all our servers (healthcare, public)
+as of 2025, these Docker containers are used on all our servers (healthcare, public)
 as well as in some partner hospitals.
 See the [hosting options](https://wwW.vidjil.org/doc/healthcare/),
 including support and remote maintenance
@@ -55,15 +55,15 @@ For a single-team lab with one or two weekly sequencing runs, we advise
 a standard computer with **4 CPU/cores** (hence 3 workers + 1 client),
 at at least 1 GHz and **8GB RAM**.
 
-For reference, here are setups of our public servers 
+For reference, here are setups of our public servers
 as of 2023 (300+ users, including 50+ regular users).
 🌱 You probably don't need so much resources for your lab!
   
 <!-- - 2016-2017 Quad core Intel 2.4GHz, 3 workers, 16 GB
      - 2018-2020? 8vCPU, 6 workers, 28GB 
      -->
-- Health certified server: 12 vCPUs, 14GB RAM, with redundant backups
-- Public server <https://app.vidjil.org>: 16 vCPUs (11 workers), 120GB RAM
+- Health certified server: 8 cores/16 threads, 64 Go RAM, with redundant backups
+- [Public server](https://app.vidjil.org): 16 vCPUs (11 workers), 120GB RAM
 
 ### Storage
 
@@ -90,8 +90,8 @@ See `FILE_SOURCE` below.
 
 By default, accounts are local to the Vidjil server.
 
-An experimental integration to LDAP servers is now available (`LDAP` variable in defs.py).
-Contact us if you need help in setting such an authentication.
+An experimental integration to LDAP servers is now available (`USE_LDAP` variable in .env files).
+Contact us if you need help in setting up such an authentication.
 
 ### Network
 
@@ -99,51 +99,50 @@ Once installed, the server can run on a private network.
 However, the following network access are recommended:
 
 - outbound access
-  - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
-  - for server maintainers: upgrades and reports to a monitor server
+    - for users: several features using external platforms (IgBlast, IMGT/V-QUEST…)
+    - for server maintainers: upgrades and reports to a monitor server
 - inbound access
-  - through the [VidjilNet consortium](https://www.vidjil.net),
-    the team in Lille may help local server maintainers in some monitoring, maintenance and upgrade tasks,
-    provided a SSH access can be arranged, possibly over VPN.
+    - through the [VidjilNet consortium](https://www.vidjil.net),
+      the team may help local server maintainers in some monitoring, maintenance and upgrade tasks,
+      provided a SSH access can be arranged, possibly over VPN.
 
-## Docker -- Installation
+## Installation with docker
 
 All our images are hosted on DockerHub in the [vidjil](https://hub.docker.com/r/vidjil) repositories.
 The last images are tagged with `vidjil/server:latest` and `vidjil/client:latest`.
 
-Individual services are started by docker-compose  (<https://docs.docker.com/compose/>).
+Individual services are started by [docker-compose](https://docs.docker.com/compose/).
 
 ### Before installation
 
-Install `docker-compose`. See <https://docs.docker.com/compose/install/#install-compose>
+- Install [docker](https://docs.docker.com/engine/install/) and [docker compose](https://docs.docker.com/compose/install/#install-compose)
+  If it doesn't exist yet, you should create a `docker` group. The users needing to access docker (typically administrators) must belong to this group.
 
-If it doesn't exist yet, you should create a `docker` group.
-The users needing to access `docker` must belong to this group.
-
-Install `git`.
-Clone the [Vidjil git](https://gitlab.inria.fr/vidjil/vidjil) with `git clone https://gitlab.inria.fr/vidjil/vidjil.git`,
-and go to the directory [vidjil/docker](https://gitlab.inria.fr/vidjil/vidjil/tree/dev/docker).
-This contains both [docker-compose.yml](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/docker-compose.yml) as well as configuration files.
+- Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+  Clone the [Vidjil git](https://gitlab.inria.fr/vidjil/vidjil) with `git clone https://gitlab.inria.fr/vidjil/vidjil.git`,
+  and go to the directory [vidjil/docker](https://gitlab.inria.fr/vidjil/vidjil/tree/dev/docker).
+  It contains [docker-compose.yml](https://gitlab.inria.fr/vidjil/vidjil/-/blob/dev/docker/docker-compose.yml) as well as configuration files.
 
 ### Docker environment
 
-The vidjil Docker environment is managed by `docker-compose`, who launches the following services:
+The vidjil Docker environment is managed by `docker compose`, who launches the following services:
 
 From image `vidjil/client`
 
-- `nginx` The web server, containing the client web application
+- `nginx` The front web server, containing the client web application and redirecting requests to uwsgi if needed
 
 From image `vidjil/server`
 
+- `uwsgi` py4web backend server
+- `workers-all` and `workers-short`: The [scheduler workers](dev-server.md#scheduler) to run vidjil users' samples and other pre/post-process
+- `flowers` Front-end to monitor the status of py4web workers
+- `fuse` XmlRPCServer that handles custom fuses (for comparing samples)
+
+From other images
+
 - `mysql` The database
-- `uwsgi` The Py4web backend server
-- `workers` The Py4web Scheduler workers in charge of executing vidjil users' samples
-- `redis` Allow to dispatch jobs to workers
-- `flowers` A server to monitoring workers status
-- `fuse` The XmlRPCServer that handles queries for comparing samples
-- `restic` Starts a cron job to schedule regular backups
-- `reporter` A monitoring utility that can be configured to send monitoring information to a remote server
-- `postfix` A mail relay to allow `uwsgi` to send error notifications
+- `redis` Queue service to dispatch jobs to [workers](dev-server.md#scheduler)
+- `restic` Service that schedules regular backups
 
 ### Network usage and SSL certificates
 
@@ -160,20 +159,20 @@ Vidjil uses HTTPS by default, and will therefore require SSL certificates.
 You can achieve this with the following steps:
 
 - Configure the SSL certificates
-  - A fast option is to create a self-signed SSL certificate.
-   Note that it will trigger security warnings when accessing the client.
-   From the `docker/` directory:
+    - A fast option is to create a self-signed SSL certificate.
+     Note that it will trigger security warnings when accessing the client.
+     From the `docker/` directory:
 
-   ```sh
-   openssl genrsa 4096 > vidjil.key
-   openssl req -new -x509 -nodes -sha1 -days 1780 -key vidjil.key > vidjil.crt
-   openssl x509 -noout -fingerprint -text < vidjil.crt
-   mkdir -p vidjil-client/ssl
-   mv vidjil.* vidjil-client/ssl/
-   ```
+     ```sh
+     openssl genrsa 4096 > vidjil.key
+     openssl req -new -x509 -nodes -sha1 -days 1780 -key vidjil.key > vidjil.crt
+     openssl x509 -noout -fingerprint -text < vidjil.crt
+     mkdir -p vidjil-client/ssl
+     mv vidjil.* vidjil-client/ssl/
+     ```
 
-  - If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
-    The certificates must bear the name of your mail domain (<maildomain>.crt and <maildomain>.key)
+    - If you are using the `postfix` container you may want to generate certificates (using the same process) and place them in `postfix/ssl`.
+      The certificates must bear the name of your mail domain (\<mail-domain\>.crt and \<mail-domain\>.key)
 
 - A better option is to use other certificates, for example by configuring free [Let's Encrypt](https://letsencrypt.org/) certificates.
   One solution is to use `certbot` on the host to generate the certificates and to copy them in the right directory so that the container
@@ -201,7 +200,6 @@ You can achieve this with the following steps:
   ```
 
 If necessary, in `docker-compose.yml`, update `nginx.volumes`, line `./vidjil-client/ssl:/etc/nginx/ssl`, to set the directory with the certificates.
-    The same can be done for the `postfix` container.
 
 If you would prefer to use the vidjil over HTTP (not recommended outside of testing purposes), you can
 use the provided configuration files in `docker/vidjil-server/conf` and `docker/vidjil-client/conf`. You will find several files
@@ -210,31 +208,29 @@ forget to make a backup of any file you replace.)
 
 ### First configuration and first launch
 
-- Set the SSL certificates (see above)
-- Change the mysql root password, mysql user password and the py4web admin password in `.env` file
-- Set the desired mail domain and credentials for the `postfix` container in `.env`
-- Set the number of workers in `.env`. Keep at least one threads not used to not overload server
+- Set the [SSL certificates](#network-usage-and-ssl-certificates)
+- Change the mysql root password, mysql user password and the py4web admin password in `.env.default` file
+    - `MYSQL_ROOT_PASSWORD` is the password for the root user of MySQL
+    - `MYSQL_PASSWORD` is the password for the `vidjil` user of MySQL
+    - `PY4WEB_ADMIN_PASSWORD` is the password for the py4web admin user
+- Set the number of workers and uwsgi threads in `.env.default`. Keep at least one threads not used to not overload server
+    - `WORKERS_POOL` is the number of workers to run. The default value is the number of threads minus 1.
+    - `UWSGI_POOL` is the number of threads to run for uwsgi. The default value is 6.
+- Start the services with `docker-compose up -d`.
 
-- Comment reporter services in `docker-compose.yml`
-
-- It is advised to first launch  with `docker-compose up mysql`.
-The first time, this container creates the database and it takes some time.
-
-- When `mysql` is launched,
-you can safely launch `docker-compose up -d`.
 Then `docker ps` should display seven running containers for a localhost usage:
 `vidjil-nginx`, `vidjil-uwsgi`, `vidjil-mysql`, `vidjil-fuse`, `vidjil-workers`, `vidjil-flowers`, `vidjil-redis`.
-Service `restic`, `reporter` and `postfix` are usefull for backup and email communication and need to be started for regular installation.
+Service `restic` is useful for backup and email communication and need to be started for regular installation.
 
 - Vidjil also need germline files.
-  - You can use IMGT germline files if you accept IMGT licence.
-    For this, from the `vidjil` directory (root of the git repository),
-    run `make germline` to create `germline/` while checking the licence.
-  - These germlines are included in the server container with a volume in the fuse block
-    in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
-  - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
+    - You can use IMGT germline files if you accept IMGT license.
+      For this, from the `vidjil` directory (root of the git repository),
+      run `make germline` to create `germline/` while checking the license.
+    - These germlines are included in the server container with a volume in the fuse block
+      in your `docker-compose.yml`: `../germline:/usr/share/vidjil/germline`.
+    - Copy also the generated `browser/js/germline.js` into the `docker/vidjil-client/conf/` directory.
 
-- Open a web browser to `https://localhost`, or to your FQDN if you configured it (see above).
+- Open a web browser to `https://localhost`, or to your FQDN if you configured it (see [above](#network-usage-and-ssl-certificates)).
 Click on `init database` and create a first account by entering an email.
 This account is the main root account of the server. Other administrators could then be created.
 
@@ -254,53 +250,98 @@ You can resolve it either by changing the port used by Vidjil in the `nginx.port
 section of the `docker-compose.yml` file or by stopping the service using port
 80.
 
+### Connect to docker containers
+
+Sometimes, in order to perform some maintenance operations, one may need to connect to a running docker container:
+
+```bash
+# Using docker and container name
+docker exec -it <container_name> bash
+# In docker folder using compose service name
+docker compose exec -it <service_name> bash
+```
+
+For example, to connect to uwsgi, if the default container name was not modified:
+
+```bash
+# Using docker and container name
+docker exec -it vidjil-uwsgi bash
+# In docker folder using compose service name
+docker compose exec -it uwsgi bash
+```
+
+NB: modifications done inside the container will be lost if container is destroyed (`docker compose down` or server restart), unless the modified files are stored in a mounted folder.
+
 ### Further configuration
 
-The following configuration files are found in the `vidjil/docker` directory:
+Configuration files can be found in the `vidjil/docker` directory. Among them:
 
 - `.env.default` various variables use and transmit by docker to container: path, password, pool of workers, ...
 - `vidjil-client/conf/conf.js` various variables for the vidjil client
+- `vidjil-client/conf/nginx_vidjil` configuration for the nginx server
 - `vidjil-client/conf/nginx_gzip.conf` configuration for gzip in nginx
-- `vidjil-client/conf/nginx_gzip_static.conf`  same as the previous but for static resources
+- `vidjil-server/conf/uwsgi.ini` configuration required to run vidjil with uwsgi
+- `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi service. Ensures the owner of some relevant volumes are correct within the container and starts uwsgi
 
-- `vidjil-server/conf/defs.py` various variables for the vidjil server
-- `vidjil-server/conf/uwsgi.ini`   configuration required to run vidjil with uwsgi
-- `vidjil-server/scripts/nginx-entrypoint.sh` entrypoint for the nginx
-- `vidjil-server/scripts/uwsgi-entrypoint.sh` entrypoint for the uwsgi
-service. Ensures the owner of some relevant volumes are correct within
-the container and starts uwsgi
+Below are some notable configuration changes you should consider. List of settable variables is in `docker/.env.default`. It can be modified directly in the file or by creating a new `.env.something` file. In this case, you need to update the `env-file` option in the `docker-compose.yml` or `docker-compose.override.yml` file (see [docker compose docs](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-env_file-attribute)).
 
-- `sites/nginx` configuration required when running vidjil with nginx
-- `service` (not currently in use)
+#### Configure passwords
 
-Here are some notable configuration changes you should consider. List of settable variable is in `docker/.env.default`. Some other should be done in `vidjil-server/conf/defs.py` file.
+As mentionned [above]((#first-configuration-and-first-launch), he passwords for the MySQL root user, the MySQL vidjil user and the py4web admin user are set in the `.env.default` file. Note that they should be set before the first launch of the server.
 
-- mysql root and vidjil password can be set as mentionned above
+- `MYSQL_ROOT_PASSWORD` is the password for the root user of MySQL
+- `MYSQL_PASSWORD` is the password for the `vidjil` user of MySQL
+- `PY4WEB_ADMIN_PASSWORD` is the password for the py4web admin user
+- `MYSQL_BACKUP_PASSWORD` is the password for the backup user of MySQL
+- `VIDJIL_ADMIN_PASSWORD` is the password for the admin user of Vidjil
 
-- Change the `FROM_EMAIL` and `ADMIN_EMAILS` variables in `vidjil-server/conf/defs.py`.
-  They are used for admin emails monitoring the server an reporting errors.
-  Change also the `hosting` variable in `vidjil-client/conf/confs.js`.
+#### Configure login and sessions
 
-- <a name='healthcare'></a>
-  If, according yo your local regulations, the server is suitable for hosting clinical data,
-  you may update the `HEALTHCARE_COMPLIANCE` variable in `vidjil-server/conf/defs.py`
-  and the `healthcare` variable in `vidjil-client/conf/confs.js` to remove warnings related to non-healthcare compliance.
-  Updating this variable is the sole responsibility of the institution responsible for the server,
-  and should be done in accordance with the regulations that apply in your country.
-  See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
+Login and sessions can be configured (especially regarding security). It is based on py4web authentication system. Note that other authentication systems are available, such as LDAP, but they are not documented here.
 
-- To allow users to select files from a mounted volume,
-  set `FILE_SOURCE` and `FILE_TYPES` in `vidjil-server/conf/defs.py`.
-  In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
-  Users will still be allowed to upload their own files.
+- `TWO_FACTOR_REQUIRED` is a boolean variable that indicates if two factor authentication is required. Default is `false`. If it is activated, the user will need to enter a code sent by email to log in. In this case, the SMTP configuration must be set (see below).
+- `MAX_WRONG_PASSWORDS` is the maximum number of wrong passwords before the account is blocked, in order to prevent brute-force attacks. Default is 5.
+- `LOGIN_EXPIRATION_TIME` is the time in seconds before a login expires. Default is 7200 seconds (2 hours).
+- `SESSION_SECRET_KEY` is the secret key used to encrypt the session cookie:
+  It should be a random string of at least 32 characters ideally.
+  You can generate it with `openssl rand -base64 32`.
 
-- By default path directory for files that require saving outside of the containers (the database, third party binaries, uploads, vidjil results and log files) is settable in `.env.default` file. Default path is set in `.env.default` at `VOLUME_PATH` variable. Default value is `./volumes/vidjil/` relative to docker directory. Change can also be done directly in `volumes` in `docker-compose.yml` for various services or in `docker-compose.override.yml`. See also [Requirements / Storage](#storage) above.
+#### Configure email
 
-- Configure the reporter. Ideally this container should be positioned
-  on a remote server in order to be able to report on a down server,
-  but we have packed it here for convenience.
-  You will also
-  need to change the `DB_ADDRESS` in `conf/defs.py` to match it.
+Vidjil is able to send emails to users or admins. You need to configure the mail server to use.
+You can use an external SMTP server (or set up your own with postfix for example).
+Note that if you activate two factor authentication (see [above](#configure-login-and-sessions)), you need to configure the SMTP server.
+
+- `SMTP_SERVER` is the SMTP server to use, with format "address:port"
+- `SMTP_CREDENTIALS` is the credentials to use, with format "user:password"
+- `SMTP_FROM_EMAIL` is the sender address to use, with format "name@domain". It can be different from the credentials, but in this case, the receiver may consider it as spam.
+- `SMTP_DOMAIN` is the domain to use, with format "domain".
+- `SMTP_ADMIN_EMAILS` is the list of admin emails to use when sending emails to admin (in case of errors on the server for example). The format to use is ["name1@domain1", "name2@domain2"] (or ["name1@domain1"] if only one admin).
+- `SMTP_EMAIL_SUBJECT_START` is the subject prefix to use when sending emails to admin (in case of errors on the server for example). Default is "[Vidjil]".
+- `SMTP_TLS` defines if TLS should be used, with format "true" or "false". Default is "true".
+- `SMTP_SSL` defines if SSL should be used, with format "true" or "false". Default is "false".
+
+The configuration can be tested in the `admin` page of the web application (see [admin documenation](admin.md#database-maintenance)).
+
+#### Configure healthcare
+
+If, according yo your local regulations, the server is suitable for hosting clinical data,
+you may update the `HEALTHCARE_COMPLIANCE` variable in `.env.default` to `true`.
+and the `healthcare` variable in `vidjil-client/conf/conf.js` to remove warnings related to non-healthcare compliance.
+Updating this variable is the sole responsibility of the institution responsible for the server,
+and should be done in accordance with the regulations that apply in your country.
+See also the [hosting options](healthcare.md) offered by the VidjilNet consortium.
+
+#### Configure network file upload
+
+To allow users to select files from a mounted volume,
+set `FILE_SOURCE` and `FILE_TYPES` in `.env.default`.
+In this case, the `DIR_SEQUENCES` directory will be populated with links to the selected files.
+Users will still be allowed to upload their own files.
+
+#### Configure save path directories
+
+- Path directories for files that require saving outside of the containers (the database, third party binaries, uploads, vidjil results and log files) is settable in `.env.default` file. Default path is set in `.env.default` at `VOLUME_PATH` variable. Default value is `./volumes/vidjil/` relative to docker directory. Change can also be done directly in `volumes` in `docker-compose.yml` for various services or in `docker-compose.override.yml`. See also [Requirements / Storage](#storage) above.
 
 ### Adding external software
 
@@ -312,16 +353,16 @@ Executable should be automatically detected inside your container.
 !!! Warning
     Some binaries working on your computer may not work inside container environment.
     For compatibilities reasons,
-    keep in mind that some softwares need to be build inside a docker image to get correct libraries and compilers.
+    keep in mind that some softwares need to be built inside the docker container to get correct libraries and compilers.
 
-When the software has compatible inputs and outputs, it will be enough
-to configure then the appropriate `pre process` or `analysis config` (to be documented).
+When the software has compatible inputs and outputs, it only requires
+to configure the appropriate `pre process` or `analysis config` (to be documented).
 In some cases, using the software may require development such as wrappers.
-Contact us (<mailto:contact@vidjil.org>) to have more information and help.
+[Contact us](mailto:contact@vidjil.org) to have more information and help.
 
 ### Troubleshooting
 
-## CORS header 'Access-Control-Allow-Origin' missing
+#### CORS header 'Access-Control-Allow-Origin' missing
 
 Sometime, you want to split the client and the server on different server.
 This type of configuration need to allow cross origin in nginx server.
@@ -337,126 +378,51 @@ add_header 'Access-Control-Allow-Origin' 'your_other_domain';
 The mysql container is not fully launched. This can happen especially at the first launch.
 You may relaunch the containers.
 
-If restarting the containers does not resolve the issue, there are a couple of things
-you can look into:
+If restarting the containers does not resolve the issue, ensure the database was created correctly. This should have been done automatically,
+  but just in case, you can check the console output, or check the database:
 
- - Ensure the database password in `vidjil-server/conf/defs.py` matches the password for
- the mysql user: `vidjil`.
- If you are not sure, you can check with the following:
- ```sh
- docker exec -it vidjil-mysql bash
- mysql -u vidjil -p vidjil
- ```
- or reset it:
- ```sh
- docker exec -it vidjil-mysql bash
- mysql -u root -p
- SET PASSWORD FOR vidjil = PASSWORD('<new password>');
- ```
- 
- - Ensure the database was created correctly. This should have been done automatically,
- but just in case, you can check the console output, or check the database:
- ```sh
- docker exec -it vidjil-mysql bash
- mysql -u vidjil -p vidjil
- ```
- If the database does not exist, mysql will display an error after logging in.
+  ```sh
+  docker exec -it vidjil-mysql bash
+  mysql -u vidjil -p vidjil
+  ```
 
-#### Launching manually the backup
+  If the database does not exist, mysql will display an error after logging in.
 
-The backup should be handled by the backup container, see [*Making backups* below](#making-backups). Otherwise you can use the `backup.sh` script by connecting to the `backup` or `uwsgi` container (for a full backup, otherwise add the `-i` option when
-running `backup.sh`):
+#### Launching the backup manually
 
-```sh
-cd /usr/share/vidjil/server
-sh backup.sh vidjil /mnt/backup >> /var/log/cron.log 2>&1
-```
+The backup should be handled by the restic container, see [*Making backups* below](#making-backups). Otherwise backup can be done manually, see [database doc](server.md#database).
 
 #### I can't connect to the py4web administration site
-The URL to this site is https://mywebsite/_dashboard.
+
+The URL to this site is your-website/_dashboard.
 The password should be given in the docker `.env` environment file.
-
-This password will not persist when the container will be restarted.
-For a persistent password, please use the environment variable.
-
-Each time you relaunch uwsgi server, the password is update to last value present in `.env`.
 
 ### Updating a Docker installation
 
-#### Before the update
-
-We post news on image updates at [changelogs docker](changelog-docker.md).
-Check there whether the new image require any configuration change.
-
-By security, we please you to always make a backup (see "Backups", below) before doing this process.
-It is especially important to backup the database, as the update process may transform it.
-
-#### Pulling the new images
-
-``` bash
-docker pull vidjil/server:latest
-docker pull vidjil/client:latest
-```
-
-This will pull the latest version of the images.
-More tags are available at <https://hub.docker.com/r/vidjil/server/tags/>.
-
-If you do not have access to `hub.docker.com` on your server, then you
-should pull and extract the image onto a machine that does,
-send it to your server with your favorite method, and finally import
-the image on the server.
-
-Extract:
-
-``` sh
-docker save -o <output_file> vidjil/server[:<version>] vidjil/client[:<version>]
-```
-
-Import:
-
-```sh
-docker load -i <input_file>
-```
-
-#### Launch the new containers
-
-In some cases, you may need to update your `docker-compose.yml` file or some
-of the configuration files. We will describe the changes in the `CHANGELOG` file.
-The latest versions of these files are available on our
-[Gitlab](https://gitlab.inria.fr/vidjil/vidjil).
-
-Once the images are pulled, you can relaunch the containers:
-
-```sh
-docker-compose down
-docker-compose up -d
-```
-
-By default, all previous volumes will be reused and no data will be lost.
-If the database schema was updated, py4web will update it on your database.
-Check that the containers run well, and that you still manage to log on Vidjil
-and to access the database, and to see a result from a sample.
-
-If something is not working properly, you have still the option to rollback
-to the previous images (for example by tagging as `latest` a previous image),
-and possibly by reusing also your last datable backup if something went wrong.
-
-#### Launching a single container
-
-When an update occurs on a single container, one may not want to relaunch all
-the containers, to save time. With `docker-compose` it is possible to do so.
-
-Stop the desired container (for instance the client):
-
-```sh
-docker-compose stop nginx
-```
-
-Then launch it again
-
-```sh
-docker-compose up -d nginx
-```
+1. Adapt the config for the new version (see [docker changelog](https://www.vidjil.org/doc/changelog-docker))
+    1. Update the docker image to use in `.env` files (`VIDJIL_SERVER_DOCKER_IMAGE_VERSION` and `VIDJIL_CLIENT_DOCKER_IMAGE_VERSION`).
+    1. See if other modifications are needed in `.env` files.
+    1. See if modifications are needed in other specific configuration file (`docker-compose.yml`, `conf.js`, .env files, ...). **Be careful**: do not apply the config right now, wait for the new version to be deployed.
+1. Set-up a warning message on your front end server if it is separated (otherwise, the front will be shutdown and the server will not answer):
+    1. Connect to the front-end server.
+    1. In `conf.js` file, set `use_database` to `false`. This will deactivate db access. In order to display an explicit message, uncomment the `alert:` part, setting explicit `title` and `msg`.
+    1. Restart the nginx service to take new config into account: `docker compose restart nginx`.
+    1. Re-load front-end webpage with no cache (Ctrl+F5 for example) and check the alert message is correctly displayed and database cannot be accessed.
+1. Stop docker (on the backend server): `docker compose down`.
+1. Check if server needs to be updated (for instance `sudo apt-get update && sudo apt-get -y upgrade`), and may be restarted. This is a good time to do that !
+1. Check restic ran after the last modification. If need be, restart restic services: `docker compose up -d restic`. This should trigger an immediate save. After that, connect to restic service to see that an up-to-date snapshot exists (see [restic doc](#setting-up-restic-service)).
+1. Check if there are uncommitted changes in vidjil repo in `vidjil` folder. The idea here is to prevent having specific element in the server. Check if specificity can be committed to vidjil, or if it can be in the specific config repo. If not, save the modifications before checkout.
+1. Backup database (!! Before update !!). The backup file may be found in the path mounted by restic. If need be, it can be done manually using [database export](#database-export).
+1. git checkout the new vidjil tag/branch.
+1. Re-apply local modifications if need be.
+1. Update all the files for new version (docker-compose, .env files, ... - see first bullet).
+1. Download new docker images: `docker compose pull`.
+1. If need be, update the vidjil-algo version used (see `DIR_VIDJIL` variable in `.env` files).)
+1. If need be, update the `contrib` repo.
+1. If need be, the database backup should be loaded from a fresh db, see [database import](#database-import).
+1. Start all services: `docker compose up -d`.
+1. Tests modification directly in back-end website (do not forget to empty browser cache).
+1. Update front-end server if it is separated using the same procedure, then reactivate front-end: modify `conf.js` file back to its old value.
 
 ### Knowing what docker image version is running
 
@@ -464,14 +430,7 @@ As our latest image is always tagged `latest` you may have troubles to know
 what version is currently running on your server. To determine that, you can
 use the *digest* of the image. You can view it, for example with `docker image
 --digests vidjil/server`. Then you can compare it with the digests shown [on
-the Dockerhub page](https://hub.docker.com/r/vidjil/server/tags/).
-
-## Plain server installation
-
-!!! warning
-    We used this installation on the public server between 2014 and 2018.
-    This installation is not supported anymore.
-    Only available installation should use docker service and docker containers (see above).
+the Docker Hub page](https://hub.docker.com/r/vidjil/server/tags/).
 
 ## Running the server in a production environment
 
@@ -484,6 +443,45 @@ retrieved.
 
 PY4web and Vidjil are no exception to this rule.
 
+### Database
+
+#### Database export
+
+```bash
+docker compose up -d mysql # to be sure mysql is running
+docker compose exec -it mysql bash
+mysqldump -u <backup-user> -p --no-create-info --complete-insert --no-tablespaces vidjil > <backup-file.sql>
+```
+
+Then move the created sql file to a mounted folder to access it outside the container, and store it in a proper location.
+
+NB: `mysqldump` may be replaced by `mariadb-dump` some times soon.
+
+An important element to note here is the `--no-create-info`. We add this parameter because py4web needs to be allowed to create tables itself because it keeps track of database migrations and errors will occur if tables exist which it considers it needs to create.
+
+#### Database import
+
+In order to import the data from another server, you need to ensure there will be no key collision, or the import will fail.
+
+If the database contains data, the easiest is to drop the database and create a new database with empty tables:
+
+1. Stop the running services: `docker compose down`
+1. Drop the database : You need to
+   1. Delete the `volumes/vidjil/mysql` folder (or the corresponding mounted folder)
+   1. Delete the .table files used by py4web in `volumes/vidjil/databases` (or the corresponding mounted folder).
+1. Recreate a database with empty tables: this is done by starting `mysql` and `uwsgi` services: `docker compose up -d mysql uwsgi`
+
+NB: Let the tables be uninitialized here to prevent keys collisions.
+
+Once the tables have been created, the data can be imported as follows:
+
+```bash
+docker compose exec -it mysql bash
+mysql -u <user> -p vidjil < <backup-file.sql>
+```
+
+After this, starts all services using `docker compose up -d`.
+
 ### Making backups
 
 The top priority is to backup *files created during the analysis*
@@ -492,19 +490,29 @@ Should the data be lost, valuable man-hours would be lost.
 In order to prevent this, we make several times a day incremental backups of the
 data stored on the public Vidjil servers.
 
-This task is done by `restic` service.
+#### Setting up `restic` service
 
-To work well, you need to create a dedicated user `backup` in your MySQL database and to give it access to vidjil database.
+The backup task is done using the [restic](https://restic.net/) tool. To do this, we add a `restic` service in our docker compose configuration. An example of how to set the service up is implemented in `docker-compose-dev.yml`. Restic password is to modify in .env file.
 
-#### Set backup service
+To be able to get data from the database, you need to create a dedicated user `backup` in your MySQL database and to give it access to vidjil database, see [below](#create-backup-user).
 
-1. Modify user name and password
+Some commands (see [restic doc](https://restic.readthedocs.io/en/stable/) for more details):
 
-    The `docker/backup/conf/backup.cnf` gives the authentication information to the database so that
-    a backup user (read rights only required) can connect to the database.  
-    User name and password can be change.
-    These change should be include to modify also values used by restic service.
-    To do that, edit file `docker/backup/conf/backup.cnf`.
+- to see snapshots:
+  1. Get in the docker container from vdb server:
+    `docker exec -it vidjil-restic bash`
+  1. Run command `restic snapshots`
+
+- to load a snapshot:
+  1. Get in the docker container from vdb server:
+    `docker exec -it vidjil-restic bash`
+  1. Run command `sudo restic restore [snapshot id] --target [/folder]`
+
+#### Create backup user
+
+1. Set backup user password
+
+  The password for the backup user is to be defined in your .env file (either `.env.default` or you specific .env.something file), setting the value of `MYSQL_BACKUP_PASSWORD`.
 
 1. Open a terminal, open mysql interface inside docker image
 
@@ -528,9 +536,9 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
 
 1. Set host availability to connection
 
-  Host value (ip) of newly created user should be set. 
+  Host value (ip) of newly created user should be set.
   Use '%' to allow access from everywhere.
-  A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regulary.
+  A more restrictive ip could be use for security, but check that your ip should be fixed and do not change regularly.
 
   ```sql
   UPDATE mysql.user SET Host = "%" WHERE User = "backup";
@@ -550,21 +558,18 @@ To work well, you need to create a dedicated user `backup` in your MySQL databas
   SHOW GRANTS FOR backup;
   ```
 
-1. Restart restic service
+1. Restart restic service to force backup now
 
-  Backup is done by restic service.
-  It needs to be restarted to take into account change made on configuration file `docker/backup/conf/backup.cnf`.
+  If you want to save now, restart restic: `docker compose restart restic`. Check logs to verify that backup is OK. One can also check size and date of `dump.sql` file in the folder mounted on `/mnt/volumes/sql` in restic container.
 
 !!! note
-    Read docker logs for restic service to see if everything working well.
+    Read docker logs for restic service to see if everything is working as expected.
 
 #### Note on backup content
 
-Backup does not apply to uploaded files.
-We inform users that they should
-keep a backup of their original sequence files.
+By default, backup does not apply to uploaded files. In the server we run, we inform users that they should keep a backup of their original sequence files.
 
-Then the backup strategy can be configured in the `docker/backup/conf/backup-cron` file. The cron file states how often the backup script will be called. There are three options: backing up all results/analyses since yesterday, since the start of the month, since forever. On top of that the database is exported under two formats (CSV and SQL).
+However, the configuration of `restic` service could be modified to save uploaded files, or other ones, see [restic documentation](https://restic.readthedocs.io/en/stable/).
 
 ### Autodelete and Permissions
 
@@ -735,63 +740,102 @@ However, they can simply be copied over to the new installation. Their filenames
 are stored in the database and should therefore be accessible as long as
 they are in the correct directories.
 
-#### Exporting/importing a full database
+## Server Monitoring
 
-When a full database migration is needed, it can be done with the following command:
+![New with release 2024.12](https://img.shields.io/badge/Release-2024.12-blue)
 
-``` bash
-mysqldump -u <user> -p <db> -c --no-create-info > <file>
+Some monitoring features are accessible through the web application with the addition of a new dedicated controller, allowing the retrieval of metrics from a Vidjil server instance. A full list of available metrics will be described below.
+
+The goal of these metrics is to be regularly called by an [API instance](https://gitlab.inria.fr/vidjil/metrics/metrics-instance) to be integrated into an external monitoring service. The tools used in our pipeline combine the [Vidjil API](api.md) for metrics requests, [Prometheus](https://prometheus.io/) for metrics storage, and [Grafana](https://grafana.com/) for visualization.
+
+``` mermaid
+graph TB
+    subgraph Metrics servers
+    D[Grafana<br>viewer] -- ask<br>metrics  --> C;
+    C -- serve<br>metrics  --> D;
+    C -- recurrent<br>requests  --> B;
+    B -- formatted<br>metrics --> C[Prometheus<br>DB];
+    end
+
+    V1 ~~~ V2;
+    V1 ~~~ VX;
+    V2 ~~~ VX;
+
+    V1(**Vidjil<br>server 1**) -- raw<br>metrics --> B[API<br>server];
+    V2(**Vidjil<br>server 2**) -- raw<br>metrics --> B[API<br>server];
+    VX(**Vidjil<br>server X**) -- raw<br>metrics --> B[API<br>server];
+    B -- request<br>metrics --> V1;
+    B -- request<br>metrics --> V2;
+    B -- request<br>metrics --> VX;
 ```
 
-The `--no-create-info` option is important because py4web needs to be allowed to create tables itself.
-Indeed, it keeps track of database migrations and errors will occur if
-tables exist which it considers it needs to create.
+A dedicated configuration of these tools can be found at this [page](https://gitlab.inria.fr/vidjil/metrics/metrics-server) and could be set up with a simple docker configuration.
 
-In order to import the data into an installation you first need to ensure
-the tables have been created by Py4web. This can be achieved by simply
-accessing a non-static page.
+### Set up monitoring
 
-!!! warning
-    If the database has been initialized from the interface you will
-    likely encounter primary key collisions or duplicated data, so it is best
-    to skip the initialization altogether.
+A set of three steps/conditions should be filled:
 
-Once the tables have been created, the data can be imported as follows:
+#### Add a dedicated metrics user and group
 
-``` bash
-mysql -u <user> -p <db> < <file>
-```
+This new group will only see metrics information.
 
-At least the results and analysis files should thus be copied.
+If you start from a fresh installation initialized from scratch, a dedicated group named *metrics* will be automatically created.  
+If not, you will have to create it yourself (see [Creating groups](admin.md#creating-groups)), name it *metrics*, and remove all rights in it.
 
-Please note that with this method you should have at least one admin user
-that is accessible in the imported data. Since the initialization is being
-skipped, the usual admin account won't be present.
-It is also possible to create a user directly from the database although
-this is not the recommended course of action.
+An automatic creation of this user can be set at database initialization. To do this, various metrics variables should be set in `docker/.env.default` at the initialization of the database (`METRICS_USER_PASSWORD`, `METRICS_USER_EMAIL`).  
+If you have already initialized the database or done a server upgrade, you can also create a dedicated user and add it to this group.
+
+#### Start a metrics server instance
+
+A metrics server instance should be installed, that will launch the combination of Vidjil API/Prometheus/Grafana to monitor server. More documentation on this last point will be found on [dedicated repository](https://gitlab.inria.fr/vidjil/metrics/metrics-server) and updated regularly with usage adoption.
+
+#### Update some data in database
+
+A call to `set_creator_samples_set` should be done at migration to be able to access previous data more efficiently.
+
+### Available metrics
+
+A complete list of available metrics is listed here, and can be found in `metrics.py` file.
+
+Note that some metrics are more computational intensive than others. We chose to split metrics in 2 lists: `fast`, `long`. Note that metrics server will call `long` metrics less often than `fast` ones.
+
+| Metrics                           | List | Descriptions                                                                                         |
+| :-------------------------------- | :--- | :--------------------------------------------------------------------------------------------------- |
+| group_count                       | fast | Get number of groups                                                                                 |
+| set_patients_count                | fast | Get number of patients for all users                                                                 |
+| set_runs_count                    | fast | Get number of runs for all users                                                                     |
+| set_generics_count                | fast | Get number of generic sets for all users                                                             |
+| set_patients_by_user              | fast | Get number of patients split by user id                                                              |
+| set_runs_by_user                  | fast | Get number of runs split by user id                                                                  |
+| set_generics_by_user              | fast | Get number of generic split by user id                                                               |
+| sequence_count                    | fast | Get number of sequences files                                                                        |
+| results_count                     | fast | Get number of results present on server                                                              |
+| sequence_by_user                  | fast | Get number of sequences files by user                                                                |
+| sequence_size_by_user             | fast | Get sump of sequence files by users                                                                  |
+| config_analysis                   | fast | Get list of analysis split by configurations                                                         |
+| config_analysis_by_users_patients | fast | Get list of analysis, split by configurations, only for patients                                     |
+| config_analysis_by_users_runs     | fast | Get list of analysis, split by configurations, only for runs                                         |
+| config_analysis_by_users_generic  | fast | Get list of analysis, split by configurations, only for generics sets                                |
+| login_count                       | fast | Get number of login count, group by user id                                                          |
+| status_analysis                   | fast | Get number of analysis grouped by status (allows to see pending, finish, running or failed analysis) |
+| set_patients_by_group             | long | Get number of patients split by groups                                                               |
+| set_runs_by_group                 | long | Get number of runs split by groups                                                                   |
+| set_generics_by_group             | long | Get number of generic split by groups                                                                |
+| config_analysis_by_groups         | long | Get number of analysis split by configs and by groups                                                |
 
 ## Using CloneDB [Under development]
-
-!!! note
-  This documentation is not suitable for py4web version of server.
-  Please wait for release 2024.06 to be fixed.
-  If you need to use it until this date, please [contact us](mailto:support@vidjil.org).
 
 The [CloneDB](https://gitlab.inria.fr/vidjil/clonedb) has to be installed
 independently of the Vidjil platform.
 
 Then one can easily extract data to be used with CloneDB. A script is provided
-(`server/scripts-web2py/create_clone_db.py`) which
+(`server/py4web/apps/vidjil/scripts/create_clone_db.py`) which
 produces a FASTA file to be indexed with CloneDB. This script takes as
 parameter the FASTA output file and one (or many) group IDs, which correspond
-to the groups having access to the datasets. Note that for the moment the Vidjil platform only allow a per group access to the CloneDB.
+to the groups having access to the datasets. Note that for the moment the Vidjil platform only allows a per group access to the CloneDB.
 
-The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX`
-is replaced with the group ID.
+The FASTA output filename must follow the format `clonedb_XXX.fa` where `XXX` is replaced with the group ID.
 
-Make sure that the `DIR_CLONEDB` variable is set in `defs.py` and points to
-the CloneDB server directory. Make sure that in this directory the
-`clonedb_defs.py` has been filled correctly.
+Make sure that the `DIR_CLONEDB` variable points to the CloneDB server directory (default is `/usr/share/clonedb/` and can be overriden in .env files). Make sure that in this directory the `clonedb_defs.py` has been filled correctly.
 
-Then index the created FASTA file with the CloneDB index (follow the
-instructions from CloneDB).
+Then index the created FASTA file with the CloneDB index (follow the instructions from CloneDB).

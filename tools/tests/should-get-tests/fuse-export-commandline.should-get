@@ -1,0 +1,12 @@
+### Without distributions computing
+!OUTPUT_FILE: fuse-export-fuse-commandline.vidjil
+!LAUNCH: $PYTHON ../../fuse.py --output fuse-export-fuse-commandline.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil
+
+$ Get correct file name in original_names field
+1:"/some/file_1"
+1:"/some/file_2"
+
+$ Export commandline in samples object
+
+1: commandline_fuse
+1: ../../fuse.py --output fuse-export-fuse-commandline.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil

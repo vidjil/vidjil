@@ -41,7 +41,7 @@ or to provide an URL to connect to an existing one online.
 
 ### Starting the environment
 
-The vidjil Docker environment is managed by Docker Compose since it is composed of 
+The vidjil Docker environment is managed by Docker Compose since it is composed of
 several different services, but a single service, nginx, is required to run the vidjil client,
 for a more detailed explanation on other services see dev-server.md.
 
@@ -163,7 +163,7 @@ new Clone(data, model, index, C_SIZE_DISTRIB | C_INTERACTABLE | C_IN_SCATTERPLOT
 
 ### Update mechanism
 
-Views object are used to display the content of an Object.model() 
+Views object are used to display the content of an Object.model()
 The views are using 3 different update functions to synchronyze the data stored in the model and the content they display.
 If you make any change to the model you should use one of these functions to resync the view with it.
 
@@ -368,7 +368,7 @@ example : the aligner_menu.js entry allowing to enable/disable the V/D/J regions
 
 ### Clone
 
-*Info box*
+#### Info box
 
 In the info box all the fields starting with a \_ are put. Also all the
 fields under the `seg` field are displayed as soon as they have a `start` and
@@ -442,13 +442,13 @@ Historic Watir tests were migrated toward Cypress.
 Install Docker, then either build locally the Docker image,
 or download it from dockerhub
 
-*Local build*
+##### Local build
 
 ```bash
 docker build ./docker/ci  -t "vidjilci/cypress_with_browsers:latest"
 ```
 
-*Dockerhub pull*
+##### Dockerhub pull
 
 ```bash
 docker pull "vidjilci/cypress_with_browsers:latest"
@@ -494,7 +494,7 @@ A `test_sandbox` is available to quickly test some modification made in the brow
 
 #### Troubleshooting
 
-**Xvfb error**
+##### Xvfb error
 
 :       The cypress pipeline may fail in some cases, when, after the end of the tests,
         the Xvfb server and the docker container are still running.
@@ -505,7 +505,7 @@ docker ps
 docker stop $container_id
 ```
 
-**Permission errors on report and screenshot files**
+##### Permission errors on report and screenshot files
 
 :    Files produced by cypress docker belong to the root user.
     These files should be deleted with root privilege.

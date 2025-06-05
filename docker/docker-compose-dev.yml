@@ -20,8 +20,12 @@ services:
             - ./:/usr/share/vidjil/docker
             - ../server/:/usr/share/vidjil/server/
             - ../tools:/usr/share/vidjil/tools
+            # CloneDB
+            - ../../clonedb:/usr/share/clonedb
             # Use contrib folder
             - ../../contrib:/usr/share/vidjil/tools/scripts
+            - ../../contrib/third-party-softwares/compiled:/binaries
+            - ../../contrib/third-party-softwares/compiled:/usr/share/tools/
 
     nginx:
         image: vidjil/client:dev
@@ -70,7 +74,7 @@ services:
             RESTIC_COMPRESSION: max
             RESTIC_BACKUP_SOURCES: /mnt/volumes
             RESTIC_BACKUP_ARGS: >-
-                --tag health-data --exclude='*.tmp' --limit-download 10000 --limit-upload 10000 --verbose
+                --tag health-data --exclude='*.tmp' --verbose=2 --ignore-ctime
             RESTIC_FORGET_ARGS: >-
                 --keep-last 50 --keep-daily 30 --keep-weekly 15 --keep-monthly 36 --keep-yearly 10
             RESTIC_READ_CONCURRENCY: 1
@@ -84,6 +88,9 @@ services:
             - ${VOLUME_PATH:-./volumes/vidjil/}/result/tmp:/mnt/volumes/result/tmp:ro
             - ./volumes/backup:/mnt/backup
             - /var/run/docker.sock:/var/run/docker.sock
+        depends_on:
+            mysql:
+                condition: service_healthy
         links:
             - mysql:mysql
         networks:

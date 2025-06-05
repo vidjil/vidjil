@@ -43,8 +43,15 @@ describe("Manipulate patient, sample and launch analysis", function () {
       // Open result
       cy.openSampleResult(sample_id);
       // Check number of clones found
-      cy.get("#list_clones").children().should("have.length", 26);
-
+      cy.get("#list_clones").children().should("have.length", 38);
+      // Check number of clones found without removed clonotypes
+      cy.get("#list_clones")
+      .children()
+      .filter((index, el) => {
+        return Cypress.$(el).css("display") !== "none";
+      })
+      .should("have.length", 26);
+    
       // Delete process
       cy.get("@patient_id").then((patient_id) => {
         cy.openDBPage();
@@ -69,15 +76,24 @@ describe("Manipulate patient, sample and launch analysis", function () {
   });
 
   it("03-Sets and samples creations, associations, deletions", function () {
+    // Get filter initial number
+    cy.goToPatientPage();
+    cy.dbPageFilter("john");
+    const initialFilterNumberJohn_return = cy.getTableLength("#db_table_container");
+    cy.dbPageFilter("first_name:john");
+    const initialFilterNumberFirstNameJohn_return = cy.getTableLength("#db_table_container");
+    cy.dbPageFilter("id:john");
+    const initialFilterNumberIdJohn_return = cy.getTableLength("#db_table_container");
+
     // Create, edit patients
-    var id = "";
+    var emptyId = "";
     var first_name = "fn";
     var last_name = "ln";
     var birthday = "";
     var patient_information = "cy";
     var group = "public";
     cy.createPatient(
-      id,
+      emptyId,
       first_name + "1",
       last_name + "1",
       birthday,
@@ -86,7 +102,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).as("patient1");
     const patient1_display_name = last_name + "1" + " " + first_name + "1";
     cy.createPatient(
-      id,
+      emptyId,
       first_name + "2",
       last_name + "2",
       birthday,
@@ -94,7 +110,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
       group
     );
     cy.createPatient(
-      id,
+      emptyId,
       first_name + "3",
       last_name + "3",
       birthday,
@@ -103,7 +119,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).then((uid) => {
       cy.editPatient(
         uid,
-        id,
+        emptyId,
         first_name + "4",
         last_name + "4",
         birthday,
@@ -111,25 +127,60 @@ describe("Manipulate patient, sample and launch analysis", function () {
       );
     });
 
+    cy.createPatient(
+      emptyId,
+      "John",
+      "Peter",
+      birthday,
+      patient_information,
+      group
+    );
+    cy.createPatient(
+      emptyId,
+      "peter",
+      "john",
+      birthday,
+      patient_information,
+      group
+    );
+    cy.createPatient(
+      "john",
+      "peter",
+      "peter",
+      birthday,
+      patient_information,
+      group
+    );
+
     // Filter patients
     cy.goToPatientPage();
-    cy.dbPageFilter(first_name + "1");
-    cy.getTableLength("#db_table_container").should("eq", 1);
-    cy.dbPageFilter("patient");
-    cy.getTableLength("#db_table_container").should("eq", 8);
+    cy.dbPageFilter("john");
+    initialFilterNumberJohn_return.then((initialFilterNumberJohn) => {
+      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberJohn + 3);
+    })
+    cy.dbPageFilter("first_name:john");
+    initialFilterNumberFirstNameJohn_return.then((initialFilterNumberFirstNameJohn) => {
+      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberFirstNameJohn + 1);
+    })
+    cy.dbPageFilter("id:john");
+    initialFilterNumberIdJohn_return.then((initialFilterNumberIdJohn) => {
+      cy.getTableLength("#db_table_container").should("eq", initialFilterNumberIdJohn + 1);
+    })
 
     // Create run
-    cy.createRun(id, "run", "2023-01-01", "cy", group);
+    cy.createRun(emptyId, "run", "2023-01-01", "cy", group);
 
     // Add samples and multi-samples with association
-    var preprocess = undefined;
-    var filename1 = "Demo-X5.fa";
-    var filename2 = undefined;
-    var sampling_date = "2024-01-01";
-    var sample_information = "cy";
+    const no_preprocess = undefined;
+    const storage_nfs = "nfs";
+    const storage_computer = "computer";
+    const filename1 = "Demo-X5.fa";
+    const filename2 = undefined;
+    const sampling_date = "2024-01-01";
+    const sample_information = "cy";
     cy.addSample(
-      preprocess,
-      "nfs",
+      no_preprocess,
+      storage_nfs,
       filename1,
       filename2,
       sampling_date,
@@ -137,8 +188,8 @@ describe("Manipulate patient, sample and launch analysis", function () {
       first_name + "1"
     ).as("sample_1");
     var sample_to_add_2 = [
-      preprocess,
-      "nfs",
+      no_preprocess,
+      storage_nfs,
       filename1,
       filename2,
       sampling_date,
@@ -146,8 +197,8 @@ describe("Manipulate patient, sample and launch analysis", function () {
       first_name + "2",
     ];
     var sample_to_add_3 = [
-      preprocess,
-      "nfs",
+      no_preprocess,
+      storage_nfs,
       filename1,
       filename2,
       sampling_date,
@@ -156,8 +207,108 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ];
     cy.multiSamplesAdd([sample_to_add_2, sample_to_add_3]);
 
+    // add samples with preprocess
+    const otherPreprocess = "5";
+    const preProcessInfo = "pre";
+    const noCommonSet = undefined;
+    const resources_path = "cypress/resources/";
+    const patient1_r1 = resources_path + "patient1_R1.fastq.gz";
+    const patient1_r2 = resources_path + "patient1_R2.fastq.gz";
+    const patient1_no_suffix = resources_path + "patient1.fastq.gz";
+    const patient2_r2 = resources_path + "patient2_R2.fastq.gz";
+    // check error if no filename2
+    var expected_r1_r2_message = undefined;
+    var click_submit = true;
+    var expected_flash_message = "missing file: please ensure all file fields are filled before submitting.";
+    cy.addSample(
+      otherPreprocess,
+      storage_nfs,
+      filename1,
+      filename2,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
+    // check warning if no suffix
+    expected_r1_r2_message = "File 2 should contain '_R2'";
+    click_submit = false;
+    expected_flash_message = undefined;
+    cy.addSample(
+      otherPreprocess,
+      storage_computer,
+      patient1_r1,
+      patient1_no_suffix,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
+    // check warning if r1 r2 filenames are not matching
+    expected_r1_r2_message = "Files should have the same name except from '_R1' and '_R2'";
+    click_submit = false;
+    expected_flash_message = undefined;
+    cy.addSample(
+      otherPreprocess,
+      storage_computer,
+      patient1_r1,
+      patient2_r2,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
+    // check no warning if r1 r2 filenames are matching
+    expected_r1_r2_message = undefined;
+    click_submit = false;
+    expected_flash_message = undefined;
+    cy.addSample(
+      otherPreprocess,
+      storage_computer,
+      patient1_r1,
+      patient1_r2,
+      sampling_date,
+      preProcessInfo,
+      noCommonSet,
+      expected_r1_r2_message,
+      click_submit,
+      expected_flash_message,
+    );
+
     cy.get("@sample_1").then((sample_id1) => {
-      // Jump
+      // copy sample path to clipboard
+      // did not manage to make it work with firefox and chrome legacy, as clipboard permissions cannot be set
+      // add permission for chrome to access clipboard before (see https://github.com/cypress-io/cypress-example-recipes/blob/master/examples/testing-dom__clipboard/cypress/e2e/permissions-spec.cy.js)
+      if ((Cypress.browser.name === "chrome") && (parseInt(Cypress.browser.version.split(".")[0]) >= 81)) {
+        cy.wrap(Cypress.automation('remote:debugger:protocol', {
+          command: 'Browser.grantPermissions',
+          params: {
+            permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+            // make the permission tighter by allowing the current origin only
+            // like "http://localhost:56978"
+            origin: window.location.origin,
+          },
+        }))
+        cy.get(`#copyPathClipboard_${sample_id1}`).click().then(() => {
+          // check that the path is copied to clipboard
+          cy.window().then((win) => {
+            win.navigator.clipboard.readText().then((text) => {
+              expect(text).to.contain('/mnt/upload/uploads/sequence_file.data_file.');
+            });
+          });
+
+          // check flash message is displayed
+          cy.get(".flash_1").should("be.visible").contains("Copied");
+        });
+      }
+
+      // Jump using common sets
       cy.get(
         `#row_sequence_file_${sample_id1} > :nth-child(5) > .patient_token`
       )
@@ -179,9 +330,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
   });
 
   it("04-Sets and samples with tags", function () {
-    cy.goToPatientPage();
-
-    // Add a patient with some with tags
+    // Add patients with some with tags
     const id = "";
     const first_name = "ft";
     const last_name = "lt";
@@ -199,8 +348,10 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).then((patient_id) => {
       // Get initial number
       cy.goToPatientPage();
+      cy.clearInterceptList("@getActivities");
+      cy.clearInterceptList("@postAllSampleSets");
       cy.get(
-        `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(4) > span > a`
+        `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(5) > span > a`
       )
         .should("exist")
         .should("have.attr", "data-linkable-name", "#t1")
@@ -229,6 +380,8 @@ describe("Manipulate patient, sample and launch analysis", function () {
     ).then((patient_id) => {
       initialFilterNumber_return.then((initialFilterNumber) => {
         // From inside the patient
+        cy.clearInterceptList("@getActivities");
+        cy.clearInterceptList("@postAllSampleSets");
         cy.get(".tag-link") // works only if one tag available
           .should("contain", "#t1")
           .click();
@@ -240,8 +393,10 @@ describe("Manipulate patient, sample and launch analysis", function () {
 
         // From the patients page
         cy.goToPatientPage();
+        cy.clearInterceptList("@getActivities");
+        cy.clearInterceptList("@postAllSampleSets");
         cy.get(
-          `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(4) > span > a`
+          `#sample_set_open_${patient_id}_config_id_-1 > :nth-child(5) > span > a`
         )
           .should("exist")
           .should("have.attr", "data-linkable-name", "#t1")

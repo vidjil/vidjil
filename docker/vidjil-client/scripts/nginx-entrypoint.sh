@@ -47,6 +47,13 @@ if test -v "HEALTHCARE_COMPLIANCE"; then
     fi
 fi
 
+# Set the server 
+if test -v "SERVER_VERSION"; then
+    echo "Setting server_version to \"$SERVER_VERSION\""
+    sed -i "s/server_version: \".*\"/server_version: \"${SERVER_VERSION}\"/g" /etc/vidjil/conf.js
+    sed -i "s/server_version: \".*\"/server_version: \"${SERVER_VERSION}\"/g" /etc/vidjil/conf_http.js
+fi
+
 echo "Start nginx"
 spawn-fcgi -U nginx -u nginx -G nginx -g nginx -s /var/run/fcgiwrap.socket /usr/bin/fcgiwrap
 nginx -g 'daemon off;'

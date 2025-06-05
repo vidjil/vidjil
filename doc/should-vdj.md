@@ -17,9 +17,9 @@ directly proposing pull requests on Gitlab with new tests in the [`algo/tests/sh
 We can also help to encode sequences in this format.
 The current tests were contributed by:
 
-  - Yann Ferret (CHRU Lille), 2014-2015 \[1\]
-  - Florian Thonier (Inserm, Paris Necker), 2015-2016
-  - And many users of the Vidjil platform
+- Yann Ferret (CHRU Lille), 2014-2015 \[1\]
+- Florian Thonier (Inserm, Paris Necker), 2015-2016
+- And many users of the Vidjil platform
 
 ## A `.should-vdj.fa` file
 
@@ -55,17 +55,17 @@ Comments can be given either as lines starting with `#`, or parts of headers, ag
 The header of each sequence, beginning by `>`, gives the V(D)J designation of the underlying sequence,
 such as in `>IGKV1-5*03 9/CTAC/1 IGKJ1*01  [IGK]`.
 
-  - Gene names are taken as specified in IMGT/GENE-DB.
-    They can be either fully qualified, with their alleles (`IGKJ1*01`) or without (`IGKJ1`).
-    When there is no allele given, the number of deletions for the N regions should refer to the `*01` allele.
-    Special names are also accepted, such as `Intron` or `KDE`.
+- Gene names are taken as specified in IMGT/GENE-DB.
+  They can be either fully qualified, with their alleles (`IGKJ1*01`) or without (`IGKJ1`).
+  When there is no allele given, the number of deletions for the N regions should refer to the `*01` allele.
+  Special names are also accepted, such as `Intron` or `KDE`.
 
-  - N-regions are given in three components: number of nucleotides deleted at the right (3') of the left segment,
-    insertion, and number of nucleotides deleted at the left (5') of the right segment.
-    The insertion can be specified either by the full sequence of nucleotides (`9/CCCTGG/1`),
-    or by only the number of nucleotides (`9/6/1`).
+- N-regions are given in three components: number of nucleotides deleted at the right (3') of the left segment,
+  insertion, and number of nucleotides deleted at the left (5') of the right segment.
+  The insertion can be specified either by the full sequence of nucleotides (`9/CCCTGG/1`),
+  or by only the number of nucleotides (`9/6/1`).
 
-  - N-regions are optional : `>IGKV1-5*03 IGKJ1*01` can be given instead of `>IGKV1-5*03 9/4/1 IGKJ1*01`
+- N-regions are optional : `>IGKV1-5*03 IGKJ1*01` can be given instead of `>IGKV1-5*03 9/4/1 IGKJ1*01`
 
 The designation can thus be very short, such as in `>TRGV2 TRGJP1`.
 However, it is advised to put as much information as possible in the designation,
@@ -74,14 +74,14 @@ Such complete designations will give more extensive tests.
 
 VDJ recombinations can be encoded, such as
 
-  - `>IGHV3-74*02 7/CCGCGGT/6 IGHD3-9*01 4/CTTCGAACA/7 IGHJ4*02`
+- `>IGHV3-74*02 7/CCGCGGT/6 IGHD3-9*01 4/CTTCGAACA/7 IGHJ4*02`
 
 Incomplete or unusual recombinations can also be specified, such as
 
-  - `>IGHD7-27*01 10/CATTA/0 IGHJ3*02`
-  - `>TRDV1*01 TRDD2*01 TRAJ29*01`
-  - `>TRDD2 18/6/0 TRDD3 5/5/0 TRDJ1`
-  - `>Intron 2/0/9 KDE`
+- `>IGHD7-27*01 10/CATTA/0 IGHJ3*02`
+- `>TRDV1*01 TRDD2*01 TRAJ29*01`
+- `>TRDD2 18/6/0 TRDD3 5/5/0 TRDJ1`
+- `>Intron 2/0/9 KDE`
 
 Very special cases should be explained by comments in plain English.
 
@@ -138,20 +138,20 @@ Having a correct behavior on these tests may be a goal for future releases.
 
 Within the `algo/tests` directory:
 
-  - `python should-vdj-to-tap.py` runs one or several tests, given as parameters on the command line,
-  - `make shouldvdj` runs all `.should-vdj.fa` tests,
-  - `make shouldvdj_and_locus` further runs tests on the locus.
-    This locus test is also launched for all reverse complement sequences.
+- `python should-vdj-to-tap.py` runs one or several tests, given as parameters on the command line,
+- `make shouldvdj` runs all `.should-vdj.fa` tests,
+- `make shouldvdj_and_locus` further runs tests on the locus.
+  This locus test is also launched for all reverse complement sequences.
 
 ## References
 
 The paper \[1\] includes an evaluation of the V(D)J designation of 125 clones.
 
-1.  Yann Ferret, A. Caillault et al.,
-    *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
-    British Journal of Haematology, 2016, 173, 413–420,
-    <https://hal.archives-ouvertes.fr/hal-01279160>
+1. Yann Ferret, A. Caillault et al.,
+  *Multi-loci diagnosis of acute lymphoblastic leukaemia with high-throughput sequencing and bioinformatics analysis*,
+  British Journal of Haematology, 2016, 173, 413–420,
+  <https://hal.archives-ouvertes.fr/hal-01279160>
 
-2.  Mikaël Salson et al., A dataset of sequences with manually curated V(D)J designations
-    RepSeq 2015,
-    <https://hal.inria.fr/hal-01331556>
+2. Mikaël Salson et al., A dataset of sequences with manually curated V(D)J designations
+  RepSeq 2015,
+  <https://hal.inria.fr/hal-01331556>

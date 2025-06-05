@@ -82,4 +82,52 @@ describe('Colors', function () {
     
   })
 
+  it('5281 - fuse commandline in info panel',  function() {
+    cy.openAnalysis("demo/Demo-X5-no-clone.vidjil")
+
+    // After that, do some action ...
+    cy.get('.button > .icon-info').click()
+
+    cy.get('#modal_line_title_info_timepoint_fuse_parameters')
+      .should("exist")
+      .should("contain", "fuse parameters")
+
+      cy.get('#modal_line_value_info_timepoint_fuse_parameters')
+      .should("exist")
+      .should("contain", "fuse.py -o Demo-X5-no-clone.vidjil -t 100 Demo-X5-XXX.vidjil")
+    return
+  })
+
+
+  it('5476-info title with size on locus span',  function() {
+
+    // Open a simple sample, with 2 locus only, but present in multiple time
+    cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
+
+    cy.get('#toogleLocusSystemBox_TRD')
+      .trigger('mouseenter')  // simulate hover
+      .invoke('attr', 'title')
+      .should('contain', "Locus TRD; 100.00% of system, 20.00% of total segmented reads")
+
+    cy.get('#toogleLocusSystemBox_IGH')
+      .trigger('mouseenter')  // simulate hover
+      .invoke('attr', 'title')
+      .should('contain', "Locus IGH; 100.00% of system, 80.00% of total segmented reads")
+
+    cy.get('#toogleLocusSystemBox_IGH')
+      .click()
+
+    cy.get('#toogleLocusSystemBox_TRD')
+      .trigger('mouseenter')  // simulate hover
+      .invoke('attr', 'title')
+      .should('contain', "Locus TRD; 100.00% of system, 20.00% of total segmented reads")
+
+    cy.get('#toogleLocusSystemBox_IGH')
+      .trigger('mouseenter')  // simulate hover
+      .invoke('attr', 'title')
+      .should('contain', "Locus IGH; 100.00% of system, 80.00% of total segmented reads")
+
+  })
+
+
 })

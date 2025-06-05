@@ -16,7 +16,7 @@ QUnit.test("loadCluster", function(assert) {
     m.initClones()
     m.parseJsonAnalysis(analysis_data_clusters)
 
-    // Controle fake clusters
+    // Control fake clusters
     assert.deepEqual(m.analysis_clusters.length,  2, "Correct number of non found clusters" )
     assert.deepEqual(m.analysis_clusters[0],  ["id_fake_1", "id_fake_2"], "Correct values for first non found cluster" )
     assert.deepEqual(m.analysis_clusters[1],  ["id_fake_1b", "id_fake_2b"], "Correct values for second non found cluster (don't get real clone Id)" )
@@ -73,26 +73,26 @@ QUnit.test("limit loaded clonotype", function(assert) {
     assert.deepEqual(json_data_min_per_locus.clones.length,  110, "Correct number of clonotype in raw data" )
 
     CLONOTYPE_TOP_LIMIT = 100
-    // No min per locus, so limit to CLONOTYPE_TOP_LIMIT value (100) +1 smaller (only TRG locus)
+    // No min per locus, so limit to CLONOTYPE_TOP_LIMIT value (100) +1 smaller and +1 removed (only TRG locus)
     var m = new Model();
     m.parseJsonData(json_data_min_per_locus)
     m.initClones()
-    assert.deepEqual(m.clones.length,  101, "clones loaded limited to clonotype_top_limit" )
+    assert.deepEqual(m.clones.length,  104, "clones loaded limited to clonotype_top_limit" )
 
 
-    // min per locus to 10, so should load top 100 + 10 clonotype + 2 smaller (both locus)
+    // min per locus to 10, so should load top 100 + 10 clonotype + 2 smaller + 2 removed (both locus)
     json_data_min_per_locus.samples.commandline[0] += "--min-clones-per-locus 10"
     var m = new Model();
     m.parseJsonData(json_data_min_per_locus)
     m.initClones()
-    assert.deepEqual(m.clones.length,  112, "clones loaded over limit due to min per locus" )
+    assert.deepEqual(m.clones.length,  114, "clones loaded over limit due to min per locus" )
 
 
-    // min per locus to 5, so should load top 100 + only 5 (even if more is present in sample) + 2 smaller (both locus)
+    // min per locus to 5, so should load top 100 + only 5 (even if more is present in sample) + 2 smaller + 2 removed (both locus)
     json_data_min_per_locus.samples.commandline[0] = json_data_min_per_locus.samples.commandline[0].replace("--min-clones-per-locus 10", "--min-clones-per-locus 5")
     var m = new Model();
     m.parseJsonData(json_data_min_per_locus)
     m.initClones()
-    assert.deepEqual(m.clones.length,  107, "clones loaded over limit due to min per locus, with min per locus value" )
+    assert.deepEqual(m.clones.length,  109, "clones loaded over limit due to min per locus, with min per locus value" )
 
 });

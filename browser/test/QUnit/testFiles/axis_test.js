@@ -75,3 +75,33 @@ QUnit.test("Test axis getter name/description", function(assert) {
 
 });
 
+
+QUnit.test("axis evalues", function(assert) {
+
+    var m = new Model(m);
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    //TODO
+    var c1 = m.clones[0]
+    c1.seg.evalue       = {"val": "8.30e-81"}
+    c1.seg.evalue_left  = {"val": "1.15e-297"}
+    c1.seg.evalue_right = "8.30e-81" // old format of evalue
+    var c2 = m.clones[1]
+    c2.seg.evalue       = undefined
+    c2.seg.evalue_left  = undefined
+    c2.seg.evalue_right = undefined
+
+    assert.equal(AXIS_DEFAULT["EValue"].fct(c1), 8.30e-81, `axis 'EValue', correct for clone 0 (get ${AXIS_DEFAULT["EValue"].fct(c1)})` )
+    assert.equal(AXIS_DEFAULT["EValue"].fct(c2), undefined, `axis 'EValue', correct for clone 1 (get ${AXIS_DEFAULT["EValue"].fct(c2)})` )
+
+    assert.equal(AXIS_DEFAULT["EValue Left"].fct(c1), 1.15e-297, `axis 'EValue Left', correct for clone 0 (get ${AXIS_DEFAULT["EValue Left"].fct(c1)})` )
+    assert.equal(AXIS_DEFAULT["EValue Left"].fct(c2), undefined, `axis 'EValue Left', correct for clone 1 (get ${AXIS_DEFAULT["EValue Left"].fct(c2)})` )
+
+    assert.equal(AXIS_DEFAULT["EValue Right"].fct(c1), 8.30e-81, `axis 'EValue Right', correct for clone 0 (get ${AXIS_DEFAULT["EValue Right"].fct(c1)})` )
+    assert.equal(AXIS_DEFAULT["EValue Right"].fct(c2), undefined, `axis 'EValue Right', correct for clone 1 (get ${AXIS_DEFAULT["EValue Right"].fct(c2)})` )
+
+});
+
+

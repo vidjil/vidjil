@@ -3,7 +3,7 @@ build_doc:
   image: python:3.12
   stage: build_doc
   before_script:
-    - pip3 install mkdocs mkdocs-gitlab-plugin requests mkdocs-material
+    - pip install -r doc/requirements.txt
   script:
     - make -C doc html
     - cd tools; python validate-links.py

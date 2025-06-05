@@ -32,7 +32,6 @@ stages:
   - test_germlines
   - test_functional
   - test_cypress_client
-  - test_cypress_external
   - test_cypress_server
   - test_server_api
   - test_tutorial
@@ -47,6 +46,7 @@ stages:
   - benchmark
   - publish_release
   - deploy_prod
+  - test_cypress_external
 
 
 # Tools
@@ -107,9 +107,9 @@ include:
 .need_for_moderate_client:
   needs: [test_tools, test_browser_unit, code_quality_custom]
 .need_for_staged_client:
-  needs: [client1-ff-supported, external1-ff-supported]
+  needs: [client1-ff-supported]
 .need_for_late_client:
-  needs: [client1-ff-supported, external1-ff-supported, tuto-c1-ff-supported]
+  needs: [client1-ff-supported, tuto-c1-ff-supported]
 
 ### Server part should not contain client stage
 .need_for_moderate_server:
@@ -202,14 +202,7 @@ test_browser_unit:
   image: registry.gitlab.inria.fr/vidjil/vidjil/cypress_with_browsers:$CYPRESS_DOCKER_VERSION
   stage: test_unit
   script:
-    - npm -v
-    - npm install --save-dev qunit
-    - npm link nightmare --unsafe-perm=true ;
-    - apt-get update && apt-get -y install xvfb grep
-    - make demo data germline
-    - make -C browser sha1
-    - cp -p doc/analysis-example.vidjil browser/
-    - make unit_browser
+    - bash browser/test/unit_browser_test.sh
   artifacts:
     paths:
     - browser/
@@ -246,6 +239,43 @@ code_quality_custom:
     - cidocker
   extends:
     - .need_for_quick_test
+
+.base_ruff:
+  stage: test_quality
+  interruptible: true
+  image: ghcr.io/astral-sh/ruff:0.9.9-alpine
+  before_script:
+    - cd $CI_PROJECT_DIR
+    - ruff --version
+  tags:
+    - cidocker
+  extends:
+    - .need_for_quick_test
+
+Ruff Check:
+  extends: .base_ruff
+  script:
+    - ruff check --output-format=gitlab > code-quality-report.json
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-client/
+    - dev
+    - schedules
+  artifacts:
+    reports:
+      codequality: $CI_PROJECT_DIR/code-quality-report.json
+
+Ruff Format:
+  extends: .base_ruff
+  script:
+    - ruff format --diff
+  only:
+    - /^feature-.*s.*\/.*$/
+    - /^hotfix-.*s.*\/.*$/
+    - /^prod-client/
+    - dev
+    - schedules
 
 # Server
 

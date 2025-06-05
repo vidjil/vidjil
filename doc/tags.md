@@ -1,5 +1,5 @@
 
-* Tags
+# Default tags
 
 These tags are the default tags, mainly targeted
 for onco-hematological studies and clinical practise.
@@ -7,19 +7,19 @@ for onco-hematological studies and clinical practise.
 Any user can define and use his own tags.
 Feel free to contact us for any suggestion on this list.
 
-
-#ALL #T-ALL  #B-ALL
+```text
+#ALL #T-ALL #B-ALL
 #pre-B-ALL #pro-B-ALL #mature-B-ALL
 
-#CML #HCL #MZL #T-PLL 
-#CLL #LGL 
+#CML #HCL #MZL #T-PLL
+#CLL #LGL
 
 #lymphoma
-#MCL #NHL #HL #FL #DLBCL 
+#MCL #NHL #HL #FL #DLBCL
 #WM #MAG
-#MM     
+#MM
 
-#diagnosis #MRD #relapse #CR  #deceased
+#diagnosis #MRD #relapse #CR #deceased
 #pre-BMT #post-BMT #pre-SCT #post-SCT
 
 #dilution #standard
@@ -33,9 +33,8 @@ Feel free to contact us for any suggestion on this list.
 #TRA #TRB #TRG #TRD
 #IGH #IGK #KDE #IGL
 
-
-#IKAROS   
-#BCR-ABL    #TEL-AML1  #E2A-PBX
+#IKAROS
+#BCR-ABL #TEL-AML1 #E2A-PBX
 #BCL2
 #PAX5
-
+```

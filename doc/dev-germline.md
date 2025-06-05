@@ -15,7 +15,7 @@ They come from various sources:
 It is advised to regularly retrieve the new sequences.
 However doing so may break some tests and requires some time and to fix things by hand.
 
-### On a `feature-g/` branch
+## On a `feature-g/` branch
 
 We first prepare germlines on a `feature-g` branch.
 First you need to retrieve the new germlines.
@@ -31,7 +31,7 @@ It is also advised to work on tests on the algorithm (see below), but, at this s
 When a pipeline from a `feature-g` succeeds, a `.tar.gz` is uploaded to <www.vidjil.org/germlines>
 with an id such as `2021-01-21`.
 
-### On a `feature-a/` branch
+## On a `feature-a/` branch
 
 - Put the new germline id in `germline/germline_id` (and also in `germline/homo_sapiens.g`)
 - Then `make germline` will retrieve from <www.vidjil.org/germlines> the new germlines
@@ -39,7 +39,7 @@ with an id such as `2021-01-21`.
 - From the root directory, run a `make test` and possibly update the tests
   (and possibly `make diff-from-saved`)
 
-### 10-md5-germlines.should
+## 10-md5-germlines.should
 
 You also have to generate the md5 of the germline data. For that purpose:
 

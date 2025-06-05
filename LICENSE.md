@@ -8,7 +8,7 @@ This software is for research use only and comes with no warranty.
 The development code is available on <https://gitlab.inria.fr/vidjil/vidjil>.
 Bug reports, issues and patches are welcome.
 
-# Licenses for third-party software and databases
+## Licenses for third-party software and databases
 
 Vidjil provide ready-to-use docker containers for a full client/server web application.
 See instructions on <https://www.vidjil.org/doc/server/#docker-installation>.
@@ -36,6 +36,7 @@ For this, you should in particular comply to IMGT conditions (free for academic 
 * @license          LGPL
 
 json                : JSON for Modern C++
+
 * @version          3.11.3
 * @author           Niels Lohmann
 * @link             <https://github.com/nlohmann/json>
@@ -147,6 +148,13 @@ x is "current version" at time of release
 * @link             <https://github.com/select2/select2>
 * @license          MIT
 
+**resumable.js**       : A JavaScript library for providing multiple simultaneous, stable, fault-tolerant and resumable/restartable uploads via the HTML5 File API.
+
+* @author           Steffen Fagerström Christensen + external contributors
+* @version          1.1.0
+* @link             <https://github.com/23/resumable.js>
+* @license          MIT
+
 ### Client base docker image
 
 **nginx**               : docker image used as base for vidjil-client docker image
@@ -198,7 +206,7 @@ x is "current version" at time of release
 
 ### Server base docker image
 
-**ubuntu 20.04**        : docker image used as base for vidjil-server docker image
+**ubuntu 24.04**        : docker image used as base for vidjil-server docker image
 
 * @license          <https://ubuntu.com/licensing>
 
@@ -287,7 +295,7 @@ x is "current version" at time of release
 **apt-utils**
 
 * @license  GPLv2+
-* @link     <https://packages.ubuntu.com/bionic/apt-utils>
+* @link     <https://packages.ubuntu.com/noble/apt-utils>
 
 **pyuwsgi**
 

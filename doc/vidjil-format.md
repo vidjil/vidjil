@@ -23,11 +23,11 @@ This format accept any kind of definition:
 Clonotypes are identified by a `id` string that may be an arbitrary identifier such as `clone-072a`.
 Software computing clonotypes may choose some relevant identifiers:
 
-  - `CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC`, Vidjil algorithm, 50 nt window centered on the CDR3
-  - `CARPRDWNTYYYYGMDVW`, a CDR3 AA sequence
-  - `CARPRDWNTYYYYGMDVW IGHV3-11*00 IGHJ6*00`, a CDR3 AA sequence with additional V/J gene information (MiXCR)
-  - the 'clone sequence' as computed by the ARReST in `.clntab` files (processed by `fuse.py`)
-  - see also 'IMGT clonotype (AA) or (nt)'
+- `CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC`, Vidjil algorithm, 50 nt window centered on the CDR3
+- `CARPRDWNTYYYYGMDVW`, a CDR3 AA sequence
+- `CARPRDWNTYYYYGMDVW IGHV3-11*00 IGHJ6*00`, a CDR3 AA sequence with additional V/J gene information (MiXCR)
+- the 'clone sequence' as computed by the ARReST in `.clntab` files (processed by `fuse.py`)
+- see also 'IMGT clonotype (AA) or (nt)'
 
 ## Examples
 
@@ -52,7 +52,10 @@ or `clusters`, to further cluster some clones, see below).
 
     "samples": {
          "number": 1, 
-         "original_names": ["T8045-BC081-Diag.fastq"]
+         "original_names": ["T8045-BC081-Diag.fastq"],
+         "commandline": [
+            "vidjil-algo -g germline/homo-sapiens.g -Z 100 -r 1 -3 Diag.fastq"
+         ]
     },
 
     "reads" : {
@@ -109,7 +112,12 @@ do a correct gathering.
          "timestamp": [
            "2019-12-17 17:49:22",
            "2019-12-27 17:50:04"
-         ]
+         ],
+         "commandline": [
+            "vidjil-algo -g germline/homo-sapiens.g -Z 100 -r 1 -3 Diag.fastq",
+            "vidjil-algo -g germline/homo-sapiens.g -Z 100 -r 1 -3 FollowUp1.fastq"
+         ], 
+         "commandline_fuse": "fuse.py -o fused.vidjil -t 100 T8045-BC081-Diag.vidjil T8045-BC082-fu1.vidjil"
     },
 
     "reads" : {
@@ -205,6 +213,9 @@ do a correct gathering.
     ]
 }
 ```
+
+Note that we add a field in samples part to keep trace of commandline used for fuse call.
+This allows to get important info on pre-fuse/post-fuse called.
 
 #### `.vidjil` file - pre process data
 
@@ -345,8 +356,8 @@ some clones, and added external data (`data`).
 
 The `stock_order` and `order` fields define the order in which the points should be considered.
 
-* `stock_order` contains the order for all the existing samples and thus remembers positions of each samples, hidden or not.
-* `order` only remembers the currently shown samples.
+- `stock_order` contains the order for all the existing samples and thus remembers positions of each samples, hidden or not.
+- `order` only remembers the currently shown samples.
 
 In the example above we should first consider the second point (whose `name`
 is *fu1)* and the point to be considered in second should be the first one in
@@ -426,8 +437,8 @@ In the `.analysis` file, this section is intended to describe some specific clon
    "name": "",      // clone custom name [optional]
                     // (the default name, in .vidjil, is computed from V/D/J information)
 
-   "label": "",     // clone labels, separed by spaces [optional]
-                    // These labels may add some information entered with a controled vocabulary
+   "label": "",     // clone labels, separated by spaces [optional]
+                    // These labels may add some information entered with a controlled vocabulary
 
    "sequence": "",  // reference nt sequence [required for .vidjil]
                     // (for .analysis, not really used now in the web application,
@@ -454,10 +465,10 @@ In the `.analysis` file, this section is intended to describe some specific clon
                     // Any feature to be highlighted in the sequence.
                     // All those fields are optional (though some minor feature may not properly work in the client)
                     //  - "start"/"stop" : positions on the clone sequence (starting at 1)
-                    //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangment. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
+                    //  - "delLeft/delRight" : a numerical value . It is the numbers of nucleotides deleted during the rearrangement. DelRight are compatible with V/5 and D/4 segments, delLeft is compatible with D/4 and J/3 segments.
                     //  - "seq" : a sequence
                     //  - "val" : a numerical value
-                    //  - "info" : a textual vlaue
+                    //  - "info" : a textual value
 
         "somefeature": { "start": 56, "stop": 61, "seq": "ACTGTA", "val": 145.7, "info": "analyzed with xyz" },
 
@@ -489,7 +500,6 @@ In the `.analysis` file, this section is intended to describe some specific clon
 
 }
 ```
-
 
 ### `distributions`: providing statistics on full clonal populations
 
@@ -527,7 +537,7 @@ Distributions can be on several axes, like both V/J (here seg3/seg5).
    }
 ```
 
-Distributions from a `.vidjil` files can be computed by `tools/fuse.py`, 
+Distributions from a `.vidjil` files can be computed by `tools/fuse.py`,
 giving the desired list of distributions
 through the `-d` option. For the above example, run:
 
@@ -539,7 +549,6 @@ The command `fuse.py -l` yields the list of available axes,
 but currently only `lenSeqAverage` and `seq3,seq5` are supported.
 Adding axes can be done trough in `get_values()` in `tools/fuse.py`.
 Note that axes should also be added to `browser/js/axis_conf.js` to be displayed in the client.
-
 
 ### `germlines` list \[optional\]\[work in progress, to be documented\]
 
@@ -563,10 +572,10 @@ to obtain copy numbers from read counts, with the goal of estimating
 Minimal Residual Disease (MRD) values.  To use this feature, users
 should:
 
-  - add spike-ins in known copy numbers in their lab preps
-  - inform `vidjil-algo` the sequences and copy numbers of these spike-ins
-  - add a pre-processing step in the analysis configuration to insert
-    the normalized values (MRD estimations) into the `vidjil` file
+- add spike-ins in known copy numbers in their lab preps
+- inform `vidjil-algo` the sequences and copy numbers of these spike-ins
+- add a pre-processing step in the analysis configuration to insert
+  the normalized values (MRD estimations) into the `vidjil` file
 
 The web application can then take the info from the `vidjil` file and
 display it.
@@ -602,10 +611,9 @@ file in JSON format must be created, as in the following example:
 ```
 
 and given to `vidjil-algo` by means of the flag `--label-json
-spikes.json`.  Notice that the family of each spike-in must be
-informed as well, because it has been determined that performing the
-procedure within a family yields better results
-(https://doi.org/10.1111/bjh.16571).
+spikes.json`. Notice that the family of each spike-in must be
+informed as well, because it [has been determined](https://doi.org/10.1111/bjh.16571) that performing the
+procedure within a family yields better results.
 
 For the pre-processing step, Vidjil offers a script called
 `spike-normalization.py`, so one can add a line such as the following
@@ -635,7 +643,8 @@ more reads in the sample, are normalized by this process.
 The information flow of normalization is as follows.  The
 post-analysis script `tools/spike-normalization.py` writes multiple
 data fields in the `vidjil` file.  Part of the info is set into an
-`mrd` field, and contains data for each sample.  
+`mrd` field, and contains data for each sample.
+
 ```javascript
 "mrd": {
   "coefficients": {
@@ -687,7 +696,7 @@ and are arrays containing one value per time point.
 
 Here, field `R2` indicates the Pearson R2 coefficient for the linear
 regression used in this clone; `copy_number` is the estimated copy
-number of this clone, obtained by mutiplying this clone's coefficient
+number of this clone, obtained by multiplying this clone's coefficient
 by its read count; `family` is the clone family; and
 `normalized_reads` is the estimated value of MRD for this clone.
 

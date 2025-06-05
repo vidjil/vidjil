@@ -36,6 +36,7 @@ json_data_raw = {
       "  ==> segmented 448435 reads (48.2%)\n  ==> found 43444 40-windows in 418595 segments (45%) inside 929901 sequences\n "
     ],
     "producer": ["ha","hi","ho","hu"],
+    "commandline_fuse": "fuse.py -o fused.vidjil -t 100 file1.vidjil file2.vidjil",
     "run_timestamp": ["2015-10-20 13:59:02", "2015-10-25 14:00:32", "2015-11-20 14:03:13", "2015-12-20 14:04:48"],
     "pre_process": {
       "stats": {
@@ -203,6 +204,7 @@ json_data_raw = {
         "2020-05-22 10:50:53"
       ]
     }, 
+    "associated_sets_names": [["other_1", "other_2"], [], ["other_1"], []],
   },
   "data": {
     "dataTest1" : [45,60,52,60],

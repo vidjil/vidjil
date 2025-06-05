@@ -429,8 +429,6 @@ ul {
 }
 #upload_summary {
   display: none;
-  z-index: 10;
-  background-color: #ffffff;
 }
 .upload_field {
   width: 100%;
@@ -1315,7 +1313,7 @@ span.logo {
   margin-left: -6px;
   border-top: none;
   margin-top: calc(32px - 24px);
-  z-index: 5;
+  z-index: 11;
   overflow: hidden;
   border-width: 1px;
   background-color: #ffffff;
@@ -1860,9 +1858,8 @@ h3 .uid {
   margin-left: 20px;
 }
 .summary_filename {
-  width: 200px;
+  width: 150px;
   display: inline-block;
-  height: 1em;
   overflow: hidden;
   overflow-wrap: break-word;
   margin-right: 5px;

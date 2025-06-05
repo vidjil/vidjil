@@ -1,7 +1,7 @@
-
-This is the preliminary help for bioinformaticians administrators of the Vidjil web application. This help covers administrative features that are mostly accessible from the web application, and is complementary to the [Docker/Server documentation](server.md). Users should consult the [Web Platform User Manual](user.md).
-
-For administrators, new tabs are available, allowing them various actions.
+!!! note
+  This is the preliminary help for bioinformaticians administrators of the Vidjil web application. This help covers administrative features that are mostly accessible from the web application, and is complementary to the [Docker/Server documentation](server.md). Users should consult the [Web Platform User Manual](user.md).
+  
+  For administrators, new tabs are available, allowing them various actions.
 
 ## Pre-processes, processes and post-processes
 
@@ -29,10 +29,9 @@ Here is an example with a fictive paired-end merger: "mymerger".
   by the server. This step will depend of you installation of the server. If you use
   a plain installation, you only need the add the executable to the path use by
   www-data user (if it is the one choose to serve the server). If you choose to use
-  the docker installation, you need to uncomment the binaries volume into the
-  docker-compose.yml file (service fuse); and copy the executable into the
-  corresponding local directory (by default vidjil/docker/binaries/). After this, you should
-  inquire the path into the **defs.py** file (relative path start from server/py4web/apps/vidjil).
+  the docker installation, you need to mount a folder to the binaries folder (check
+  `DIR_BINARIES` value in .env files, by default /binaries/) and copy the executable
+  into the corresponding local directory .
 - After that, you will need to adapt the function "run<sub>preprocess</sub>" of task.py.
   The goal here is to add some shortcut that will be use by the server to adapt the
   calling of preprocess to replace the file names or path of the executable. For
@@ -81,8 +80,7 @@ See [`contrib` repository](https://gitlab.inria.fr/vidjil/contrib) for examples.
 - Your script needs to take as an input a `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
   such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples.vidjil`
 
-- The script should be available in the path referenced as `PRE_PROCESS_DIR` in `tools/defs.py`.
-  The default path is relative to the `defs.py` file, so `.`  will be interpreted as `tools/` directory.
+- The script should be available in the path referenced as `DIR_PREPROCESS` in .env files (`/usr/share/vidjil/tools/scripts/preprocess/` by default).
 
 - The script should be referenced in the `Fuse command` field of one "config" in the `processes config` page,
   as for example in `-t 100 --pre spike-normalization.py`.
@@ -181,6 +179,7 @@ In the `Database maintenance` links, admins can use:
 
 - `administration` link to access to a specific dashboard application, which allows to check for some errors in the backend (see [py4web documentation](https://py4web.com/_documentation/static/en/chapter-04.html))
 - `clean workers status` link to purge some jobs that may have freezed in a wrong state. This should not affect currently running tasks. This should not be needed, but we had some instabilities with job statuses.
+- `send test email` link to send a test email to the administrator. This is useful to check if the email server is correctly configured. The email will be sent to the address specified in the `.env` file (see [server documentation for configuration](server.md#further-configuration)).
 
 ### Logs files
 
@@ -208,89 +207,6 @@ As an administrator, to be able to check some users issues, you can impersonate 
 
 !!! warning
   This feature must be used with care...
-
-## Server Monitoring
-
-![New with release 2024.12](https://img.shields.io/badge/Release-2024.12-blue)
-
-Some monitoring features are accessible through the web application with the addition of a new dedicated controller, allowing the retrieval of metrics from a Vidjil server instance. A full list of available metrics will be described below.
-
-The goal of these metrics is to be regularly called by an [API instance](https://gitlab.inria.fr/vidjil/metrics/metrics-instance) to be integrated into an external monitoring service. The tools used in our pipeline combine the [Vidjil API](api.md) for metrics requests, [Prometheus](https://prometheus.io/) for metrics storage, and [Grafana](https://grafana.com/) for visualization.
-
-``` mermaid
-graph TB
-    subgraph Metrics servers
-    D[Grafana<br>viewer] -- ask<br>metrics  --> C;
-    C -- serve<br>metrics  --> D;
-    C -- recurrent<br>requests  --> B;
-    B -- formatted<br>metrics --> C[Prometheus<br>DB];
-    end
-
-    V1 ~~~ V2;
-    V1 ~~~ VX;
-    V2 ~~~ VX;
-
-    V1(**Vidjil<br>server 1**) -- raw<br>metrics --> B[API<br>server];
-    V2(**Vidjil<br>server 2**) -- raw<br>metrics --> B[API<br>server];
-    VX(**Vidjil<br>server X**) -- raw<br>metrics --> B[API<br>server];
-    B -- request<br>metrics --> V1;
-    B -- request<br>metrics --> V2;
-    B -- request<br>metrics --> VX;
-```
-
-A dedicated configuration of these tools can be found at this [page](https://gitlab.inria.fr/vidjil/metrics/metrics-server) and could be set up with a simple docker configuration.
-
-### Set up monitoring
-
-A set of three steps/conditions should be filled:
-
-#### Add a dedicated user and group
-
-This new group will only see metrics information.
-
-If you start from a fresh installation initialized from scratch, a dedicated group named *metrics* will be automatically created.  
-If not, you will have to create it yourself (see [Creating groups](#creating-groups)), name it *metrics*, and remove all rights in it.
-
-An automatic creation of this user can be set at database initialization. To do this, various metrics variables should be set in `docker/.env.default` at the initialization of the database (`METRICS_USER_PASSWORD`, `METRICS_USER_EMAIL`).  
-If you have already initialized the database or done a server upgrade, you can also create a dedicated user and add it to this group.
-
-#### Start a metrics server instance
-
-A metrics server instance should be installed, that will launch the combination of Vidjil API/Prometheus/Grafana to monitor server. More documentation on this last point will be found on [dedicated repository](https://gitlab.inria.fr/vidjil/metrics/metrics-server) and updated regularly with usage adoption.
-
-#### Update some data in database
-
-A call to `set_creator_samples_set` should be done at migration to be able to access previous data more efficiently.
-
-### Available metrics
-
-A complete list of available metrics is listed here, and can be found in `metrics.py` file.
-
-Note that some metrics are more computational intensive than others. We chose to split metrics in 2 lists: `fast`, `long`. Note that metrics server will call `long` metrics less often than `fast` ones.
-
-| Metrics                           | List | Descriptions                                                                                        |
-|:----------------------------------|:-----|:----------------------------------------------------------------------------------------------------|
-| group_count                       | fast | Get number of groups                                                                                |
-| set_patients_count                | fast | Get number of patients for all users                                                                |
-| set_runs_count                    | fast | Get number of runs for all users                                                                    |
-| set_generics_count                | fast | Get number of generic sets for all users                                                            |
-| set_patients_by_user              | fast | Get number of patients split by user id                                                          |
-| set_runs_by_user                  | fast | Get number of runs split by user id                                                              |
-| set_generics_by_user              | fast | Get number of generic split by user id                                                           |
-| sequence_count                    | fast | Get number of sequences files                                                                       |
-| results_count                     | fast | Get number of results present on server                                                             |
-| sequence_by_user                  | fast | Get number of sequences files by user                                                               |
-| sequence_size_by_user             | fast | Get sump of sequence files by users                                                                 |
-| config_analysis                   | fast | Get list of analysis split by configurations                                                     |
-| config_analysis_by_users_patients | fast | Get list of analysis, split by configurations, only for patients                                 |
-| config_analysis_by_users_runs     | fast | Get list of analysis, split by configurations, only for runs                                     |
-| config_analysis_by_users_generic  | fast | Get list of analysis, split by configurations, only for generics sets                             |
-| login_count                       | fast | Get number of login count, group by user id                                                         |
-| status_analysis                   | fast | Get number of analysis grouped by status (allow to see pending, finish, running or failed analysis) |
-| set_patients_by_group             | long | Get number of patients split by groups                                                            |
-| set_runs_by_group                 | long | Get number of runs split by groups                                                                |
-| set_generics_by_group             | long | Get number of generic split by groups                                                             |
-| config_analysis_by_groups         | long | Get number of analysis split by configs and by groups                                             |
 
 ## Plugins
 

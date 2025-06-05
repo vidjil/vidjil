@@ -12,7 +12,7 @@ and used by the *color by* menu.
 * **size (other sample)**: Ratio of the number of reads of the clone to the total number of reads in the selected locus, on a second sample
 (applicable when there are several samples)
 
-* **locus**: Locus or recombination system, as detailed [here](libraries-recombinations.md)
+* **locus**: [Locus or recombination system](libraries-recombinations.md)
 
 * **V/5' gene, D gene, J/3' gene**: V, D, and J genes (or 5' and 3' segments for [incomplete or special recombinations](libraries-recombinations.md), regardless of the allele
 * **V/5' allele, D allele, J/3' allele**: Same as above, but taking into account each allele

@@ -28,7 +28,15 @@ function TagManager(model) {
         "custom_2":             {"color" : "#379149", "display" : true, name: "custom 2"},
         "custom_3":             {"color" : "#508100", "display" : true, name: "custom 3"},
         "none":                 {"color" : "",        "display" : true},
-        "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true, name: "smaller clonotype"}
+        "smaller_clonotypes":   {"color" : "#bdbdbd", "display" : true, name: "smaller clonotype"},
+        "removed_clonotypes":   {
+            "color" : "#000000", 
+            "display" : true, 
+            name: "removed clonotype", 
+            // additional properties, to put somwhere else?
+            "textDecoration" : "line-through",
+            "opacity" : 0.3
+        }
     }
 
     this.default_tag="none";
@@ -60,6 +68,22 @@ TagManager.prototype = {
     getColor: function(key){
         return this.tag[key].color
     },
+
+    // return tag current textDecoration value
+    getTextDecoration: function(key){
+        if (this.tag[key] && this.tag[key].textDecoration) 
+            return this.tag[key].textDecoration;
+        else
+            return "none";
+    },    
+
+    // return tag current opacity value
+    getOpacity: function(key){
+        if (this.tag[key] && this.tag[key].opacity) 
+            return this.tag[key].opacity;
+        else
+            return 1;
+    },   
 
     // return tag current display value
     isVisible: function(key){
@@ -152,13 +176,21 @@ TagManager.prototype = {
         }
 
         for (var k in this.tag) {
+            if (k === "removed_clonotypes" && this.m.clone(clonesIDs[0]).hasSizeOther()) {
+                continue;
+            }
+            if (k === "removed_clonotypes") {
+                var div_removedtag = $('<div/>').html("<hr>").appendTo($(this.tagSelectorList));
+                $('<span/>', {
+                    text: "Set to none to restore clonotype"
+                }).appendTo(div_removedtag);
+            }
             buildTagSelector(k);
         }
         
-
         // add to report button
         var div2 = $('<div/>', {}).html("<hr>").appendTo($(this.tagSelectorList))
-        var report_button = $('<div/>', { text: 'add clone(s) to next report'
+        var report_button = $('<div/>', { text: 'add clone(s) to next report ', title: '(r to add / shift+r to remove all)'
                                         }).appendTo(div2)
                                             .click(function (){
                                                 report.addClones(clonesIDs);

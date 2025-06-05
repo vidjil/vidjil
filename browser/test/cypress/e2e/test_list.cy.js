@@ -1,4 +1,4 @@
-/// <reference types="cypress" />
+9/// <reference types="cypress" />
 
 var localhost = true
 console.log( Cypress.env('workdir') )
@@ -15,9 +15,9 @@ describe('List', function () {
 
   it('00-Open a simple vidjil file',  function() {
     cy.openAnalysis("doc/analysis-example2.vidjil")
-    cy.get('#list_clones').children().should('have.length', 8)
+    cy.get('#list_clones').children().should('have.length', 11) // removed TRG clonotype is hidden
     cy.get('#listElem_5 > .nameBox').should('have.text', "clone_cluster1")
-    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.408%")
+    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.304%")
 
     return
   })
@@ -29,7 +29,7 @@ describe('List', function () {
 
     cy.get('#listElem_5 > .nameBox').should('have.text', "clone_cluster1")
     // second sample open with analysis, so size is smaller
-    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.014%")
+    cy.get('#listElem_5 > .axisBox > .sizeBox').should('have.text', "0.013%")
     cy.get('#listElem_6 > .nameBox').should('not.visible');
     return
   })
@@ -57,6 +57,8 @@ describe('List', function () {
       cy.get('#list_clones').children().eq(0)
         .should("contain", "Main ALL clone")
       cy.get('#list_clones').children().eq(1)
+        .should("contain", "IGH smaller clonotype")
+      cy.get('#list_clones').children().eq(2)
         .should("contain", "TRG smaller clonotype")
 
       // change order by 'size'
@@ -133,7 +135,7 @@ describe('List', function () {
 
     // default axis; size
     cy.get('#listElem_4 > .axisBox')
-      .should('have.attr', 'title', '16 nt, 1021 reads (0.408%) reads')
+      .should('have.attr', 'title', '16 nt, 1021 reads (0.304%, 0.408% of TRG) reads')
 
     cy.changeListAxix("Top")
     cy.get('#listElem_4 > .axisBox')
@@ -147,16 +149,17 @@ describe('List', function () {
     //// Issue 4375; hide distrib clone by tag
     cy.openAnalysis("tools/tests/data/fused_multiple.vidjil")
     // # id     0 --> biggest clone, IGHV1, IGHJ1, _average_read_length==162
-    //  # id 15/16 --> other clone (TRD, IGH)
-    //  # id    18 --> lenSeqAverage/_average_read_length == 162
-    //  # id    27 --> lenCDR3 (undefined), represent all clones
-    //  # id    29 --> seg5; seg3 (IGHV1; IGHJ1)
+    //  # id 15/17 --> other clone (TRD, IGH)
+    //  # id 16/18 --> removed clone (TRD, IGH)
+    //  # id    20 --> lenSeqAverage/_average_read_length == 162
+    //  # id    29 --> lenCDR3 (undefined), represent all clones
+    //  # id    31 --> seg5; seg3 (IGHV1; IGHJ1)
 
     // first, distrib clones are visible, in opened preset 0 or 4
     cy.getCloneInList(0)// >> real clone exist in list
-    cy.getCloneInList('29')
+    cy.getCloneInList('31')
       .should('have.css', 'display', 'block') // seg5/seg3 distrib clone exist in list
-    cy.getCloneInList('18')
+    cy.getCloneInList('20')
       .should('not.be.visible') // lenSeqAverage distrib clone DON'T show in list
 
 
@@ -166,13 +169,13 @@ describe('List', function () {
 
 
     cy.getCloneInList('0') // real clone still presnet in list
-    cy.getCloneInList('29')
+    cy.getCloneInList('31')
       .should('not.be.visible') // seg5/seg3 distrib clone are NO MORE present in list
 
     // change in another preset with distributions clones
     cy.changePreset("visu", "read length distribution")
 
-    cy.getCloneInList('18')
+    cy.getCloneInList('20')
       .should('not.be.visible') //lenSeqAverage distrib clone is NOT present in list"
 
     // Remove filter
@@ -182,7 +185,7 @@ describe('List', function () {
       .click()
     cy.update_icon()
 
-    cy.getCloneInList('29')
+    cy.getCloneInList('31')
       .should('be.visible') // seg5/seg3 distrib clone is present in list
       .should('have.css', 'display', 'block')
   })
@@ -200,28 +203,28 @@ describe('List', function () {
     // change in another preset with distributions clones
     cy.changePreset("visu", "read length distribution")
     cy.update_icon(1000)
-    cy.getCloneInList(18).should('have.text', "162 (2 clonotypes)")
+    cy.getCloneInList(20).should('have.text', "162 (2 clonotypes)")
 
     // change sample
     cy.get('#time1').click()
-    cy.getCloneInList(18).should('have.text', "162 (0 clonotype)")
+    cy.getCloneInList(20).should('have.text', "162 (0 clonotype)")
 
 
     cy.get('#time2').click()
-    cy.getCloneInList(18).should('have.text', "162 (7 clonotypes)")
+    cy.getCloneInList(20).should('have.text', "162 (7 clonotypes)")
 
     cy.get('#time0').click()
     cy.get("#top_slider")
       .invoke('val', 15)
       .trigger('change',{ force: true })
     cy.get('body').click()
-    cy.getCloneInList(18).should('have.text', "162 (0 clonotype)") //name of distrib clonotype for time 0, top max
+    cy.getCloneInList(20).should('have.text', "162 (0 clonotype)") //name of distrib clonotype for time 0, top max
 
     cy.selectClone(1)
     cy.get('#hide_selected').click()
     cy.update_icon()
 
-    cy.getCloneInList(18).should('have.text', "162 (0 clonotype)") //name of distrib clonotype for time 0, top max, clone 1 hidden
+    cy.getCloneInList(20).should('have.text', "162 (0 clonotype)") //name of distrib clonotype for time 0, top max, clone 1 hidden
   })
 
 
@@ -237,13 +240,13 @@ describe('List', function () {
     cy.getCloneSize(0).should("have.text", "20.00%")  //before focus; clone 0;correct starting size
     cy.getCloneSize(1).should("have.text", "12.00%")  //before focus; clone 1;correct starting size
     cy.getCloneSize(2).should("have.text", "10.00%")  //before focus; clone 2;correct starting size
-    cy.getCloneSize(17).should("have.text", "8.000%")  //before focus; clone 17;correct starting size
-    cy.getCloneSize(18).should("have.text", "8.000%")  //before focus; clone 18;correct starting size
-    cy.getCloneSize(19).should("have.text", "6.000%")  //before focus; clone 19;correct starting size
+    cy.getCloneSize(19).should("have.text", "8.000%")  //before focus; clone 17;correct starting size
+    cy.getCloneSize(20).should("have.text", "8.000%")  //before focus; clone 18;correct starting size
+    cy.getCloneSize(21).should("have.text", "6.000%")  //before focus; clone 19;correct starting size
     cy.getCloneInList(3).should("be.visible")
 
     // Focus on the selection of clonotype
-    cy.selectCloneMulti([0, 1, 2, 17, 18, 19])
+    cy.selectCloneMulti([0, 1, 2, 19, 20, 21])
     cy.get('#focus_selected').click()
     cy.update_icon()
 
@@ -251,9 +254,9 @@ describe('List', function () {
     cy.getCloneSize(0).should("have.text", "20.00%")  //After focus; clone 0;correct size
     cy.getCloneSize(1).should("have.text", "12.00%")  //After focus; clone 1;correct size
     cy.getCloneSize(2).should("have.text", "10.00%")  //After focus; clone 2;correct size
-    cy.getCloneSize(17).should("have.text", "8.000%") //After focus; clone 17;correct size
-    cy.getCloneSize(18).should("have.text", "8.000%") //After focus; clone 18;correct size
-    cy.getCloneSize(19).should("have.text", "6.000%") //After focus; clone 19;correct size
+    cy.getCloneSize(19).should("have.text", "8.000%") //After focus; clone 17;correct size
+    cy.getCloneSize(20).should("have.text", "8.000%") //After focus; clone 18;correct size
+    cy.getCloneSize(21).should("have.text", "6.000%") //After focus; clone 19;correct size
     cy.getCloneInList(3).should("not.be.visible")
 
     cy.get('#focus_selected').click()
@@ -275,25 +278,25 @@ describe('List', function () {
     cy.update_icon()
 
     cy.getCloneSize(1).should("have.text", "12.00%")  // Init size of a real clone before merge
-    cy.getCloneSize(18).should("have.text", "8.000%") // Init size of a distrib clone (len 162) before merge
-    cy.getCloneSize(19).should("have.text", "6.000%") // Init size of a distrib clone (len 164) clone before merge
-    cy.selectCloneMulti([1, 2, 18])
+    cy.getCloneSize(20).should("have.text", "8.000%") // Init size of a distrib clone (len 162) before merge
+    cy.getCloneSize(21).should("have.text", "6.000%") // Init size of a distrib clone (len 164) clone before merge
+    cy.selectCloneMulti([1, 2, 20])
     cy.get('#cluster').click()
     cy.update_icon()
 
     cy.getCloneInList(1).should("be.visible")     // Real clone A should be present in list 
     cy.getCloneInList(2).should("not.be.visible") // Real clone B should NOT be present in list 
-    cy.getCloneInList(18).scrollIntoView().should("be.visible")    // Distrib clone should be present in list 
+    cy.getCloneInList(20).scrollIntoView().should("be.visible")    // Distrib clone should be present in list 
 
     cy.getCloneSize(1).should("have.text", "22.00%")  // Size after merge of support real clone
-    cy.getCloneSize(18).should("have.text", "8.000%") // Size after merge of distrib clone (len 162)
-    cy.getCloneSize(19).should("have.text", "6.000%") // Size after merge of distrib clone (len 164)
+    cy.getCloneSize(20).should("have.text", "8.000%") // Size after merge of distrib clone (len 162)
+    cy.getCloneSize(21).should("have.text", "6.000%") // Size after merge of distrib clone (len 164)
 
     cy.selectClone(1)
     cy.get('#hide_selected').click()
     cy.update_icon()
-    cy.getCloneSize(18).should("have.text", "8.000%") // Size of distrib clone (len 162) after hiding of merged clone
-    cy.getCloneSize(19).should("have.text", "6.000%") // Size of distrib clone (len 164) after hiding of merged clone
+    cy.getCloneSize(20).should("have.text", "8.000%") // Size of distrib clone (len 162) after hiding of merged clone
+    cy.getCloneSize(21).should("have.text", "6.000%") // Size of distrib clone (len 164) after hiding of merged clone
 
     cy.get('#list_split_all')
   })
@@ -306,7 +309,7 @@ describe('List', function () {
     cy.update_icon()
 
     cy.getCloneInList(0).should("be.visible")  // real clone exist in list
-    cy.getCloneInList(18).should("not.be.visible") // distrib clone is hidden
+    cy.getCloneInList(20).should("not.be.visible") // distrib clone is hidden
   })
 
 
@@ -317,7 +320,7 @@ describe('List', function () {
       .should('have.class', "icon-lock-1 list_lock_on")
       .should('have.attr', 'title', "Release sort as '-' on sample T8045-BC081-Diag")
     cy.get('#list_clones').children()
-      .should('have.length', 8)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child should be clone 0
 
     cy.changeSortList("size")
@@ -327,7 +330,7 @@ describe('List', function () {
       .should('have.attr', 'title', "Release sort as 'size' on sample T8045-BC081-Diag")
 
     cy.get('#list_clones').children()
-      .should('have.length', 8)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child still should be clone 0
 
     cy.get('#time1').click() // change timepoint
@@ -337,7 +340,7 @@ describe('List', function () {
       .should('have.class', "icon-lock-1 list_lock_on")
       .should('have.attr', 'title', "Release sort as 'size' on sample T8045-BC081-Diag")
     cy.get('#list_clones').children()
-      .should('have.length', 8)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child should be clone 0
 
     // Remove lock
@@ -346,12 +349,12 @@ describe('List', function () {
       .should('have.attr', 'title', "Freeze list as '-' on sample T8045-BC082-fu1")
 
     cy.get('#list_clones').children()
-      .should('have.length', 8)
+      .should('have.length', 11)
       .should('have.attr', 'id', "0") // first child should still be clone 0 (as no change in order at this moment)
 
     cy.changeSortList("size")
     cy.get('#list_clones').children()
-      .should('have.length', 8)
+      .should('have.length', 11)
       .should('have.attr', 'id', "7") // change order, new first child is clone 7 (other)
     cy.get('#div_sortLock') //lock in good state after change of sort method (locked)
       .should('have.class', "icon-lock-1 list_lock_on")
@@ -360,7 +363,7 @@ describe('List', function () {
     cy.get('#time0').click() // change timepoint
 
     cy.get('#list_clones').children()
-      .should('have.length', 8)
+      .should('have.length', 11)
       .should('have.attr', 'id', "7") // No lock, should reorder
   })
 
@@ -396,15 +399,15 @@ describe('List', function () {
     cy.openAnalysis("doc/analysis-example.vidjil")
 
     // Correct text and number
-    cy.getCloneInList(100).should("have.text", "TRB smaller clonotypes").should('be.visible')
-    cy.getCloneInList(101).should("have.text", "TRD smaller clonotypes").should('be.visible')
-    cy.getCloneInList(99 ).should("have.text", "TRA smaller clonotypes").should('be.visible')
-    cy.getCloneInList(102).should("have.text", "IGH smaller clonotypes").should('be.visible')
-    cy.getCloneInList(103).should("have.text", "ERG smaller clonotypes").should('be.visible') // not present in sample 1; but present
+    cy.getCloneInList(101).should("have.text", "TRB smaller clonotypes").should('be.visible')
+    cy.getCloneInList(103).should("have.text", "TRD smaller clonotypes").should('be.visible')
+    cy.getCloneInList(99).should("have.text", "TRA smaller clonotypes").should('be.visible')
+    cy.getCloneInList(105).should("have.text", "IGH smaller clonotypes").should('be.visible')
+    cy.getCloneInList(107).should("have.text", "ERG smaller clonotypes").should('be.visible') // not present in sample 1; but present
 
     // Correct order in list
     cy.get('#list_clones')
-      .children().should('have.attr', 'id', "100") // first child should be clone 0
+      .children().should('have.attr', 'id', "101") // first child should be clone 0
     // cy.get('#list_clones')
     //   .children().should('have.attr', 'id', "101") // second child should be clone 0
   })

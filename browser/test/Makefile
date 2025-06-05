@@ -3,6 +3,10 @@ all: unit
 
 unit: nightmare
 
+docker_unit:
+	docker run --rm \
+		-v `pwd`/../..:/app \
+		"vidjilci/cypress_with_browsers:12.9" bash browser/test/unit_browser_test.sh
 
 nightmare: SHELL:=/bin/bash
 nightmare:
@@ -19,4 +23,4 @@ quality:
 ../../tools/tests/%:
 	$(MAKE) -C ../../tools/tests data/$(notdir $@)
 
-.PHONY: unit all
+.PHONY: unit all docker_unit

@@ -391,6 +391,18 @@ Report.prototype = {
     },
 
     /**
+     * Set selection of samples to the current sample and only this.
+     * @param {int} sampleId Sample id to set
+     */
+    selectSample: function(sampleId) {
+        const sampleName = this.m.getStrTime(sampleId, "original_name")
+        this.settings.samples = [sampleName]
+
+        // rerender content
+        this.initSamples()
+    },
+
+    /**
      * Change the sample status after a click on one sample tile
      * Take into account the shift press status to modify the behavior of selection
      * Menu is rerendered after modification
@@ -418,7 +430,7 @@ Report.prototype = {
                 this.showAllSamples();
             }
         }
-            
+        
         // rerender content
         this.initSamples()
     },
@@ -454,14 +466,36 @@ Report.prototype = {
             var selected = (self.settings.samples.indexOf(this.m.getStrTime(timeId, "original_name")) != -1)
             var text = "#"+this.m.getStrTime(timeId, "order") +" "+ this.m.getStrTime(timeId, "name")
 
-            if (selected) count++
-            var div = $('<div/>',   { id:  'rs-sample-select'+i, 
-                                        type: 'checkbox', 
-                                        class: (selected) ? "rs-sample rs-selected" : "rs-sample rs-unselected",
-                                        value: this.m.getStrTime(timeId, "original_name"),
-                                        text: text}).appendTo(parent).click(handle)
+            if (selected) {
+                count++
+            }
+            $('<div/>',   { id:  'rs-sample-select'+i, 
+                            type: 'checkbox', 
+                            class: (selected) ? "rs-sample rs-selected" : "rs-sample rs-unselected",
+                            value: this.m.getStrTime(timeId, "original_name"),
+                            text: text}).appendTo(parent).click(handle)
         }
         $("#rs-selected-sample-count").html("["+count+" selected]")
+
+        self.updateSampleInBlocks()
+    },
+
+    updateSampleInBlocks: function() {
+        var modified = false;
+        if (this.settings.samples.length == 1) {
+            // only one sample selected, update the sample in blocks
+            selected_sample = this.settings.samples[0]
+            for (const block of this.settings.blocks) {
+                if ((block.sample != undefined) && (block.sample != selected_sample)) {
+                    block.sample = selected_sample;
+                    modified = true;
+                }
+            }
+        }
+
+        if (modified) {
+            this.initBlocks();
+        }
     },
 
     /**
@@ -580,11 +614,10 @@ Report.prototype = {
 
     initClones: function(){
         var self = this;
-        var main = $("#report-settings-clones")
         var parent = $("#report-clones-list");
         parent.empty() // Erase previous content
 
-        // add/remove sample to list on click
+        // remove clone on click
         var handle = function(){
             self.removeClone($(this).attr("value"));
             $(this).parent().remove()
@@ -891,6 +924,7 @@ Report.prototype = {
         this.w.onload = function(){
             self.w.document.title = text
             self.w.document.getElementById("header-title").innerHTML = text
+            self.w.document.getElementById("logospan_report").innerHTML = `(${config.server_version})`
             
             if (self.settings.blocks)
                 self.settings.blocks.forEach(function(block){
@@ -1095,14 +1129,16 @@ Report.prototype = {
             {'label': "Filename:" , 'value' : this.m.dataFileName },
             {'label': "Updated on:" , 'value' : analysis_timestamp},
             {'label': "Software used:" , 'value' : this.m.getSoftVersion()},
-            {'label': "Analysis date:" , 'value' : "" }
         ]
 
-
         if (typeof this.m.db_key != "undefined" &&
-            typeof this.m.db_key.sample_set_id != "undefined"){
-            content.push({'label': "Hosting server:"  , 'value' : window.location.hostname});
-            }
+            typeof this.m.db_key.sample_set_id != "undefined") {
+            content.push({'label': "Server:"  , 'value' : window.location.hostname});
+        }
+
+        if ((typeof this.m.user != "undefined") && (this.m.user != "")) {
+            content.push({'label': "Report creator:" , 'value' : this.m.user });
+        }
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
         for ( var key in content ){
@@ -1138,7 +1174,8 @@ Report.prototype = {
         var content = [
             {'label': "Filename:" , value : this.m.samples.names[time]},
             {'label': "Sample date:" , value : this.m.getSampleTime(time)},
-            {'label': "Analysis date:" , value : this.m.getTimestampTime(time)}
+            {'label': "Analysis date:" , value : this.m.getTimestampTime(time)},
+            {'label': "Associated sets:", value : this.m.getStrTime(time, "associated_sets_names")}
         ]
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
@@ -1166,7 +1203,8 @@ Report.prototype = {
          var div = $('<div/>', {'class': 'flex'}).appendTo(sampleInfo);
          var content = [
             {'label': "Analysis software:" , value : this.m.getSoftVersionTime(time)},
-            {'label': "Parameters:" , value : this.m.getCommandTime(time)}
+            {'label': "Algorithm parameters:" , value : this.m.getCommandAlgoTime(time)},
+            {'label': "Fuse parameters:" , value : this.m.getCommandFuse()}
          ];
 
          var table = $('<table/>', {'class': 'info-table'}).appendTo(div);
@@ -1317,22 +1355,54 @@ Report.prototype = {
 
     // add a list of clones to current report
     addClones : function(list) {
+        var numberOfAddedClones = 0
         for (var i=0; i<list.length; i++){
             var clone_id  = m.clone(list[i]).id
-            if (this.clones.indexOf(clone_id) == -1)
+            if (this.clones.indexOf(clone_id) == -1) {
                 this.clones.push(clone_id)
+                numberOfAddedClones++
+            }
         }
-        // If menu is already open, update it
-        // Useful when user already selected clonotype, but don't add them
-        if ($("#report-menu").is(":visible")){
-            this.menu()
+        if (numberOfAddedClones > 0) {
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+
+            // Display message
+            console.log({"type": "flash", "msg": "report: " + numberOfAddedClones + " clone(s) added to the report" , "priority": 1});
         }
     },
 
     // remove a clone from settings by clone id 
     removeClone : function(id) {
         var index = this.clones.indexOf(id)
-        if ( index != -1) this.clones.splice(index, 1)
+        if ( index != -1) {
+            this.clones.splice(index, 1)
+
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+        }
+    },
+
+    // remove all clones from settings
+    removeAllClones : function() {
+        if (this.clones.length > 0) {
+            this.clones = []
+
+            // If menu is already open, update it
+            // Useful when user already selected clonotype, but don't add them
+            if ($("#report-menu").is(":visible")){
+                this.menu()
+            }
+
+            // Display message
+            console.log({"type": "flash", "msg": "report: all clones removed from the report" , "priority": 1});
+        }
     },
 
     // print a block in the report using given conf
@@ -1581,12 +1651,22 @@ Report.prototype = {
     },
     
     clone : function(cloneID, block) {
+        var self = this;
+
+        var clone = $('<div/>', {'class': 'clone'});
         var color = this.getCloneExportColor(cloneID);
-        var clone = $('<div/>', {'class': 'clone'})
-        var clone_polyline = document.getElementById("polyline" + cloneID)
-        
+
         var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
+
+        // Insert comments button
+        $('<i/>', {
+            'class': 'clone_button pointer icon-pencil-1 float-right',
+            'title': 'insert comments below this clone'
+        }).click(function(){self.insertCloneComments(clone)})
+          .appendTo(head);
+
         //clone svg path icon
+        var clone_polyline = document.getElementById("polyline" + cloneID);
         if (clone_polyline != null){
             var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1706,7 +1786,41 @@ Report.prototype = {
             j++;
           }
         }
-        return clone
+
+        return clone;
+    },
+
+    cloneComments: function() {
+        var self = this;
+
+        var cloneComments = $('<div/>', {'class': 'clone'});
+
+        // Insert close button
+        var head = $('<span/>', {'class': 'clone_head'}).appendTo(cloneComments);
+        $('<i/>', {
+            'class': 'clone_button pointer icon-cancel float-right',
+            'title': 'Remove this clone comments'
+        }).click(function(){self.removeCloneComments(cloneComments)})
+            .appendTo(head);
+        $('<span/>', {'text':"Comments", 'class': 'clone_name'}).appendTo(head);
+
+        $('<textarea/>', {'title': "These comments won't be saved.", 
+                        'style': "width: 100%; display: block; overflow: hidden; resize: vertical;",
+                        'rows': 5, 
+                        'placeholder': "Write clone comments"
+                        }).appendTo(cloneComments)
+    
+        return cloneComments
+    },
+
+    insertCloneComments: function(clone){
+        var self = this;
+        var comment = self.cloneComments();
+        comment.insertAfter(clone);
+    },
+
+    removeCloneComments: function(cloneComments){
+        cloneComments.remove();
     },
 
     sampleLog: function(block) {

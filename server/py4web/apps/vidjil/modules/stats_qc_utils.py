@@ -1,16 +1,15 @@
-from collections import defaultdict
-from dataclasses import dataclass
 import json
 import math
 import os
 import pathlib
+from collections import defaultdict
+from dataclasses import dataclass
 from typing import Dict, List
 
-from . import zmodel_factory
-from . import stats_decorator
 from .. import settings
-from ..modules import sampleSet
 from ..common import db
+from ..modules import sampleSet
+from . import stats_decorator, zmodel_factory
 
 SETS_COLUMN_NAME = "sets"
 SAMPLE_COLUMN_NAME = "sample"
@@ -56,7 +55,9 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
     genescan_decorator = stats_decorator.GenescanDecorator()
     loci_list_decorator = stats_decorator.LociListDecorator()
     return {
-        SETS_COLUMN_NAME: HeaderConfig("Sets", "Patients, runs, sets", sets_decorator, 120, True),
+        SETS_COLUMN_NAME: HeaderConfig(
+            "Sets", "Patients, runs, sets", sets_decorator, 120, True
+        ),
         SAMPLE_COLUMN_NAME: HeaderConfig(
             "Sample name", "Sample name", stat_decorator, 120, False
         ),
@@ -94,7 +95,11 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             False,
         ),
         INTRA_CONTAMINATION_COLUMN_NAME: HeaderConfig(
-            "Common", "Common clonotypes ≥0.01% with other samples of this set.\nNB: These are the common clonotypes with all samples of the set, even if they are not displayed.", stat_decorator, 50, False
+            "Common",
+            "Common clonotypes ≥0.01% with other samples of this set.\nNB: These are the common clonotypes with all samples of the set, even if they are not displayed.",
+            stat_decorator,
+            50,
+            False,
         ),
         MAIN_CLONE_COLUMN_NAME: HeaderConfig(
             "Main clonotype", "Main clonotype", stat_decorator, 180, False
@@ -106,13 +111,25 @@ def get_stat_headers() -> Dict[str, HeaderConfig]:
             "Pre-process", "Pre-process", stat_decorator, 45, True
         ),
         SHANNON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Shannon", "Shannon's diversity (0: no diversity, 3-5+: full diversity)", stat_decorator, 45, False
+            "Shannon",
+            "Shannon's diversity (0: no diversity, 3-5+: full diversity)",
+            stat_decorator,
+            45,
+            False,
         ),
         PIELOU_EVENNESS_COLUMN_NAME: HeaderConfig(
-            "Pielou", "Pielou's evenness (0: no diversity, 1: full diversity)", stat_decorator, 45, True
+            "Pielou",
+            "Pielou's evenness (0: no diversity, 1: full diversity)",
+            stat_decorator,
+            45,
+            True,
         ),
         SIMPSON_DIVERSITY_COLUMN_NAME: HeaderConfig(
-            "Simpson", "Simpson's diversity (0: no diversity, 1: full diversity)", stat_decorator, 45, True
+            "Simpson",
+            "Simpson's diversity (0: no diversity, 1: full diversity)",
+            stat_decorator,
+            45,
+            True,
         ),
     }
     # 'reads' : HeaderConfig('reads', 'parser', stat_decorator, False),
@@ -190,14 +207,20 @@ def get_fuse_data(sample_set_id: int, results_file_ids: List[int]) -> dict:
         sample_query_pos[str(result_fuse["results_file"])].append(position)
 
     model_factory = zmodel_factory.ModelFactory()
-    set_types = [sampleSet.SET_TYPE_PATIENT, sampleSet.SET_TYPE_RUN, sampleSets.SET_TYPE_GENERIC]
+    set_types = [
+        sampleSet.SET_TYPE_PATIENT,
+        sampleSet.SET_TYPE_RUN,
+        sampleSet.SET_TYPE_GENERIC,
+    ]
     helpers = {}
     for set_type in set_types:
         helpers[set_type] = model_factory.get_instance(set_type)
-        
+
     # Get set infos
     sample_set = {}
-    print(f"{sample_set_id=} - {query[0]['set_id']=} - {query[0]['set_id'] == sample_set_id}")
+    print(
+        f"{sample_set_id=} - {query[0]['set_id']=} - {query[0]['set_id'] == sample_set_id}"
+    )
     if len(query) > 0 and query[0]["set_id"] == sample_set_id:
         first_result_fuse = query[0]
         sample_set["set_type"] = first_result_fuse["sample_type"]
@@ -207,7 +230,7 @@ def get_fuse_data(sample_set_id: int, results_file_ids: List[int]) -> dict:
         )
         sample_set["info"] = first_result_fuse["set_info"]
         sample_set["type"] = first_result_fuse["sample_type"]
-        
+
     fuse_data = {}
     for result_fuse in query:
         set_type = result_fuse["sample_type"]
@@ -242,7 +265,7 @@ def get_fused_stats(fuse):
     fuse_file_path = pathlib.Path(settings.DIR_RESULTS, fuse["fused_file_name"])
     fuse_results_files = fuse["results_files"]
     fused_stats = {}
-    with open(fuse_file_path, "r") as fuse_file:
+    with open(fuse_file_path, "r", encoding="utf-8") as fuse_file:
         fuse_data = json.load(fuse_file)
         top_clones = fuse_data["clones"][: fuse_data["samples"]["number"]]
 
@@ -294,7 +317,7 @@ def get_fused_stats(fuse):
             result_stats["shannon_diversity"] = NOT_APPLICABLE
             result_stats["pielou_evenness"] = NOT_APPLICABLE
             result_stats["simpson_diversity"] = NOT_APPLICABLE
-                
+
             if fuse_data["reads"]["segmented"][result_index]:
                 sorted_clones = sorted(
                     top_clones,
@@ -422,31 +445,84 @@ def get_fused_stats(fuse):
                 )
 
                 if "diversity" in fuse_data:
-                    # isinstance needed for old fused data. 
+                    # isinstance needed for old fused data.
                     # New format use a dict with value by locus+global, old have only a direct global float value
 
                     shannon_diversity = NOT_APPLICABLE
                     if "index_H_entropy" in fuse_data["diversity"]:
-                        if isinstance(fuse_data["diversity"]["index_H_entropy"][result_index], dict):
-                            shannon_diversity = round(float(fuse_data["diversity"]["index_H_entropy"][result_index]["all"]), 3)
+                        if isinstance(
+                            fuse_data["diversity"]["index_H_entropy"][result_index],
+                            dict,
+                        ):
+                            shannon_diversity = round(
+                                float(
+                                    fuse_data["diversity"]["index_H_entropy"][
+                                        result_index
+                                    ]["all"]
+                                ),
+                                3,
+                            )
                         else:
-                            shannon_diversity = round(float(fuse_data["diversity"]["index_H_entropy"][result_index]), 3)
+                            shannon_diversity = round(
+                                float(
+                                    fuse_data["diversity"]["index_H_entropy"][
+                                        result_index
+                                    ]
+                                ),
+                                3,
+                            )
                     result_stats["shannon_diversity"] = shannon_diversity
-                    
+
                     pielou_evenness = NOT_APPLICABLE
                     if "index_E_equitability" in fuse_data["diversity"]:
-                        if isinstance(fuse_data["diversity"]["index_E_equitability"][result_index], dict):
-                            pielou_evenness = round(float(fuse_data["diversity"]["index_E_equitability"][result_index]["all"]), 3)
+                        if isinstance(
+                            fuse_data["diversity"]["index_E_equitability"][
+                                result_index
+                            ],
+                            dict,
+                        ):
+                            pielou_evenness = round(
+                                float(
+                                    fuse_data["diversity"]["index_E_equitability"][
+                                        result_index
+                                    ]["all"]
+                                ),
+                                3,
+                            )
                         else:
-                            pielou_evenness = round(float(fuse_data["diversity"]["index_E_equitability"][result_index]), 3)
+                            pielou_evenness = round(
+                                float(
+                                    fuse_data["diversity"]["index_E_equitability"][
+                                        result_index
+                                    ]
+                                ),
+                                3,
+                            )
                     result_stats["pielou_evenness"] = pielou_evenness
-                    
+
                     simpson_diversity = NOT_APPLICABLE
                     if "index_E_equitability" in fuse_data["diversity"]:
-                        if isinstance(fuse_data["diversity"]["index_Ds_diversity"][result_index], dict):
-                            simpson_diversity = round(float(fuse_data["diversity"]["index_Ds_diversity"][result_index]["all"]), 3)
+                        if isinstance(
+                            fuse_data["diversity"]["index_Ds_diversity"][result_index],
+                            dict,
+                        ):
+                            simpson_diversity = round(
+                                float(
+                                    fuse_data["diversity"]["index_Ds_diversity"][
+                                        result_index
+                                    ]["all"]
+                                ),
+                                3,
+                            )
                         else:
-                            simpson_diversity = round(float(fuse_data["diversity"]["index_Ds_diversity"][result_index]), 3)
+                            simpson_diversity = round(
+                                float(
+                                    fuse_data["diversity"]["index_Ds_diversity"][
+                                        result_index
+                                    ]
+                                ),
+                                3,
+                            )
                     result_stats["simpson_diversity"] = simpson_diversity
 
             if "pre_process" in fuse_data["samples"]:
@@ -474,12 +550,12 @@ def format_display_stats(result_fuse: dict, result_fused_stats: dict) -> None:
     display_stats_data[MAPPED_READS_COLUMN_NAME] = stats_decorator.DataWithTitle(
         f"{mapped_reads_percent:.2f}%",
         f"{mapped_reads_percent:.2f}% ({result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']})"
-        if result_fused_stats['total_reads']
+        if result_fused_stats["total_reads"]
         else f"{mapped_reads_percent:.2f}%",
     )
     display_stats_data[MAPPED_READS_NUMBER_COLUMN_NAME] = (
         f"{result_fused_stats['mapped_reads']} / {result_fused_stats['total_reads']}"
-        if result_fused_stats['total_reads']
+        if result_fused_stats["total_reads"]
         else NOT_APPLICABLE
     )
 

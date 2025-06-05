@@ -401,6 +401,11 @@ Model_loader.prototype = {
             this.reads.segmented_all[o] = this.reads.segmented[o]
         }
         
+        // initialize removed reads
+            
+        this.removed_clones_reads_of_active_locus = new Array(this.reads.segmented.length).fill(0);
+        this.removed_clones_reads_total = new Array(this.reads.segmented.length).fill(0);
+
         this.compute_average_quality();
 
         
@@ -416,12 +421,38 @@ Model_loader.prototype = {
         self.system_selected = [];
         self.system_available = [];
         var system;
+
         for (var p = 0; p < this.clones.length; p++) {
             system = this.clone(p).get('germline')
             if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
                 self.system_available.push(system)
             }
         }
+
+        // Add locus to system with at least 1% if no clonotype is present in loaded data
+        let threshold = THRESHOLD_LOCUS_IN_SYSTEM;
+        for (var germline in this.reads.germline) {
+            const systemReads = this.reads.germline[germline];
+            const segmentedReads = this.reads.segmented;
+
+            if (systemReads == undefined || self.system_available.includes(germline)) continue;
+
+            let above = false;
+            for (let i = 0; i < systemReads.length; i++) {
+                const val = systemReads[i];
+                const segmented = segmentedReads[i] || 0;
+
+                const ratio = segmented > 0 ? val / segmented : 0;
+
+                if (ratio > threshold) {
+                    above = true;
+                    break;
+                }
+            }
+
+            if (above == true) { self.system_available.push(germline) }
+        }
+
         self.system_available.sort(locus_cmp)
 
         for (var sa in self.system_available){
@@ -436,17 +467,27 @@ Model_loader.prototype = {
             self.system = germline_list[0];
         }
 
-        // add virtuals clones (ex-others)
+        // add virtuals clones (ex-others and removed clonotype counter)
         for (var q = 0; q < this.system_available.length; q++) {
             var other = {
                 "sequence": 0,
-                "id": "other"+this.system_available[q],
+                "id": "other" + this.system_available[q],
                 "top": 0,
                 "reads": [],
-                "germline" : this.system_available[q],
+                "germline": this.system_available[q],
             };
             new Clone(other, self, index, C_SIZE_OTHER);
-            index++ ;
+            index++;
+
+            var removed = {
+                "sequence": 0,
+                "id": "removed" + this.system_available[q],
+                "top": 0,
+                "reads": [],
+                "germline": this.system_available[q],
+            };
+            new Clone(removed, self, index, C_SIZE_OTHER);
+            index++;
         }
         
         //remove incomplete similarity matrix (TODO: fix fuse.py)
@@ -716,7 +757,16 @@ Model_loader.prototype = {
                 }
                 }
             }
-            this.toggle_all_systems(true);
+
+            // loci
+            if (this.analysis.system_selected) {
+                this.system_selected = this.analysis.system_selected;
+                this.update_selected_system();
+            } else {
+                this.toggle_all_systems(true);
+            }
+
+            // selected sample
             this.t = this.samples.order[0]
             
         }else{
@@ -780,7 +830,8 @@ Model_loader.prototype = {
                 names: this.samples.names},
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
-            report_save :this.report_save
+            report_save :this.report_save,
+            system_selected : this.system_selected,
         }
 
         var elem;

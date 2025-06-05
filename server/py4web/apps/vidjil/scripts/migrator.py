@@ -3,17 +3,18 @@ import sys
 
 sys.path.append("../../../")
 
-import json
 import argparse
-import logging
 import datetime
+import json
+import logging
 import os
 import shutil
+
+from apps.vidjil import settings
+from apps.vidjil.common import db
+from apps.vidjil.modules.permission_enum import PermissionEnum
 from pydal.helpers.classes import RecordDeleter, RecordUpdater
 from pydal.objects import LazySet
-from apps.vidjil.common import db
-from apps.vidjil import settings
-from apps.vidjil.modules.permission_enum import PermissionEnum
 
 
 class MigrateLogger:
@@ -263,7 +264,7 @@ class Importer:
                 if table not in self.mappings:
                     self.mappings[table] = IdMapper(self.log)
                 self.mappings[table].setMatchingId(int(vid), oid)
-    
+
     def get_mapping_id(self, table, id):
         self.log.debug(f"Getting mapping for table {table} and id {id}")
         return self.mappings[table].getMatchingId(id)
@@ -315,15 +316,21 @@ def export_pre_process_log_files(tables, dest, log):
                 )
 
 
-def import_pre_process_log_files(tables: dict, src, importer: Importer, log: MigrateLogger):
+def import_pre_process_log_files(
+    tables: dict, src, importer: Importer, log: MigrateLogger
+):
     pre_file_path = pathlib.Path(src, "pre")
     for sequence_file_id, sequence_file_entry in tables["sequence_file"].items():
         if sequence_file_entry["pre_process_id"] is not None:
             source_folder = pathlib.Path(
                 pre_file_path, DIR_PRE_VIDJIL_ID_EXPORT % int(sequence_file_id)
             )
-            mapped_sequence_file_id = importer.get_mapping_id("sequence_file", int(sequence_file_id))
-            target_folder = pathlib.Path(settings.DIR_PRE_VIDJIL_ID % int(mapped_sequence_file_id))
+            mapped_sequence_file_id = importer.get_mapping_id(
+                "sequence_file", int(sequence_file_id)
+            )
+            target_folder = pathlib.Path(
+                settings.DIR_PRE_VIDJIL_ID % int(mapped_sequence_file_id)
+            )
             try:
                 shutil.copytree(source_folder, target_folder, dirs_exist_ok=True)
                 log.debug(f"Copying {source_folder} to {target_folder}")
@@ -441,11 +448,11 @@ def export_group_data(filesrc, filepath, groupids, log):
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
-    with open(filepath + "/export.json", "w") as outfile:
+    with open(filepath + "/export.json", "w", encoding="utf-8") as outfile:
         json.dump(tables, outfile, ensure_ascii=False)
-    with open(filepath + "/config.json", "w") as outfile:
+    with open(filepath + "/config.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_configs, outfile, ensure_ascii=False)
-    with open(filepath + "/pprocess.json", "w") as outfile:
+    with open(filepath + "/pprocess.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False)
 
     files_filepath = get_files_filepath(filepath)
@@ -473,11 +480,11 @@ def export_sample_set_data(filesrc, filepath, sample_type, sample_ids, log):
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
-    with open(filepath + "/export.json", "w") as outfile:
+    with open(filepath + "/export.json", "w", encoding="utf-8") as outfile:
         json.dump(tables, outfile, ensure_ascii=False)
-    with open(filepath + "/config.json", "w") as outfile:
+    with open(filepath + "/config.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_configs, outfile, ensure_ascii=False)
-    with open(filepath + "/pprocess.json", "w") as outfile:
+    with open(filepath + "/pprocess.json", "w", encoding="utf-8") as outfile:
         json.dump(mapped_pre_process_configs, outfile, ensure_ascii=False)
 
     files_filepath = get_files_filepath(filepath)
@@ -498,7 +505,7 @@ def import_data(
 ):
     log.info("importing data")
     data = {}
-    with open(filesrc + "/export.json", "r") as infile:
+    with open(filesrc + "/export.json", "r", encoding="utf-8") as infile:
         data = json.load(infile)
         # data = reencode_dict(tmp)
 

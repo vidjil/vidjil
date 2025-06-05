@@ -15,7 +15,7 @@ QUnit.test("without views", function(assert) {
     var m = new Model();
 
     console.log(speedTest(m));
-    assert.equal(m.clones.length, 101, "");
+    assert.equal(m.clones.length, 104, "");
 });
 
 QUnit.test("with views", function(assert) {
@@ -27,5 +27,5 @@ QUnit.test("with views", function(assert) {
     var list = new List("list", "data", m);
     
     console.log(speedTest(m));
-    assert.equal(m.clones.length, 101, "");
+    assert.equal(m.clones.length, 104, "");
 });

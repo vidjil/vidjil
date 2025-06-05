@@ -161,14 +161,14 @@ Info.prototype = {
             reads_div.className = "reads_details";
 
             // Segmented reads
-            var div_segmented = this.build_line_read_number("info_segmented", "analyzed reads", "analyzed", this.m.reads.segmented_all);
+            var div_segmented = this.build_line_read_number("info_segmented", "analyzed reads", "analyzed", this.m.reads.segmented_all, total=true);
             div_segmented.title = "total: " + this.m.toStringThousands(this.m.reads.total[this.m.t]);
             reads_div.appendChild(div_segmented);
 
 
             // Segmented reads, on the selected system(s)
             if (this.m.system == "multi") {
-                div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented);
+                div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented, total=false);
                 reads_div.appendChild(div_segmented);
             }
 
@@ -336,7 +336,25 @@ Info.prototype = {
         return container;
     },
 
+    /**
+     * Allow to update title attribute of a locus span in info panel to show size of locus (in system or globally)
+     */
+    makeMouseEnterHandlerOnLocusSpan: function(span, key, self) {
+        return function(event) {
+            var time = self.m.getTime();
+            let size_in_all = ((self.m.reads.germline[key][time]/self.m.reads.segmented_all[time])*100).toFixed(2);
+            let size_in_system = self.m.reads.germline[key][time] && self.m.systemGroupSize(key) ?
+                ((self.m.reads.germline[key][time]*100) / self.m.systemGroupSize(key)).toFixed(2) : 
+                (0).toFixed(2)
+            
+            span.title = `Locus ${key}; ${size_in_system}% of system, ${size_in_all}% of total segmented reads`;
+        };
+    },
+
     build_multi_system: function () {
+        let self = this;
+
+
         var div = document.createElement('div');
         div.className = "info_line locus_line";
 
@@ -365,8 +383,8 @@ Info.prototype = {
             }
         }
 
-        for (var k in key_list) {
-            key = key_list[k];
+        for (let k in key_list) {
+            let key = key_list[k];
 
             // Are we at the start of a new group of locus ?
             if (key.substring(0,2) != last_key.substring(0,2)) {
@@ -391,10 +409,15 @@ Info.prototype = {
 
             checkbox.onchange = checkbox_onchange;
             var span_system = this.m.systemBox(key);
+            span_system.removeAttribute('title');
 
-            var span = document.createElement('span');
+            let span = document.createElement('span');
             span.className = "systemBoxNameMenu "+key;
             span.id = "toogleLocusSystemBox_"+key;
+
+            span.addEventListener('mouseenter', self.makeMouseEnterHandlerOnLocusSpan(span, key, self));
+
+
             if (this.m.system_selected.indexOf(key) == -1)
                 span.className = "systemBoxNameMenu unchecked " + key;
             span.appendChild(span_system);
@@ -409,23 +432,30 @@ Info.prototype = {
         return div;
     },
 
-    build_line_read_number: function (id, label, qualifier, read_number) {
+    build_line_read_number: function (id, label, qualifier, read_number, total=true) {
+        time = this.m.getTime();
         var val = "no read";
         var warning_title = false;
         var warning_class = '' ;
+        var removed_reads = this.m.removed_clones_reads_of_active_locus[time];
+        var removed_reads_total = this.m.removed_clones_reads_total[time];
+        var percent;
 
         if (read_number[this.m.t] > 0) {
-            var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100;
-            val = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)";
-
-            if (percent < 10) {
-                warning_title = "Very few reads " + qualifier;
-                warning_class = "alert";
-            } else if (percent < 50) {
-                warning_title = "Few reads " + qualifier;
-                warning_class = "warning";
-            }
+            var removed = total ? removed_reads_total : removed_reads;
+            var remaining_reads = read_number[this.m.t] - removed;
+            percent = (remaining_reads / this.m.reads.total[this.m.t]) * 100;
+            val = this.m.toStringThousands(remaining_reads) + " (" + percent.toFixed(2) + "%)"; 
         }
+                
+        if (percent < 10) {
+            warning_title = "Very few reads " + qualifier;
+            warning_class = "alert";
+        } else if (percent < 50) {
+            warning_title = "Few reads " + qualifier;
+            warning_class = "warning";
+        }
+
         div = this.build_named_info_line(id, label, val, false);
 
         if (warning_class !== "") {

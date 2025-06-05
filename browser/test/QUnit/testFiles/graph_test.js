@@ -48,7 +48,7 @@ QUnit.test("init", function(assert) {
     
     graph.initRes()
     assert.deepEqual(graph.data_res[0], 	{
-                                      "id": 7,
+                                      "id": 9,
                                       "name": "resolution1",
                                       "path": "M70,41.1L70,41L70.05,41L70.35,40.869L70.65,41L70.95,40.869L71,40.869L71,41.1"
                                     },

@@ -26,7 +26,7 @@ QUnit.test("grid", function(assert) {
                                     }, 
                                     "buildSystemGrid()");
     
-    assert.equal(sp.nodes.length, 7 , "check nodes");
+    assert.equal(sp.nodes.length, 9 , "check nodes");
 
     sp.changeSplitMethod("V/5' gene", "V/5' gene", "grid");
     sp.update()
@@ -58,7 +58,7 @@ QUnit.test("grid", function(assert) {
         sp.changeSplitMethod("N length", "Size", "bar");
         sp.update()
 
-        assert.equal(   sp.select_x.selectedIndex,      11,                     'select_x index')
+        assert.equal(   sp.select_x.selectedIndex,      14,                     'select_x index')
         assert.equal(   sp.select_y.selectedIndex,      6,                      'select_y index')
         assert.approx(  sp.nodes[1].bar_h/sp.resizeH,   0.40, 0.05,             "node 1, bar h position " + m.clone(1).getSize())
         assert.equal(   sp.axisX.getPos(m.clone(1)),    sp.axisX.getValuePos(9),"node 1, bar x position " + m.clone(1).getNlength())
@@ -212,7 +212,7 @@ QUnit.test("axes productivity detailed", function(assert) {
     var sp = new ScatterPlot("visu",m);
     sp.init();
 
-    assert.equal(sp.returnActiveclones(), 7, "returnActiveClones -> 7");
+    assert.equal(sp.returnActiveclones(), 8, "returnActiveClones -> 8"); // 6 clones + 2 smaller (IGH and TRG)
     sp.changeSplitMethod("Productivity+", "Productivity+", "grid");
 
     var axes_legend = document.getElementById("visu_axis_x_container").childNodes

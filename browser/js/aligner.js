@@ -454,8 +454,12 @@ Aligner.prototype = {
 
         //edit
         if (this.m.focus == cloneID) $(cloneT).addClass("list_focus");
-        cloneT.getElementsByClassName("nameBox")[0].title = clone.getName();
-        cloneT.getElementsByClassName("nameBox")[0].style.color = clone.color;
+        var span_name = cloneT.getElementsByClassName("nameBox")[0];
+        span_name.title = clone.getName();
+        span_name.style.color = clone.color;
+        //removed clonotype style (opacity and line-through)
+        span_name.style.opacity = this.m.tags.getOpacity(clone.getTag());
+        span_name.style.textDecoration = this.m.tags.getTextDecoration(clone.getTag());
         cloneT.getElementsByClassName("nameBox2")[0].appendChild(document.createTextNode(clone.getShortName()));
         cloneT.getElementsByClassName("delBox")[0].onclick = function () {
             self.removeSequence(cloneID);
@@ -1170,7 +1174,7 @@ Aligner.prototype = {
                 $("#reset_focus").css("display", "")
             else
                 $("#reset_focus").css("display", "none")
-    },
+        },
 
     /**
      * find and return the list of clone fields who contain potential information that can be highlighted on sequences

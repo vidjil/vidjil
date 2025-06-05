@@ -15,8 +15,8 @@ QUnit.test("convert", function(assert) {
         "cdr3": {"start": 1, "end": 4}, // 1-based
         "foo": {"start": 18, "stop": 43}
     };
-    assert.equal(m.getConvertedBoundary(json_clone3.seg, "5", "end"), 5, "getConvertedBoundary existant: Ok");
-    assert.equal(typeof m.getConvertedBoundary(json_clone3.seg, "5", "start"), 'undefined', "getConvertedBoundary non existant: Ok");
+    assert.equal(m.getConvertedBoundary(json_clone3.seg, "5", "end"), 5, "getConvertedBoundary existing: Ok");
+    assert.equal(typeof m.getConvertedBoundary(json_clone3.seg, "5", "start"), 'undefined', "getConvertedBoundary not existing: Ok");
     assert.deepEqual(m.getConvertedSegNames(seg['cdr3']), {"start": 1, "stop": 4}, "getConvertedSegNames (before 0-based conversion)")
 
     assert.deepEqual(m.getConvertedSeg(seg, "3"), {"name": "J", "start": 3}, "getConvertedSeg: Ok");
@@ -91,8 +91,8 @@ QUnit.test("load with new order && stock_order", function(assert) {
     m.parseJsonAnalysis(analysis_data_stock_order_with_error)
     m.initClones()
 
-    assert.deepEqual(m.samples.order,          [2, 0, 3], "Correct order after loading analysis with dusplicate sample in order" )
-    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading analysis with dusplicate sample in order" )
+    assert.deepEqual(m.samples.order,          [2, 0, 3], "Correct order after loading analysis with duplicate sample in order" )
+    assert.deepEqual(m.samples.stock_order, [1, 2, 0, 3], "Correct stock_order after loading analysis with duplicate sample in order" )
     
 });
 
@@ -107,8 +107,10 @@ QUnit.test("time control", function(assert) {
     assert.equal(m.getSoftVersionTime(), "ha", "getSoftVersionTime : Ok")
     assert.equal(m.getSoftVersionTime(2), "ho", "getSoftVersionTime : Ok")
     
-    assert.equal(m.getCommandTime(), "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ", "getCommandTime : Ok")
-    assert.equal(m.getCommandTime(2), "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Fu-2.fa ", "getCommandTime : Ok")
+    assert.equal(m.getCommandAlgoTime(), "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ", "getCommandAlgoTime : Ok")
+    assert.equal(m.getCommandAlgoTime(2), "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Fu-2.fa ", "getCommandAlgoTime : Ok")
+
+    assert.equal(m.getCommandFuse(), "fuse.py -o fused.vidjil -t 100 file1.vidjil file2.vidjil", "getCommandAlgoTime : Ok if data present")
 
     assert.equal(m.getTimestampTime(), "2015-10-20 13:59:02", "getTimestampTime : Ok")
     assert.equal(m.getTimestampTime(2), "2015-11-20 14:03:13", "getTimestampTime : Ok")
@@ -129,6 +131,8 @@ QUnit.test("time control", function(assert) {
     
     assert.equal(m.getStrTime(0, "sampling_date"), "2014-10-20", "get sampling date")
     assert.equal(m.getStrTime(0, "name"), "Diag", "get time original name")
+    assert.equal(m.getStrTime(0, "associated_sets_names"), "other_1;other_2", "get associated sets 0")
+    assert.equal(m.getStrTime(1, "associated_sets_names"), "/", "get associated sets 1")
     assert.equal(m.dateDiffInDays("2014-10-05", "2014-10-10"), "+5", "datediffindays")
     assert.ok(isNaN(m.dateDiffInDays("2014-10-05", "toto")), "datediffindays with a string")
     assert.deepEqual(m.dateDiffMinMax(), {'min': 5 , 'max': 30}, "dateDiffMinMax (min = " + m.dateDiffMinMax()['min']+", max = " + m.dateDiffMinMax()['max']+")")
@@ -140,6 +144,18 @@ QUnit.test("time control", function(assert) {
 
     assert.equal(m.getStrTime(1, "delta_date"), "+5", "get day since diag")
     
+
+    // Tests values returned if keys are not present
+    var m = new Model();
+    m.parseJsonData(json_data)
+    delete m.samples.timestamp // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getSampleTime(2), "-", "getSampleTime : Ok if key not present")
+    delete m.samples.producer // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getSoftVersionTime(2), "-", "getSoftVersionTime : Ok if key not present")
+    delete m.samples.commandline // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getCommandAlgoTime(2), "-", "getCommandAlgoTime : Ok if key not present")
+    delete m.samples.commandline_fuse // Remove key, as it can be if no fuse launch, or on previous data
+    assert.equal(m.getCommandFuse(), "-", "getCommandAlgoTime : Ok if no value present")
 });
 
 
@@ -167,6 +183,61 @@ QUnit.test("select/focus", function(assert) {
     m.focusIn(0)
 });
 
+
+QUnit.test("removed clonotypes", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data,100);
+    m.initClones();
+    time = m.getTime();
+
+    // Set removed_clonotypes tag to clones 0 and 2
+    m.clone(0).changeTag("removed_clonotypes");
+    m.clone(2).changeTag("removed_clonotypes");
+
+    // Test that argument removed is set to true
+    assert.equal(m.clone(0).isRemoved(), true, "Clone has now attrivute removed set to true");
+    assert.equal(m.clone(2).isRemoved(), true, "Clone has now attrivute removed set to true");
+    
+    // Test that getSize() return 0 for removed clones
+    assert.equal(m.clone(0).getSize(), 0, "Clone size is 0");
+    assert.equal(m.clone(2).getSize(), 0, "Clone size is 0");
+
+    // Test proper computation of removed_clones_reads_of_active_locus with all germlines
+    m.computeRemovedClonesReads();
+    var c0_Reads = m.clone(0).getReads(); //TRG
+    var c2_Reads = m.clone(2).getReads(); //IGH
+
+    assert.equal(m.removed_clones_reads_of_active_locus[time], c0_Reads + c2_Reads, "removed_clones_reads_of_active_locus is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_total[time], c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
+
+    // Test proper computation of removed_clones_reads_of_active_locus with only TRG germline
+    m.keep_one_active_system('TRG');
+    assert.equal(m.removed_clones_reads_of_active_locus[time], c0_Reads, "removed_clones_reads_of_active_locus is the sum of removed clones reads for selected locus");
+    assert.equal(m.removed_clones_reads_total[time], c0_Reads + c2_Reads, "removed_clones_reads_total is the sum of all removed clones reads");
+
+    // Test proper computation of removed_clones_reads_of_active_locus with only one germline (TRG) at all times
+    assert.equal(m.removed_clones_reads_of_active_locus[0], m.clone(0).getReads(0), "removed_clones_reads_of_active_locus has the correct value at time point 0");
+    assert.equal(m.removed_clones_reads_total[0], m.clone(0).getReads(0) + m.clone(2).getReads(0), "removed_clones_reads_total has the correct value at time point 0");
+
+    assert.equal(m.removed_clones_reads_of_active_locus[1], m.clone(0).getReads(1), "removed_clones_reads_of_active_locus has the correct value at time point 1");
+    assert.equal(m.removed_clones_reads_total[1], m.clone(0).getReads(1) + m.clone(2).getReads(1), "removed_clones_reads_total has the correct value at time point 1");
+    
+    assert.equal(m.removed_clones_reads_of_active_locus[2], m.clone(0).getReads(2), "removed_clones_reads_of_active_locus has the correct value at time point 2");
+    assert.equal(m.removed_clones_reads_total[2], m.clone(0).getReads(2) + m.clone(2).getReads(2), "removed_clones_reads_total has the correct value at time point 2");
+    
+    assert.equal(m.removed_clones_reads_of_active_locus[3], m.clone(0).getReads(3), "removed_clones_reads_of_active_locus has the correct value at time point 3");
+    assert.equal(m.removed_clones_reads_total[3], m.clone(0).getReads(3) + m.clone(2).getReads(3), "removed_clones_reads_total has the correct value at time point 3");
+    
+    // Test proper return of removed_clones_reads_of_active_locus to 0 when no clone is removed
+    m.toggle_system('IGH');
+    m.clone(0).changeTag("none");
+    m.clone(2).changeTag("none");
+    m.computeRemovedClonesReads();
+
+    assert.equal(m.removed_clones_reads_of_active_locus[time], 0, "removed_clones_reads_of_active_locus is now 0");
+    assert.equal(m.removed_clones_reads_total[time], 0, "removed_clones_reads_total is now O");
+
+});
 
 
 QUnit.test("correlate", function(assert) {
@@ -228,13 +299,12 @@ QUnit.test("cluster", function(assert) {
 
     m.break([0])
     assert.deepEqual(m.clusters[1], [1], "break [0] -> [1] is alone");
-
     m.restoreClusters()
     m.restoreClusters()
     assert.deepEqual(m.clusters[0], [0,2], "restore previous clusters -> [0,2]");
     
     m.resetClusters()
-    assert.deepEqual(m.clusters, [[0],[1],[2],[3],[4],[5],[6]], "resetClusters");
+    assert.deepEqual(m.clusters, [[0],[1],[2],[3],[4],[5],[6],[7],[8]], "resetClusters");
     
     var m = new Model();
     m.parseJsonData(json_data,100)
@@ -267,6 +337,19 @@ QUnit.test("system selection", function(assert) {
     assert.equal(m.system_selected.length, 1, "one system selected (IGH)")
     assert.equal(m.reads.segmented[0], 100, "100 reads segmented on IGH")
     assert.notEqual(m.system_selected.indexOf("IGH"), 1, "IGH selected")
+
+    // test analysis loading
+    m.parseJsonData(json_data, 100)
+    assert.deepEqual(m.system_selected, m.system_available, "All systems should be selected by default")
+    analysis_data_systems = JSON.parse(JSON.stringify(analysis_data))
+    analysis_data_systems.system_selected = ["TRG"]
+    m.parseJsonAnalysis(analysis_data_systems)
+
+    assert.notEqual(m.system_available.indexOf("IGH"), -1, "IGH system is available after analysis load")
+    assert.notEqual(m.system_available.indexOf("TRG"), -1, "TRG system is available after analysis load")
+    assert.equal(m.system_selected.length, 1, "We just have 1 system selected after analysis load")
+    assert.notEqual(m.system_selected.indexOf("TRG"), -1, "TRG system is selected after analysis load")
+    assert.equal(m.system_selected.indexOf("IGH"), -1, "IGH system is not selected after analysis load")
 });
 
 QUnit.test("model: analysis sample data application", function(assert) {
@@ -515,12 +598,12 @@ QUnit.test("distribution_load", function(assert) {
     m1.parseJsonData(json_data, 100)
     m1.initClones()
 
-    assert.equal(m1.clones.length, 7, 'Correct number of clones WITHOUT distributions clones')
+    assert.equal(m1.clones.length, 9, 'Correct number of clones WITHOUT distributions clones')
     assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITHOUT distributions clones')
 
     m1.distributions = data_distributions
     m1.loadAllDistribClones()
-    assert.equal(m1.clones.length, 12, 'Correct number of clones WITH distributions clones')
+    assert.equal(m1.clones.length, 14, 'Correct number of clones WITH distributions clones')
     assert.equal(countRealClones(m1), 5, 'Correct number of real clones WITH distributions clones')
    
     // Add distrib values directly into json data
@@ -530,7 +613,7 @@ QUnit.test("distribution_load", function(assert) {
     var m2 = new Model();
     m2.parseJsonData(json_data_bis, 100)
 
-    assert.equal(m2.clones.length, 12, 'Correct number of clones WITH distributions clones (directly from json_data)')
+    assert.equal(m2.clones.length, 14, 'Correct number of clones WITH distributions clones (directly from json_data)')
     assert.equal(countRealClones(m2), 5, 'Correct number of real clones WITH distributions clones (directly from json_data)')
    
 });

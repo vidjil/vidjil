@@ -18,6 +18,7 @@
 *.vidjil
 *.xml
 dep.mk
+out-ruff
 .directory
 
 algo/git-version.h
@@ -33,6 +34,7 @@ algo/tools/dynprog
 algo/tools/segmentD
 algo/tools/similarity
 algo/tools/vdj_assign
+algo/**/*.gcda
 
 binaries/
 
@@ -42,6 +44,7 @@ browser/css/*.css
 browser/js/conf.js
 browser/js/germline.js
 browser/js/git-sha1.js
+browser/js/git-sha1.js.tmp
 
 data/Stanford_S22.fasta
 data/Stanford_S22.rc.fasta
@@ -50,6 +53,7 @@ demo/*.fa
 demo/*.fasta
 
 doc/analysis-example2.analysis
+doc/tags.html
 
 docker/volumes/
 docker/vidjil-client/ssl/vidjil.crt
@@ -95,17 +99,24 @@ out/
 vidjil-algo
 vidjil-algo/
 
+venv/
+
 # Tests
-cypress/
+/cypress
 cypress.config.js
 algo/tests/should-get-tests/out/*
 algo/tests/data/analysis-with-windows.analysis.formatted
 algo/tests/data/analysis-with-windows.analysis.new.new.formatted
+algo/tests/data/chimera-fake-VJ-trim.g
+algo/tests/data/Stanford_S22.fasta
+algo/tests/data/Stanford_S22.rc.fasta
+browser/test/cypress/fixtures
 browser/test/cypress/reports
 browser/test/cypress/screenshots
 browser/test/cypress/videos
 browser/test/cypress/logs
 browser/test/*.png
+browser/test/QUnit/tap_output
 browser/test/test/TEST*
 server/py4web/apps/vidjil/controllers/test_controller.py
 server/py4web/apps/vidjil/tests/cypress/logs/*
@@ -113,6 +124,8 @@ server/py4web/apps/vidjil/tests/cypress/screenshots/*
 server/py4web/apps/vidjil/tests/cypress/downloads/*
 server/py4web/apps/vidjil/tests/cypress/fixtures
 server/py4web/apps/vidjil/tests/cypress/support
+server/py4web/apps/vidjil/tests/cypress/plugins
+server/py4web/apps/vidjil/tests/cypress/integration
 server/.coverage
 tools/tests/should.retry
 tools/tests/should.warned.retry

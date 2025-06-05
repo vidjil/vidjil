@@ -1,6 +1,6 @@
 
 !!! note
-	This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
+    This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
 ## Algo 2025-02
 
@@ -465,5 +465,3 @@ This improved heuristic was designed to implement a multi-germline analysis in a
 ## Algo 2013-04-18
 
 * First public release
-
-
