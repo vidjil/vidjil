@@ -400,27 +400,29 @@ The password should be given in the docker `.env` environment file.
 ### Updating a Docker installation
 
 1. Adapt the config for the new version (see [docker changelog](https://www.vidjil.org/doc/changelog-docker))
-    1. See if modifications are needed in `.env` files
+    1. Update the docker image to use in `.env` files (`VIDJIL_SERVER_DOCKER_IMAGE_VERSION` and `VIDJIL_CLIENT_DOCKER_IMAGE_VERSION`).
+    1. See if other modifications are needed in `.env` files.
     1. See if modifications are needed in other specific configuration file (`docker-compose.yml`, `conf.js`, .env files, ...). **Be careful**: do not apply the config right now, wait for the new version to be deployed.
 1. Set-up a warning message on your front end server if it is separated (otherwise, the front will be shutdown and the server will not answer):
     1. Connect to the front-end server.
     1. In `conf.js` file, set `use_database` to `false`. This will deactivate db access. In order to display an explicit message, uncomment the `alert:` part, setting explicit `title` and `msg`.
     1. Restart the nginx service to take new config into account: `docker compose restart nginx`.
     1. Re-load front-end webpage with no cache (Ctrl+F5 for example) and check the alert message is correctly displayed and database cannot be accessed.
-1. Stop docker (on the backend server): `docker compose down`
-1. Check if server needs to be updated (for instance `sudo apt-get update && apt-get upgrade`), and may be restarted. This is a good time to do that !
-1. Check restic ran after the last modification. If need be, restart restic services: `docker compose up -d restic`. This should trigger an immediate save. After that, connect to restic service to see that an up-to-date snapshot exists.
+1. Stop docker (on the backend server): `docker compose down`.
+1. Check if server needs to be updated (for instance `sudo apt-get update && sudo apt-get -y upgrade`), and may be restarted. This is a good time to do that !
+1. Check restic ran after the last modification. If need be, restart restic services: `docker compose up -d restic`. This should trigger an immediate save. After that, connect to restic service to see that an up-to-date snapshot exists (see [restic doc](#setting-up-restic-service)).
 1. Check if there are uncommitted changes in vidjil repo in `vidjil` folder. The idea here is to prevent having specific element in the server. Check if specificity can be committed to vidjil, or if it can be in the specific config repo. If not, save the modifications before checkout.
-1. Backup database (!! Before update !!). The backup file may be found in the path mounted by restic. If need be, it can be done manually using [database export](#database-export)
+1. Backup database (!! Before update !!). The backup file may be found in the path mounted by restic. If need be, it can be done manually using [database export](#database-export).
 1. git checkout the new vidjil tag/branch.
 1. Re-apply local modifications if need be.
-1. Update specific config, either by running the corresponding [pipeline](https://gitlab.inria.fr/vidjil/config/-/pipelines) or by pulling the branch and applying config `./apply_targets.sh`
-1. Download new docker images: `docker pull vidjil/server` and `docker pull vidjil/client` (hopefully we should improve this to use defined versions of images and not `latest` sometimes...)
-1. If need be, update the `contrib` repo
-1. If need be, the database backup should be loaded from a fresh db, see [database import](#database-import)
-1. Start all services: `docker compose up -d`
-1. Tests modification directly in back-end website (do not forget to empty browser cache)
-1. Update front-end server if it is separated using the same procedure, then reactivate front-end: modify `conf.js` file back to its old value
+1. Update all the files for new version (docker-compose, .env files, ... - see first bullet).
+1. Download new docker images: `docker compose pull`.
+1. If need be, update the vidjil-algo version used (see `DIR_VIDJIL` variable in `.env` files).)
+1. If need be, update the `contrib` repo.
+1. If need be, the database backup should be loaded from a fresh db, see [database import](#database-import).
+1. Start all services: `docker compose up -d`.
+1. Tests modification directly in back-end website (do not forget to empty browser cache).
+1. Update front-end server if it is separated using the same procedure, then reactivate front-end: modify `conf.js` file back to its old value.
 
 ### Knowing what docker image version is running
 
