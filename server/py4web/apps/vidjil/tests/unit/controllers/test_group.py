@@ -108,10 +108,7 @@ class TestGroupController(unittest.TestCase):
         result = json.loads(json_result)
         assert result["message"] == group_controller.ACCESS_DENIED
         assert result["success"] == "false"
-        assert (
-            result["redirect"]
-            == "http://127.0.0.1/vidjil/sample_set/all?type=patient&page=0"
-        )
+        assert result["redirect"] == "/vidjil/sample_set/all?type=patient&page=0"
 
     ##################################
     # Tests on group_controller.add()
