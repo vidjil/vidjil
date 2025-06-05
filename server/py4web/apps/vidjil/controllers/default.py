@@ -21,7 +21,6 @@ from py4web import URL, action, request, response
 
 from .. import settings, tasks
 from ..common import T, auth, cors, db, log, scheduler, session
-from ..controllers.group import add_default_group_permissions
 from ..modules import sampleSet, vidjil_utils, zmodel_factory
 from ..modules.analysis_file import get_analysis_data
 from ..modules.controller_utils import error_message
@@ -403,28 +402,6 @@ def checkProcess():
 @action("/vidjil/default/get_data", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def get_data():
-    if not auth.user:
-        res = {
-            "redirect": URL(
-                "auth",
-                "login",
-                args="login",
-                scheme=True,
-                vars=dict(
-                    _next=URL(
-                        "default",
-                        "get_data",
-                        scheme=True,
-                        vars=dict(
-                            sample_set_id=request.query["sample_set_id"],
-                            config=request.query["config"],
-                        ),
-                    )
-                ),
-            )
-        }
-        return json.dumps(res, separators=(",", ":"))
-
     error = ""
 
     if "patient" in request.query:
@@ -696,12 +673,6 @@ def get_data():
 @action("/vidjil/default/get_custom_data", method=["POST", "GET"])
 @action.uses(db, auth.user)
 def get_custom_data():
-    if not auth.user:
-        res = {
-            "redirect": URL("default", "user", args="login", scheme=True)
-        }  # TODO _next
-        return json.dumps(res, separators=(",", ":"))
-
     error = ""
 
     samples = []
@@ -946,97 +917,19 @@ def save_analysis():
         return json.dumps(res, separators=(",", ":"))
 
 
-# @action("/vidjil/default/user/<path>", method=["POST", "GET"])
-@action.uses(db, session, "db_layout.html")
-@vidjil_utils.jsontransformer
-def user(path=None):
-    """
-    exposes:
-    http://..../[app]/default/user/login
-    http://..../[app]/default/user/logout
-    http://..../[app]/default/user/register
-    http://..../[app]/default/user/profile
-    http://..../[app]/default/user/retrieve_password
-    http://..../[app]/default/user/change_password
-    http://..../[app]/default/user/manage_users (requires membership in
-    use @auth.requires_login()
-        @auth.requires_membership('group name')
-        @auth.requires_permission('read','table name',record_id)
-    to decorate functions that need access control
-    """
-
-    # redirect already logged user
-    if auth.user and path == "login":
-        res = {"redirect": URL("default", "home", scheme=True)}
-        return json.dumps(res, separators=(",", ":"))
-
-    # only authenticated admin user can access register view
-    if auth.user and path == "register":
-        # save admin session (the registering will automatically login the new user in order to initialize its default values)
-        admin_auth = auth
-        auth.is_logged_in = lambda: False
-
-        def post_register(form):
-            # Set up a new user, after register
-
-            # Default permissions
-            add_default_group_permissions(auth, auth.user_group(), anon=True)  # noqa: F823
-
-            # Belong to the public group
-            group_id = db(db.auth_group.role == "public").select()[0].id
-            db.auth_membership.insert(user_id=auth.user_id, group_id=group_id)
-
-            log.admin(
-                "User %s <%s> registered, group %s"
-                % (auth.user_id, auth.user.email, auth.user_group())
-            )
-
-            # restore admin session after register
-            auth = admin_auth
-            auth.user = session.auth.user
-
-        auth.settings.register_onaccept = post_register
-
-        # redirect to the last added user view
-        auth.settings.logged_url = URL("user", "info")
-        auth.settings.login_next = URL("user", "info")
-
-        return dict(form=auth.register())
-
-    # reject others
-    if path == "register":
-        res = {"message": "you need to be admin and logged to add new users"}
-        return json.dumps(res, separators=(",", ":"))
-
-    if auth.user and path == "logout":
-        auth.user = None
-        auth.session.clear()
-
-        return home()
-
-    return dict(form=auth())
-
-
 @action("/vidjil/default/impersonate", method=["POST", "GET"])
 @action.uses(db, auth, session)
 def impersonate():
     if auth.is_impersonating():
-        log.debug("impersonate << stop")
+        log.info("impersonate << stop")
         auth.stop_impersonating(request.url)
     if request.query["id"] != 0:
-        log.debug(f"impersonate >> {request.query['id']}")
+        log.info(f"impersonate >> {request.query['id']}")
         if "next" in request.query:
             redirect_url = request.query["next"]
         else:
-            redirect_url = URL("default", "home.html", scheme=True)
-        log.debug(f"redirect_url {redirect_url}")
+            redirect_url = vidjil_utils.get_patient_redirect_url()
         auth.start_impersonating(request.query["id"], redirect_url)
-        log.debug(
-            {
-                "success": "true",
-                "message": f"impersonated user_id {request.query['id']}",
-            }
-        )
     res = {"redirect": "reload"}
     return json.dumps(res, separators=(",", ":"))
 
@@ -1045,12 +938,10 @@ def impersonate():
 @action.uses(db, auth, session)
 def stop_impersonate():
     if auth.is_impersonating():
-        log.debug({"success": "true", "message": "impersonate << stop"})
         if "next" in request.query:
             redirect_url = request.query["next"]
         else:
-            redirect_url = URL("default", "home.html", scheme=True)
-        log.debug(f"redirect_url {redirect_url}")
+            redirect_url = vidjil_utils.get_patient_redirect_url()
         auth.stop_impersonating(redirect_url)
     res = {"redirect": "reload"}
     return json.dumps(res, separators=(",", ":"))

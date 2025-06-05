@@ -3,9 +3,7 @@ Returns messages previously logged within the 'user_log' table.
 See UserLogHandler() in models/db.py.
 """
 
-import json
-
-from py4web import URL, action, request
+from py4web import action, request
 
 from ..common import auth, db
 from ..modules import vidjil_utils
@@ -42,19 +40,6 @@ def get_data_list(table):
 @action.uses("log/index.html", db, auth.user)
 @vidjil_utils.jsontransformer
 def index():
-    if not auth.user:
-        res = {
-            "redirect": URL(
-                "default",
-                "user",
-                args="login",
-                scheme=True,
-                vars=dict(_next=URL("patient", "index", scheme=True)),
-            )
-        }
-
-        return json.dumps(res, separators=(",", ":"))
-
     user_log = db.user_log
     data_list = []
     groups = []

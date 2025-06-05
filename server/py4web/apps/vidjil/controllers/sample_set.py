@@ -5,7 +5,7 @@ import pathlib
 from collections import defaultdict
 
 from ombott import static_file
-from py4web import URL, action, request
+from py4web import action, request
 
 from .. import settings
 from ..common import T, auth, db, log, session
@@ -264,22 +264,6 @@ def all():
         type = request.query.get("type")
     else:
         type = sampleSet.SET_TYPE_GENERIC
-
-    if not auth.user:
-        res = {
-            "redirect": URL(
-                "default",
-                "user",
-                args="login",
-                scheme=True,
-                vars=dict(
-                    _next=URL(
-                        "sample_set", "all", vars={"type": type, "page": 0}, scheme=True
-                    )
-                ),
-            )
-        }
-        return json.dumps(res, separators=(",", ":"))
 
     isAdmin = auth.is_admin()
 
