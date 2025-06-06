@@ -211,7 +211,7 @@ test_browser_unit:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
+    - /^release-.*$/
     - dev
     - schedules
   tags:
@@ -232,7 +232,7 @@ code_quality_custom:
   only:
     - /^feature-.*c.*\/.*$/
     - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
+    - /^release-.*$/
     - dev
     - schedules
   tags:
@@ -259,7 +259,7 @@ Ruff Check:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - /^prod-client/
+    - /^release-.*$/
     - dev
     - schedules
   artifacts:
@@ -273,7 +273,7 @@ Ruff Format:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - /^prod-client/
+    - /^release-.*$/
     - dev
     - schedules
 
@@ -306,7 +306,7 @@ test_server_unit:
     only:
       - /^feature-.*s.*\/.*$/
       - /^hotfix-.*s.*\/.*$/
-      - /^prod-server/
+      - /^release-.*$/
       - dev
       - schedules
     tags:
@@ -373,7 +373,7 @@ test_server_unit:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
-    - /^prod-server/
+    - /^release-.*$/
     - dev
     - schedules
   tags:
@@ -473,7 +473,7 @@ deploy_client:
     - ssh vidjil@$PROD_CLIENT_SERVER "
          cd $PROD_CLIENT_PATH
          && git fetch
-         && git reset --hard origin/prod-client
+         && git reset --hard origin/$CI_COMMIT_BRANCH
          && make germline
          && cp doc/analysis-example.vidjil browser/
          && cd docker
@@ -482,7 +482,7 @@ deploy_client:
     name: production
     url: https://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
-    - prod-client
+    - release-.*$
   tags:
     - cidocker
   needs:
@@ -525,8 +525,7 @@ build_test_server_docker:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
   only:
-    - /^prod-server/
-    - /^prod-client/
+    - /^release-.*$/
     - /^feature-.*s.*\/.*$/
     - /^feature-.*t.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
@@ -550,7 +549,6 @@ deploy_docker:
     - docker:dind
   script:
     - export CUR_DATE=`date +%Y-%m-%d`
-    - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
     - export SHA=`echo $CI_COMMIT_SHA | awk '{ print substr($0, 0, 8) }'`
     - export TAG="vidjil/$TYPE:$CUR_DATE-$SHA"
     - docker login -u "$CI_DOCKER_USER" -p "$CI_DOCKER_PASSWORD" $CI_DOCKER
@@ -560,11 +558,13 @@ deploy_docker:
     - docker push "vidjil/$TYPE:latest"
     - docker rmi $TAG "vidjil/$TYPE:latest"
   when: manual
+  parallel:
+    matrix:
+      - TYPE: ["server", "client"]
   extends:
     - .need_for_independent_test
   only:
-    - /^prod-server/
-    - /^prod-client/
+    - /^release-.*$/
   tags:
     - ci.inria.fr
     - small
