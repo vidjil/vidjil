@@ -105,4 +105,50 @@ describe("Manipulate configs", function () {
     }
 
   });
+
+
+  it("03-clipboard-config-preprocess", function () {
+    cy.goToPreprocessPage();
+
+    if ((Cypress.browser.name === "chromium") && (parseInt(Cypress.browser.version.split(".")[0]) >= 81)) {
+      cy.wrap(Cypress.automation('remote:debugger:protocol', {
+        command: 'Browser.grantPermissions',
+        params: {
+          permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+          origin: window.location.origin,
+        },
+      }))
+
+      cy.get('#preprocess_copyPathClipboard_1 > .icon-newspaper')
+        .click()
+        .then(() => {
+          // check that the path is copied to clipboard
+
+          cy.window().then((win) => {
+            win.navigator.clipboard.readText().then((text) => {
+              expect(text).to.contain("'name': 'd1',");
+              expect(text).to.contain("'command': 'd',");
+              expect(text).to.contain("'info': 'Cy'");
+            });
+          });
+
+          // check flash message is displayed
+          cy.get(".flash_1").should("be.visible").contains("Copied");
+        });
+
+        cy.get('#new_preprocess_btn')
+          .click()
+
+        cy.get('#fillPreprocessConfigFormFromClipboard')
+          .click()
+
+        cy.get('#pre_process_name').should('have.value',"d1");
+        cy.get('#pre_process_command').should('have.value',"d");
+        cy.get('#pre_process_info').should('have.value',"Cy");
+
+    }
+
+  });
+
+
 });
