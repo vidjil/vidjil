@@ -59,6 +59,8 @@ class TestConfigController(unittest.TestCase):
         assert result["used_configs"][0] == 1
         assert len(result["classification"]) == 6
 
+        assert result["query"][0]["clipboard"] ==  "{'name': 'Clonality', 'program': 'vidjil', 'classification': '1', 'command': '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr', 'fuse_command': '-t 100 -d lenSeqAverage --overlaps', 'info': 'incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality'}"
+
     ##################################
     # Tests on config_controller.add()
     ##################################
