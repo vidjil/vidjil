@@ -451,15 +451,24 @@ def get_fused_stats(fuse):
                             fuse_data["diversity"]["index_H_entropy"][result_index],
                             dict,
                         ):
-                            shannon_diversity = round(
-                                float(
-                                    fuse_data["diversity"]["index_H_entropy"][
-                                        result_index
-                                    ]["all"]
-                                ),
-                                3,
-                            )
-                        else:
+                            if (
+                                "all"
+                                in fuse_data["diversity"]["index_H_entropy"][
+                                    result_index
+                                ]
+                            ):
+                                shannon_diversity = round(
+                                    float(
+                                        fuse_data["diversity"]["index_H_entropy"][
+                                            result_index
+                                        ]["all"]
+                                    ),
+                                    3,
+                                )
+                        elif (
+                            fuse_data["diversity"]["index_H_entropy"][result_index]
+                            is not None
+                        ):
                             shannon_diversity = round(
                                 float(
                                     fuse_data["diversity"]["index_H_entropy"][

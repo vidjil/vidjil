@@ -62,13 +62,15 @@ class BarChartDecorator(StatDecorator):
 
     def decorate(self, data):
         bars = []
-        for val in data:
-            bar_span = SPAN(
-                _style=f"height: {val}%; width: {(1.0 / len(data)) * 100}%",
-                _title=f"{val}%",
-                _class="bar",
-            )
-            bars.append(bar_span)
+        if len(data) > 0:
+            width = (1.0 / len(data)) * 100
+            for val in data:
+                bar_span = SPAN(
+                    _style=f"height: {val}%; width: {width}%",
+                    _title=f"{val}%",
+                    _class="bar",
+                )
+                bars.append(bar_span)
         return DIV(*bars, _class="bar_chart")
 
 
@@ -78,14 +80,15 @@ class LabeledBarChartDecorator(BarChartDecorator):
 
     def decorate(self, data):
         bars = []
-        percentage_per_item = (1.0 / len(data)) * 100
-        for t in data:
-            # We want larger bars to better see them. However we may not want that with wide labeled bar charts
-            style = f"height: {t[1]}%; width: {percentage_per_item * 2}%; margin-right: -{percentage_per_item}%"
-            if t[1]:
-                style += ";min-height: 1px"
-            bar_span = SPAN(_style=style, _title=t[0], _class="bar")
-            bars.append(bar_span)
+        if len(data) > 0:
+            percentage_per_item = (1.0 / len(data)) * 100
+            for t in data:
+                # We want larger bars to better see them. However we may not want that with wide labeled bar charts
+                style = f"height: {t[1]}%; width: {percentage_per_item * 2}%; margin-right: -{percentage_per_item}%"
+                if t[1]:
+                    style += ";min-height: 1px"
+                bar_span = SPAN(_style=style, _title=t[0], _class="bar")
+                bars.append(bar_span)
 
         # Last bar, to have a full height
         bars.append(SPAN(_style="height: 100%; visibility: hidden;", _class="bar"))
