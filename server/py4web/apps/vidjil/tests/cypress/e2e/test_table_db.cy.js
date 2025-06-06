@@ -285,7 +285,7 @@ describe("Manipulate patient, sample and launch analysis", function () {
       // copy sample path to clipboard
       // did not manage to make it work with firefox and chrome legacy, as clipboard permissions cannot be set
       // add permission for chrome to access clipboard before (see https://github.com/cypress-io/cypress-example-recipes/blob/master/examples/testing-dom__clipboard/cypress/e2e/permissions-spec.cy.js)
-      if ((Cypress.browser.name === "chrome") && (parseInt(Cypress.browser.version.split(".")[0]) >= 81)) {
+      if ((Cypress.browser.name === "chromium") && (parseInt(Cypress.browser.version.split(".")[0]) >= 81)) {
         cy.wrap(Cypress.automation('remote:debugger:protocol', {
           command: 'Browser.grantPermissions',
           params: {
