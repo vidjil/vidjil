@@ -518,13 +518,15 @@ build_test_server_docker:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-  only:
-    - /^release-.*$/
-    - /^feature-.*s.*\/.*$/
-    - /^feature-.*t.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^hotfix-.*t.*\/.*$/
-    - dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
   tags:
     - cidocker
   artifacts:
