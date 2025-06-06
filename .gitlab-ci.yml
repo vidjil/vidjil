@@ -237,12 +237,6 @@ code_quality_custom:
   script:
     - npm install -g jshint
     - make -C browser quality
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^release-.*$/
-    - dev
-    - schedules
   tags:
     - cidocker
   extends:
