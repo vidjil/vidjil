@@ -459,9 +459,6 @@ deploy_review_server:
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
   dependencies: []
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
       when: on_success
