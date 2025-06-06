@@ -53,9 +53,17 @@ client1-ff-supported:
     - .test_cypress_base
     - .need_for_moderate_client
   variables:
-    BROWSER: firefox_supported/firefox
+    BROWSER: chrome_supported/chrome
   needs:
     - []
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
+
 
 c2:
   extends:
@@ -65,19 +73,33 @@ c2:
       - BROWSER: [
           firefox_latest/firefox,
           firefox_legacy/firefox,
-          chrome_supported/chrome,
+          firefox_supported/firefox,
           chrome_latest/chrome,
           chrome_legacy/chrome
         ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: manual
 
 external1-ff-supported:
   extends:
     - .test_cypress_ext
     - .need_for_moderate_client
   variables:
-    BROWSER: firefox_supported/firefox
+    BROWSER: chrome_supported/chrome
   needs:
     - []
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
 
 external2:
   extends:
@@ -88,10 +110,17 @@ external2:
       - BROWSER: [
           firefox_latest/firefox,
           firefox_legacy/firefox,
-          chrome_supported/chrome,
+          firefox_supported/firefox,
           chrome_latest/chrome,
           chrome_legacy/chrome
         ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: manual
 
 
 
@@ -120,9 +149,18 @@ tuto-c1-ff-supported:
     - .tuto-client
     - .need_for_moderate_client
   variables:
-    BROWSER: firefox_supported/firefox
+    BROWSER: chrome_supported/chrome
   needs:
     - []
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /doc/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
 
 tuto-c2:
   extends:
@@ -132,8 +170,15 @@ tuto-c2:
     matrix:
       - BROWSER: [
           firefox_latest/firefox,
-          firefox_legacy/firefox, # not working for the moment on certain tests
-          chrome_supported/chrome,
+          firefox_legacy/firefox,
+          firefox_supported/firefox,
           chrome_latest/chrome,
           chrome_legacy/chrome
         ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: manual
