@@ -280,12 +280,13 @@ Ruff Check:
   extends: .base_ruff
   script:
     - ruff check --output-format=gitlab > code-quality-report.json
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^release-.*$/
-    - dev
-    - schedules
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
   artifacts:
     reports:
       codequality: $CI_PROJECT_DIR/code-quality-report.json
@@ -294,12 +295,13 @@ Ruff Format:
   extends: .base_ruff
   script:
     - ruff format --diff
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^release-.*$/
-    - dev
-    - schedules
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
 
 # Server
 
