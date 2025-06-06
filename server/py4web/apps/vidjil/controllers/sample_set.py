@@ -103,6 +103,10 @@ def index():
     if "config_id" in request.query and request.query["config_id"] != "-1":
         try:
             config_id = int(request.query["config_id"])
+            if db.config[config_id] is None:
+                log.error(f"Config with id {config_id} does not exist")
+                config_id = -1
+                config = False
             config = True
         except TypeError as error:
             log.error(
