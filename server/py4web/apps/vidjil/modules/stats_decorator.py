@@ -116,7 +116,7 @@ class SetsDecorator(StatDecorator):
             d = DIV(
                 s,
                 sample_set["name"],
-                _onclick=f"db.call('sample_set/index', {{'id': '{sample_set['id']}'}})",
+                _onclick=f"db.call('sample_set/index', {{'id': '{sample_set['id']}', 'config_id': -1}})",
                 _style="",
                 _class=f"pointer set_token {sample_set['type']}_token",
             )

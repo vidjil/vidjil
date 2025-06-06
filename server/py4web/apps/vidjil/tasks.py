@@ -101,7 +101,7 @@ def schedule_fuse(sample_set_ids, config_ids):
                         == db.results_file.sequence_file_id
                     )
                     & (db.results_file.config_id == config_id)
-                    & (db.results_file.hidden == False)  # noqa: E712
+                    & (db.results_file.hidden == False)
                 )
                 .select(
                     db.sample_set_membership.sample_set_id,
@@ -230,9 +230,6 @@ def run_vidjil(
         cmd += " " + vidjil_cmd + " " + seq_file
 
         if grep_reads is not None:
-            print(f"{grep_reads=}")
-            print(f"{seq_file=}")
-
             if re.match(r"^[acgtnACGTN]+$", grep_reads):
                 zipped = "z" if seq_file.endswith(".gz") else ""
                 get_quality = (
@@ -668,7 +665,7 @@ def run_fuse(
             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
             & (db.sample_set_membership.sample_set_id == sample_set_id)
             & (db.results_file.config_id == id_config)
-            & (db.results_file.hidden == False)  # noqa: E712
+            & (db.results_file.hidden == False)
         ).select(orderby=db.sequence_file.id | ~db.results_file.run_date)
 
         query = []
@@ -1136,7 +1133,7 @@ def compute_extra(id_file, id_config, min_threshold):
     results_file = (
         db(
             (db.results_file.sequence_file_id == id_file)
-            & (db.results_file.hidden == False)  # noqa: E712
+            & (db.results_file.hidden == False)
             & (db.results_file.config_id == id_config)
         )
         .select(orderby=~db.results_file.run_date)
