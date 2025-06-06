@@ -67,6 +67,13 @@ test_tools:
     - .need_for_quick_test
   tags:
     - cidocker
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
 
 
 # Germlines
@@ -208,12 +215,13 @@ test_browser_unit:
     - browser/
     expire_in: 7 day
     when: always
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^release-.*$/
-    - dev
-    - schedules
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
   tags:
     - cidocker
   extends:
@@ -239,6 +247,17 @@ code_quality_custom:
     - cidocker
   extends:
     - .need_for_quick_test
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
 
 .base_ruff:
   stage: test_quality
@@ -251,6 +270,17 @@ code_quality_custom:
     - cidocker
   extends:
     - .need_for_quick_test
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
 
 Ruff Check:
   extends: .base_ruff
@@ -303,12 +333,13 @@ test_server_unit:
         - server/unit_report.xml
         - server/unit_coverage.xml
       expire_in: 7 day
-    only:
-      - /^feature-.*s.*\/.*$/
-      - /^hotfix-.*s.*\/.*$/
-      - /^release-.*$/
-      - dev
-      - schedules
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
     tags:
       - cidocker
     extends:
@@ -387,9 +418,11 @@ deploy_review:
     name: review-$CI_BUILD_REF_NAME
     url: http://$CI_COMMIT_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
   tags:
     - web
   extends:
@@ -435,6 +468,11 @@ deploy_review_server:
   only:
     - /^feature-.*s.*\/.*$/
     - /^hotfix-.*s.*\/.*$/
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
   extends:
     - .need_for_independent_test
   artifacts:
