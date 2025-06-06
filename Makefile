@@ -2,7 +2,7 @@
 VIDJIL_ALGO_SRC = algo/
 VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
-CYPRESS_BROWSER = browsers/firefox_supported/chrome
+CYPRESS_BROWSER = browsers/chrome_supported/chrome
 
 TEE = python tools/tee.py -v
 
