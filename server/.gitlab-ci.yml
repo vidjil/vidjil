@@ -43,12 +43,6 @@
     CYPRESS_PATH: server/py4web/apps/vidjil/tests/cypress
     HOST: local
     TEST_FILES_PATTERN: "/app/cypress/e2e/test_*.js"
-  only: &onlyServerBranches
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-server/
-    - dev
-
 
 
 ## Cypress with server
