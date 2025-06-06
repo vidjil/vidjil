@@ -957,12 +957,8 @@ function copyHard(obj){
 async function fillConfigFormFromClipboard() {
   try {
     const content = await navigator.clipboard.readText();
+    const values  = JSON.parse(content.replace(/'/g, '"'));
 
-    // Par exemple, on suppose que les champs sont séparés par des tabulations ou des sauts de ligne
-    const values = JSON.parse(content.replace(/'/g, '"'));
-    console.default.log( values );
-
-    // On remplit les champs un à un (ajustez selon vos besoins)
     document.getElementById("config_name").value = values.name;
     document.getElementById("config_classification").value = values.classification;
     document.getElementById("config_program").value = values.program;
@@ -970,6 +966,24 @@ async function fillConfigFormFromClipboard() {
     document.getElementById("config_fuse_command").value = values.fuse_command;
     document.getElementById("config_info").value = values.info;
 
+  } catch (err) {
+    console.error("Error in clipboard reading.", err);
+  }
+}
+
+
+
+/**
+ * Allow to read content from clipboard to put it in preprocess configuration form 
+ */
+async function fillPreprocessConfigFormFromClipboard() {
+  try {
+    const content = await navigator.clipboard.readText();
+    const values  = JSON.parse(content.replace(/'/g, '"'));
+
+    document.getElementById("pre_process_name").value = values.name;
+    document.getElementById("pre_process_command").value = values.command;
+    document.getElementById("pre_process_info").value = values.info;
   } catch (err) {
     console.error("Error in clipboard reading.", err);
   }

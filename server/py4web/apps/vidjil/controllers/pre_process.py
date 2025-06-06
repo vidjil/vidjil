@@ -44,6 +44,13 @@ def index():
         extra={"user_id": auth.user_id, "record_id": None, "table_name": "pre_process"},
     )
 
+    for elt in query:
+        elt["clipboard"] = str({
+            "name": str(elt["name"]),
+            "command": str(elt["command"]),
+            "info": str(elt["info"])
+        })
+
     return dict(
         message=T("Pre-process list"),
         query=query,

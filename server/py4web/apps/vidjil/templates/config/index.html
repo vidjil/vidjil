@@ -53,7 +53,7 @@
                 <td onclick="db.call('config/edit', {'id' :'[[=row.id]]'} )" >
                     <i class="icon-pencil-2" title="edit config"></i>
                 </td>
-                <td id="copyPathClipboard_[[=row.id]]" class="pointer" onclick='copyTextToClipboard("[[=row.clipboard]]", "configuration [[=row.name]]")' title="[[=dict(row)]]" > <i class="icon-newspaper" title="[[=row]]"></i></td>
+                <td id="copyPathClipboard_[[=row.id]]" class="pointer" onclick='copyTextToClipboard("[[=row.clipboard]]", "configuration [[=row.name]]")' title="Copy '[[=row.name]]' process configuration" > <i class="icon-newspaper" title="[[=row]]"></i></td>
                 <td [[ if (row.id not in used_configs): ]]onclick="db.call('config/confirm', {'id' :'[[=row.id]]'} )" [[pass]]>
                     <i class="icon-erase" title="delete config" [[ if (row.id in used_configs): ]] style="opacity: 0.4" [[pass]]></i>
                 </td>
