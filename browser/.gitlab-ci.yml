@@ -31,11 +31,7 @@
     when: always
   tags:
     - cidocker
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - dev
+
 
 
 .test_cypress_ext:
@@ -137,12 +133,7 @@ external2:
   before_script:
     - apt-get update && apt-get -y install pandoc
     - make -C doc/tutorial/ build_tutorial_cypress_client
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - dev
-    - doc
+
 
 tuto-c1-ff-supported:
   extends:

@@ -370,12 +370,6 @@ test_server_unit:
     DOCKER_HOST: tcp://docker:2375
     # DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^release-.*$/
-    - dev
-    - schedules
   tags:
     - cidocker
 
