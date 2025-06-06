@@ -259,7 +259,7 @@ def form():
 
         sample_set_list = db(
             (db.sample_set_membership.sequence_file_id == request.query["file_id"])
-            & (db.sample_set_membership.sample_set_id != None)  # noqa: E711
+            & (db.sample_set_membership.sample_set_id != None)
             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
             & (db.sample_set.sample_type != "sequence_file")
         ).select(
@@ -447,7 +447,7 @@ def submit():
         }
         return json.dumps(res, separators=(",", ":"))
     else:
-        print(f["errors"])
+        log.error(f"add_form() failed - {errors=}")
         return error_message("add_form() failed")
 
 
@@ -916,7 +916,7 @@ def delete():
 
 def sequencer_list():
     sequencer_list = []
-    for row in db(db.sequence_file.sequencer != None).select(  # noqa: E711
+    for row in db(db.sequence_file.sequencer != None).select(
         db.sequence_file.sequencer, distinct=True
     ):
         if row.sequencer != "null":
@@ -928,7 +928,7 @@ def sequencer_list():
 
 def pcr_list():
     pcr_list = []
-    for row in db(db.sequence_file.pcr != None).select(  # noqa: E711
+    for row in db(db.sequence_file.pcr != None).select(
         db.sequence_file.pcr, distinct=True
     ):
         if row.pcr != "null":
@@ -940,7 +940,7 @@ def pcr_list():
 
 def producer_list():
     producer_list = []
-    for row in db(db.sequence_file.producer != None).select(  # noqa: E711
+    for row in db(db.sequence_file.producer != None).select(
         db.sequence_file.producer, distinct=True
     ):
         if row.producer != "null":
@@ -969,14 +969,12 @@ def restart_pre_process():
     )
     old_task_id = sequence_file.pre_process_scheduler_task_id
     if db.scheduler_task[old_task_id] is not None:
-        print(f"Delete old preprocess: {old_task_id}")
         scheduler.control.revoke(old_task_id, terminate=True)
         db(db.scheduler_task.id == old_task_id).delete()
         db.commit()
 
     # Launch new preprocess
     pre_process = db.pre_process[sequence_file.pre_process_id]
-    print(f"sequence_file.id: {sequence_file.id}, pre_process.id: {pre_process.id}")
     res = tasks.schedule_pre_process(sequence_file.id, pre_process.id)
 
     log.debug(

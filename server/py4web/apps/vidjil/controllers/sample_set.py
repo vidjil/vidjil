@@ -101,8 +101,15 @@ def index():
     info_file = helper.get_info_dict(data)
 
     if "config_id" in request.query and request.query["config_id"] != "-1":
-        config_id = int(request.query["config_id"])
-        config = True
+        try:
+            config_id = int(request.query["config_id"])
+            config = True
+        except TypeError as error:
+            log.error(
+                f"Error when trying to cast config_id to int for {request.query["config_id"]=}: {error}"
+            )
+            config_id = -1
+            config = False
     elif "config_id" in request.query and request.query["config_id"] == "-1":
         most_used_query = db((db.fused_file.sample_set_id == sample_set.id)).select(
             db.fused_file.config_id.with_alias("id"),
@@ -149,7 +156,7 @@ def index():
             left=db.results_file.on(
                 (db.results_file.sequence_file_id == db.sequence_file.id)
                 & (db.results_file.config_id == str(config_id))
-                & (db.results_file.hidden == False)  # noqa: E712
+                & (db.results_file.hidden == False)
             ),
             orderby=db.sequence_file.id | ~db.results_file.run_date,
         )
@@ -175,7 +182,7 @@ def index():
             left=db.results_file.on(
                 (db.results_file.sequence_file_id == db.sequence_file.id)
                 & (db.results_file.config_id == str(config_id))
-                & (db.results_file.hidden == False)  # noqa: E712
+                & (db.results_file.hidden == False)
             )
         )
 
@@ -605,7 +612,7 @@ def custom():
         & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
         & (db.results_file.sequence_file_id == db.sequence_file.id)
         & (db.results_file.data_file != "")
-        & (db.results_file.hidden == False)  # noqa: E712
+        & (db.results_file.hidden == False)
         & (db.config.id == db.results_file.config_id)
     )
 
@@ -763,7 +770,7 @@ def get_configs_by_classification():
         classification["%02d_noclass" % i]["name"] = "-"
         classification["%02d_noclass" % i]["info"] = ""
         classification["%02d_noclass" % i]["configs"] = db(
-            (db.config.classification is None)
+            (db.config.classification == None)
             & (
                 auth.vidjil_accessible_query(PermissionEnum.read.value, db.config)
                 | auth.vidjil_accessible_query(PermissionEnum.admin.value, db.config)
@@ -1029,7 +1036,7 @@ def multi_sample_stats():
             left=db.results_file.on(
                 (db.results_file.sequence_file_id == db.sequence_file.id)
                 & (db.results_file.config_id == str(config_id))
-                & (db.results_file.hidden == False)  # noqa: E712
+                & (db.results_file.hidden == False)
             ),
             orderby=db.sequence_file.id | ~db.results_file.run_date,
         )
@@ -1284,8 +1291,8 @@ def result_files():
         & (db.sample_set_membership.sample_set_id == db.sample_set.id)
         & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
         & (db.results_file.sequence_file_id == db.sequence_file.id)
-        & (db.results_file.data_file != None)  # noqa: E711
-        & (db.results_file.hidden == False)  # noqa: E712
+        & (db.results_file.data_file != None)
+        & (db.results_file.hidden == False)
         & config_query
     )
 

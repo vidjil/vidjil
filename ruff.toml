@@ -3,3 +3,7 @@ extend-exclude = ["algo", "browser", "germline", "packaging", "tools", "server/s
 [lint]
 # Add import fix
 extend-select = ["I"]
+# Exclude specific rules no relevant to the project
+# Comparison to `None` with `==` or `!=` should be used instead of `is` or `is not` in pydal
+# Comparison to `True` or `False` with `==` or `!=` should be used instead of `is` or `is not` in pydal
+ignore = ["E711", "E712"]

@@ -243,7 +243,7 @@ def get_active_notifications():
     user_id = auth.user_id if auth.user else None
 
     query = db(
-        (db.notification.expiration >= today) | (db.notification.expiration == None)  # noqa: E711
+        (db.notification.expiration >= today) | (db.notification.expiration == None)
     ).select(
         db.notification.ALL,
         db.user_preference.val,
@@ -253,7 +253,7 @@ def get_active_notifications():
         ),
     )
 
-    query = query.find(lambda row: row.user_preference.val is None)
+    query = query.find(lambda row: row.user_preference.val == None)
 
     # TODO sanitize this response
     return query.as_json()
