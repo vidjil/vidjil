@@ -126,9 +126,9 @@ describe("Manipulate configs", function () {
 
           cy.window().then((win) => {
             win.navigator.clipboard.readText().then((text) => {
-              expect(text).to.contain("'name': 'd1',");
-              expect(text).to.contain("'command': 'd',");
-              expect(text).to.contain("'info': 'Cy'");
+              expect(text).to.contain("'name': 'public pre-process',");
+              expect(text).to.contain("'command': 'cat &file1& &file2& > &result&',");
+              expect(text).to.contain("'info': 'concatenate two files'");
             });
           });
 
@@ -142,9 +142,9 @@ describe("Manipulate configs", function () {
         cy.get('#fillPreprocessConfigFormFromClipboard')
           .click()
 
-        cy.get('#pre_process_name').should('have.value',"d1");
-        cy.get('#pre_process_command').should('have.value',"d");
-        cy.get('#pre_process_info').should('have.value',"Cy");
+        cy.get('#pre_process_name').should('have.value',"public pre-process");
+        cy.get('#pre_process_command').should('have.value',"cat &file1& &file2& > &result&");
+        cy.get('#pre_process_info').should('have.value',"concatenate two files");
 
     }
 
