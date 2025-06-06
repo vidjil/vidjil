@@ -45,11 +45,13 @@ def index():
     )
 
     for elt in query:
-        elt["clipboard"] = str({
-            "name": str(elt["name"]),
-            "command": str(elt["command"]),
-            "info": str(elt["info"])
-        })
+        elt["clipboard"] = str(
+            {
+                "name": str(elt["name"]),
+                "command": str(elt["command"]),
+                "info": str(elt["info"]),
+            }
+        )
 
     return dict(
         message=T("Pre-process list"),

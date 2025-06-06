@@ -45,14 +45,16 @@ def index():
     )
 
     for elt in query:
-        elt["clipboard"] = str({
-            "name": str(elt["name"]),
-            "program": str(elt["program"]),
-            "classification": str(elt["classification"]),
-            "command": str(elt["command"]),
-            "fuse_command": str(elt["fuse_command"]),
-            "info": str(elt["info"])
-        })
+        elt["clipboard"] = str(
+            {
+                "name": str(elt["name"]),
+                "program": str(elt["program"]),
+                "classification": str(elt["classification"]),
+                "command": str(elt["command"]),
+                "fuse_command": str(elt["fuse_command"]),
+                "info": str(elt["info"]),
+            }
+        )
     return dict(
         message=T("Configs"),
         query=query,
