@@ -53,7 +53,7 @@ server1-ff-supported:
   variables:
     BROWSER: chrome_supported/chrome
   needs:
-    - [build_test_server_docker]
+    - job: build_test_server_docker
       optional: true
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
@@ -106,7 +106,7 @@ tuto-s1-ff-supported:
   variables:
     BROWSER: chrome_supported/chrome
   needs:
-    - [build_test_server_docker]
+    - job: build_test_server_docker
       optional: true
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
