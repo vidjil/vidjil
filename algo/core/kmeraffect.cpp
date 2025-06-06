@@ -44,7 +44,8 @@ bool operator==(const affect_t &a1, const affect_t &a2) {
      || a1.length == (unsigned char) ~0 || a2.length == (unsigned char)~0 || a1.length == a2.length);
 }
 bool operator<(const affect_t &a1, const affect_t &a2) {
-  return a1.c < a2.c
+  return affect_char(a1) < affect_char(a2)
+    || (affect_char(a1) == affect_char(a2) && affect_strand(a1) < affect_strand(a2))
     || (a1.c == a2.c && a1.length < a2.length
         && affect_char(a1) != AFFECT_AMBIGUOUS_CHAR && affect_char(a1) != AFFECT_UNKNOWN_CHAR);
 }

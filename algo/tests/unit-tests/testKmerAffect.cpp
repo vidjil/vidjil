@@ -21,10 +21,10 @@ void testAffect() {
 
   TAP_TEST(! (Vminus == Vplus), TEST_AFFECT_COMPARISON, "");
   TAP_TEST(Vminus != Vplus, TEST_AFFECT_COMPARISON, "");
-  TAP_TEST(! (Vminus < Vplus), TEST_AFFECT_COMPARISON, "");
-  TAP_TEST(Vminus > Vplus, TEST_AFFECT_COMPARISON, "");
-  TAP_TEST(! (Vminus <= Vplus), TEST_AFFECT_COMPARISON, "");
-  TAP_TEST(Vminus >= Vplus, TEST_AFFECT_COMPARISON, "");
+  TAP_TEST((Vminus < Vplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(!( Vminus > Vplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST((Vminus <= Vplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(!(Vminus >= Vplus), TEST_AFFECT_COMPARISON, "");
 
   TAP_TEST(! (Vminus == Jplus), TEST_AFFECT_COMPARISON, "");
   TAP_TEST(Vminus != Jplus, TEST_AFFECT_COMPARISON, "");
@@ -32,6 +32,13 @@ void testAffect() {
   TAP_TEST(Vminus >= Jplus, TEST_AFFECT_COMPARISON, "");
   TAP_TEST(! (Vminus < Jplus), TEST_AFFECT_COMPARISON, "");
   TAP_TEST(Vminus > Jplus, TEST_AFFECT_COMPARISON, "");
+
+  TAP_TEST(! (Vplus == Jplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(Vplus != Jplus, TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(! (Vplus <= Jplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(Vplus >= Jplus, TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(! (Vplus < Jplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(Vplus > Jplus, TEST_AFFECT_COMPARISON, "");
 
   TAP_TEST(Vminus == Vminus, TEST_AFFECT_COMPARISON, "");
   TAP_TEST(! (Vminus != Vminus), TEST_AFFECT_COMPARISON, "");
@@ -144,10 +151,10 @@ void testKmerAffectComparison() {
 
   TAP_TEST(! (Vminus == Vplus), TEST_KMERAFFECT_COMPARISON, "");
   TAP_TEST(Vminus != Vplus, TEST_KMERAFFECT_COMPARISON, "");
-  TAP_TEST(! (Vminus < Vplus), TEST_KMERAFFECT_COMPARISON, "");
-  TAP_TEST(Vminus > Vplus, TEST_KMERAFFECT_COMPARISON, "");
-  TAP_TEST(! (Vminus <= Vplus), TEST_KMERAFFECT_COMPARISON, "");
-  TAP_TEST(Vminus >= Vplus, TEST_KMERAFFECT_COMPARISON, "");
+  TAP_TEST((Vminus < Vplus), TEST_KMERAFFECT_COMPARISON, "");
+  TAP_TEST(!(Vminus > Vplus), TEST_KMERAFFECT_COMPARISON, "");
+  TAP_TEST((Vminus <= Vplus), TEST_KMERAFFECT_COMPARISON, "");
+  TAP_TEST(!(Vminus >= Vplus), TEST_KMERAFFECT_COMPARISON, "");
 
   TAP_TEST(! (Vminus == Jplus), TEST_KMERAFFECT_COMPARISON, "");
   TAP_TEST(Vminus != Jplus, TEST_KMERAFFECT_COMPARISON, "");
@@ -155,6 +162,13 @@ void testKmerAffectComparison() {
   TAP_TEST(Vminus >= Jplus, TEST_KMERAFFECT_COMPARISON, "");
   TAP_TEST(! (Vminus < Jplus), TEST_KMERAFFECT_COMPARISON, "");
   TAP_TEST(Vminus > Jplus, TEST_KMERAFFECT_COMPARISON, "");
+
+  TAP_TEST(! (Vplus == Jplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(Vplus != Jplus, TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(! (Vplus <= Jplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(Vplus >= Jplus, TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(! (Vplus < Jplus), TEST_AFFECT_COMPARISON, "");
+  TAP_TEST(Vplus > Jplus, TEST_AFFECT_COMPARISON, "");
 
   TAP_TEST(Vminus == Vminus, TEST_KMERAFFECT_COMPARISON, "");
   TAP_TEST(! (Vminus != Vminus), TEST_KMERAFFECT_COMPARISON, "");
