@@ -333,13 +333,13 @@ test_server_unit:
         - server/unit_report.xml
         - server/unit_coverage.xml
       expire_in: 7 day
-  rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: on_success
+    rules:
+      - if: '$CI_COMMIT_BRANCH !~ /dev/'
+        when: on_success
+      - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+        when: on_success
+      - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+        when: on_success
     tags:
       - cidocker
     extends:
