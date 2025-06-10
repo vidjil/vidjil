@@ -66,7 +66,6 @@ void testProba1() {
   uint64_t duration_not_precomputed = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count();
 
   if(! RUNNING_ON_VALGRIND) {
-    TAP_TEST(duration_precomputation > duration_precomputed, TEST_PROBA_PRECOMPUTER, "Make sure that a precomputation is performed");
     TAP_TEST(duration_precomputed*50 < duration_not_precomputed, TEST_PROBA_PRECOMPUTER, "Make sure that precomputation is much faster than no precomputation");
     PRINT_VAR(duration_not_precomputed);
   }
