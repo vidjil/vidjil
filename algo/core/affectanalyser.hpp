@@ -840,7 +840,10 @@ void MultipleAffectAnalyser::computeString(std::set<KmerAffect> &affects, bool r
   if (affects.size() == 0)
     affects = getAffectations();
   for (KmerAffect affect: affects) {
-    BitSet bs = affectations.find(affect)->second;
+    auto it = affectations.find(affect);
+    if (it == affectations.end())
+      break;
+    BitSet bs = it->second;
     char neutral = (binary) ? '0' : ' ';
     if (string_values == "") {
       string_values = std::string(bs.size(), neutral);
