@@ -1,26 +1,26 @@
 import unittest
 
-from ....modules import sampleSet as sampleSet
+from ....modules import sampleSet as sample_set_module
 
 
-class TestAdminController(unittest.TestCase):
+class TestSampleSetModule(unittest.TestCase):
     def setUp(self):
         return
 
     ##################################
-    # Tests on admin_controller.index()
+    # Tests on sample_set_module.index()
     ##################################
 
-    def test_create_sampleset_for_each_type(self):
-        sample_set_patient = sampleSet.SampleSet(type="patient")
+    def test_create_sampleSet_for_each_type(self):
+        sample_set_patient = sample_set_module.SampleSet(type="patient")
         assert sample_set_patient is not None
-        sample_set_run = sampleSet.SampleSet(type="run")
+        sample_set_run = sample_set_module.SampleSet(type="run")
         assert sample_set_run is not None
-        sample_set_generic = sampleSet.SampleSet(type="generic")
+        sample_set_generic = sample_set_module.SampleSet(type="generic")
         assert sample_set_generic is not None
 
     def test_show_results_fields(self):
-        sample_set_patient = sampleSet.SampleSet(type="patient")
+        sample_set_patient = sample_set_module.SampleSet(type="patient")
 
         data_results = {
             # Fictive data
