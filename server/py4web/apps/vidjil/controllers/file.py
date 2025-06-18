@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import base64
 import datetime
 import io
@@ -19,6 +18,11 @@ from ..modules.sampleSet import get_set_group
 from ..modules.sequenceFile import check_space
 from ..modules.zmodel_factory import ModelFactory
 from ..user_groups import get_involved_groups, get_upload_group_ids
+
+try:
+    import uwsgi  # type: ignore
+except ModuleNotFoundError:
+    pass
 
 
 ###########################
@@ -744,55 +748,69 @@ def upload_process(
     mes = f"file {filename}({sequence_id}) "
     log.debug(mes + "processing uploaded file")
 
-    # Store file in db by moving it to the correct location
+    # Lock to prevent race issue on R1/R2 upload
     try:
-        if file_number == "2":
-            db_filename = ""
-            with io.BytesIO() as empty_file:
-                db_filename = db.sequence_file.data_file2.store(empty_file, filename)
-            shutil.move(
-                merged_file,
-                os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
-            )
-            sequence_file.update_record(data_file2=db_filename)
-        else:
-            db_filename = ""
-            with io.BytesIO() as empty_file:
-                db_filename = db.sequence_file.data_file.store(empty_file, filename)
-            shutil.move(
-                merged_file,
-                os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
-            )
-            sequence_file.update_record(data_file=db_filename)
-    except IOError as e:
-        if str(e).find("File name too long") > -1:
-            error += "Your filename is too long, please shorten it."
-        else:
-            error += "System error during processing of uploaded file."
-            log.error(str(e))
+        uwsgi.lock()
+    except Exception as exception:
+        log.error(f"Error when trying to acquire lock from uwsgi: {exception}")
 
-    data_file = sequence_file.data_file
-    data_file2 = sequence_file.data_file2
+    try:
+        # Store file in db by moving it to the correct location
+        try:
+            if file_number == "2":
+                db_filename = ""
+                with io.BytesIO() as empty_file:
+                    db_filename = db.sequence_file.data_file2.store(
+                        empty_file, filename
+                    )
+                shutil.move(
+                    merged_file,
+                    os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
+                )
+                sequence_file.update_record(data_file2=db_filename)
+            else:
+                db_filename = ""
+                with io.BytesIO() as empty_file:
+                    db_filename = db.sequence_file.data_file.store(empty_file, filename)
+                shutil.move(
+                    merged_file,
+                    os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
+                )
+                sequence_file.update_record(data_file=db_filename)
+        except IOError as e:
+            if str(e).find("File name too long") > -1:
+                error += "Your filename is too long, please shorten it."
+            else:
+                error += "System error during processing of uploaded file."
+                log.error(str(e))
 
-    if file_number == "1" and data_file is None:
-        return error_message("no data file")
-    if file_number == "2" and data_file2 is None:
-        return error_message("no data file 2")
+        data_file = sequence_file.data_file
+        data_file2 = sequence_file.data_file2
 
-    # Start preprocess if needed
-    number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
-    if preprocess is not None:
-        if data_file is not None and (
-            data_file2 is not None if number_of_required_files == 2 else True
-        ):
-            sequence_file.update_record(pre_process_flag=tasks.STATUS_WAITING)
-            old_task_id = sequence_file.pre_process_scheduler_task_id
-            if db.scheduler_task[old_task_id] is not None:
-                scheduler.control.revoke(old_task_id, terminate=True)
-                db(db.scheduler_task.id == old_task_id).delete()
-                db.commit()
-            tasks.schedule_pre_process(int(sequence_id), int(preprocess.id))
-            mes += f" | p{preprocess.id} start pre_process for {sequence_id}: {preprocess.name} "
+        if file_number == "1" and data_file is None:
+            return error_message("no data file")
+        if file_number == "2" and data_file2 is None:
+            return error_message("no data file 2")
+
+        # Start preprocess if needed
+        number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
+        if preprocess is not None:
+            if data_file is not None and (
+                data_file2 is not None if number_of_required_files == 2 else True
+            ):
+                sequence_file.update_record(pre_process_flag=tasks.STATUS_WAITING)
+                old_task_id = sequence_file.pre_process_scheduler_task_id
+                if db.scheduler_task[old_task_id] is not None:
+                    scheduler.control.revoke(old_task_id, terminate=True)
+                    db(db.scheduler_task.id == old_task_id).delete()
+                    db.commit()
+                tasks.schedule_pre_process(int(sequence_id), int(preprocess.id))
+                mes += f" | p{preprocess.id} start pre_process for {sequence_id}: {preprocess.name} "
+    finally:
+        try:
+            uwsgi.unlock()
+        except Exception as exception:
+            log.error(f"Error when trying to release lock from uwsgi: {exception}")
 
     # Compute and store file size
     if file_number == "1" and data_file is not None:
