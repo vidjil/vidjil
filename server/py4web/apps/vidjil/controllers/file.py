@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import datetime
+import glob
 import io
 import json
 import os
@@ -456,6 +457,14 @@ PART_SUFFIX = ".part"
 MERGED_SUFFIX = ".merged"
 
 
+def get_chunk_dir(resumableIdentifier: str) -> pathlib.Path:
+    return pathlib.Path(settings.UPLOAD_FOLDER, PARTS_FOLDER, resumableIdentifier)
+
+
+def get_merged_file_path(resumableIdentifier: str) -> pathlib.Path:
+    return pathlib.Path(settings.UPLOAD_FOLDER, resumableIdentifier + MERGED_SUFFIX)
+
+
 @action("/vidjil/file/resumable_upload", method=["OPTIONS"])
 @action.uses(auth.user)
 def resumable_upload_options():
@@ -504,14 +513,15 @@ def resumable_upload_get():
     resumableChunkNumber = int(request.params["resumableChunkNumber"])
 
     # chunk folder path based on the parameters
-    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, PARTS_FOLDER, resumableIdentifier)
+    chunk_dir = get_chunk_dir(resumableIdentifier)
 
     # chunk path based on the parameters
     chunk_name = f"{resumableChunkNumber}{PART_SUFFIX}"
-    chunk_path = os.path.join(chunk_dir, chunk_name)
+    chunk_path = pathlib.Path(chunk_dir, chunk_name)
 
-    if os.path.isfile(chunk_path):
+    if chunk_path.exists():
         # Let resumable.js know this chunk already exists
+        log.debug(f"found chunk {chunk_path}")
         return "OK"
     else:
         # Let resumable.js know this chunk does not exists and needs to be uploaded
@@ -540,7 +550,6 @@ def resumable_upload_post():
     Returns:
     str: "OK" if the chunk is successfully received and processed.
     """
-    mes = ""
     error = ""
 
     if "resumableIdentifier" not in request.params:
@@ -563,36 +572,33 @@ def resumable_upload_post():
     resumableFilename = request.params["resumableFilename"]
     file = request.files["file"]
 
-    chunk_dir = os.path.join(settings.UPLOAD_FOLDER, PARTS_FOLDER, resumableIdentifier)
-    os.makedirs(chunk_dir, exist_ok=True)
+    chunk_dir = get_chunk_dir(resumableIdentifier)
+    chunk_dir.mkdir(exist_ok=True)
 
     chunk_name = f"{resumableChunkNumber}{PART_SUFFIX}"
-    chunk_path = os.path.join(chunk_dir, chunk_name)
+    chunk_file_path = pathlib.Path(chunk_dir, chunk_name)
 
-    with open(chunk_path, "wb") as chunk_file:
+    with open(chunk_file_path, "wb") as chunk_file:
         chunk_file.write(file.file.read())
 
-    mes += f"Chunk {resumableChunkNumber} of {resumableFilename} received."
-
-    # Check if all chunks are received
-    received_chunks = len(os.listdir(chunk_dir))
+    # Merge received chunks
+    chunk_dir = get_chunk_dir(resumableIdentifier)
+    received_chunks = len(glob.glob(f"*{PART_SUFFIX}", root_dir=chunk_dir))
     if received_chunks == resumableTotalChunks:
-        mes += " All chunks received. Storing merged file."
-
-        final_path = os.path.join(
-            settings.UPLOAD_FOLDER, resumableIdentifier + MERGED_SUFFIX
-        )
-        with open(final_path, "wb") as final_file:
+        merged_file_path = get_merged_file_path(resumableIdentifier)
+        with open(merged_file_path, "wb") as merged_file:
             for i in range(1, resumableTotalChunks + 1):
-                chunk_path = os.path.join(chunk_dir, f"{i}.part")
+                chunk_path = pathlib.Path(chunk_dir, f"{i}.part")
+                if not chunk_path.exists():
+                    log.error(
+                        f"Missing {chunk_path} when trying to merge uploaded file"
+                    )
+                    raise HTTP(
+                        500,
+                        f"Upload error when receiving file {resumableFilename}, please try to upload again.",
+                    )
                 with open(chunk_path, "rb") as chunk_file:
-                    final_file.write(chunk_file.read())
-        mes += f" File {resumableIdentifier}{MERGED_SUFFIX} written successfully."
-        # Clean up chunks
-        for i in range(1, resumableTotalChunks + 1):
-            os.remove(os.path.join(chunk_dir, f"{i}.part"))
-        os.rmdir(chunk_dir)
-
+                    merged_file.write(chunk_file.read())
     return "OK"
 
 
@@ -620,6 +626,7 @@ def resumable_upload_process():
     Returns:
     str: A JSON string containing the result message.
     """
+
     # Check input parameters
     error = []
     if "resumableIdentifier" not in request.params:
@@ -634,11 +641,10 @@ def resumable_upload_process():
         error.append("Upload error")
 
     if error:
+        log.error(f"resumable_upload_process : {error}")
         raise HTTP(500, ", ".join(error))
 
-    expected_merged_file = os.path.join(
-        settings.UPLOAD_FOLDER, request.params["resumableIdentifier"] + MERGED_SUFFIX
-    )
+    resumableIdentifier = request.params["resumableIdentifier"]
     sequence_id = request.params["sequence_id"].removesuffix("_2")
     filename = request.params["filename"]
     file_number = request.params["file_number"]
@@ -647,8 +653,10 @@ def resumable_upload_process():
         if "pre_process" in request.params and request.params["pre_process"] != "0"
         else None
     )
+    merged_file_path = get_merged_file_path(resumableIdentifier)
+
     return upload_process(
-        expected_merged_file, sequence_id, filename, file_number, preprocess
+        merged_file_path, sequence_id, filename, file_number, preprocess
     )
 
 
@@ -688,7 +696,7 @@ def upload():
 
     # write uploaded file to disk
     sequence_id = request.params["id"]
-    merged_file = os.path.join(settings.UPLOAD_FOLDER, f"{sequence_id}{MERGED_SUFFIX}")
+    merged_file = get_merged_file_path(sequence_id)
     uploaded_file_upload = request.files["file"]
     filename = uploaded_file_upload.filename
     with open(merged_file, "wb") as f:
