@@ -3,6 +3,80 @@
     These notes are a work-in-progress; they are not as polished as the user documentation.  
     Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), the [issues](https://gitlab.inria.fr/vidjil/vidjil), the commit messages, and the source code.
 
+# Development environment
+
+## Installing the development environment
+
+To prepare your development environment, you first need to have `python 3.12`, `docker` and `docker-compose` installed need to run the following commands:
+
+```bash
+# Create a virtual environment
+python3 -m venv venv
+# Activate the virtual environment
+source venv/bin/activate
+# Install the required packages
+pip install -r requirements.txt
+pip install -r requirements_dev.txt
+pip install -r requirements_tests.txt
+# Activate pre-commit hooks
+pre-commit install
+```
+
+## Docker: Deploy a local version for development purpose
+
+See [Docker installation documentation](server.md#installation-with-docker)
+
+You may want to make some modifications to the code of Vidjil web application, server, browser or tools side.
+In these cases, you should get a copy of the Vidjil repository where you will be able to make your changes, and also make some modifications to the `docker-compose.yml`.
+
+A specific docker-compose file is provided as `docker-compose-dev.yml`.
+It overrides some volume declaration to use scripts and content of the local repository in docker.
+
+``` bash
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+```
+
+If you don't want to have to specify the path docker-compose files, you can link or rename `docker-compose-dev.yml` as `docker-compose.override.yml`. It will then be automatically applied at launch.
+
+## Building images for DockerHub
+
+Make sure your Dockerfile is up to date with any changes you may want to
+make in the containers. The Dockerfile accepts the following build arguments:
+
+- build-env: TEST or PRODUCTION. If unspecified, PRODUCTION is assumed.
+  The main difference is that TEST will build the image with an HTTP
+  configuration whereas PRODUCTION uses HTTPS.
+
+``` bash
+docker build --build-arg build_env=PRODUCTION -t vidjil/client:<version> -f docker/vidjil-client/Dockerfile ../
+docker build --build-arg build_env=PRODUCTION -t vidjil/server:<version> -f docker/vidjil-server/Dockerfile ../
+```
+
+Tag the image you have just built:
+
+``` bash
+docker tag vidjil:test vidjil/client:latest
+docker tag vidjil:test vidjil/server:latest
+```
+
+Push the image to DockerHub:
+
+``` bash
+docker push vidjil/client:<tag>
+docker push vidjil/server:<tag>
+```
+
+You may be required to log in, in which case you can consult the [following documentation](https://docs.docker.com/engine/reference/commandline/login/).
+
+If you encounter an issue where docker is unable to access
+archive.ubuntu.org, you may need to add your DNS to /etc/docker/daemon.json
+
+``` json
+{
+    "dns":["dns1", "dns2"]
+}
+```
+
 # Development notes -- Server
 
 ## Notifications
@@ -170,61 +244,4 @@ To open the GUI and select tests to launch, the command will be:
 
 ```bash
 make functional_server_cypress_open
-```
-
-# Docker
-
-See [Docker installation documentation](server.md#installation-with-docker)
-
-## Deploy a local version for development purpose
-
-You may want to make some modifications to the code of Vidjil web application, server, browser or tools side.
-In these cases, you should get a copy of the Vidjil repository where you will be able to make your changes, and also make some modifications to the `docker-compose.yml`.
-
-A specific docker-compose file is provided as `docker-compose-dev.yml`.
-It overrides some volume declaration to use scripts and content of the local repository in docker.
-
-``` bash
-docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
-```
-
-If you don't want to have to specify the path docker-compose files, you can link or rename `docker-compose-dev.yml` as `docker-compose.override.yml`. It will then be automatically applied at launch.
-
-## Building images for DockerHub
-
-Make sure your Dockerfile is up to date with any changes you may want to
-make in the containers. The Dockerfile accepts the following build arguments:
-
-- build-env: TEST or PRODUCTION. If unspecified, PRODUCTION is assumed.
-  The main difference is that TEST will build the image with an HTTP
-  configuration whereas PRODUCTION uses HTTPS.
-
-``` bash
-docker build --build-arg build_env=PRODUCTION -t vidjil/client:<version> -f docker/vidjil-client/Dockerfile ../
-docker build --build-arg build_env=PRODUCTION -t vidjil/server:<version> -f docker/vidjil-server/Dockerfile ../
-```
-
-Tag the image you have just built:
-
-``` bash
-docker tag vidjil:test vidjil/client:latest
-docker tag vidjil:test vidjil/server:latest
-```
-
-Push the image to DockerHub:
-
-``` bash
-docker push vidjil/client:<tag>
-docker push vidjil/server:<tag>
-```
-
-You may be required to log in, in which case you can consult the [following documentation](https://docs.docker.com/engine/reference/commandline/login/).
-
-If you encounter an issue where docker is unable to access
-archive.ubuntu.org, you may need to add your DNS to /etc/docker/daemon.json
-
-``` json
-{
-    "dns":["dns1", "dns2"]
-}
 ```
