@@ -1,5 +1,4 @@
 <!doctype html>
-<!doctype html>
 
 <!-- 
   This file is part of Vidjil <http://www.vidjil.org>, High-throughput Analysis of V(D)J Immune Repertoire
@@ -42,7 +41,7 @@
     <link rel="stylesheet" href="css/jquery-ui/jquery-ui.theme.css" />
     <link rel="stylesheet" href="css/lib/select2.min.css" />
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js" integrity="sha512-UWMGINgjUq/2sNur/d2LbiAX6IHmZkkCivoKSdoX+smfB+wB8f96/6Sp8ediwzXBXMXaAqymp6S55SALBk5tNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script data-main="js/app.js" src="js/lib/require.js"></script>
 
@@ -89,18 +88,18 @@
         <h2>Import data</h2>
 
         Data file (.vidjil):<br />
-        <input id="upload_json" type="file" name="json" /></br>
+        <input id="upload_json" type="file" name="json" /><br />
         <p class='help'>The .vidjil file stores a set of clonotypes on several points.</p>
 
         Analysis file (.analysis, optional):<br />
-        <input id="upload_pref" type="file" name="pref" /></br>
+        <input id="upload_pref" type="file" name="pref" /><br />
         <p class='help'>The .analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
 
         <button id="start_import_json" onclick="document.getElementById('file_menu').style.display='none';
             m.load('upload_json','upload_pref')">start</button>
     </div>
 
-    <div id="settings_export_menu" style="display: none;" >
+    <div id="settings_export_menu" class="hidden" >
         <span class="closeButton" onclick="cancel();"><i class="icon-cancel" title=""></i></span>
 
         <h2>Manage settings and templates</h2>
@@ -134,7 +133,7 @@
             <h2>analysis menu</h2>
 
         Analysis file:<br />
-        <input id="upload_analysis" type="file" name="analysis" /></br></br>
+        <input id="upload_analysis" type="file" name="analysis" /><br /><br />
 
             <button onclick="document.getElementById('axis_choice').style.display='none';
                                     m.loadAnalysis('upload_analysis');">start</button> 
@@ -156,7 +155,7 @@
                 <div class="menu" id="top_info">
                     <!--Div is filled programmatically -->
                 </div>
-                <div class="menu" id="db_menu" style="display : none">samples
+                <div class="menu" id="db_menu" class="hidden">samples
                     <div class="selector"><div>
                         <div class="menu_box">
                             <a class="buttonSelector" onclick="javascript:db.call('sample_set/all', {'type': 'patient', 'page': 0})">open list</a>
@@ -169,7 +168,7 @@
                 </div>
             </div>
 
-            <div class="menu" id="static_file_menu" style="display : none">
+            <div class="menu" id="static_file_menu" class="hidden">
                 file
                 <div id="fileSelector" class="selector">
                     <div>
@@ -253,7 +252,7 @@
                 <div class="selector">
                     <div>
                         <div class="menu_box">
-                            <span id="top_label"></span></br>
+                            <span id="top_label"></span><br />
                             <input id="top_slider" type="range" min="1" max="100" step="1" value="10"
                                 onchange="m.filter.add('Top', '>', parseInt(this.value));" />
                             <div id="top_slider_min_per_locus_warning" style="color: orangered; display: none;">Top over limit due to min per locus</div>
@@ -266,7 +265,7 @@
                         <div class="menu_box">
                             <div id="filter_switch_sample"
                                 title="Hide clonotypes that are not present in the current sample">
-                                <input id="filter_switch_sample_check" type="checkbox"></input> Focus on clonotypes of one
+                                <input id="filter_switch_sample_check" type="checkbox"> Focus on clonotypes of one
                                 sample
                             </div>
                         </div>
@@ -283,7 +282,7 @@
                             </form>
                         </div>
                         <div class="menu_box">
-                            size display</br>
+                            size display<br />
                             <label for="menuNotation_scientific" class="buttonSelector">
                                 <input id="menuNotation_scientific" type="radio" name="notation"
                                     onclick="m.changeNotation('scientific', true, true)" value="scientific" />scientific notation
@@ -294,7 +293,7 @@
                             </label>
                         </div>
                         <div class="menu_box">
-                            sample key</br>
+                            sample key<br />
                             <label for="menuTimeForm_order" class="buttonSelector">
                                 <input id="menuTimeForm_order" type="radio" name="time" value="order"
                                        onclick="m.changeTimeFormat('order', true, true)"/> #
@@ -317,7 +316,7 @@
                             </label>
                         </div>
                         <div class="menu_box">
-                            N regions in clonotype names</br>
+                            N regions in clonotype names<br />
                             <label for="menuCloneNot_nucleotide_number" class="buttonSelector"
                                 onclick="m.changeCloneNotation('nucleotide_number', true, true)">
                                 <input id="menuCloneNot_nucleotide_number" type="radio" name="show_name"
@@ -335,7 +334,7 @@
                             </label>
                         </div>
                         <div class="menu_box">
-                            alleles in clone names</br>
+                            alleles in clone names<br />
                             <label for="menuAlleleNot_never" class="buttonSelector">
                                 <input id="menuAlleleNot_never" type="radio" name="menu_allele" value="never" onclick="m.changeAlleleNotation('never', true, true)" />never
                             </label>
@@ -354,7 +353,7 @@
                         </div>
 		                <div id="remove_primer_external"
                             title="Primers will be trimmed before sending them to an external tool (such as IMGT/V-QUEST, IgBlast, Blast, …)">
-                            <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses</input>
+                            <input id="remove_primer_external_check" type="checkbox">trim primers before external analyses
                         </div>
 
 
@@ -367,7 +366,7 @@
                         <!--
                         <div class="submenu" id="system_menu" style="display:none">
                             <div class="menu_box">
-                                selected locus/germline (for the grid)</br>
+                                selected locus/germline (for the grid)<br />
                                 <ul id="germline_list">
                                 </ul>
                             </div>
@@ -395,7 +394,7 @@
 
                             <div class="menu_box">
                                 <div id="EditDistanceSlider">
-                                    </br>
+                                    <br />
                                     <input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10"
                                         onchange="sp.displayDistanceMax(this.value)" style="display:none" />
                                 </div>
@@ -422,12 +421,12 @@
                     <div>
                         <input type="checkbox"
                             onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display
-                        fps</input></br>
+                        fps<br />
                         <input type="checkbox"
-                            onclick=" this.checked ? console.openLog() : console.closeLog() ;">log</input>
+                            onclick=" this.checked ? console.openLog() : console.closeLog() ;">log
                         <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input
                                 type="radio" name="time" value="delta_date_no_zero">day after first sample (no
-                            zero)</input></div>
+                            zero)</div>
                     </div>
                 </div>
             </div>
@@ -474,13 +473,13 @@
                     <div>
                         <a id="help_support" class="buttonSelector getHelp" onclick="report.sendMail()">get support</a>
                         <a id="help_manual" class="buttonSelector" href="http://www.vidjil.org/doc/user"
-                            target="_blank">manual</a>
+                            target="_blank" rel="noopener">manual</a>
                         <a id="help_tutorial" class="buttonSelector"
-                            href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank">tutorial</a>
+                            href="http://www.vidjil.org/doc/tutorial/mastering-vidjil.html" target="_blank" rel="noopener">tutorial</a>
                         <a id="help_shortcuts" class="buttonSelector" href="https://www.vidjil.org/doc/user/#keyboard-shortcuts"
-                            target="_blank">keyboard shortcuts</a>
+                            target="_blank" rel="noopener">keyboard shortcuts</a>
                         <a id="help_bugtracker" class="buttonSelector" href="https://gitlab.inria.fr/vidjil/vidjil"
-                            target="_blank" title="The bugtracker is the place where you can communicate and collaborate with the developer and other Vidjil users to share ideas and report bugs.
+                            target="_blank" rel="noopener" title="The bugtracker is the place where you can communicate and collaborate with the developer and other Vidjil users to share ideas and report bugs.
  +Need to be registered or create a specific account.">bugtracker</a>
                         <a class="buttonSelector devel-mode" onclick="my_tips.reset()">reset tips of the day</a>
                     </div>
