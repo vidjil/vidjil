@@ -106,15 +106,20 @@ class Uploader {
     }, 200);
   }
 
+  sanitizeFilename(filename) {
+    // Sanitize the filename to ensure it is a valid identifier
+    return filename.replace(/[^a-zA-Z0-9_.-]/g, "_");
+  }
+
   add(id, data) {
-    var file = data.get("file");
-    var preProcess = data.get("pre_process");
-    var fileNumber = data.get("file_number");
-    var div_parent = $("#upload_summary_selector").children()[0];
-    var div = $("<div/>").appendTo(div_parent);
+    const file = data.get("file");
+    const preProcess = data.get("pre_process");
+    const fileNumber = data.get("file_number");
+    const div_parent = $("#upload_summary_selector").children()[0];
+    const div = $("<div/>").appendTo(div_parent);
     this.fileIdMatch[file] = id;
     this.queue[this.generateUniqueIdentifier(file)] = {
-      filename: file.name,
+      filename: this.sanitizeFilename(file.name),
       file: file,
       status: "queued",
       percent: 0,
@@ -129,7 +134,7 @@ class Uploader {
   generateUniqueIdentifier(file) {
     if (file in this.fileIdMatch) {
       const sequenceId = this.fileIdMatch[file];
-      const filename = file.name;
+      const filename = this.sanitizeFilename(file.name);
       const fileSize = file.size;
       return `${sequenceId}-${filename}-${fileSize}`;
     } else {

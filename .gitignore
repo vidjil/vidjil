@@ -126,6 +126,7 @@ server/py4web/apps/vidjil/tests/cypress/fixtures
 server/py4web/apps/vidjil/tests/cypress/support
 server/py4web/apps/vidjil/tests/cypress/plugins
 server/py4web/apps/vidjil/tests/cypress/integration
+server/py4web/apps/vidjil/tests/unit/resources/results/parts/test_identifier/*
 server/.coverage
 tools/tests/should.retry
 tools/tests/should.warned.retry

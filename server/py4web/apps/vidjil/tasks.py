@@ -902,16 +902,9 @@ def run_pre_process(
 
         out_folder = settings.DIR_PRE_VIDJIL_ID % sequence_file_id
 
-        preprocess = db.pre_process[pre_process_config_id]
-        required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
-
-        if required_files == 2:
-            output_filename = get_preprocessed_filename(
-                get_original_filename(sequence_file.data_file),
-                get_original_filename(sequence_file.data_file2),
-            )
-        else:
-            output_filename = get_original_filename(sequence_file.data_file)
+        filename1 = get_original_filename(sequence_file.data_file)
+        extension = "".join(pathlib.Path(filename1).suffixes)
+        output_filename = f"{sequence_file_id}{extension}"
 
         if clean_before:
             shutil.rmtree(out_folder, ignore_errors=True)
