@@ -70,9 +70,11 @@ test_tools:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
       when: on_success
 
 
@@ -218,7 +220,7 @@ test_browser_unit:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -244,9 +246,7 @@ code_quality_custom:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -264,17 +264,6 @@ code_quality_custom:
     - cidocker
   extends:
     - .need_for_quick_test
-  rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
-      when: on_success
 
 Ruff Check:
   extends: .base_ruff
@@ -283,7 +272,7 @@ Ruff Check:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -298,7 +287,7 @@ Ruff Format:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
       when: on_success
@@ -332,7 +321,7 @@ test_server_unit:
     rules:
       - if: '$CI_COMMIT_BRANCH !~ /dev/'
         when: on_success
-      - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
         when: on_success
       - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
         when: on_success
@@ -415,7 +404,7 @@ deploy_review:
     url: http://$CI_COMMIT_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -462,7 +451,7 @@ deploy_review_server:
     auto_stop_in: 2 months
   dependencies: []
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
       when: on_success
@@ -507,7 +496,7 @@ deploy_client:
     name: production
     url: https://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
-    - release-.*$
+    - release-web-.*$
   tags:
     - cidocker
   needs:
@@ -556,8 +545,6 @@ build_test_server_docker:
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
   tags:
     - cidocker
   artifacts:
@@ -591,7 +578,7 @@ deploy_docker:
   extends:
     - .need_for_independent_test
   only:
-    - /^release-.*$/
+    - /^release-web-.*$/
   tags:
     - ci.inria.fr
     - small

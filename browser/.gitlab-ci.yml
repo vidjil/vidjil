@@ -55,7 +55,7 @@ client1-ff-supported:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -76,7 +76,7 @@ c2:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: manual
@@ -92,7 +92,7 @@ external1-ff-supported:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -113,7 +113,7 @@ external2:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: manual
@@ -148,7 +148,7 @@ tuto-c1-ff-supported:
       when: on_success
     - if: '$CI_COMMIT_BRANCH !~ /doc/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -169,7 +169,7 @@ tuto-c2:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: manual
