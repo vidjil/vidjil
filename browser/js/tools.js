@@ -956,8 +956,13 @@ function copyHard(obj){
  */
 async function fillConfigFormFromClipboard() {
   try {
-    const content = await navigator.clipboard.readText();
-    const values  = JSON.parse(content.replace(/'/g, '"'));
+    var content = await navigator.clipboard.readText();
+    content = content.replace(/\\'/g, "\\\\'")
+    content = content.replace(/"/g, '\\"')
+    content = content.replace(/'/g, '"')
+    content = content.replace(/\\\\"/g, "'")
+
+    const values  = JSON.parse(content);
 
     document.getElementById("config_name").value = values.name;
     document.getElementById("config_classification").value = values.classification;
@@ -978,8 +983,14 @@ async function fillConfigFormFromClipboard() {
  */
 async function fillPreprocessConfigFormFromClipboard() {
   try {
-    const content = await navigator.clipboard.readText();
-    const values  = JSON.parse(content.replace(/'/g, '"'));
+    var content = await navigator.clipboard.readText();
+    // {'name': 'test_clipboard', 'command': ' python xxx &flash2& --flash2 ', 'info': 'une "valeur" et une \'autre\'.'}
+    content = content.replace(/\\'/g, "\\\\'")
+    content = content.replace(/"/g, '\\"')
+    content = content.replace(/'/g, '"')
+    content = content.replace(/\\\\"/g, "'")
+
+    const values  = JSON.parse(content);
 
     document.getElementById("pre_process_name").value = values.name;
     document.getElementById("pre_process_command").value = values.command;
