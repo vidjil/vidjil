@@ -42,7 +42,7 @@ test_server_api:
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /dev/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
       when: on_success
