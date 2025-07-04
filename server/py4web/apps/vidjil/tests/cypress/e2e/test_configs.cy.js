@@ -70,7 +70,7 @@ describe("Manipulate configs", function () {
           origin: window.location.origin,
         },
       }))
-      cy.get('#copyPathClipboard_2 > .icon-newspaper')
+      cy.get('#copyToClipboard_process_2 > .icon-newspaper')
         .click()
         .then(() => {
           // check that the path is copied to clipboard
@@ -119,7 +119,7 @@ describe("Manipulate configs", function () {
         },
       }))
 
-      cy.get('#preprocess_copyPathClipboard_1 > .icon-newspaper')
+      cy.get('#copyToClipboard_preprocess_1 > .icon-newspaper')
         .click()
         .then(() => {
           // check that the path is copied to clipboard
