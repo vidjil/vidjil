@@ -54,7 +54,8 @@ def index():
                 "fuse_command": str(elt["fuse_command"]),
                 "info": str(elt["info"]),
             }
-        )
+        ).replace('"', '\\"').replace("\'", "\\'")
+
     return dict(
         message=T("Configs"),
         query=query,
