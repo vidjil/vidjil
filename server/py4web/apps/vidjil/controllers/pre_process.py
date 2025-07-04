@@ -51,7 +51,9 @@ def index():
                 "command": str(elt["command"]),
                 "info": elt["info"]
             }
-        ).replace('"', '\\"').replace("\'", "\\'")
+        )
+        .replace('"', '\\"')
+        .replace("\'", "\\'")
 
     return dict(
         message=T("Pre-process list"),
