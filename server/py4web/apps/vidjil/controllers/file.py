@@ -6,8 +6,10 @@ import os
 import pathlib
 import shutil
 
+from pottery import Redlock
 from py4web import HTTP, action, request
 from pydal.objects import Row
+from redis import Redis
 
 from .. import sampleSet, settings, tasks
 from ..common import T, auth, db, log, scheduler
@@ -18,11 +20,6 @@ from ..modules.sampleSet import get_set_group
 from ..modules.sequenceFile import check_space
 from ..modules.zmodel_factory import ModelFactory
 from ..user_groups import get_involved_groups, get_upload_group_ids
-
-try:
-    import uwsgi  # type: ignore
-except ModuleNotFoundError:
-    pass
 
 
 ###########################
@@ -749,12 +746,15 @@ def upload_process(
     log.debug(mes + "processing uploaded file")
 
     # Lock to prevent race issue on R1/R2 upload
-    try:
-        uwsgi.lock()
-    except Exception as exception:
-        log.error(f"Error when trying to acquire lock from uwsgi: {exception}")
 
-    try:
+    host, port = settings.REDIS_SERVER.split(":")
+    my_redis = Redis(host=host, port=int(port))
+    sequence_file_lock = Redlock(
+        key=f"sequence_file_{sequence_id}",
+        masters={my_redis},
+        auto_release_time=1,
+    )
+    with sequence_file_lock:
         # Store file in db by moving it to the correct location
         try:
             if file_number == "2":
@@ -806,11 +806,6 @@ def upload_process(
                     db.commit()
                 tasks.schedule_pre_process(int(sequence_id), int(preprocess.id))
                 mes += f" | p{preprocess.id} start pre_process for {sequence_id}: {preprocess.name} "
-    finally:
-        try:
-            uwsgi.unlock()
-        except Exception as exception:
-            log.error(f"Error when trying to release lock from uwsgi: {exception}")
 
     # Compute and store file size
     if file_number == "1" and data_file is not None:
