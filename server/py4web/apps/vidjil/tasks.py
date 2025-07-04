@@ -13,6 +13,9 @@ import traceback
 import xmlrpc.client
 from subprocess import PIPE, STDOUT, Popen
 
+from pottery import Redlock
+from redis import Redis
+
 from apps.vidjil import settings
 from apps.vidjil.modules import tools_utils, vidjil_utils
 
@@ -740,18 +743,34 @@ def run_fuse(
             log.error(res)
             raise
 
-        fused_files = db(
-            (db.fused_file.config_id == id_config)
-            & (db.fused_file.sample_set_id == sample_set_id)
-        ).select()
-        if len(fused_files) > 0:
-            fused_file = fused_files[0]
-            id_fuse = fused_file.id
-        else:
-            id_fuse = db.fused_file.insert(
-                sample_set_id=sample_set_id, config_id=id_config
-            )
-            db.commit()
+        host, port = settings.REDIS_SERVER.split(":")
+        my_redis = Redis(host=host, port=int(port))
+        fused_file_lock = Redlock(
+            key=f"fused_file_{id_config}_{sample_set_id}",
+            masters={my_redis},
+            auto_release_time=1,
+        )
+        id_fuse = -1
+        with fused_file_lock:
+            fused_files = db(
+                (db.fused_file.config_id == id_config)
+                & (db.fused_file.sample_set_id == sample_set_id)
+            ).select()
+            if len(fused_files) > 0:
+                fused_file = fused_files[0]
+                id_fuse = fused_file.id
+            else:
+                id_fuse = db.fused_file.insert(
+                    sample_set_id=sample_set_id, config_id=id_config
+                )
+                db.commit()
+        if id_fuse == -1:
+            error_message = "!!! Fuse failed : do no manage to acquire fused file lock."
+            res = {
+                "message": f"[{id_data}] c{id_config}: {output_file=} - {error_message}"
+            }
+            log.error(res)
+            raise
 
         with open(fuse_filepath, "rb") as stream:
             ts = time.time()
