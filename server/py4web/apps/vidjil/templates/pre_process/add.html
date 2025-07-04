@@ -1,5 +1,16 @@
 [[extend 'db_layout.html']]
 
+<br/>
+Import configuration from clipboard:<button type="button"
+    id="fillPreprocessConfigFormFromClipboard" 
+    onclick="fillPreprocessConfigFormFromClipboard()"
+    title="Import preprocess configuration copied in clipboard from preprocess configuration page">
+    <i class="icon-table"></i>
+</button>
+<br/>
+<br/>
+
+
 <form id="data_form" action="DB_ADDRESS/pre_process/add_form" enctype="multipart/form-data" method="post">
     <table>
         <tbody>
@@ -34,8 +45,3 @@
         </tbody>
     </table>
 </form>
-
-<button id="fillPreprocessConfigFormFromClipboard" type="button" onclick="fillPreprocessConfigFormFromClipboard()"
-    title="Import preprocess configuration copied in clipboard from preprocess configuration page">
-    Import preprocess configuration from clipboard
-</button>
