@@ -45,15 +45,17 @@ def index():
     )
 
     for elt in query:
-        elt["clipboard"] = str(
-            {
-                "name": str(elt["name"]),
-                "command": str(elt["command"]),
-                "info": elt["info"]
-            }
+        elt["clipboard"] = (
+            str(
+                {
+                    "name": str(elt["name"]),
+                    "command": str(elt["command"]),
+                    "info": elt["info"],
+                }
+            )
+            .replace('"', '\\"')
+            .replace("'", "\\'")
         )
-        .replace('"', '\\"')
-        .replace("\'", "\\'")
 
     return dict(
         message=T("Pre-process list"),
