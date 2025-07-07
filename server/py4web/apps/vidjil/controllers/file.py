@@ -753,6 +753,8 @@ def upload_process(
         key=f"sequence_file_{sequence_id}",
         masters={my_redis},
         auto_release_time=1,
+        context_manager_blocking=True,
+        context_manager_timeout=5,
     )
     with sequence_file_lock:
         # Store file in db by moving it to the correct location

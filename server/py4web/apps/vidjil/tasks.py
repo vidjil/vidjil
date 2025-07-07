@@ -749,6 +749,8 @@ def run_fuse(
             key=f"fused_file_{id_config}_{sample_set_id}",
             masters={my_redis},
             auto_release_time=1,
+            context_manager_blocking=True,
+            context_manager_timeout=5,
         )
         id_fuse = -1
         with fused_file_lock:
