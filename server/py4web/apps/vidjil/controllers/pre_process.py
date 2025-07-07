@@ -1,5 +1,6 @@
 import json
 import os
+import urllib.parse
 
 from py4web import action, request
 
@@ -45,16 +46,14 @@ def index():
     )
 
     for elt in query:
-        elt["clipboard"] = (
-            str(
+        elt["clipboard"] = urllib.parse.quote(
+            json.dumps(
                 {
                     "name": str(elt["name"]),
                     "command": str(elt["command"]),
-                    "info": elt["info"],
+                    "info": str(elt["info"]),
                 }
             )
-            .replace('"', '\\"')
-            .replace("'", "\\'")
         )
 
     return dict(

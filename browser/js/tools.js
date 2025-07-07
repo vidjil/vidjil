@@ -984,12 +984,7 @@ async function fillConfigFormFromClipboard() {
 async function fillPreprocessConfigFormFromClipboard() {
   try {
     var content = await navigator.clipboard.readText();
-    // {'name': 'test_clipboard', 'command': ' python xxx &flash2& --flash2 ', 'info': 'une "valeur" et une \'autre\'.'}
-    content = content.replace(/\\'/g, "\\\\'")
-    content = content.replace(/"/g, '\\"')
-    content = content.replace(/'/g, '"')
-    content = content.replace(/\\\\"/g, "'")
-
+    content = decodeURIComponent(content)
     const values  = JSON.parse(content);
 
     document.getElementById("pre_process_name").value = values.name;
