@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe("Manipulate configs", function () {
-  it("01-config", function () {
+  it("01-process-config", function () {
     cy.createConfig(
       "c",
       ["3", "Analysis with/for other software"],
@@ -33,21 +33,21 @@ describe("Manipulate configs", function () {
 
   it("02-preprocess_config", function () {
     // Create a preprocess
-    var pre_process_name_1 = "d1";
-    var pre_process_name_2 = "d2";
-    var pre_process_command = "d";
-    var pre_process_info = "Cy";
+    const preProcessName1 = "d1";
+    const preProcessName2 = "d2";
+    const preProcessCommand = "d";
+    const preProcessInfo = "Cy";
     cy.createPreprocess(
-      pre_process_name_1,
-      pre_process_command,
-      pre_process_info
+      preProcessName1,
+      preProcessCommand,
+      preProcessInfo
     ).then((preprocess_id) => {
       // Edit a preprocess
       cy.editPreprocess(
         preprocess_id,
-        pre_process_name_2,
-        pre_process_command,
-        pre_process_info + "; edit"
+        preProcessName2,
+        preProcessCommand,
+        preProcessInfo + "; edit"
       );
 
       // Change permissions for group public (id=3)
@@ -55,13 +55,11 @@ describe("Manipulate configs", function () {
       cy.permissionPreprocess(preprocess_id, 3, false);
 
       // Delete preprocess
-      cy.deletePreprocess(preprocess_id, pre_process_name_2);
+      cy.deletePreprocess(preprocess_id, preProcessName2);
     });
   });
 
-  it("03-clipboard-config", function () {
-    cy.goToConfigsPage();
-
+  it("03-clipboard-copy-config", function () {
     if ((Cypress.browser.name === "chromium") && (parseInt(Cypress.browser.version.split(".")[0]) >= 81)) {
       cy.wrap(Cypress.automation('remote:debugger:protocol', {
         command: 'Browser.grantPermissions',
@@ -70,85 +68,65 @@ describe("Manipulate configs", function () {
           origin: window.location.origin,
         },
       }))
+
+      // Copy process config to clipboard and apply it to a new config
+      cy.goToConfigsPage();
       cy.get('#copyToClipboard_process_2 > .icon-newspaper')
         .click()
         .then(() => {
+          // check flash message is displayed
+          cy.get(".flash_1").should("be.visible").contains("Copied");
+
           // check that the path is copied to clipboard
           cy.window().then((win) => {
             win.navigator.clipboard.readText().then((text) => {
-              expect(text).to.contain("'program': 'vidjil',");
-              expect(text).to.contain("'classification': '1',");
-              expect(text).to.contain("'name': 'multi+inc+xxx',");
-              expect(text).to.contain("'command': '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ',");
-              expect(text).to.contain("'fuse_command': '-t 100',");
-              expect(text).to.contain("'info': 'multi-locus, with some incomplete/unusual/unexpected recombinations'");
+              const decodedText = decodeURIComponent(text)
+              expect(decodedText).to.contain('"program": "vidjil",');
+              expect(decodedText).to.contain('"classification": "1",');
+              expect(decodedText).to.contain('"name": "multi+inc+xxx",');
+              expect(decodedText).to.contain('"command": "-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ",');
+              expect(decodedText).to.contain('"fuse_command": "-t 100",');
+              expect(decodedText).to.contain('"info": "multi-locus, with some incomplete/unusual/unexpected recombinations"');
             });
           });
-
-          // check flash message is displayed
-          cy.get(".flash_1").should("be.visible").contains("Copied");
         });
-
-        cy.get('#new_config_btn')
-          .click()
-
-        cy.get('#db_content > button')
-          .click()
-
-        cy.get('#config_name').should('have.value',"multi+inc+xxx");
-        cy.get('#config_classification').should('have.value',"1");
-        cy.get('#config_program').should('have.value',"vidjil");
-        cy.get('#config_command').should('have.value',"-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ");
-        cy.get('#config_fuse_command').should('have.value',"-t 100");
-        cy.get('#config_info').should('have.value',"multi-locus, with some incomplete/unusual/unexpected recombinations");
-
-    }
-
-  });
+      cy.get('#new_config_btn')
+        .click()
+      cy.get('#fillProcessConfigFormFromClipboard')
+        .click()
+      cy.get('#config_name').should('have.value',"multi+inc+xxx");
+      cy.get('#config_classification').should('have.value',"1");
+      cy.get('#config_program').should('have.value',"vidjil");
+      cy.get('#config_command').should('have.value',"-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 ");
+      cy.get('#config_fuse_command').should('have.value',"-t 100");
+      cy.get('#config_info').should('have.value',"multi-locus, with some incomplete/unusual/unexpected recombinations");
 
 
-  it("03-clipboard-config-preprocess", function () {
-    cy.goToPreprocessPage();
-
-    if ((Cypress.browser.name === "chromium") && (parseInt(Cypress.browser.version.split(".")[0]) >= 81)) {
-      cy.wrap(Cypress.automation('remote:debugger:protocol', {
-        command: 'Browser.grantPermissions',
-        params: {
-          permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
-          origin: window.location.origin,
-        },
-      }))
-
+      // Copy pre-process config to clipboard and apply it to a new config
+      cy.goToPreprocessPage();
       cy.get('#copyToClipboard_preprocess_1 > .icon-newspaper')
         .click()
         .then(() => {
-          // check that the path is copied to clipboard
-
-          cy.window().then((win) => {
-            win.navigator.clipboard.readText().then((text) => {
-              expect(text).to.contain("'name': 'public pre-process',");
-              expect(text).to.contain("'command': 'cat &file1& &file2& > &result&',");
-              expect(text).to.contain("'info': 'concatenate two files'");
-            });
-          });
-
           // check flash message is displayed
           cy.get(".flash_1").should("be.visible").contains("Copied");
+
+          // check that the path is copied to clipboard
+          cy.window().then((win) => {
+            win.navigator.clipboard.readText().then((text) => {
+              const decodedText = decodeURIComponent(text)
+              expect(decodedText).to.contain('"name": "public pre-process",');
+              expect(decodedText).to.contain('"command": "cat &file1& &file2& > &result&",');
+              expect(decodedText).to.contain('"info": "concatenate two files"');
+            });
+          });
         });
-
-        cy.get('#new_preprocess_btn')
-          .click()
-
-        cy.get('#fillPreprocessConfigFormFromClipboard')
-          .click()
-
-        cy.get('#pre_process_name').should('have.value',"public pre-process");
-        cy.get('#pre_process_command').should('have.value',"cat &file1& &file2& > &result&");
-        cy.get('#pre_process_info').should('have.value',"concatenate two files");
-
+      cy.get('#new_preprocess_btn')
+        .click()
+      cy.get('#fillPreprocessConfigFormFromClipboard')
+        .click()
+      cy.get('#pre_process_name').should('have.value',"public pre-process");
+      cy.get('#pre_process_command').should('have.value',"cat &file1& &file2& > &result&");
+      cy.get('#pre_process_info').should('have.value',"concatenate two files");
     }
-
   });
-
-
 });

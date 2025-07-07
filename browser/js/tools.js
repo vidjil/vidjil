@@ -955,25 +955,19 @@ function copyHard(obj){
  * Allow to read content from clipboard to put it in configuration form 
  */
 async function fillConfigFormFromClipboard() {
-  try {
-    var content = await navigator.clipboard.readText();
-    content = content.replace(/\\'/g, "\\\\'")
-    content = content.replace(/"/g, '\\"')
-    content = content.replace(/'/g, '"')
-    content = content.replace(/\\\\"/g, "'")
-
-    const values  = JSON.parse(content);
-
-    document.getElementById("config_name").value = values.name;
-    document.getElementById("config_classification").value = values.classification;
-    document.getElementById("config_program").value = values.program;
-    document.getElementById("config_command").value = values.command;
-    document.getElementById("config_fuse_command").value = values.fuse_command;
-    document.getElementById("config_info").value = values.info;
-
-  } catch (err) {
-    console.error("Error in clipboard reading.", err);
-  }
+    try {
+        const content = await navigator.clipboard.readText();
+        const decoded_content = decodeURIComponent(content);
+        const values  = JSON.parse(decoded_content);
+        document.getElementById("config_name").value = values.name;
+        document.getElementById("config_classification").value = values.classification;
+        document.getElementById("config_program").value = values.program;
+        document.getElementById("config_command").value = values.command;
+        document.getElementById("config_fuse_command").value = values.fuse_command;
+        document.getElementById("config_info").value = values.info;
+    } catch (err) {
+        console.error("Error in clipboard reading.", err);
+    }
 }
 
 
@@ -982,17 +976,16 @@ async function fillConfigFormFromClipboard() {
  * Allow to read content from clipboard to put it in preprocess configuration form 
  */
 async function fillPreprocessConfigFormFromClipboard() {
-  try {
-    var content = await navigator.clipboard.readText();
-    content = decodeURIComponent(content)
-    const values  = JSON.parse(content);
-
-    document.getElementById("pre_process_name").value = values.name;
-    document.getElementById("pre_process_command").value = values.command;
-    document.getElementById("pre_process_info").value = values.info;
-  } catch (err) {
-    console.error("Error in clipboard reading.", err);
-  }
+    try {
+        const content = await navigator.clipboard.readText();
+        const decoded_content = decodeURIComponent(content);
+        const values  = JSON.parse(decoded_content);
+        document.getElementById("pre_process_name").value = values.name;
+        document.getElementById("pre_process_command").value = values.command;
+        document.getElementById("pre_process_info").value = values.info;
+    } catch (err) {
+        console.error("Error in clipboard reading.", err);
+    }
 }
 
 
