@@ -61,7 +61,7 @@ class TestConfigController(unittest.TestCase):
 
         assert (
             result["query"][0]["clipboard"]
-            == "{'name': 'Clonality', 'program': 'vidjil', 'classification': '1', 'command': '-c clones -z 100 -r 1 -g germline/homo-sapiens.g -e 1 -2 -w 90 -y all --no-airr', 'fuse_command': '-t 100 -d lenSeqAverage --overlaps', 'info': 'incomplete germlines + larger window (90bp), thus 20bp more on each side. This configuration is advised for studies on IGH clonality'}"
+            == "%7B%22name%22%3A%20%22Clonality%22%2C%20%22program%22%3A%20%22vidjil%22%2C%20%22classification%22%3A%20%221%22%2C%20%22command%22%3A%20%22-c%20clones%20-z%20100%20-r%201%20-g%20germline/homo-sapiens.g%20-e%201%20-2%20-w%2090%20-y%20all%20--no-airr%22%2C%20%22fuse_command%22%3A%20%22-t%20100%20-d%20lenSeqAverage%20--overlaps%22%2C%20%22info%22%3A%20%22incomplete%20germlines%20%2B%20larger%20window%20%2890bp%29%2C%20thus%2020bp%20more%20on%20each%20side.%20This%20configuration%20is%20advised%20for%20studies%20on%20IGH%20clonality%22%7D"
         )
 
     ##################################
