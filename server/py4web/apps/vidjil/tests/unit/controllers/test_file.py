@@ -645,7 +645,48 @@ class TestFileController:
             if chunk_path.exists():
                 chunk_path.unlink()
             if chunk_dir.exists():
-                chunk_dir.rmdir()
+                shutil.rmtree(chunk_dir)
+
+    def test_resumable_upload_get_missing_chunk(self):
+        """
+        Test resumable_upload_get to ensure it correctly handles a missing chunk.
+        """
+        # Given : Logged as a user with the necessary permissions
+        db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        resumableIdentifier = "test_identifier"
+        resumableChunkNumber = 1
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            chunk_dir = pathlib.Path(
+                settings.UPLOAD_FOLDER,
+                file_controller.PARTS_FOLDER,
+                resumableIdentifier,
+            )
+            chunk_dir.mkdir(parents=True, exist_ok=True)
+
+            # When : Calling resumable_upload_get for a non-existing chunk
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={
+                    "resumableIdentifier": resumableIdentifier,
+                    "resumableChunkNumber": resumableChunkNumber + 1,
+                    "format": "json",
+                },
+            ):
+                with pytest.raises(HTTP) as exc_info:
+                    file_controller.resumable_upload_get()
+                assert exc_info.value.status == 204
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
+            if chunk_dir.exists():
+                shutil.rmtree(chunk_dir)
 
     ##################################
     # Tests on file_controller.resumable_upload_post()
@@ -703,53 +744,6 @@ class TestFileController:
             settings.UPLOAD_FOLDER = save_upload_folder
             if final_path.exists():
                 final_path.unlink()
-
-    def test_resumable_upload_get_missing_chunk(self):
-        """
-        Test resumable_upload_get to ensure it correctly handles a missing chunk.
-        """
-        # Given : Logged as a user with the necessary permissions
-        db_manipulation_utils.add_indexed_user(self.session, 1)
-        db_manipulation_utils.log_in(
-            self.session,
-            db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1),
-        )
-        resumableIdentifier = "test_identifier"
-        resumableChunkNumber = 1
-        save_upload_folder = settings.UPLOAD_FOLDER
-        try:
-            settings.UPLOAD_FOLDER = test_utils.get_results_path()
-            chunk_dir = pathlib.Path(
-                settings.UPLOAD_FOLDER,
-                file_controller.PARTS_FOLDER,
-                resumableIdentifier,
-            )
-            chunk_dir.mkdir(parents=True, exist_ok=True)
-            chunk_path = (
-                chunk_dir / f"{resumableChunkNumber}{file_controller.PART_SUFFIX}"
-            )
-            chunk_path.write_bytes(b"chunk data")
-
-            # When : Calling resumable_upload_get for a non-existing chunk
-            with Omboddle(
-                self.session,
-                keep_session=True,
-                params={
-                    "resumableIdentifier": resumableIdentifier,
-                    "resumableChunkNumber": resumableChunkNumber + 1,
-                    "format": "json",
-                },
-            ):
-                with pytest.raises(HTTP) as exc_info:
-                    file_controller.resumable_upload_get()
-                assert exc_info.value.status == 204
-        finally:
-            settings.UPLOAD_FOLDER = save_upload_folder
-            if chunk_path.exists():
-                chunk_path.unlink()
-            if chunk_dir.exists():
-                chunk_dir.rmdir()
 
     ##################################
     # Tests on file_controller.resumable_upload_process()

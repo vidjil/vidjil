@@ -522,7 +522,6 @@ def resumable_upload_get():
 
     if chunk_path.exists():
         # Let resumable.js know this chunk already exists
-        log.debug(f"found chunk {chunk_path}")
         return "OK"
     else:
         # Let resumable.js know this chunk does not exists and needs to be uploaded
