@@ -67,6 +67,15 @@ test_tools:
     - .need_for_quick_test
   tags:
     - cidocker
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
 
 
 # Germlines
@@ -208,12 +217,13 @@ test_browser_unit:
     - browser/
     expire_in: 7 day
     when: always
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - dev
-    - schedules
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
   tags:
     - cidocker
   extends:
@@ -229,16 +239,19 @@ code_quality_custom:
   script:
     - npm install -g jshint
     - make -C browser quality
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
-    - /^prod-client/
-    - dev
-    - schedules
   tags:
     - cidocker
   extends:
     - .need_for_quick_test
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
 
 .base_ruff:
   stage: test_quality
@@ -256,12 +269,13 @@ Ruff Check:
   extends: .base_ruff
   script:
     - ruff check --output-format=gitlab > code-quality-report.json
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-client/
-    - dev
-    - schedules
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
   artifacts:
     reports:
       codequality: $CI_PROJECT_DIR/code-quality-report.json
@@ -270,12 +284,13 @@ Ruff Format:
   extends: .base_ruff
   script:
     - ruff format --diff
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-client/
-    - dev
-    - schedules
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
 
 # Server
 
@@ -303,12 +318,13 @@ test_server_unit:
         - server/unit_report.xml
         - server/unit_coverage.xml
       expire_in: 7 day
-    only:
-      - /^feature-.*s.*\/.*$/
-      - /^hotfix-.*s.*\/.*$/
-      - /^prod-server/
-      - dev
-      - schedules
+    rules:
+      - if: '$CI_COMMIT_BRANCH !~ /dev/'
+        when: on_success
+      - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+        when: on_success
+      - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+        when: on_success
     tags:
       - cidocker
     extends:
@@ -370,12 +386,6 @@ test_server_unit:
     DOCKER_HOST: tcp://docker:2375
     # DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-server/
-    - dev
-    - schedules
   tags:
     - cidocker
 
@@ -393,9 +403,11 @@ deploy_review:
     name: review-$CI_BUILD_REF_NAME
     url: http://$CI_COMMIT_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
-  only:
-    - /^feature-.*c.*\/.*$/
-    - /^hotfix-.*c.*\/.*$/
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
   tags:
     - web
   extends:
@@ -438,9 +450,11 @@ deploy_review_server:
     on_stop: stop_deploy_review_server
     auto_stop_in: 2 months
   dependencies: []
-  only:
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
   extends:
     - .need_for_independent_test
   artifacts:
@@ -473,7 +487,7 @@ deploy_client:
     - ssh vidjil@$PROD_CLIENT_SERVER "
          cd $PROD_CLIENT_PATH
          && git fetch
-         && git reset --hard origin/prod-client
+         && git reset --hard origin/$CI_COMMIT_BRANCH
          && make germline
          && cp doc/analysis-example.vidjil browser/
          && cd docker
@@ -482,7 +496,7 @@ deploy_client:
     name: production
     url: https://$PROD_CLIENT_SERVER/?data=analysis-example.vidjil
   only:
-    - prod-client
+    - release-web-.*$
   tags:
     - cidocker
   needs:
@@ -524,14 +538,13 @@ build_test_server_docker:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-  only:
-    - /^prod-server/
-    - /^prod-client/
-    - /^feature-.*s.*\/.*$/
-    - /^feature-.*t.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^hotfix-.*t.*\/.*$/
-    - dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
   tags:
     - cidocker
   artifacts:
@@ -550,7 +563,6 @@ deploy_docker:
     - docker:dind
   script:
     - export CUR_DATE=`date +%Y-%m-%d`
-    - export TYPE=`echo $CI_COMMIT_REF_NAME | awk '{ gsub(/prod-/, "") }{ print $1 }'`
     - export SHA=`echo $CI_COMMIT_SHA | awk '{ print substr($0, 0, 8) }'`
     - export TAG="vidjil/$TYPE:$CUR_DATE-$SHA"
     - docker login -u "$CI_DOCKER_USER" -p "$CI_DOCKER_PASSWORD" $CI_DOCKER
@@ -560,11 +572,13 @@ deploy_docker:
     - docker push "vidjil/$TYPE:latest"
     - docker rmi $TAG "vidjil/$TYPE:latest"
   when: manual
+  parallel:
+    matrix:
+      - TYPE: ["server", "client"]
   extends:
     - .need_for_independent_test
   only:
-    - /^prod-server/
-    - /^prod-client/
+    - /^release-web-.*$/
   tags:
     - ci.inria.fr
     - small

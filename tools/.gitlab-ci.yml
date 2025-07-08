@@ -39,13 +39,15 @@ test_server_api:
     when: always
   variables:
     HOST: local
-  only: &onlyServerBranches
-    - /^feature-.*s.*\/.*$/
-    - /^feature-.*t.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^hotfix-.*t.*\/.*$/
-    - /^prod-server/
-    - dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
   needs:
     - [build_test_server_docker]
 
