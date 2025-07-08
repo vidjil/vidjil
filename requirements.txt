@@ -6,6 +6,7 @@ pydal == 20241111.2
 pymysql
 celery
 celery[redis]
+pottery
 ruff
 pre-commit
 

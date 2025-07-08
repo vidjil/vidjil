@@ -4,8 +4,8 @@ import os
 import re
 import subprocess
 
-import redis
 from py4web import action, request
+from redis import Redis
 
 from .. import settings, tasks
 from ..common import auth, db, log, scheduler, send_mail
@@ -302,9 +302,9 @@ def clean_workers_status():
     current_task_ids = []
 
     # Get tasks from redis
-    my_redis = redis.Redis(host="redis")
+    host, port = settings.REDIS_SERVER.split(":")
+    my_redis = Redis(host=host, port=int(port))
     redis_tasks = my_redis.lrange("short", 0, -1) + my_redis.lrange("long", 0, -1)
-    log.debug(f"{redis_tasks=}")
     for redis_task in redis_tasks:
         redis_task = json.loads(redis_task)
         if "headers" in redis_task and "argsrepr" in redis_task["headers"]:
@@ -327,7 +327,6 @@ def clean_workers_status():
     ).select(db.scheduler_task.id)
 
     # Set not corresponding tasks status to FAILED in DB
-    log.debug(f"{current_task_ids=}, {in_progress_task_ids.as_list()=}")
     dangling_task_ids = [
         in_progress_task.id
         for in_progress_task in in_progress_task_ids

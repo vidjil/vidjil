@@ -5,8 +5,8 @@ import logging
 import os
 import pathlib
 import shutil
-import unittest
 
+import pytest
 from py4web import HTTP, request
 from py4web.core import Session, _before_request
 
@@ -21,8 +21,9 @@ from ..utils.omboddle import Omboddle
 LOGGER = logging.getLogger(__name__)
 
 
-class TestFileController(unittest.TestCase):
-    def setUp(self):
+class TestFileController:
+    @pytest.fixture(autouse=True)
+    def setup(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
             os.path.normpath(__file__).split(os.path.sep)[:-5]
@@ -740,9 +741,9 @@ class TestFileController(unittest.TestCase):
                     "format": "json",
                 },
             ):
-                with self.assertRaises(HTTP) as cm:
+                with pytest.raises(HTTP) as exc_info:
                     file_controller.resumable_upload_get()
-                assert cm.exception.status == 204
+                assert exc_info.value.status == 204
         finally:
             settings.UPLOAD_FOLDER = save_upload_folder
             if chunk_path.exists():
@@ -754,7 +755,7 @@ class TestFileController(unittest.TestCase):
     # Tests on file_controller.resumable_upload_process()
     ##################################
 
-    def test_resumable_upload_process(self):
+    def test_resumable_upload_process(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
@@ -767,6 +768,14 @@ class TestFileController(unittest.TestCase):
             sample_set_id, user_id
         )
         filename = "plop"
+
+        # Mock the Redlock context manager to avoid timeout issues
+        mock_redlock = mocker.patch("apps.vidjil.controllers.file.Redlock")
+        mock_lock_instance = mocker.MagicMock()
+        mock_lock_instance.__enter__ = mocker.MagicMock(return_value=mock_lock_instance)
+        mock_lock_instance.__exit__ = mocker.MagicMock(return_value=None)
+        mock_redlock.return_value = mock_lock_instance
+
         save_upload_folder = settings.UPLOAD_FOLDER
         save_data_file_upload_folder = db.sequence_file.data_file.uploadfolder
         try:
@@ -815,7 +824,7 @@ class TestFileController(unittest.TestCase):
     # Tests on file_controller.upload()
     ##################################
 
-    def test_upload(self):
+    def test_upload(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
@@ -834,6 +843,16 @@ class TestFileController(unittest.TestCase):
             filename = "plop"
             upload_helper = test_utils.UploadHelper(file, filename)
             save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+            # Mock the Redlock context manager to avoid timeout issues
+            mock_redlock = mocker.patch("apps.vidjil.controllers.file.Redlock")
+            mock_lock_instance = mocker.MagicMock()
+            mock_lock_instance.__enter__ = mocker.MagicMock(
+                return_value=mock_lock_instance
+            )
+            mock_lock_instance.__exit__ = mocker.MagicMock(return_value=None)
+            mock_redlock.return_value = mock_lock_instance
+
             try:
                 db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
                 # When : Calling upload
