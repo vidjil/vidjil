@@ -2,7 +2,7 @@
 VIDJIL_ALGO_SRC = algo/
 VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
-CYPRESS_BROWSER = browsers/firefox_supported/chrome
+CYPRESS_BROWSER = browsers/chrome_supported/chrome
 
 TEE = python tools/tee.py -v
 
@@ -116,7 +116,7 @@ functional_server_cypress:
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
-		--env BROWSER=$(CYPRESS_BROWSER) --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_table_db.cy.js"
+		--env BROWSER=$(CYPRESS_BROWSER) --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.cy.js"
 
 ###############################
 

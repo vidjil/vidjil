@@ -16,6 +16,7 @@
                 <td class="column_20"> </td>
                 <td class="column_20"> </td>
                 <td class="column_20"> </td>
+                <td class="column_20"> </td>
             </tr>
         </thead>
        [[ for row in query :]]
@@ -27,6 +28,7 @@
 
 [[if isAdmin:]] <td id="preprocess_permission_[[=row.id]]" onclick="db.call('pre_process/permission', {'id' :'[[=row.id]]'} )" > <i class="icon-key" title="set permissions"></i> </td> [[else:]] <td></td> [[pass]]
                 <td id="preprocess_edit_[[=row.id]]" onclick="db.call('pre_process/edit', {'id' :'[[=row.id]]'} )" > <i class="icon-pencil-2" title="edit pre-process"></i> </td>
+                <td id="copyToClipboard_preprocess_[[=row.id]]" class="pointer" onclick='copyTextToClipboard("[[=row.clipboard]]", "configuration [[=row.name]]")' title="Copy '[[=row.name]]' preprocess configuration" > <i class="icon-newspaper"></i></td>
                 <td id="preprocess_delete_[[=row.id]]" onclick="db.call('pre_process/confirm', {'id' :'[[=row.id]]'} )" > <i class="icon-erase" title="delete pre-process"></i> </td>
             </tr>
         [[pass]]

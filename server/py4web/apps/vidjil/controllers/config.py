@@ -1,4 +1,5 @@
 import json
+import urllib.parse
 
 from py4web import action, request
 
@@ -43,6 +44,20 @@ def index():
     log.info(
         mes, extra={"user_id": auth.user_id, "record_id": -1, "table_name": "config"}
     )
+
+    for elt in query:
+        elt["clipboard"] = urllib.parse.quote(
+            json.dumps(
+                {
+                    "name": str(elt["name"]),
+                    "program": str(elt["program"]),
+                    "classification": str(elt["classification"]),
+                    "command": str(elt["command"]),
+                    "fuse_command": str(elt["fuse_command"]),
+                    "info": str(elt["info"]),
+                }
+            )
+        )
 
     return dict(
         message=T("Configs"),
