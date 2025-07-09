@@ -141,14 +141,17 @@ class TestSampleSetController:
         exception = excinfo.value
         assert exception.status == 303
 
-    # TODO : error when testing all : group concat seems to not work with sqlite... Is it working on mysql ?
+    # TODO : error when testing all : group concat syntax is not the same for sqlite in get_conf_list_select
+    # Is the value really used in SampleSetList ?
+    # Otherwise deactivate in sqlite case, but this means a specific behavior for tests...
     # def test_all(self):
     #     # Given : logged as other user
     #     user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
     #     db_manipulation_utils.log_in(
     #         self.session,
     #         db_manipulation_utils.get_indexed_user_email(1),
-    #         db_manipulation_utils.get_indexed_user_password(1))
+    #         db_manipulation_utils.get_indexed_user_password(1),
+    #     )
     #     db_manipulation_utils.add_patient(1, user_id)
 
     #     # When : Calling all:

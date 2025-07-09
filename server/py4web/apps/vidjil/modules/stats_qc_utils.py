@@ -447,77 +447,69 @@ def get_fused_stats(fuse):
 
                     shannon_diversity = NOT_APPLICABLE
                     if "index_H_entropy" in fuse_data["diversity"]:
+                        h_entropy = fuse_data["diversity"]["index_H_entropy"][
+                            result_index
+                        ]
                         if isinstance(
-                            fuse_data["diversity"]["index_H_entropy"][result_index],
+                            h_entropy,
                             dict,
                         ):
+                            if "all" in h_entropy and h_entropy["all"] is not None:
+                                shannon_diversity = round(
+                                    float(h_entropy["all"]),
+                                    3,
+                                )
+                        elif h_entropy is not None:
                             shannon_diversity = round(
-                                float(
-                                    fuse_data["diversity"]["index_H_entropy"][
-                                        result_index
-                                    ]["all"]
-                                ),
-                                3,
-                            )
-                        else:
-                            shannon_diversity = round(
-                                float(
-                                    fuse_data["diversity"]["index_H_entropy"][
-                                        result_index
-                                    ]
-                                ),
+                                float(h_entropy),
                                 3,
                             )
                     result_stats["shannon_diversity"] = shannon_diversity
 
                     pielou_evenness = NOT_APPLICABLE
                     if "index_E_equitability" in fuse_data["diversity"]:
+                        e_equitability = fuse_data["diversity"]["index_E_equitability"][
+                            result_index
+                        ]
                         if isinstance(
-                            fuse_data["diversity"]["index_E_equitability"][
-                                result_index
-                            ],
+                            e_equitability,
                             dict,
                         ):
-                            pielou_evenness = round(
-                                float(
-                                    fuse_data["diversity"]["index_E_equitability"][
-                                        result_index
-                                    ]["all"]
-                                ),
-                                3,
-                            )
+                            if (
+                                "all" in e_equitability
+                                and e_equitability["all"] is not None
+                            ):
+                                pielou_evenness = round(
+                                    float(e_equitability["all"]),
+                                    3,
+                                )
                         else:
                             pielou_evenness = round(
-                                float(
-                                    fuse_data["diversity"]["index_E_equitability"][
-                                        result_index
-                                    ]
-                                ),
+                                float(e_equitability),
                                 3,
                             )
                     result_stats["pielou_evenness"] = pielou_evenness
 
                     simpson_diversity = NOT_APPLICABLE
-                    if "index_E_equitability" in fuse_data["diversity"]:
+                    if "index_Ds_diversity" in fuse_data["diversity"]:
+                        ds_diversity = fuse_data["diversity"]["index_Ds_diversity"][
+                            result_index
+                        ]
                         if isinstance(
-                            fuse_data["diversity"]["index_Ds_diversity"][result_index],
+                            ds_diversity,
                             dict,
                         ):
-                            simpson_diversity = round(
-                                float(
-                                    fuse_data["diversity"]["index_Ds_diversity"][
-                                        result_index
-                                    ]["all"]
-                                ),
-                                3,
-                            )
+                            if (
+                                "all" in simpson_diversity
+                                and simpson_diversity["all"] is not None
+                            ):
+                                simpson_diversity = round(
+                                    float(ds_diversity["all"]),
+                                    3,
+                                )
                         else:
                             simpson_diversity = round(
-                                float(
-                                    fuse_data["diversity"]["index_Ds_diversity"][
-                                        result_index
-                                    ]
-                                ),
+                                float(ds_diversity),
                                 3,
                             )
                     result_stats["simpson_diversity"] = simpson_diversity

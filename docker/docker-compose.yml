@@ -50,6 +50,7 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+                restart: true
         links:
             - mysql:mysql
             - redis:redis
@@ -83,8 +84,10 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+                restart: true
             uwsgi:
                 condition: service_healthy
+                restart: true
         links:
             - mysql:mysql
             - uwsgi:uwsgi
@@ -129,8 +132,10 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+                restart: true
             uwsgi:
                 condition: service_healthy # To prevent db creation racing issues
+                restart: true
         links:
             - redis:redis
             - mysql:mysql
@@ -153,8 +158,10 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+                restart: true
             uwsgi:
                 condition: service_healthy # To prevent db creation racing issues
+                restart: true
         links:
             - redis:redis
             - mysql:mysql
@@ -175,8 +182,10 @@ services:
         depends_on:
             redis:
                 condition: service_started
+                restart: true
             uwsgi:
                 condition: service_healthy # To prevent db creation racing issues
+                restart: true
         links:
             - redis
         ports:

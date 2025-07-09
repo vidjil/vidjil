@@ -103,6 +103,10 @@ def index():
     if "config_id" in request.query and request.query["config_id"] != "-1":
         try:
             config_id = int(request.query["config_id"])
+            if db.config[config_id] is None:
+                log.error(f"Config with id {config_id} does not exist")
+                config_id = -1
+                config = False
             config = True
         except TypeError as error:
             log.error(
@@ -401,9 +405,8 @@ def form():
     )
 
 
-# create a patient if the html form is complete
-# need ["first_name", "last_name", "birth_date", "info"]
-# redirect to patient list if success
+# create or edit one or more sample sets if the html form is complete
+# redirect to sample set if success
 # return a flash error message if fail
 @action("/vidjil/sample_set/submit", method=["POST", "GET"])
 @action.uses(db, auth.user)
@@ -444,11 +447,12 @@ def submit():
                         ).select()
                         if len(rows) > 0:
                             sample_set = rows.first()
-                            db[set_type][sample_set.id] = p
-                            id_sample_set = sample_set["sample_set_id"]
+                            sample_set_id = sample_set["sample_set_id"]
+                            sample_set_info = sample_set["info"]
+                            sample_set.update_record(**p)
 
-                            if sample_set.info != p["info"]:
-                                group_id = get_set_group(id_sample_set)
+                            if sample_set_info != p["info"]:
+                                group_id = get_set_group(sample_set_id)
                                 should_register_tags = True
                                 reset = True
 
@@ -465,12 +469,12 @@ def submit():
                 # add
                 elif auth.can_create_sample_set_in_group(int(data["group"])):
                     group_id = int(data["group"])
-                    id_sample_set = db.sample_set.insert(
+                    sample_set_id = db.sample_set.insert(
                         sample_type=set_type, creator=auth.user_id
                     )
 
                     p["creator"] = auth.user_id
-                    p["sample_set_id"] = id_sample_set
+                    p["sample_set_id"] = sample_set_id
                     p["id"] = db[set_type].insert(**p)
                     should_register_tags = True
 
@@ -497,15 +501,15 @@ def submit():
 
             if error:
                 mes = f"error occurred : {p['error']}"
-                id_sample_set = -1
+                sample_set_id = -1
             else:
-                mes = "%s (%s) %s %sed" % (set_type, id_sample_set, name, action)
+                mes = "%s (%s) %s %sed" % (set_type, sample_set_id, name, action)
             p["message"] = [mes]
             log.info(
                 mes,
                 extra={
                     "user_id": auth.user_id,
-                    "record_id": id_sample_set,
+                    "record_id": sample_set_id,
                     "table_name": "sample_set",
                 },
             )
@@ -517,7 +521,6 @@ def submit():
     if not error:
         if not bool(length_mapping):
             creation_group_tuple = get_default_creation_group(auth)
-            # response.view = 'sample_set/form.html'
             sets = {"patient": [], "run": [], "generic": []}
             return dict(
                 message=T("form is empty"),
@@ -550,7 +553,6 @@ def submit():
             "generic": data["generic"] if "generic" in data else [],
         }
         log.info("an error occurred")
-        # response.view = 'sample_set/form.html'
         return json.dumps(
             dict(
                 message="an error occurred",

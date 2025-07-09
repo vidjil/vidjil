@@ -34,7 +34,7 @@ class Generic(SampleSet):
             name=self.get_display_name(data),
             filename="sample_set_%d" % data["id"],
             label="",
-            info="",
+            info=data["info"],
         )
 
     def get_data(self, sample_set_id):
