@@ -56,12 +56,7 @@ server1-ff-supported:
     - job: build_test_server_docker
       optional: true
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: on_success
+    - !reference [.rules_server]
 
 ## Cypress with server
 s2:
@@ -77,12 +72,7 @@ s2:
           chrome_legacy/chrome
         ]
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: manual
+    - !reference [.rules_server]
 
 
 
@@ -109,12 +99,7 @@ tuto-s1-ff-supported:
     - job: build_test_server_docker
       optional: true
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: on_success
+    - !reference [.rules_server]
 
 
 ## Cypress with server
@@ -132,11 +117,6 @@ tuto-s2:
           chrome_legacy/chrome
         ]
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: manual
+    - !reference [.rules_server]
 
 

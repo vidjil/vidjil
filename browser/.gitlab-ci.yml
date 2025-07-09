@@ -53,12 +53,7 @@ client1-ff-supported:
   needs:
     - []
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
+    - !reference [.rules_client]
 
 
 c2:
@@ -74,12 +69,7 @@ c2:
           chrome_legacy/chrome
         ]
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: manual
+    - !reference [.rules_client]
 
 external1-ff-supported:
   extends:
@@ -90,12 +80,7 @@ external1-ff-supported:
   needs:
     - []
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
+    - !reference [.rules_client]
 
 external2:
   extends:
@@ -111,12 +96,7 @@ external2:
           chrome_legacy/chrome
         ]
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: manual
+    - !reference [.rules_client]
 
 
 
@@ -144,14 +124,10 @@ tuto-c1-ff-supported:
   needs:
     - []
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
+    - !reference [.rules_client]
+    - if: '$CI_COMMIT_BRANCH =~ /doc/'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /doc/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
+    
 
 tuto-c2:
   extends:
@@ -167,9 +143,4 @@ tuto-c2:
           chrome_legacy/chrome
         ]
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: manual
+    - !reference [.rules_client]
