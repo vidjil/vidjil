@@ -1,0 +1,30 @@
+
+.rules_client: &rules_client
+    - if: '$CI_COMMIT_BRANCH =~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
+
+.rules_server: &rules_server
+    - if: '$CI_COMMIT_BRANCH =~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success
+
+.rules_client_and_server: &rules_client_and_server
+    - if: '$CI_COMMIT_BRANCH =~ /dev/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /release-web-.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
+      when: on_success

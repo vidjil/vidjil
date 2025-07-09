@@ -23,6 +23,7 @@ variables:
 before_script:
   - *before_script_global
 
+
 stages:
   - test_tools
   - test_quality
@@ -68,14 +69,7 @@ test_tools:
   tags:
     - cidocker
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: on_success
+    - !reference [.rules_server]
 
 
 # Germlines
@@ -102,6 +96,7 @@ include:
   - local: 'browser/.gitlab-ci.yml' # Client pipelines
   - local: 'server/.gitlab-ci.yml' # Server pipelines
   - local: 'tools/.gitlab-ci.yml' # Tools/API pipelines
+  - local: '.gitlab-ci-rules.yml' # declaration of rules for gitlab-ci
 
 ###########################
 ###  Needs declaration  ###
@@ -218,12 +213,7 @@ test_browser_unit:
     expire_in: 7 day
     when: always
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
+    - !reference [.rules_client]
   tags:
     - cidocker
   extends:
@@ -244,14 +234,7 @@ code_quality_custom:
   extends:
     - .need_for_quick_test
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*t.*\/.*$/'
-      when: on_success
+    - !reference [.rules_client_and_server]
 
 .base_ruff:
   stage: test_quality
@@ -270,12 +253,7 @@ Ruff Check:
   script:
     - ruff check --output-format=gitlab > code-quality-report.json
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
-      when: on_success
+    - !reference [.rules_server]
   artifacts:
     reports:
       codequality: $CI_PROJECT_DIR/code-quality-report.json
@@ -285,12 +263,7 @@ Ruff Format:
   script:
     - ruff format --diff
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: on_success
+    - !reference [.rules_server]
 
 # Server
 
@@ -319,12 +292,7 @@ test_server_unit:
         - server/unit_coverage.xml
       expire_in: 7 day
     rules:
-      - if: '$CI_COMMIT_BRANCH !~ /dev/'
-        when: on_success
-      - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
-        when: on_success
-      - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-        when: on_success
+      - !reference [.rules_server]
     tags:
       - cidocker
     extends:
@@ -404,7 +372,7 @@ deploy_review:
     url: http://$CI_COMMIT_REF_SLUG.ci.vidjil.org/?data=analysis-example.vidjil
     on_stop: stop_deploy_review
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+    - if: '$CI_COMMIT_BRANCH =~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*c.*\/.*$/'
       when: on_success
@@ -451,7 +419,7 @@ deploy_review_server:
     auto_stop_in: 2 months
   dependencies: []
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /release-web-.*$/'
+    - if: '$CI_COMMIT_BRANCH =~ /release-web-.*$/'
       when: on_success
     - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
       when: on_success
@@ -539,12 +507,7 @@ build_test_server_docker:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /dev/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH !~ /release.*$/'
-      when: on_success
-    - if: '$CI_COMMIT_BRANCH =~ /^feature-.*s.*\/.*$/'
-      when: on_success
+    - !reference [.rules_server]
   tags:
     - cidocker
   artifacts:
