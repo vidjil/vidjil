@@ -748,9 +748,9 @@ def run_fuse(
         fused_file_lock = Redlock(
             key=f"fused_file_{id_config}_{sample_set_id}",
             masters={my_redis},
-            auto_release_time=1,
+            auto_release_time=10,
             context_manager_blocking=True,
-            context_manager_timeout=5,
+            context_manager_timeout=10,
         )
         id_fuse = -1
         with fused_file_lock:
@@ -772,7 +772,7 @@ def run_fuse(
                 "message": f"[{id_data}] c{id_config}: {output_file=} - {error_message}"
             }
             log.error(res)
-            raise
+            return STATUS_FAILED
 
         with open(fuse_filepath, "rb") as stream:
             ts = time.time()

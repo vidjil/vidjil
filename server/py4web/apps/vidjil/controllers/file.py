@@ -752,58 +752,56 @@ def upload_process(
     mes = f"file {filename}({sequence_id}) "
     log.debug(mes + "processing uploaded file")
 
-    # Lock to prevent race issue on R1/R2 upload
+    # Store file in db by moving it to the correct location
+    try:
+        if file_number == "2":
+            db_filename = ""
+            with io.BytesIO() as empty_file:
+                db_filename = db.sequence_file.data_file2.store(empty_file, filename)
+            shutil.move(
+                merged_file,
+                os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
+            )
+            sequence_file.update_record(data_file2=db_filename)
+        else:
+            db_filename = ""
+            with io.BytesIO() as empty_file:
+                db_filename = db.sequence_file.data_file.store(empty_file, filename)
+            shutil.move(
+                merged_file,
+                os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
+            )
+            sequence_file.update_record(data_file=db_filename)
+    except IOError as e:
+        if str(e).find("File name too long") > -1:
+            error += "Your filename is too long, please shorten it."
+        else:
+            error += "System error during processing of uploaded file."
+            log.error(str(e))
+        raise HTTP(500, ", ".join(error))
 
-    host, port = settings.REDIS_SERVER.split(":")
-    my_redis = Redis(host=host, port=int(port))
-    sequence_file_lock = Redlock(
-        key=f"sequence_file_{sequence_id}",
-        masters={my_redis},
-        auto_release_time=1,
-        context_manager_blocking=True,
-        context_manager_timeout=5,
-    )
-    with sequence_file_lock:
-        # Store file in db by moving it to the correct location
-        try:
-            if file_number == "2":
-                db_filename = ""
-                with io.BytesIO() as empty_file:
-                    db_filename = db.sequence_file.data_file2.store(
-                        empty_file, filename
-                    )
-                shutil.move(
-                    merged_file,
-                    os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
-                )
-                sequence_file.update_record(data_file2=db_filename)
-            else:
-                db_filename = ""
-                with io.BytesIO() as empty_file:
-                    db_filename = db.sequence_file.data_file.store(empty_file, filename)
-                shutil.move(
-                    merged_file,
-                    os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
-                )
-                sequence_file.update_record(data_file=db_filename)
-        except IOError as e:
-            if str(e).find("File name too long") > -1:
-                error += "Your filename is too long, please shorten it."
-            else:
-                error += "System error during processing of uploaded file."
-                log.error(str(e))
+    data_file = sequence_file.data_file
+    data_file2 = sequence_file.data_file2
 
-        data_file = sequence_file.data_file
-        data_file2 = sequence_file.data_file2
+    if file_number == "1" and data_file is None:
+        raise HTTP(500, "no data file")
+    if file_number == "2" and data_file2 is None:
+        raise HTTP(500, "no data file 2")
 
-        if file_number == "1" and data_file is None:
-            return error_message("no data file")
-        if file_number == "2" and data_file2 is None:
-            return error_message("no data file 2")
-
-        # Start preprocess if needed
-        number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
-        if preprocess is not None:
+    # Start preprocess if needed
+    number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
+    if preprocess is not None:
+        # Lock to prevent race issue on R1/R2 upload
+        host, port = settings.REDIS_SERVER.split(":")
+        my_redis = Redis(host=host, port=int(port))
+        sequence_file_lock = Redlock(
+            key=f"sequence_file_{sequence_id}",
+            masters={my_redis},
+            auto_release_time=10,
+            context_manager_blocking=True,
+            context_manager_timeout=10,
+        )
+        with sequence_file_lock:
             if data_file is not None and (
                 data_file2 is not None if number_of_required_files == 2 else True
             ):
