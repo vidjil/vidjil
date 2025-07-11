@@ -566,28 +566,28 @@ def resumable_upload_post():
     if error:
         return error_message(", ".join(error))
 
-    resumableIdentifier = request.params["resumableIdentifier"]
-    resumableChunkNumber = int(request.params["resumableChunkNumber"])
-    resumableTotalChunks = int(request.params["resumableTotalChunks"])
-    resumableFilename = request.params["resumableFilename"]
+    resumable_identifier = request.params["resumableIdentifier"]
+    resumable_chunk_number = int(request.params["resumableChunkNumber"])
+    resumable_total_chunks = int(request.params["resumableTotalChunks"])
+    resumable_filename = request.params["resumableFilename"]
     file = request.files["file"]
 
-    chunk_dir = get_chunk_dir(resumableIdentifier)
+    chunk_dir = get_chunk_dir(resumable_identifier)
     chunk_dir.mkdir(exist_ok=True)
 
-    chunk_name = f"{resumableChunkNumber}{PART_SUFFIX}"
+    chunk_name = f"{resumable_chunk_number}{PART_SUFFIX}"
     chunk_file_path = pathlib.Path(chunk_dir, chunk_name)
 
     with open(chunk_file_path, "wb") as chunk_file:
         chunk_file.write(file.file.read())
 
     # Merge received chunks
-    chunk_dir = get_chunk_dir(resumableIdentifier)
+    chunk_dir = get_chunk_dir(resumable_identifier)
     received_chunks = len(glob.glob(f"*{PART_SUFFIX}", root_dir=chunk_dir))
-    if received_chunks == resumableTotalChunks:
-        merged_file_path = get_merged_file_path(resumableIdentifier)
+    if received_chunks == resumable_total_chunks:
+        merged_file_path = get_merged_file_path(resumable_identifier)
         with open(merged_file_path, "wb") as merged_file:
-            for i in range(1, resumableTotalChunks + 1):
+            for i in range(1, resumable_total_chunks + 1):
                 chunk_path = pathlib.Path(chunk_dir, f"{i}.part")
                 if not chunk_path.exists():
                     log.error(
@@ -595,10 +595,11 @@ def resumable_upload_post():
                     )
                     raise HTTP(
                         500,
-                        f"Upload error when receiving file {resumableFilename}, please try to upload again.",
+                        f"Upload error when receiving file {resumable_filename}, please try to upload again.",
                     )
                 with open(chunk_path, "rb") as chunk_file:
                     merged_file.write(chunk_file.read())
+        shutil.rmtree(chunk_dir)
     return "OK"
 
 
@@ -644,7 +645,7 @@ def resumable_upload_process():
         log.error(f"resumable_upload_process : {error}")
         raise HTTP(500, ", ".join(error))
 
-    resumableIdentifier = request.params["resumableIdentifier"]
+    resumable_identifier = request.params["resumableIdentifier"]
     sequence_id = request.params["sequence_id"].removesuffix("_2")
     filename = request.params["filename"]
     file_number = request.params["file_number"]
@@ -653,7 +654,7 @@ def resumable_upload_process():
         if "pre_process" in request.params and request.params["pre_process"] != "0"
         else None
     )
-    merged_file_path = get_merged_file_path(resumableIdentifier)
+    merged_file_path = get_merged_file_path(resumable_identifier)
 
     return upload_process(
         merged_file_path, sequence_id, filename, file_number, preprocess
