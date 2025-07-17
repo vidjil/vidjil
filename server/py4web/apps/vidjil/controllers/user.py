@@ -163,6 +163,9 @@ def edit_form():
             return json.dumps(res, separators=(",", ":"))
         updated_user["password"] = new_pwd
         updated_user["last_password_change"] = datetime.datetime.now()
+        if auth.is_admin():
+            updated_user["number_wrong_passwords"] = 0
+
 
     db(db.auth_user.id == request.params["id"]).update(**updated_user)
 
