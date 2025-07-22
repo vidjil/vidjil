@@ -166,7 +166,7 @@ if (typeof config !== 'undefined' && typeof config.alert !== 'undefined') {
 
 if (typeof config !== 'undefined' && (config.healthcare || false))
 {
-    document.getElementById("logospan").innerHTML = "(health)";
+    document.getElementById("logospan_index").innerHTML = "(health)";
 }
 
 console.log("=== main.js finished ===");
