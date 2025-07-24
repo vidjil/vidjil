@@ -573,7 +573,7 @@ def resumable_upload_post():
     file = request.files["file"]
 
     chunk_dir = get_chunk_dir(resumable_identifier)
-    chunk_dir.mkdir(exist_ok=True)
+    chunk_dir.mkdir(parents=True, exist_ok=True)
 
     chunk_name = f"{resumable_chunk_number}{PART_SUFFIX}"
     chunk_file_path = pathlib.Path(chunk_dir, chunk_name)
