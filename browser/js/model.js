@@ -367,6 +367,7 @@ Model.prototype = {
         }
 
         this.system_selected = []
+        this.saved_system_selected_by_config = {}
         this.top = 50
     },
     
@@ -375,13 +376,13 @@ Model.prototype = {
         for (var locus in germline){
             germl = locus.substring(0,3)
             if (typeof this.germline[germl]==="undefined") {
-             this.germline[germl]={};
+                this.germline[germl]={};
             }
             for (var allele in germline[locus]) {
-                    this.germline[germl][allele]="";
-                    this.germline [germl][allele]+=germline[locus][allele];
-                    }
+                this.germline[germl][allele]="";
+                this.germline [germl][allele]+=germline[locus][allele];
                 }
+            }
 
 
         return this.germline;

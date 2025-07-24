@@ -708,7 +708,10 @@ class TestDefaultController:
             assert (
                 result["vidjil_json_version"] == expected_result["vidjil_json_version"]
             )
-            assert result["system_selected"] == expected_result["system_selected"]
+            assert (
+                result["saved_system_selected_by_config"]
+                == expected_result["saved_system_selected_by_config"]
+            )
         finally:
             if analysis_file_id is not None:
                 result_file = Path(

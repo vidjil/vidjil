@@ -759,8 +759,13 @@ Model_loader.prototype = {
             }
 
             // loci
-            if (this.analysis.system_selected) {
-                this.system_selected = this.analysis.system_selected;
+            if (this.analysis.saved_system_selected_by_config) {
+                this.saved_system_selected_by_config = this.analysis.saved_system_selected_by_config;
+            }
+            if ((this.db_key) && (this.db_key.config) &&
+                (this.saved_system_selected_by_config) && 
+                (this.saved_system_selected_by_config[this.db_key.config] != undefined)) {
+                this.system_selected = this.saved_system_selected_by_config[this.db_key.config];
                 this.update_selected_system();
             } else {
                 this.toggle_all_systems(true);
@@ -816,6 +821,12 @@ Model_loader.prototype = {
         var date = new Date();
         var timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() +
             " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+        if (this.db_key && this.db_key.config) {
+            if (this.saved_system_selected_by_config == undefined) {
+                this.saved_system_selected_by_config = {};
+            }
+            this.saved_system_selected_by_config[this.db_key.config] = this.system_selected;
+        }
         
         var analysisData = {
             producer : "browser",
@@ -831,11 +842,11 @@ Model_loader.prototype = {
             clones : this.analysis_clones,
             clusters : this.analysis_clusters,
             report_save :this.report_save,
-            system_selected : this.system_selected,
+            saved_system_selected_by_config : this.saved_system_selected_by_config,
         }
 
         var elem;
-        for (var i = 0; i < this.clones.length; i++) {
+        for (let i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
 
             //tag, custom name, expected_value
