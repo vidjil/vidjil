@@ -552,8 +552,7 @@ def get_data():
             data["samples"]["commandline"].append(command)
 
             found_sequence_file = False
-            found_result_file = False  # For AIRR files
-            found_filename = False  # for Vidjil files
+            found_result_file = False  # For AIRR or .vidjil/clntab files
 
             if original_name in query2:
                 found_sequence_file = True
