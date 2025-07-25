@@ -435,7 +435,7 @@ def add_results_file(
         with file.open("rb") as stream:
             data_file = db.results_file.data_file.store(stream, filename)
     else:
-        data_file = "/test/sequence/test_file.fasta"
+        data_file = "test_file.fasta"
 
     results_file_id = db.results_file.insert(
         sequence_file_id=sequence_file_id,
