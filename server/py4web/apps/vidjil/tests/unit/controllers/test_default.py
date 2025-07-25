@@ -472,6 +472,7 @@ class TestDefaultController:
             assert result["reads"]["total"] == [786861, 200]
             assert result["samples"]["number"] == 2
             assert result["samples"]["original_names"][0] == "helloworld"
+            
             assert result["samples"]["sequence_file_id"][0] == sequence_file_id
             assert result["samples"]["results_file_id"][0] == results_file_id
             assert len(result["samples"]["associated_sets_names"][0]) == 1
@@ -718,6 +719,106 @@ class TestDefaultController:
                 os.remove(result_file)
             db.analysis_file.analysis_file.uploadfolder = save_upload_folder
             settings.DIR_RESULTS = saved_dir_results
+
+    def test_get_data_found_result_file_airr_case(self):
+        # Setup: create user, sample set, config, sequence file, results file
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        user_group_id = auth.user_group(user_id)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(
+            1, user_id
+        )
+        auth.add_permission(
+            user_group_id,
+            PermissionEnum.access.value,
+            db.sample_set,
+            sample_set_id,
+        )
+        config_id = db_manipulation_utils.add_config()
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id, force_filename="sequence_file.fastq"
+        )
+        results_file_id = db_manipulation_utils.add_results_file(
+            sequence_file_id, config_id, 
+        )
+        saved_dir_results = settings.DIR_RESULTS
+        save_fuse_upload_folder = db.fused_file.fused_file.uploadfolder
+        fused_file_id = -1
+
+        try:
+            settings.DIR_RESULTS = str(test_utils.get_results_path())
+            db.fused_file.fused_file.uploadfolder = (
+                test_utils.get_results_path()
+            )
+            # Prepare a fused file with original_names not matching sequence_file.data_file,
+            # but matching results_file.data_file (AIRR import case)
+            fused_filename = "fused_sequence_file.json"
+            fused_file_path = os.path.join(settings.DIR_RESULTS, fused_filename)
+            # Simulate the AIRR case
+            original_name = "sequence_file.fastq"
+            resultfile_name = "test_file.fasta"
+            fuse_data = {
+                "samples": {
+                    "number": 1,
+                    "original_names": [original_name],
+                    "original_results_files": [resultfile_name],
+                    "info": [],
+                    "timestamp": [],
+                    "names": [],
+                    "db_key": [],
+                    "id": [],
+                    "patient_id": [],
+                    "sample_name": [],
+                    "run_id": [],
+                    "results_file_id": [],
+                    "sequence_file_id": [],
+                    "config_id": [],
+                    "commandline": [],
+                    "associated_sets_names": [],
+                },
+                "reads": {"segmented": [100], "total": [200]},
+            }
+            with open(fused_file_path, "w", encoding="utf-8") as f:
+                f.write(json.dumps(fuse_data))
+            fused_file_id = db.fused_file.insert(
+                fused_file=fused_filename,
+                sample_set_id=sample_set_id,
+                config_id=config_id,
+                fuse_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            )
+
+            # When: call get_data
+            with Omboddle(
+                self.session,
+                keep_session=True,
+                params={"format": "json"},
+                query={"sample_set_id": sample_set_id, "config": config_id},
+            ):
+                json_result = default_controller.get_data()
+
+            # Then: found_result_file should be used, and sample info should match
+            result = json.loads(json_result)
+            assert (
+                result["samples"]["names"][0]
+                == db.sequence_file[sequence_file_id].filename.split(".")[0]
+            )
+            assert result["samples"]["results_file_id"][0] == results_file_id
+            assert result["samples"]["sequence_file_id"][0] == sequence_file_id
+            assert int(result["samples"]["config_id"][0]) == config_id
+        finally:
+            if fused_file_id != -1:
+                fused_file = pathlib.Path(
+                    settings.DIR_RESULTS,
+                    db.fused_file[fused_file_id].fused_file,
+                )
+                fused_file.unlink(missing_ok=True)
+            settings.DIR_RESULTS = saved_dir_results
+            db.fused_file.fused_file.uploadfolder = save_fuse_upload_folder
+
 
     ##################################
     # Tests on default_controller.impersonate()
