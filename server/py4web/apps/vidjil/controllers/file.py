@@ -1,6 +1,5 @@
 import base64
 import datetime
-import glob
 import io
 import json
 import os
@@ -60,9 +59,9 @@ def link_to_sample_sets(seq_file_id, id_dict):
     Create sample set memberships and return a dict of the sample set ids.
     The keys to the dict are thee same as the ones passed in id_dict
     """
-    log.debug("linking file %d to sets:" % seq_file_id)
+    log.info("linking file %d to sets:" % seq_file_id)
     for key in id_dict:
-        log.debug("%s: %s" % (key, str(id_dict[key])))
+        log.info("%s: %s" % (key, str(id_dict[key])))
         arr = [
             {"sample_set_id": oid, "sequence_file_id": seq_file_id}
             for oid in id_dict[key]
@@ -245,7 +244,7 @@ def form():
             relevant_ids[sample_type] = []
         relevant_ids[sample_type].append(row.id)
         action = "add"
-        log.debug(
+        log.info(
             "load add form",
             extra={
                 "user_id": auth.user_id,
@@ -278,7 +277,7 @@ def form():
         action = "edit"
 
         sample_type = request.query["sample_type"]
-        log.debug(
+        log.info(
             "load edit form",
             extra={
                 "user_id": auth.user_id,
@@ -400,13 +399,14 @@ def submit():
 
             filename, filepath = manage_filename(f["filename"])
             file_data.update(filename)
+
             if "data_file" in file_data and file_data["data_file"] is not None:
                 os.symlink(filepath, settings.DIR_SEQUENCES + file_data["data_file"])
                 file_data["size_file"] = os.path.getsize(filepath)
                 file_data["network"] = True
                 file_data["data_file"] = str(file_data["data_file"])
 
-            if data["source"] == "nfs":
+            if f["filename2"] != "":
                 file_data2, filepath2 = manage_filename(f["filename2"])
                 if "data_file" in file_data2 and file_data2["data_file"] is not None:
                     file_data["data_file2"] = str(file_data2["data_file"])
@@ -556,10 +556,6 @@ def resumable_upload_post():
         error += "missing resumableIdentifier"
     elif "resumableChunkNumber" not in request.params:
         error += "missing resumableChunkNumber"
-    elif "resumableTotalChunks" not in request.params:
-        error += "missing resumableTotalChunks"
-    elif "resumableFilename" not in request.params:
-        error += "missing resumableFilename"
     elif "file" not in request.files:
         error += "missing file"
 
@@ -568,8 +564,6 @@ def resumable_upload_post():
 
     resumable_identifier = request.params["resumableIdentifier"]
     resumable_chunk_number = int(request.params["resumableChunkNumber"])
-    resumable_total_chunks = int(request.params["resumableTotalChunks"])
-    resumable_filename = request.params["resumableFilename"]
     file = request.files["file"]
 
     chunk_dir = get_chunk_dir(resumable_identifier)
@@ -581,25 +575,6 @@ def resumable_upload_post():
     with open(chunk_file_path, "wb") as chunk_file:
         chunk_file.write(file.file.read())
 
-    # Merge received chunks
-    chunk_dir = get_chunk_dir(resumable_identifier)
-    received_chunks = len(glob.glob(f"*{PART_SUFFIX}", root_dir=chunk_dir))
-    if received_chunks == resumable_total_chunks:
-        merged_file_path = get_merged_file_path(resumable_identifier)
-        with open(merged_file_path, "wb") as merged_file:
-            for i in range(1, resumable_total_chunks + 1):
-                chunk_path = pathlib.Path(chunk_dir, f"{i}.part")
-                if not chunk_path.exists():
-                    log.error(
-                        f"Missing {chunk_path} when trying to merge uploaded file"
-                    )
-                    raise HTTP(
-                        500,
-                        f"Upload error when receiving file {resumable_filename}, please try to upload again.",
-                    )
-                with open(chunk_path, "rb") as chunk_file:
-                    merged_file.write(chunk_file.read())
-        shutil.rmtree(chunk_dir)
     return "OK"
 
 
@@ -654,7 +629,43 @@ def resumable_upload_process():
         if "pre_process" in request.params and request.params["pre_process"] != "0"
         else None
     )
+
+    # Merge received chunks
     merged_file_path = get_merged_file_path(resumable_identifier)
+    chunk_dir = get_chunk_dir(resumable_identifier)
+    if chunk_dir.exists() and chunk_dir.is_dir():
+        with open(merged_file_path, "wb") as merged_file:
+            number_of_chunks = sum(1 for x in chunk_dir.glob("*") if x.is_file())
+            for i in range(1, number_of_chunks + 1):
+                chunk_path = pathlib.Path(chunk_dir, f"{i}.part")
+                if not chunk_path.exists():
+                    log.error(
+                        f"Missing {chunk_path} when trying to merge uploaded file"
+                    )
+                    raise HTTP(
+                        500,
+                        f"Upload error when receiving file {filename}, please try to upload again.",
+                    )
+                with open(chunk_path, "rb") as chunk_file:
+                    merged_file.write(chunk_file.read())
+        shutil.rmtree(chunk_dir)
+    else:
+        log.error(f"{chunk_dir} expected, but does not exists!")
+        raise HTTP(500, "File chunks not found, please try to upload again.")
+
+    try:
+        expected_size = int(resumable_identifier.split("-")[-1])
+    except Exception as exception:
+        log.error(
+            f"Exception when trying to get expected file size from {resumable_identifier}: {exception}"
+        )
+        raise HTTP(500, "Wrong file size, please try to upload again.")
+
+    if merged_file_path.stat().st_size != expected_size:
+        log.error(
+            f"{merged_file_path} has size {merged_file_path.stat().st_size}, but {expected_size} was expected!"
+        )
+        raise HTTP(500, "Wrong file size, please try to upload again.")
 
     return upload_process(
         merged_file_path, sequence_id, filename, file_number, preprocess
@@ -697,11 +708,11 @@ def upload():
 
     # write uploaded file to disk
     sequence_id = request.params["id"]
-    merged_file = get_merged_file_path(sequence_id)
-    uploaded_file_upload = request.files["file"]
-    filename = uploaded_file_upload.filename
-    with open(merged_file, "wb") as f:
-        f.write(uploaded_file_upload.file.read())
+    merged_file_path = get_merged_file_path(sequence_id)
+    uploaded_file = request.files["file"]
+    filename = uploaded_file.filename
+    with open(merged_file_path, "wb") as merged_file:
+        merged_file.write(uploaded_file.file.read())
 
     # Start processing the uploaded file
     file_number = request.params["file_number"]
@@ -710,11 +721,13 @@ def upload():
         if "pre_process" in request.params and request.params["pre_process"] != "0"
         else None
     )
-    return upload_process(merged_file, sequence_id, filename, file_number, preprocess)
+    return upload_process(
+        merged_file_path, sequence_id, filename, file_number, preprocess
+    )
 
 
 def upload_process(
-    merged_file: str,
+    merged_file_path: pathlib.Path,
     sequence_id: int,
     filename: str,
     file_number: int,
@@ -725,7 +738,7 @@ def upload_process(
     and starting the preprocessing task if needed.
 
     Parameters:
-    merged_file (str): The path to the merged file.
+    merged_file_path (Path): The path to the merged file.
     sequence_id (int): The ID of the sequence file.
     filename (str): The name of the uploaded file.
     file_number (int): The file number (1 or 2) indicating whether it's the first or second file.
@@ -737,21 +750,22 @@ def upload_process(
     Returns:
     str: A JSON string containing the result message.
     """
+
     error = []
     sequence_file = db.sequence_file[sequence_id]
 
     if sequence_file is None:
         error.append("no sequence file with this id")
 
-    if not os.path.isfile(merged_file):
-        error.append(f"Expected merged file {merged_file} not found")
+    if not os.path.isfile(merged_file_path):
+        error.append(f"Expected merged file {merged_file_path} not found")
 
     if error:
-        sequence_file.update_record(pre_process_flag=tasks.STATUS_UPLOAD_FAILED)
+        if sequence_file is not None:
+            sequence_file.update_record(pre_process_flag=tasks.STATUS_UPLOAD_FAILED)
         raise HTTP(500, ", ".join(error))
 
     mes = f"file {filename}({sequence_id}) "
-    log.debug(mes + "processing uploaded file")
 
     # Store file in db by moving it to the correct location
     try:
@@ -760,7 +774,7 @@ def upload_process(
             with io.BytesIO() as empty_file:
                 db_filename = db.sequence_file.data_file2.store(empty_file, filename)
             shutil.move(
-                merged_file,
+                merged_file_path,
                 os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
             )
             sequence_file.update_record(data_file2=db_filename)
@@ -769,16 +783,17 @@ def upload_process(
             with io.BytesIO() as empty_file:
                 db_filename = db.sequence_file.data_file.store(empty_file, filename)
             shutil.move(
-                merged_file,
+                merged_file_path,
                 os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
             )
             sequence_file.update_record(data_file=db_filename)
     except IOError as e:
         if str(e).find("File name too long") > -1:
-            error += "Your filename is too long, please shorten it."
+            error.append("Your filename is too long, please shorten it.")
         else:
-            error += "System error during processing of uploaded file."
+            error.append("System error during processing of uploaded file.")
             log.error(str(e))
+        sequence_file.update_record(pre_process_flag=tasks.STATUS_UPLOAD_FAILED)
         raise HTTP(500, ", ".join(error))
 
     data_file = sequence_file.data_file
@@ -872,7 +887,7 @@ def delete_sequence_file(seq_id):
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
     if seq_filename is not None:
-        log.debug(
+        log.info(
             f"Deleting {db.sequence_file.data_file.uploadfolder}{seq_filename} with ID {seq_id}"
         )
     db.sequence_file[seq_id].update_record(data_file=None)
@@ -998,7 +1013,7 @@ def restart_pre_process():
     pre_process = db.pre_process[sequence_file.pre_process_id]
     res = tasks.schedule_pre_process(sequence_file.id, pre_process.id)
 
-    log.debug(
+    log.info(
         "restart pre process",
         extra={
             "user_id": auth.user_id,

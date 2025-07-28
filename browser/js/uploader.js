@@ -118,7 +118,8 @@ class Uploader {
     const div_parent = $("#upload_summary_selector").children()[0];
     const div = $("<div/>").appendTo(div_parent);
     this.fileIdMatch[file] = id;
-    this.queue[this.generateUniqueIdentifier(file)] = {
+    const uniqueIdentifier = this.generateUniqueIdentifier(file);
+    this.queue[uniqueIdentifier] = {
       filename: this.sanitizeFilename(file.name),
       file: file,
       status: "queued",
@@ -128,7 +129,7 @@ class Uploader {
       fileNumber: fileNumber,
       sequenceId: id,
     };
-    this.resumable.addFile(file);
+    this.addOrRetry(uniqueIdentifier);
   }
 
   generateUniqueIdentifier(file) {
@@ -152,12 +153,12 @@ class Uploader {
     }
   }
 
-  retry(id) {
+  addOrRetry(id) {
     var file = this.resumable.getFromUniqueIdentifier(id);
     if (file) {
       // We found the file in resumable
       file.retry();
-      this.queue[id].status = "queued";
+      this.queue[id].status = "upload";
       this.display();
     } else {
       // We need to add the file to resumable
@@ -260,14 +261,14 @@ class Uploader {
       case "canceled":
         html += "<span class='loading_status'> canceled by user </span>";
         html +=
-          "<span class='button2' onclick='db.uploader.retry(\"" +
+          "<span class='button2' onclick='db.uploader.addOrRetry(\"" +
           id +
           "\")'>try again</span>";
         break;
       case "upload_error":
         html += "<span class='loading_status'> upload failed </span>";
         html +=
-          "<span class='button2' onclick='db.uploader.retry(\"" +
+          "<span class='button2' onclick='db.uploader.addOrRetry(\"" +
           id +
           "\")'>try again</span>";
         break;
