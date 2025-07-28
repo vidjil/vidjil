@@ -787,6 +787,17 @@ Cypress.Commands.add("openSampleResult", (sequence_file_id) => {
 });
 
 /**
+ * Open qc stats
+ */
+Cypress.Commands.add("openQCStatsResults", (sampleSetId, configId) => {
+  cy.log(`openQCStatsResults(${sampleSetId} - ${configId})`);
+  cy.get(`#qc_sample_set_id_${sampleSetId}_config_${configId}`)
+    .should("exist")
+    .click({ force: true });
+  cy.wait("@getActivities");
+});
+
+/**
  * Delete a set
  */
 Cypress.Commands.add("deleteSet", (set_type, set_id, name) => {

@@ -18,45 +18,55 @@ describe("Manipulate patient, sample and launch analysis", function () {
 
   it("02-Launch, open, delete analysis and check logs", function () {
     cy.createPatient("", "fn", "ln", "", "c", "public").as(
-      "patient_id"
+      "patientId"
     );
 
-    var preprocess = undefined;
-    var filename1 = "Demo-X5.fa";
-    var filename2 = undefined;
-    var sampling_date = "2021-01-01";
-    var sample_information = "c #cy";
+    const preprocess = undefined;
+    const filename1 = "Demo-X5.fa";
+    const filename2 = undefined;
+    const samplingDate = "2021-01-01";
+    const sampleInformation = "c #cy";
     cy.addSample(
       preprocess,
       "nfs",
       filename1,
       filename2,
-      sampling_date,
-      sample_information
-    ).then((sample_id) => {
-      cy.log("added sample " + sample_id);
+      samplingDate,
+      sampleInformation
+    ).then((sampleId) => {
+      cy.log("added sample " + sampleId);
 
       // Launch process and wait for result
-      cy.launchProcess("2", sample_id);
-      cy.waitAnalysisCompleted("2", sample_id);
+      const configId="2";
+      cy.launchProcess(configId, sampleId);
+      cy.waitAnalysisCompleted("2", sampleId);
 
       // Open result
-      cy.openSampleResult(sample_id);
+      cy.openSampleResult(sampleId);
       // Check number of clones found
       cy.get("#list_clones").children().should("have.length", 38);
       // Check number of clones found without removed clonotypes
       cy.get("#list_clones")
-      .children()
-      .filter((index, el) => {
-        return Cypress.$(el).css("display") !== "none";
-      })
-      .should("have.length", 26);
+        .children()
+        .filter((_, el) => {
+          return Cypress.$(el).css("display") !== "none";
+        })
+        .should("have.length", 26);
+      // Check multisample stats can be displayed
+      cy.get("@patientId").then((patientId) => {
+        cy.openDBPage();
+        cy.openSet(patientId);
+        cy.openQCStatsResults(patientId, configId);
+        cy.get("#table > tbody > :nth-child(1) > td.sets > span > div > div > span")
+          .should("exist")
+          .should("contain", patientId)
+      });
     
       // Delete process
-      cy.get("@patient_id").then((patient_id) => {
-        cy.openDBPage();
-        cy.openSet(patient_id);
-        cy.deleteProcess("2", sample_id);
+      cy.get("@patientId").then((patientId) => {
+        cy.goToPatientPage();
+        cy.openSet(patientId);
+        cy.deleteProcess(configId, sampleId);
       });
 
       // Check logs
@@ -67,10 +77,10 @@ describe("Manipulate patient, sample and launch analysis", function () {
       cy.get('#db_table_container')
         .should("contain", "run requested with config multi+inc+xxx")
       cy.get('#db_table_container')
-        .should("contain", "file (" + sample_id + ") //Demo-X5.fa added")
-      cy.get("@patient_id").then((patient_id) => {
+        .should("contain", "file (" + sampleId + ") //Demo-X5.fa added")
+      cy.get("@patientId").then((patientId) => {
         cy.get('#db_table_container')
-          .should("contain", "patient (" + patient_id + ") ln added")
+          .should("contain", "patient (" + patientId + ") ln added")
       });
     });
   });
