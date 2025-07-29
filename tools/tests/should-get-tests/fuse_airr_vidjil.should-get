@@ -1,7 +1,8 @@
-!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_vidjil.tsv -o fuse_airr_vidjil.vidjil ; cat fuse_airr_vidjil.vidjil
+!OUTPUT_FILE: fuse_airr_vidjil.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../data/airr_output/airr_vidjil.tsv -o fuse_airr_vidjil.vidjil;
 
-$ check original name
-1: "../data/airr_output/airr_vidjil.tsv"
+$ check original name + original results
+2: "../data/airr_output/airr_vidjil.tsv"
 
 $ Check the producer string in output file
 1: "producer": "vidjil fuse"

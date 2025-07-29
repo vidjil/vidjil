@@ -1,10 +1,11 @@
-!LAUNCH: $PYTHON ../../fuse.py  ../data/airr_output/Demo-X5-x100.vidjil ../data/airr_output/airr_vidjil.tsv -o fuse_airr_multiple.vidjil ; cat fuse_airr_multiple.vidjil
+!OUTPUT_FILE: fuse_airr_multiple.vidjil
+!LAUNCH: $PYTHON ../../fuse.py  ../data/airr_output/Demo-X5-x100.vidjil ../data/airr_output/airr_vidjil.tsv -o fuse_airr_multiple.vidjil
 
 
 $ check original names. .vidjil
 1: "Demo-X5-x100.fasta"
-$ check original names: .tsv
-1: "../data/airr_output/airr_vidjil.tsv"
+$ check original names: .tsv (original filename + results)
+2: "../data/airr_output/airr_vidjil.tsv"
 
 $ Check the producer string in output file
 1: "producer": "vidjil fuse"
@@ -52,11 +53,13 @@ r28: 100%.*bp
 
 
 ### ===========================================================================================================
-!LAUNCH: $PYTHON ../../fuse.py  ../data/airr_output/airr_vidjil.tsv ../data/airr_output/Demo-X5-x100.vidjil -o fuse_airr_multiple_invert.vidjil ; cat fuse_airr_multiple_invert.vidjil
+!OUTPUT_FILE: fuse_airr_multiple_invert.vidjil
+!LAUNCH: $PYTHON ../../fuse.py  ../data/airr_output/airr_vidjil.tsv ../data/airr_output/Demo-X5-x100.vidjil -o fuse_airr_multiple_invert.vidjil
+
 $ check original names. .vidjil
 1: "Demo-X5-x100.fasta"
 $ check original names: .tsv
-1: "../data/airr_output/airr_vidjil.tsv"
+2: "../data/airr_output/airr_vidjil.tsv"
 
 $ _invert Check the producer string in output file
 1: "producer": "vidjil fuse"
