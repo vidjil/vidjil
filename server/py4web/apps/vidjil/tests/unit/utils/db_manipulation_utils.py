@@ -271,10 +271,12 @@ def add_sequence_file(
     else:
         if force_filename:
             filename = force_filename
+            data_file = force_filename
+            data_file2 = force_filename if preprocess else None
         else:
             filename = "test_file.fasta"
-        data_file = "/test/sequence/test_file.fasta"
-        data_file2 = "/test/sequence/test_file2.fasta" if preprocess else None
+            data_file = "/test/sequence/test_file.fasta"
+            data_file2 = "/test/sequence/test_file2.fasta" if preprocess else None
         preprocess_file = (
             "/test/sequence/preprocess_test_file.fasta" if preprocess else None
         )
@@ -435,7 +437,7 @@ def add_results_file(
         with file.open("rb") as stream:
             data_file = db.results_file.data_file.store(stream, filename)
     else:
-        data_file = "/test/sequence/test_file.fasta"
+        data_file = "test_file.fasta"
 
     results_file_id = db.results_file.insert(
         sequence_file_id=sequence_file_id,
