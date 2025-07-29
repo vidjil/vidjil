@@ -535,7 +535,9 @@ def get_data():
 
             # Now we include results file name used to make fuse in fused files
             if "original_results_files" in data["samples"]:
-                resultfile_name = data["samples"]["original_results_files"][i].split("/")[-1]
+                resultfile_name = data["samples"]["original_results_files"][i].split(
+                    "/"
+                )[-1]
             else:
                 resultfile_name = None
 
@@ -564,7 +566,11 @@ def get_data():
                         found_result_file = sequence_file
                         break
                     # Vidjil file case
-                    elif resultfile_name != None and resultfile_name == query2[sequence_file].results_file.data_file:
+                    elif (
+                        resultfile_name != None
+                        and resultfile_name
+                        == query2[sequence_file].results_file.data_file
+                    ):
                         # We can found which sample is linked to each results and sequence_file.
                         found_result_file = sequence_file
                         break

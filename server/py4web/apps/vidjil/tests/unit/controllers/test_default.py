@@ -472,7 +472,7 @@ class TestDefaultController:
             assert result["reads"]["total"] == [786861, 200]
             assert result["samples"]["number"] == 2
             assert result["samples"]["original_names"][0] == "helloworld"
-            
+
             assert result["samples"]["sequence_file_id"][0] == sequence_file_id
             assert result["samples"]["results_file_id"][0] == results_file_id
             assert len(result["samples"]["associated_sets_names"][0]) == 1
@@ -729,9 +729,7 @@ class TestDefaultController:
             db_manipulation_utils.get_indexed_user_email(1),
             db_manipulation_utils.get_indexed_user_password(1),
         )
-        patient_id, sample_set_id = db_manipulation_utils.add_patient(
-            1, user_id
-        )
+        patient_id, sample_set_id = db_manipulation_utils.add_patient(1, user_id)
         auth.add_permission(
             user_group_id,
             PermissionEnum.access.value,
@@ -743,7 +741,8 @@ class TestDefaultController:
             sample_set_id, user_id, force_filename="sequence_file.fastq"
         )
         results_file_id = db_manipulation_utils.add_results_file(
-            sequence_file_id, config_id, 
+            sequence_file_id,
+            config_id,
         )
         saved_dir_results = settings.DIR_RESULTS
         save_fuse_upload_folder = db.fused_file.fused_file.uploadfolder
@@ -751,9 +750,7 @@ class TestDefaultController:
 
         try:
             settings.DIR_RESULTS = str(test_utils.get_results_path())
-            db.fused_file.fused_file.uploadfolder = (
-                test_utils.get_results_path()
-            )
+            db.fused_file.fused_file.uploadfolder = test_utils.get_results_path()
             # Prepare a fused file with original_names not matching sequence_file.data_file,
             # but matching results_file.data_file (AIRR import case)
             fused_filename = "fused_sequence_file.json"
@@ -818,7 +815,6 @@ class TestDefaultController:
                 fused_file.unlink(missing_ok=True)
             settings.DIR_RESULTS = saved_dir_results
             db.fused_file.fused_file.uploadfolder = save_fuse_upload_folder
-
 
     ##################################
     # Tests on default_controller.impersonate()
