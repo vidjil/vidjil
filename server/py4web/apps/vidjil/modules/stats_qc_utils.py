@@ -483,7 +483,7 @@ def get_fused_stats(fuse):
                                     float(e_equitability["all"]),
                                     3,
                                 )
-                        else:
+                        elif e_equitability is not None:
                             pielou_evenness = round(
                                 float(e_equitability),
                                 3,
@@ -507,7 +507,7 @@ def get_fused_stats(fuse):
                                     float(ds_diversity["all"]),
                                     3,
                                 )
-                        else:
+                        elif ds_diversity is not None:
                             simpson_diversity = round(
                                 float(ds_diversity),
                                 3,
