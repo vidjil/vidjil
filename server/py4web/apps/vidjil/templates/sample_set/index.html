@@ -96,14 +96,14 @@
                 <td class="column5">
                     [[if fused_count >0 and fused_file is not None :]]
                         <a href="DB_ADDRESS[[=URL('default', 'get_data', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=fused_filename), use_appname=False)]]"
-                            type="application/octet-stream"><i class="icon-down" title="Download .vidjil file"></i>
+                            type="application/octet-stream"><i class="icon-download" title="Download .vidjil file"></i>
                         </a>
                     [[pass]]
                 </td>
                 <td class="column5">
                     [[if fused_count >0 and fused_file is not None and analysis_count >0 :]]
                         <a href="DB_ADDRESS[[=URL('default', 'get_analysis', vars=dict(sample_set_id = request.query['id'], config = config_id, filename=analysis_filename), use_appname=False)]]"
-                            type="application/octet-stream"><i class="icon-down-circled2" title="Download .analysis file"></i>
+                            type="application/octet-stream"><i class="icon-download-circled2" title="Download .analysis file"></i>
                         </a>
                     [[pass]]
                 </td>
@@ -204,7 +204,7 @@
                         <td></td>
                     [[pass]]
                     <td> <a [[if waiting_for_file :]] [[=XML("class='inactive' title='file is missing'")]]
-                            [[else:]] href="DB_ADDRESS[[=URL('sample_set','download_sequence_file', row.sequence_file.data_file, vars=dict(filename=row.sequence_file.filename), use_appname=False)]]" [[pass]]  ><i class="icon-down" title="Download sequence file"></i></a>
+                            [[else:]] href="DB_ADDRESS[[=URL('sample_set','download_sequence_file', row.sequence_file.data_file, vars=dict(filename=row.sequence_file.filename), use_appname=False)]]" [[pass]]  ><i class="icon-download" title="Download sequence file"></i></a>
                     </td>
                     [[if can_modify:]]
                         <td class="pointer" onclick="db.call('file/confirm', {'id' :'[[=row.sequence_file.id ]]', 'redirect_sample_set_id' : '[[=request.query["id"]]]'} )" >  <i class="icon-erase" title="delete sample"></i> </td>
@@ -237,7 +237,7 @@
                         <td>
                             [[if row.results_file.data_file:]]
                                 <a href="DB_ADDRESS[[=URL('default', 'download', row.results_file.data_file, vars=dict(filename='result-%s-%s.txt' % (request.query['id'], row.results_file.id)), use_appname=False)]]"
-                                type="application/octet-stream"><i class="icon-down" title="Download result file"></i>
+                                type="application/octet-stream"><i class="icon-download" title="Download result file"></i>
                                 </a>
                             [[pass]]
                         </td>
