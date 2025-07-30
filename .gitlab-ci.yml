@@ -29,7 +29,6 @@ stages:
   - test_quality
   - build_test_server_docker
   - test_unit
-  - deploy_review
   - test_germlines
   - test_functional
   - test_cypress_client
@@ -48,6 +47,7 @@ stages:
   - publish_release
   - deploy_prod
   - test_cypress_external
+  - deploy_review
 
 
 # Tools
