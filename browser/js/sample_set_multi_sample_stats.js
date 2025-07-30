@@ -56,7 +56,7 @@ function getStoredColumnsToHide(defaultConfig = []) {
 
 function updateDisplayAccordingToConfig(defaultConfig = []) {
   let columnsToHide = getStoredColumnsToHide(defaultConfig)
-  let numberOfColumns = $(`#${statsTableId} thead:first th`).length
+  let numberOfColumns = $('[id^=checkbox_header_]').length
 
   for (let i = 1; i <= numberOfColumns; i++) {
     if (columnsToHide.indexOf(i) > -1) {
@@ -68,20 +68,24 @@ function updateDisplayAccordingToConfig(defaultConfig = []) {
 }
 
 function hideIthColumn(i) {
-  document.querySelectorAll(`#${statsTableId} th:nth-child(${i})`).forEach(hideColumn)
-  document.querySelectorAll(`#${statsTableId} td:nth-child(${i})`).forEach(hideColumn)
-  let checkbox = getIthCheckbox(i)
-  checkbox.checked = false
+  document.querySelectorAll(`#${statsTableId} th:nth-child(${i})`).forEach(hideColumn);
+  document.querySelectorAll(`#${statsTableId} td:nth-child(${i})`).forEach(hideColumn);
+  let checkbox = getIthCheckbox(i);
+  if (checkbox != null) {
+    checkbox.checked = false;
+  }
 }
 
 function showIthColumn(i) {
-  document.querySelectorAll(`#${statsTableId} th:nth-child(${i})`).forEach(showDisplay)
-  document.querySelectorAll(`#${statsTableId} td:nth-child(${i})`).forEach(showDisplay)
-  let checkbox = getIthCheckbox(i)
-  checkbox.checked = true
+  document.querySelectorAll(`#${statsTableId} th:nth-child(${i})`).forEach(showDisplay);
+  document.querySelectorAll(`#${statsTableId} td:nth-child(${i})`).forEach(showDisplay);
+  let checkbox = getIthCheckbox(i);
+  if (checkbox != null) {
+    checkbox.checked = true;
+  }
 }
 
 function getIthCheckbox(i) {
   let checkbox = document.getElementById("checkbox_header_" + i);
-  return checkbox
+  return checkbox;
 }

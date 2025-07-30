@@ -1780,6 +1780,7 @@ def main():
     print()
 
     files = args.file
+    original_results_files = [];
     if args.first:
         if len(files) > args.first:
             print("! %d files were given. We take into account the first %d files." % (len(files), args.first))
@@ -1810,6 +1811,7 @@ def main():
             pre_path = split_path[1]
         else:
             path_name = split_path[0]
+        original_results_files.append(path_name)
 
         if args.ijson:
             json_clones = vparser.extract(path_name)
@@ -1917,6 +1919,10 @@ def main():
             os.unlink(fasta_file.name)
     else :
         jlist_fused.d["similarity"] = [];
+
+    
+    # Include original results file name to keep link sequence_file/results on server
+    jlist_fused.d["samples"].d["original_results_files"] = original_results_files;
 
 
     if args.overlaps:

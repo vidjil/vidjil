@@ -51,7 +51,7 @@ def get_clean_analysis(filehandle):
             "tags": "tags",
             "report_save": "report_save",
             "samples": "samples",
-            "system_selected": "system_selected",
+            "saved_system_selected_by_config": "saved_system_selected_by_config",
         },
     )
     return result

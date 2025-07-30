@@ -11,7 +11,6 @@
 import datetime
 import json
 import logging
-import os
 import re
 import time
 from ast import literal_eval
@@ -505,7 +504,7 @@ def get_data():
             db.sequence_file.ALL,
             db.results_file.ALL,
             db.sample_set.id,
-            orderby=db.sequence_file.id | ~db.results_file.run_date,
+            orderby=db.sequence_file.id | db.results_file.run_date,
         )
 
         query2 = {}
@@ -533,6 +532,14 @@ def get_data():
         for i in range(len(data["samples"]["original_names"])):
             original_name = data["samples"]["original_names"][i].split("/")[-1]
 
+            # Now we include results file name used to make fuse in fused files
+            if "original_results_files" in data["samples"]:
+                resultfile_name = data["samples"]["original_results_files"][i].split(
+                    "/"
+                )[-1]
+            else:
+                resultfile_name = None
+
             if "distributions" in data and "repertoires" in data["distributions"]:
                 data["distributions"]["repertoires"][original_name] = data[
                     "distributions"
@@ -546,8 +553,8 @@ def get_data():
             data["samples"]["commandline"].append(command)
 
             found_sequence_file = False
-            found_result_file = False  # For AIRR files
-            found_filename = False  # for Vidjil files
+            found_result_file = False  # For AIRR or .vidjil/clntab files
+
             if original_name in query2:
                 found_sequence_file = True
             else:
@@ -559,20 +566,18 @@ def get_data():
                         break
                     # Vidjil file case
                     elif (
-                        os.path.splitext(original_name)[0]
-                        == os.path.splitext(
-                            query2[sequence_file].sequence_file.filename
-                        )[0]
-                    ):  # ne marche pas a cause de l'extension
-                        found_filename = sequence_file
+                        resultfile_name != None
+                        and resultfile_name
+                        == query2[sequence_file].results_file.data_file
+                    ):
+                        # We can found which sample is linked to each results and sequence_file.
+                        found_result_file = sequence_file
                         break
 
-            if found_sequence_file or found_result_file or found_filename:
+            if found_sequence_file or found_result_file:
                 if found_sequence_file:  # standard case
                     row = query2[original_name]
-                elif found_filename:  # case import vidjil file
-                    row = query2[found_filename]
-                else:  # case AIRR/clntab data
+                else:  # case import vidjil or AIRR/clntab data
                     row = query2[found_result_file]
 
                 # Use row to fill fields

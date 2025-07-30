@@ -342,7 +342,8 @@ QUnit.test("system selection", function(assert) {
     m.parseJsonData(json_data, 100)
     assert.deepEqual(m.system_selected, m.system_available, "All systems should be selected by default")
     analysis_data_systems = JSON.parse(JSON.stringify(analysis_data))
-    analysis_data_systems.system_selected = ["TRG"]
+    m.db_key = { sample_set_id: "7", config: 2 }
+    analysis_data_systems.saved_system_selected_by_config = {2:["TRG"]}
     m.parseJsonAnalysis(analysis_data_systems)
 
     assert.notEqual(m.system_available.indexOf("IGH"), -1, "IGH system is available after analysis load")

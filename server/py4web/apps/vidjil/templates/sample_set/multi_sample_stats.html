@@ -48,7 +48,7 @@
       <tbody>
         [[ for pos in range(len(data['results'])): ]]
             [[ res=data['results'][pos] ]] 
-            [[ if pos in permitted_results: ]]
+            [[ if pos < len(permitted_results): ]]
               [[ row=permitted_results[pos] ]]
               <tr>
               [[ for name, header in data['headers'].items(): ]]
