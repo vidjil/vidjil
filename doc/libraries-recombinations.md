@@ -102,6 +102,18 @@ Anyway, with short reads, the identified recombinations may be skewed towards sh
 
 Those biases could occur inside one locus but also favor loci/systems with shorter recombinations
 
+### Nanopore sequencing
+
+Vidjil-algo has not been conceived for long-read sequencing, but the approach may still work, depending on the sequencing protocol and the expected error rate.
+
+At the moment, the main caveats you may be facing with Vidjil with long read sequencing are:
+
+* with long fragments (eg. 10kbp), several V or J genes can be included in the fragment, Vidjil-algo should still be able to detect a recombination but may have trouble reporting the correct VDJ recombination
+* with long fragments on WGS data, some sequences may look like a V or a J gene by chance, leading to a false positive detection of a VDJ recombination (this may be fixed by customizing the parameters)
+* due to the higher error rate, a given clone may be split in a higher number of clonotypes (ie. clonotype diversity may be over-estimated and concentration of the main clonotypes may be underestimated).
+
+Do not hesitate to contact us if you have any question regarding your third-generation sequencing data. We're willing to develop Vidjil-algo in such a direction.
+
 ## Analyzed human immune recombinations in Vidjil
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
