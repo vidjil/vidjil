@@ -166,7 +166,6 @@ def edit_form():
         if auth.is_admin():
             updated_user["number_wrong_passwords"] = 0
 
-
     db(db.auth_user.id == request.params["id"]).update(**updated_user)
 
     res = {
