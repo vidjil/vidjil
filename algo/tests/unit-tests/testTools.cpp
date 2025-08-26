@@ -27,8 +27,31 @@ void testOnlineBioReader1() {
   delete fq;
 }
 
+void testOnlineBioReaderIgnoreUpper() {
+  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa", 0, "|", true);
+  TAP_TEST(fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  fa->next();
+  Sequence s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "seq1", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "ACAAC", TEST_O_FASTA_IGNORE_UPPER, "");
+  fa->next();
+  s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "seq2", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "CG", TEST_O_FASTA_IGNORE_UPPER, "");
+  fa->next();
+  s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "seq3", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "A", TEST_O_FASTA_IGNORE_UPPER, "");
+  fa->next();
+  fa->next();
+  s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "seq", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "AT", TEST_O_FASTA_IGNORE_UPPER, "");
+  TAP_TEST(! fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+}
+
 void testOnlineBioReaderMaxNth() {
-  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa", 0, "|", 2, 2);
+  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa", 0, "|", false, 2, 2);
 
   // First sequence is 'seq2', because only_nth_sequence = 2
   TAP_TEST(fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
