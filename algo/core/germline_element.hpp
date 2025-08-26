@@ -66,8 +66,9 @@ public:
   
   /**
    * Add all the sequences in filename with the provided seed to the index
+   * @param ignore_uppercase_nt: ignore all the nucleotides that are uppercase (for the FilterWithACAutomaton only)
    */
-  void addToIndex(IKmerStore<Affect> *index);
+  void addToIndex(IKmerStore<Affect> *index, bool ignore_uppercase_nt);
 };
 
 
@@ -147,10 +148,13 @@ void GermlineElement<Affect>::add(std::string locus, std::string segment) {
 }
 
 template<typename Affect>
-void GermlineElement<Affect>::addToIndex(IKmerStore<Affect> *index) {
-  reader = std::make_shared<BioReader>(2, "|", getMarkPos());
-  reader->add(filename);
-  index->insert(*reader, affect, this, max_indexing, seed);
+void GermlineElement<Affect>::addToIndex(IKmerStore<Affect> *index, bool ignore_uppercase_nt) {
+  BioReader indexReader(2, "|", getMarkPos());
+  indexReader.add(filename);
+  index->insert(indexReader, affect, this, max_indexing, seed);
+
+  reader = std::make_shared<BioReader>(2, "|", getMarkPos(), ignore_uppercase_nt);
+  reader->add(filename, true);
   if (build_filter) {
     filter = new FilterWithACAutomaton(*reader, seed, KEYS_COMPRESS);
   }

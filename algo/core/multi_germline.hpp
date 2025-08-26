@@ -20,10 +20,15 @@ private:
   std::string species;
   int species_taxon_id;
   bool repository_allocated;
+  bool ignore_uppercase_nt;
   
 public:
 
-  MultiGermline();
+  /**
+   * @param ignore_uppercase_nt: ignore all the nucleotides that are uppercase, once the germlines have
+   *                             been indexed. This means that those sequences will be ignored for all
+   *                             downstream analyses that do not rely on the k-mer index */
+  MultiGermline(bool ignore_uppercase_nt=false);
   ~MultiGermline();
 
   void addGermline(Germline<Affect> *germline);
@@ -106,7 +111,9 @@ public:
 
 
 template <typename Affect>
-MultiGermline<Affect>::MultiGermline() : index(nullptr),repository(nullptr),ref("custom"),species("custom"),species_taxon_id(0),repository_allocated(false) {
+MultiGermline<Affect>::MultiGermline(bool ignore_uppercase_nt) :
+  index(nullptr),repository(nullptr),ref("custom"),species("custom"),species_taxon_id(0),
+  repository_allocated(false),ignore_uppercase_nt(ignore_uppercase_nt) {
 }
 
 template <typename Affect>
@@ -290,7 +297,7 @@ void MultiGermline<Affect>::buildFromJson(json germlines, int filter,
 
     json configJson = {{"order", order}, {"segments", config}};
     addGermline(new Germline<Affect>(code, shortcut, s_path, recombinations,
-                                                configJson, repository, max_indexing));
+                                     configJson, repository, max_indexing, ignore_uppercase_nt));
     allocated_germlines.back() = true;
   }
 

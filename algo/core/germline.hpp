@@ -21,6 +21,7 @@ Germline<Affect>::Germline() {
   repository_allocated = false;
   multi = nullptr;
   index = nullptr;
+  ignore_uppercase_nt = false;
 }
 
 template <typename Affect>
@@ -28,11 +29,12 @@ Germline<Affect>::Germline(std::string code, Tshortcut shortcut,
                                       std::string path, json filenames,
                                       json &jconfig,
                                       GermlineElementRepository<Affect> *repo,
-                                      int max_indexing)
+                                      int max_indexing,
+                                      bool ignore_uppercase_nt)
   : segments(jconfig["order"].get<std::list<std::string>>()), config(jconfig["segments"]), repository(repo), repository_allocated(false),
     shortcut(shortcut), code(code),
     max_indexing(max_indexing),
-    multi(nullptr), index(nullptr) {
+    multi(nullptr), index(nullptr),ignore_uppercase_nt(ignore_uppercase_nt) {
 
   if (filenames[0].size() != config.size())
     throw runtime_error("config and filenames list differ in size");
@@ -140,7 +142,8 @@ MultiGermline<Affect> *Germline<Affect>::getMultiGermline() const {
 template <typename Affect>
 std::shared_ptr<BioReader> Germline<Affect>::getReader(const std::string &segment) const {
   std::set<GermlineElement<Affect>*> elements = getGermlineElements(segment);
-  std::shared_ptr<BioReader> reader = std::make_shared<BioReader>(2, "|", (*(elements.begin()))->getMarkPos());
+  std::shared_ptr<BioReader> reader = std::make_shared<BioReader>(2, "|", (*(elements.begin()))->getMarkPos(),
+                                                                  ignore_uppercase_nt);
   for (auto &element: elements) {
     reader->add(element->getFilename(), false);
   }
@@ -210,7 +213,7 @@ void Germline<Affect>::addToIndex(IKmerStore<Affect> *index) {
       if (key_val.second
           && config[segment].count("index") > 0
           && config[segment]["index"] == "1")
-        key_val.first->addToIndex(index);
+        key_val.first->addToIndex(index, ignore_uppercase_nt);
     }
   }
 }

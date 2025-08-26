@@ -23,7 +23,8 @@ class OnlineFasta: public OnlineBioReader {
    * Default constructor
    */
   OnlineFasta(int extract_field=0, string extract_separator="|",
-              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1,
+              bool ignore_uppercase_nt=false);
 
   /**
    * Open the file. No sequence is read at first.
@@ -34,7 +35,8 @@ class OnlineFasta: public OnlineBioReader {
    */
   OnlineFasta(const string &input_filename, 
               int extract_field=0, string extract_separator="|",
-              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1,
+              bool ignore_uppercase_nt=false);
 
   virtual ~OnlineFasta();
 
