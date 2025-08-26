@@ -1,6 +1,6 @@
 
 .vidjil-algo_template: &vidjil-algo
-  image: gcc:8
+  image: gcc:10
   before_script:
     - apt-get update
     - apt-get install -y lcov time
