@@ -633,6 +633,48 @@ class Reads:
     def __str__(self):
         return "<Reads: %s>" % self.d
 
+class Analysis:
+
+    def __init__(self):
+        self.d={}
+        self.d["vidjil_json_version"] = "2014.09",
+        self.d["clones"] = []
+        self.d["clusters"] = []
+
+    def __add__(self, other):
+        obj=Analysis()
+
+        # Merge clusters. Need to take care of multliple clusters with shared id
+        # with subclonotype, some subclonotype can have various id and change only by number ({id sequence}-clone{top}.{number})
+        # merge on id sequence,
+        obj.d["clusters"] = self.d["clusters"]
+        for cluster_other in other.d["clusters"]:
+            found = False
+            for cluster_obj in obj.d["clusters"]:
+                # look if shared clonotype between cluster
+                # cut id to keep only id sequence
+                clean_cluster_obj = [clonotype.split("-")[0] for clonotype in cluster_obj]
+                clean_cluster_other = [clonotype.split("-")[0] for clonotype in cluster_other]
+
+                if len([clonotype for clonotype in clean_cluster_obj if clonotype in clean_cluster_other]):
+                    cluster_obj += cluster_other
+                    found = True
+                    continue 
+            if not found:
+                obj.d["clusters"].append(cluster_other)
+                
+
+        # Should be empty for the moment; only fill on real analysis file, but in case...
+        obj.d["clones"] = sorted(self.d["clones"], key=lambda x: x["id"])
+        for clonotype_other in other.d["clones"]:
+            if not clonotype_other["id"] in [clonotype["id"] for clonotype in obj.d["clones"]]:
+                    obj.d["clones"].append(clonotype_other)
+        return obj
+
+
+    def __str__(self):
+        return f"<Analysis: {len(self.d['clones'])} clones; {len(self.d['clusters'])} clusters; >"
+
 class OtherWindows:
 
     """Aggregate counts of windows that are discarded (due to too small 'top') for each point into several 'others-' windows."""
@@ -707,6 +749,7 @@ class ListWindows(utils.VidjilJson):
         self.d={}
         self.d["samples"] = Samples()
         self.d["reads"] = Reads()
+        self.d["analysis"] = Analysis()
         self.d["clones"] = []
         self.d["clusters"] = []
         self.d["germlines"] = {}
@@ -865,9 +908,13 @@ class ListWindows(utils.VidjilJson):
         # reorder list of clones by top value; if not, filter per locus will not work
         self.d["clones"] = sorted(self.d["clones"], key=lambda c: c.d["top"])
         per_locus = defaultdict(lambda: 0)
+        if "analysis" in self.d:
+            clusters_clonotype = [clone_id for sub  in self.d["analysis"].d["clusters"] for clone_id in sub]
+        else:
+            clusters_clonotype = []
 
         for clone in self:
-            if clone.d["top"] <= top or top == 0 \
+            if clone.d["top"] <= top or top == 0 or clone.d["id"] in clusters_clonotype\
                 or (clone.d["top"] > top and self.limit_per_locus and per_locus[clone.d["germline"]] < self.limit_per_locus) :
                     result.append(clone.d["id"])
                     if self.limit_per_locus:
@@ -913,8 +960,14 @@ class ListWindows(utils.VidjilJson):
                 self.d["mrd"] = MRD()
             if not "mrd" in other.d:
                 other.d["mrd"] = MRD()
-
             obj.d["mrd"] = self.d["mrd"] + other.d["mrd"]
+
+        if "analysis" in self.d or "analysis" in other.d:
+            if not "analysis" in self.d:
+                self.d["analysis"] = Analysis()
+            if not "analysis" in other.d:
+                other.d["analysis"] = Analysis()
+            obj.d["analysis"] = self.d["analysis"] + other.d["analysis"]
 
         try:
             ### Verify that same file is not present twice
@@ -1307,6 +1360,7 @@ class ListWindows(utils.VidjilJson):
         '''Serializer for json module'''
         if isinstance(obj, ListWindows)  or isinstance(obj, Window)\
            or isinstance(obj, Samples)   or isinstance(obj, Reads)\
+           or isinstance(obj, Analysis) \
            or isinstance(obj, Diversity) or isinstance(obj, MRD)\
            or isinstance(obj, PreProcesses):
             result = {}
@@ -1346,6 +1400,11 @@ class ListWindows(utils.VidjilJson):
 
         if "total" in obj_dict:
             obj = Reads()
+            obj.d=obj_dict
+            return obj
+
+        if "clusters" in obj_dict:
+            obj = Analysis()
             obj.d=obj_dict
             return obj
 
@@ -1634,6 +1693,7 @@ lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, 
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 lw1.d["diversity"] = Diversity()
+lw1.d["analysis"] = Analysis()
 
 
 w7 = Window(1)
