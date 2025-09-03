@@ -498,6 +498,10 @@ Model_loader.prototype = {
             this.distributions = data.distributions
             this.loadAllDistribClones()
         }
+        if (data.analysis != undefined){
+            console.default.log("Load analysis from vidjil file")
+            this.parseJsonAnalysis(data.analysis)
+        }
         this.is_ready = true
         return this
 
@@ -661,6 +665,52 @@ Model_loader.prototype = {
 
 
     /**
+     * Merge existant analysis data with overloading data. 
+     * Usefull when loaded vidjil file already include analysis data and should be overloaded by server side analysis file
+     * @param {string} analysis - analysis content (as documented for analysis file)
+     * */ 
+    mergeAnalysisContent: function (analysis) {
+        var self = this
+        if (this.analysis == undefined) {
+            this.analysis=analysis
+        }
+        // Do merge
+
+        analysis["clusters"].forEach(cluster_other => {
+            var found = False;
+            for (var cluster_obj in self["clusters"]){
+                // # look if shared clonotype between cluster
+                // # cut id to keep only id sequence
+                const clean_cluster_obj = cluster_obj.map(clonotype => clonotype.split("-")[0]);
+                const clean_cluster_other = cluster_other.map(clonotype => clonotype.split("-")[0]);
+
+                if (clean_cluster_obj.some(clonotype => clean_cluster_other.includes(clonotype))) {
+                    cluster_obj.concat(cluster_other);
+                    cluster_obj = new Set(cluster_obj);
+                    found = True;
+                    continue 
+                }
+            }
+            if (!found){
+                self["clusters"].push(cluster_other)
+            }
+        })
+
+        // # Should be empty for the moment; only fill on real analysis file, but in case...
+        analysis["clones"].forEach(clonotype_other => {
+            if (!clonotype_other["id"] in self.analysis["clones"].some(clonotype => clonotype["id"])) {
+                self.analysis["clones"].push(clonotype_other)
+            } else {
+                existant_clonotype = self.analysis["clones"].find(clonotype => clonotype["id"] === clonotype_other["id"])
+                existant_clonotype = mergeDictionaries(existant_clonotype, clonotype_other)
+            }
+        })
+        ["samples", "report_save", "saved_system_selected_by_config", "normalization"].forEach(field => {
+            self.analysis[field] = mergeDictionaries(analysis[field], self.analysis[field])
+        })
+    },
+
+    /**
      * parse a json or a json_text and complete the model with it's content
      * @param {string} analysis - json_text / content of .analysis file
      * */ 
@@ -676,7 +726,7 @@ Model_loader.prototype = {
                 return true
             }
         }else{
-            this.analysis=analysis
+            this.analysis=this.mergeAnalysisContent(analysis)
         }
         
         //check version
