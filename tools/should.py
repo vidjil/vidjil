@@ -685,6 +685,19 @@ class TestCase(TestCaseAbstract):
     True
     >>> TestCase('j', 'key[1][0]: "subtest"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
     True
+
+    >>> TestCase('j', 'key[0]: "test"').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[0]: test').test(['{ "key": ["test", 313, 0.33, true]}'])
+    False
+    >>> TestCase('j', 'key[1]: 313').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[2]: 0.33').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[3]: true').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+
+
     >>> TestCase('j', 'key[2][3]: "subtest"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
     False
 
