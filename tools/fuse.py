@@ -650,7 +650,7 @@ class Analysis:
         obj.d["clusters"] = self.d["clusters"]
         for cluster_other in other.d["clusters"]:
             found = False
-            for cluster_obj in obj.d["clusters"]:
+            for index, cluster_obj in enumerate(obj.d["clusters"]):
                 # look if shared clonotype between cluster
                 # cut id to keep only id sequence
                 clean_cluster_obj = [clonotype.split("-")[0] for clonotype in cluster_obj]
@@ -659,6 +659,8 @@ class Analysis:
                 if len([clonotype for clonotype in clean_cluster_obj if clonotype in clean_cluster_other]):
                     cluster_obj += cluster_other
                     cluster_obj = list(set(cluster_obj))
+                    cluster_obj.sort()
+                    obj.d["clusters"][index] = cluster_obj
                     found = True
                     continue 
             if not found:
