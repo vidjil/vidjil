@@ -1,11 +1,11 @@
 #######################################
 ### Part without clones (--no-clone) ##
 #######################################
-!LAUNCH: $PYTHON ../../fuse.py  --no-clones --output fused_without_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; cat fused_without_clones.vidjil
+!OUTPUT_FILE: fused_without_clones.vidjil;
+!LAUNCH: $PYTHON ../../fuse.py  --no-clones --output fused_without_clones.vidjil ../../../algo/tests/data/results-two-clones-1-2.vidjil ../../../algo/tests/data/results-two-clones-1-3.vidjil; 
 
 $ Should not have field clones
-0:"clones": \[
-
+j0: clones
 
 ###################################
 ### Part with unsegmented clones ##

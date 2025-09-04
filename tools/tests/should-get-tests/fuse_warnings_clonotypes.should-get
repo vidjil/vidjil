@@ -11,8 +11,8 @@ $ Middle file has the good 40-bp windows
 1: "id": "clone_3"
 
 $ fields 'warn' present 2 times (w81 & w82)
-j: clones[0].warn[0].code: W82
-j: clones[1].warn[0].code: W81
+j: clones[0].warn[0].code: "W82"
+j: clones[1].warn[0].code: "W81"
 
 
 $ Correct warning is present: W81 (designation)
@@ -38,21 +38,21 @@ $ Middle file has the good 40-bp windows
 
 $ fields 'warn' in clone 0
 $ 2 warns present in clone 0, warn 1
-j: clones[0].warn[0].code: W82
+j: clones[0].warn[0].code: "W82"
 $ 2 warns present in clone 0, warn 2
-j: clones[0].warn[1].code: W82
+j: clones[0].warn[1].code: "W82"
 
 $ 2 warns present in clone 0, correct message
-j: clones[0].warn[0].msg: Merged clone has different productivities in some samples \(pos 1\)
+j: clones[0].warn[0].msg: "Merged clone has different productivities in some samples (pos 1): not productive"
 
 $ fields 'warn' present 2 times (w81) in clone 1
 $ 2 warns present in clone 1, warn 1
-j: clones[1].warn[0].code: W81
+j: clones[1].warn[0].code: "W81"
 $ 2 warns present in clone 1, warn 2
-j: clones[1].warn[1].code: W81
+j: clones[1].warn[1].code: "W81"
 
 $ 2 warns present in clone 1, correct message
-j: clones[1].warn[0].msg: Merged clone has different V\(D\)J designations in some samples \(pos 1\)
+j: clones[1].warn[0].msg: "Merged clone has different V(D)J designations in some samples (pos 1): clone_name_3b"
 
 
 $ Correct warning is present: W81 (name)
