@@ -658,6 +658,7 @@ class Analysis:
 
                 if len([clonotype for clonotype in clean_cluster_obj if clonotype in clean_cluster_other]):
                     cluster_obj += cluster_other
+                    cluster_obj = list(set(cluster_obj))
                     found = True
                     continue 
             if not found:
