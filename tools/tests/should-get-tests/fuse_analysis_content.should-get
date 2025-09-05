@@ -39,6 +39,28 @@ j: analysis.clusters[1][0]: clone_5A
 $ with_analysis_both Analysis cluster 2 content should be correct, pos 1
 j: analysis.clusters[1][1]: clone_6A
 
+
+### 2 files with analysis content, clusters with mix clonotype
+!OUTPUT_FILE: fuse_analysiscase_with_analysis_3files.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../data/analysis/sample_analysis_1.vidjil ../data/analysis/sample_analysis_2.vidjil ../data/analysis/sample_analysis_1.vidjil -o fuse_analysiscase_with_analysis_3files.vidjil;
+
+$ with_analysis_both An analysis content should be found
+j: analysis
+$ with_analysis_both Analysis cluster 1 content should be correct, pos 0
+j: analysis.clusters[0][0]: clone_shared_main
+$ with_analysis_both Analysis cluster 1 content should be correct, pos 1
+j: analysis.clusters[0][1]: clone_shared_sub2
+$ with_analysis_both Analysis cluster 1 content should be correct, pos 2
+j: analysis.clusters[0][2]: clone_shared_sub3
+$ with_analysis_both Analysis cluster 1 content should be correct, pos 3
+j: analysis.clusters[0][3]: clone_shared_sub4A
+$ with_analysis_both Analysis cluster 1 content should be correct, pos 4
+j: analysis.clusters[0][4]: clone_shared_sub4B
+$ with_analysis_both Analysis cluster 1 content should be correct, not 6th element
+j0: analysis.clusters[0][5]
+
+
+
 ### 1 file with and 1 file without analysis content
 !OUTPUT_FILE: fuse_analysiscase_mix_with_without_analysis.vidjil
 !LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS  ../data/analysis/sample_analysis_1.vidjil ../data/analysis/sample_without_analysis.vidjil -o fuse_analysiscase_mix_with_without_analysis.vidjil;
