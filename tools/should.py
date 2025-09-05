@@ -22,11 +22,11 @@
 
 import sys
 
-if not (sys.version_info >= (3, 4)):
-    print("Python >= 3.4 required")
+if not (sys.version_info >= (3, 7)):
+    print("Python >= 3.7 supported")
     sys.exit(1)
 
-__version_info__ = ('3','0','0')
+__version_info__ = ('3','1','0')
 __version__ = '.'.join(__version_info__)
 
 import re
@@ -768,6 +768,7 @@ class TestCase(TestCaseAbstract):
             expression_var = expression_var.upper()
 
         self.count = None
+        to_return = False
 
         # json handling
         if self.mods.json:
@@ -775,20 +776,31 @@ class TestCase(TestCaseAbstract):
                 d = json.loads(lines[0])
                 self.json_data = deep_get(d, self.key)
 
-                if expression_var != "":
+                if expression_var != "": # test combo key/value as python variable
                     self.expression_data = json.loads(self.expression)
                     self.count = 1 if self.json_data == self.expression_data else 0
-                else: 
-                    self.count = 1 if self.json_data  else 0
+                    to_return = True
+                else: # test only key, should already be positive as keep_get don't throw error
+                    if type(self.json_data ) == int or type(self.json_data) == float or type(self.json_data) == bool:
+                        self.count = 1
+                    else:
+                        self.count = len(self.json_data)
+                    to_return = True
                 
             except (ValueError, KeyError):
                 # No json, or non-existent key: count is 0
-                self.json_data = JSON_KEY_NOT_FOUND
-                self.count = 0
+                if self.json_data == None:
+                    self.json_data = JSON_KEY_NOT_FOUND
+                    self.count = 0
+                    to_return = True
+                else: # existant key, but tested content is not json
+                    # count if as regular case
+                    lines = [str(self.json_data)]
+                    to_return = False
             finally:
-                self.compute_status()
-                return self.status.or_alias()
-
+                if to_return:
+                    self.compute_status()
+                    return self.status.or_alias()
 
         # Main count
         if self.count is None:
