@@ -20,24 +20,31 @@ j: analysis.vidjil_json_version: ["2014.09"]
 
 $ with_analysis_both An analysis content should be found
 j: analysis
+$ with_analysis_both Analysis cluster , just cluster key
+j: analysis.clusters
+$ with_analysis_both Analysis cluster 1 content should be correct, global ALL
+j: analysis.clusters: [["clone_shared_main",     "clone_shared_sub2", "clone_shared_sub3", "clone_shared_sub4A", "clone_shared_sub4B"], ["clone_5A", "clone_6A"]]
+$ with_analysis_both Analysis cluster 1 content should be correct, global
+j: analysis.clusters[0]: ["clone_shared_main",     "clone_shared_sub2", "clone_shared_sub3", "clone_shared_sub4A", "clone_shared_sub4B"]
+
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 0
-j: analysis.clusters[0][0]: clone_shared_main
+j: analysis.clusters[0][0]: "clone_shared_main"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 1
-j: analysis.clusters[0][1]: clone_shared_sub2
+j: analysis.clusters[0][1]: "clone_shared_sub2"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 2
-j: analysis.clusters[0][2]: clone_shared_sub3
+j: analysis.clusters[0][2]: "clone_shared_sub3"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 3
-j: analysis.clusters[0][3]: clone_shared_sub4A
+j: analysis.clusters[0][3]: "clone_shared_sub4A"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 4
-j: analysis.clusters[0][4]: clone_shared_sub4B
+j: analysis.clusters[0][4]: "clone_shared_sub4B"
 $ with_analysis_both Analysis cluster 1 content should be correct, not 6th element
 j0: analysis.clusters[0][5]
 
 
 $ with_analysis_both Analysis cluster 2 content should be correct, pos 0
-j: analysis.clusters[1][0]: clone_5A
+j: analysis.clusters[1][0]: "clone_5A"
 $ with_analysis_both Analysis cluster 2 content should be correct, pos 1
-j: analysis.clusters[1][1]: clone_6A
+j: analysis.clusters[1][1]: "clone_6A"
 
 
 ### 2 files with analysis content, clusters with mix clonotype
@@ -47,15 +54,15 @@ j: analysis.clusters[1][1]: clone_6A
 $ with_analysis_both An analysis content should be found
 j: analysis
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 0
-j: analysis.clusters[0][0]: clone_shared_main
+j: analysis.clusters[0][0]: "clone_shared_main"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 1
-j: analysis.clusters[0][1]: clone_shared_sub2
+j: analysis.clusters[0][1]: "clone_shared_sub2"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 2
-j: analysis.clusters[0][2]: clone_shared_sub3
+j: analysis.clusters[0][2]: "clone_shared_sub3"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 3
-j: analysis.clusters[0][3]: clone_shared_sub4A
+j: analysis.clusters[0][3]: "clone_shared_sub4A"
 $ with_analysis_both Analysis cluster 1 content should be correct, pos 4
-j: analysis.clusters[0][4]: clone_shared_sub4B
+j: analysis.clusters[0][4]: "clone_shared_sub4B"
 $ with_analysis_both Analysis cluster 1 content should be correct, not 6th element
 j0: analysis.clusters[0][5]
 
@@ -68,19 +75,19 @@ j0: analysis.clusters[0][5]
 $ fuse_analysiscase_mix_with_without_analysis; An analysis content should be found
 j: analysis
 $ fuse_analysiscase_mix_with_without_analysis; Analysis cluster 1 content should be correct, pos 0
-j: analysis.clusters[0][0]: clone_shared_main
+j: analysis.clusters[0][0]: "clone_shared_main"
 $ fuse_analysiscase_mix_with_without_analysis; Analysis cluster 1 content should be correct, pos 1
-j: analysis.clusters[0][1]: clone_shared_sub2
+j: analysis.clusters[0][1]: "clone_shared_sub2"
 $ fuse_analysiscase_mix_with_without_analysis; Analysis cluster 1 content should be correct, pos 2
-j: analysis.clusters[0][2]: clone_shared_sub3
+j: analysis.clusters[0][2]: "clone_shared_sub3"
 $ fuse_analysiscase_mix_with_without_analysis; Analysis cluster 1 content should be correct, pos 3
-j: analysis.clusters[0][3]: clone_shared_sub4A
+j: analysis.clusters[0][3]: "clone_shared_sub4A"
 $ fuse_analysiscase_mix_with_without_analysis; Analysis cluster 1 content should be correct, no pos 4
 j0: analysis.clusters[0][4]
 
 $ fuse_analysiscase_mix_with_without_analysis; Analysis cluster 2 content should be correct
-j: analysis.clusters[1][0]: clone_5A
-j: analysis.clusters[1][1]: clone_6A
+j: analysis.clusters[1][0]: "clone_5A"
+j: analysis.clusters[1][1]: "clone_6A"
 
 # ### 1 file with  and 1 file with partial analysis content
 # !OUTPUT_FILE: fuse_analysiscase_mix_with_partial_analysis.vidjil
@@ -97,21 +104,21 @@ j: analysis.clusters[1][1]: clone_6A
 $ over_limit An analysis content should be found
 j: analysis
 $ over_limit Analysis cluster 1 content should be correct; pos 0
-j: analysis.clusters[0][0]: clone_shared_mainC
+j: analysis.clusters[0][0]: "clone_shared_mainC"
 $ over_limit Analysis cluster 1 content should be correct; pos 1
-j: analysis.clusters[0][1]: clone_shared_sub3C
+j: analysis.clusters[0][1]: "clone_shared_sub3C"
 $ over_limit Analysis cluster 1 content should be correct; pos 2
-j: analysis.clusters[0][2]: clone_shared_sub4C
+j: analysis.clusters[0][2]: "clone_shared_sub4C"
 $ over_limit Analysis cluster 2 content should be correct; pos 0
-j: analysis.clusters[1][0]: clone_5C
+j: analysis.clusters[1][0]: "clone_5C"
 $ over_limit Analysis cluster 2 content should be correct; pos 1
-j: analysis.clusters[1][1]: clone_6C
+j: analysis.clusters[1][1]: "clone_6C"
 $ over_limit Analysis cluster 3 content should be correct; pos 0
-j: analysis.clusters[2][0]: clone_7C
+j: analysis.clusters[2][0]: "clone_7C"
 $ over_limit Analysis cluster 3 content should be correct; pos 1
-j: analysis.clusters[2][1]: clone_9C
+j: analysis.clusters[2][1]: "clone_9C"
 
 $ over_limit CLone 8 should not be retain as out limit, but clone 9, included in a cluster, should be keeped
-j: clones[0].id: clone_shared_mainC
-j: clones[4].id: clone_9C
+j: clones[0].id: "clone_shared_mainC"
+j: clones[4].id: "clone_9C"
 j0: clones[8].id
