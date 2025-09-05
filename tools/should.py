@@ -664,6 +664,39 @@ class TestCase(TestCaseAbstract):
     >>> TestCase('wr2', 'a.c').test(['bli abc axc bla'])
     True
 
+    
+    >>> TestCase('j', 'key').test(['{ "key": ["abc", "def"]}'])
+    True
+    >>> TestCase('j', 'key: ["abc", "def"]').test(['{ "key": ["abc", "def"]}'])
+    True
+    >>> TestCase('j', 'key: ["abc"      , "def"]').test(['{ "key": ["abc",       "def"]}'])
+    True
+    >>> TestCase('j', 'key[1]: "def"').test(['{ "key": ["abc", "def"]}'])
+    True
+    >>> TestCase('j', 'key.subkey[1]: "def"').test(['{ "key": {"subkey": ["abc", "def"]}}'])
+    True
+
+    >>> data = ['{ "key": [{"subkey": ["abc", "def"]}, "test"]}']
+    >>> TestCase('j', 'key[0].subkey: ["abc", "def"]').test(data)
+    True
+    >>> TestCase('j', 'key[0].subkey[1]: "def"').test(data)
+    True
+    >>> TestCase('j', 'key[0]: "test"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
+    True
+    >>> TestCase('j', 'key[1][0]: "subtest"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
+    True
+    >>> TestCase('j', 'key[2][3]: "subtest"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
+    False
+
+    >>> TestCase('j', 'key').test(['{ "badkey": ["abc", "def"]}'])
+    False
+    >>> TestCase('j', 'badkey').test(['{ "key": ["abc", "def"]}'])
+    False
+    >>> TestCase('j', 'key: ["abc", "xyz", "def"]').test(['{ "key": ["abc", "def"]}'])
+    False
+    >>> TestCase('j', 'key[1]: "xyz"').test(['{ "key": ["abc", "def"]}'])
+    False
+
 
     >>> repr(TestCase('x3y', 'hello'))
     'xy3:hello'
@@ -699,7 +732,7 @@ class TestCase(TestCaseAbstract):
             self.mods.count_all = True
 
         self.expression = expression if self.mods.ltspaces else expression.strip()
-        if self.mods.blanks:
+        if self.mods.blanks and not self.mods.json:
             while '  ' in self.expression:
                 self.expression = self.expression.replace('  ', ' ')
             self.expression = self.expression.replace(' ', '\s+')
@@ -729,25 +762,20 @@ class TestCase(TestCaseAbstract):
                 d = json.loads(lines[0])
                 self.json_data = deep_get(d, self.key)
 
-                if expression_var:
-                    # An expression is provided: prepare data for further count
-                    if type(self.json_data) is list:
-                        lines = [json.dumps(x) for x in self.json_data]
-                    elif type(self.json_data) is dict:
-                        lines = [json.dumps(x) for x in self.json_data.values()]
-                    else:
-                        lines = [str(self.json_data)]
-                else:
-                    # No expression provided: we just count the keys
-                    if type(self.json_data) in [list, dict]:
-                        self.count = len(self.json_data)
-                    else:
-                        self.count = 1
-
+                if expression_var != "":
+                    self.expression_data = json.loads(self.expression)
+                    self.count = 1 if self.json_data == self.expression_data else 0
+                else: 
+                    self.count = 1 if self.json_data  else 0
+                
             except (ValueError, KeyError):
                 # No json, or non-existent key: count is 0
                 self.json_data = JSON_KEY_NOT_FOUND
                 self.count = 0
+            finally:
+                self.compute_status()
+                return self.status.or_alias()
+
 
         # Main count
         if self.count is None:
@@ -763,7 +791,10 @@ class TestCase(TestCaseAbstract):
                     l = l.upper()
                 if expression_var in l:
                     self.count += l.count(expression_var) if self.mods.count_all else 1
-
+        self.compute_status()
+        return self.status.or_alias()
+    
+    def compute_status(self):
         # Compute status
         if self.expected_count == NOT_ZERO:
             sta = (self.count > 0)
@@ -781,7 +812,7 @@ class TestCase(TestCaseAbstract):
 
         self.status = Sta(sta)
 
-        return self.status.or_alias()
+        return
 
     def str_additional_status(self, verbose=False):
         s = ''
