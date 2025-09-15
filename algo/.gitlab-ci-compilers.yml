@@ -1,6 +1,6 @@
 .install-algo-dependencies:
   before_script:
-    - apt-get update
+    - apt-get update || (sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list; sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list; echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-date; apt-get update)
     - apt-get install -y time valgrind python2.7 python3 wget tar make zlib1g-dev
     - ln -sf /usr/bin/python2.7 /usr/bin/python
 
