@@ -689,13 +689,25 @@ class TestCase(TestCaseAbstract):
     >>> TestCase('j', 'key[0]: "test"').test(['{ "key": ["test", 313, 0.33, true]}'])
     True
     >>> TestCase('j', 'key[0]: test').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[0]: te').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[0]: "te"').test(['{ "key": ["test", 313, 0.33, true]}'])
     False
     >>> TestCase('j', 'key[1]: 313').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[1]: "313"').test(['{ "key": ["test", 313, 0.33, true]}'])
+    False
+    >>> TestCase('j', 'key[1]: 313.0').test(['{ "key": ["test", 313, 0.33, true]}'])
     True
     >>> TestCase('j', 'key[2]: 0.33').test(['{ "key": ["test", 313, 0.33, true]}'])
     True
     >>> TestCase('j', 'key[3]: true').test(['{ "key": ["test", 313, 0.33, true]}'])
     True
+    >>> TestCase('j', 'key[3]: tru').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[3]: "tru"').test(['{ "key": ["test", 313, 0.33, true]}'])
+    False
 
 
     >>> TestCase('j', 'key[2][3]: "subtest"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
@@ -795,7 +807,7 @@ class TestCase(TestCaseAbstract):
                     to_return = True
                 else: # existant key, but tested content is not json
                     # count if as regular case
-                    lines = [str(self.json_data)]
+                    lines = [json.dumps(self.json_data)]
                     to_return = False
             finally:
                 if to_return:
