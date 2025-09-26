@@ -13,15 +13,15 @@ $ Two identical IGH junctions, and another one
 :clones[6].seg.junction.aa: CARGIVGTTDATFDYW
 
 $ But only one TRG productive
-:clones[0].seg.junction.productive: False
-:clones[1].seg.junction.productive: True
-:clones[2].seg.junction.productive: False
-:clones[3].seg.junction.productive: False
+:clones[0].seg.junction.productive: false
+:clones[1].seg.junction.productive: true
+:clones[2].seg.junction.productive: false
+:clones[3].seg.junction.productive: false
 
 $ and only one IGH productive
-:clones[4].seg.junction.productive: True
-:clones[5].seg.junction.productive: False
-:clones[6].seg.junction.productive: False
+:clones[4].seg.junction.productive: true
+:clones[5].seg.junction.productive: false
+:clones[6].seg.junction.productive: false
 
 $ Cause of unproductivity
 :clones[0].seg.junction.unproductive: stop-codon
