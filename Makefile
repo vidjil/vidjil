@@ -48,8 +48,8 @@ functional_browser_cypress_open:
 	mv browser/js/conf.js browser/js/conf.js.bak || true
 	cp browser/js/conf.js.sample browser/js/conf.js
 	sed -i "s|use_database: true,|use_database: false,|g" browser/js/conf.js
-	sed -i "s|cgi_address: \"https://localhost/cgi/\"|cgi_address: \"https://db.vidjil.org/cgi/\"|g" browser/js/conf.js
-	sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://db.vidjil.org/vidjil/\"|g" browser/js/conf.js
+	sed -i "s|cgi_address: \"https://localhost/cgi/\"|cgi_address: \"https://app-back.vidjil.org/cgi/\"|g" browser/js/conf.js
+	sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://app-backl.org/vidjil/\"|g" browser/js/conf.js
 	sed -i "s/server_version: \".*\"/server_version: \"test\"/g" browser/js/conf.js
 	ln -sf browser/test/cypress
 	ln -sf docker/ci/cypress.config.js

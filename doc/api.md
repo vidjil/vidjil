@@ -80,7 +80,7 @@ AGCGGGTGGTGATGGCAAAGTGCCAAGGAAAGGGAAAAAGGAAGAAGAGGGTTTTTATACTGATGTGTTTCATTGTGCCT
 '''
 
 # POST url of the server
-url_post = "https://db.vidjil.org/vidjil/segmenter"
+url_post = "https://app-back.vidjil.org/vidjil/segmenter"
 
 r = requests.post(url_post, data={'sequences': sequences})
 print(r.status_code) # Should be 200 if everything is Ok
