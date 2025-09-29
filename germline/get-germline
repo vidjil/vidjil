@@ -1,18 +1,18 @@
 #!/bin/sh
 
 cd $(dirname $0)
-wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-GeneList
-wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP 
-wget -N http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP
+wget -N https://www.imgt.org/download/GENE-DB/IMGTGENEDB-GeneList
+wget -N https://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP 
+wget -N https://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP
 
 
 LOG=split-germlines.log
 ERR=split-germlines.err
 (python split-germlines.py IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP IMGTGENEDB-GeneList | tee $LOG) 2> $ERR
 
-wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
+wget -O IMGT_RELEASE https://www.imgt.org/download/GENE-DB/RELEASE
 
-wget -N -P homo-sapiens http://vidjil.org/germline/IGK-INTRON.fa
-wget -N -P homo-sapiens http://vidjil.org/germline/IGK-KDE.fa
+wget -N -P homo-sapiens https://www.vidjil.org/germline/IGK-INTRON.fa
+wget -N -P homo-sapiens https://www.vidjil.org/germline/IGK-KDE.fa
 
 cat $ERR
