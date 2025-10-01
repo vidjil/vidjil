@@ -129,4 +129,35 @@ describe("Manipulate configs", function () {
       cy.get('#pre_process_info').should('have.value',"concatenate two files");
     }
   });
+
+  it("5535-use-gz-output", function () {
+    cy.createConfig(
+      "compress_output",
+      ["3", "Analysis with/for other software"],
+      "vidjil",
+      "-c clones -z 10 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y 1000 --no-airr -uu --gz",
+      "-t 10",
+      "information of process with compressed output (--gz)"
+    ).then((config_id) => {
+      cy.createPatient("", "compressed_output", "test", "", "Cy", "public");
+      cy.addSample(
+        undefined,
+        "nfs",
+        "Demo-X5.fa",
+        undefined,
+        "2000-01-01",
+        "Demo-X5.fa sample"
+      ).then((sample_id) => {
+        cy.log(
+          "added sample " +
+            sample_id +
+            " and start process for config " +
+            config_id
+        );
+        cy.launchProcess("" + config_id, sample_id);
+        cy.waitAnalysisCompleted(config_id, sample_id);
+      });
+    });
+  });
+
 });
