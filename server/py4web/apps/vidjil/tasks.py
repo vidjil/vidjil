@@ -270,7 +270,7 @@ def run_vidjil(
             else:
                 out_results = out_folder + "/" + output_filename + ".vidjil" + gz
                 # Note that vidjil-algo don't really compress vidjil file for the moment.
-                # TODO: Update when vidjil-algo fix that;
+                # TODO: Update when vidjil-algo fix that;
             log.info(f"===> {out_results}")
             results_filepath = os.path.abspath(out_results)
             if not os.path.exists(results_filepath):
