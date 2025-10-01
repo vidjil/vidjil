@@ -262,12 +262,15 @@ def run_vidjil(
                 sys.stdout.flush()
 
             log.info(f"Vidjil done, output logs in {out_log}")
+            gz = ".gz" if "--gz" in cmd else ""  # take into account compressed output
 
             # Get result file
             if grep_reads:
                 out_results = out_folder + "/seq/clone.fa-1"
             else:
-                out_results = out_folder + "/" + output_filename + ".vidjil"
+                out_results = out_folder + "/" + output_filename + ".vidjil" + gz
+                # Note that vidjil-algo don't really compress vidjil file for the moment.
+                # TODO: Update when vidjil-algo fix that;
             log.info(f"===> {out_results}")
             results_filepath = os.path.abspath(out_results)
             if not os.path.exists(results_filepath):
