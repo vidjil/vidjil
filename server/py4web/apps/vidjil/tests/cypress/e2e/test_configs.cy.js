@@ -28,6 +28,23 @@ describe("Manipulate configs", function () {
         cy.launchProcess("" + config_id, sample_id);
         cy.waitAnalysisCompleted(config_id, sample_id);
       });
+      cy.addSample(
+        undefined,
+        "nfs",
+        "Demo-X5.vidjil.gz",
+        undefined,
+        "2000-01-01",
+        "Demo-X5.fa sample, already compressed"
+      ).then((sample_id) => {
+        cy.log(
+          "added vidjil compressed sample " +
+            sample_id +
+            " and start process for config " +
+            config_id
+        );
+        cy.launchProcess("" + config_id, sample_id);
+        cy.waitAnalysisCompleted(config_id, sample_id);
+      });
     });
   });
 
