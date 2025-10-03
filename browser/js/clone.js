@@ -880,7 +880,9 @@ Clone.prototype = {
         var system_reads = this.m.reads.segmented[time]
         if (this.germline in this.m.reads.germline) system_reads = this.m.reads.germline[this.germline][time]
         
-        if (system_reads === 0 ) return 0
+        if (system_reads === 0) { 
+            return 0 
+        }
         var result     = this.getReads(time) / system_reads
         return this.m.normalize(result, time)
     },
@@ -1129,16 +1131,29 @@ Clone.prototype = {
     /* compute the clone reads number ( sum of all reads of clones clustered )
      * @time : tracking point (default value : current tracking point)
      * @raw: do not normalize
+     * @cluster: boolean, include in number of reads all cluster component
      * */
-    getReads: function (time, raw) {
+    getReads: function (time, raw, cluster_count=true) {
         time = this.m.getTime(time)
         var result = 0;
 
-        var cluster = this.getCluster()
-        for (var j = 0; j < cluster.length; j++) {
-            result += this.m.normalize_reads(this.m.clone(cluster[j]), time, raw);
+        
+        if (cluster_count == true){
+            var cluster = this.getCluster()
+        } else {
+            var cluster = [this.index]
         }
 
+        for (var j = 0; j < cluster.length; j++) {
+            var clone = this.m.clone(cluster[j])
+            if (this.m.normalization_mode == this.m.NORM_EXTERNAL && clone.normalize_reads != undefined) {
+                result += clone.normalize_reads[time];
+            } else if (raw) {
+                result += clone.reads[time]
+            } else {
+                result += this.m.normalize_reads(clone, time, raw);
+            }
+        }
         return result
     },
 
