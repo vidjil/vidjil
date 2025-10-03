@@ -664,6 +664,31 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return typeof time !== 'undefined' ? time : this.t
     },
 
+
+    /**
+     * Return reads number of a sample. This value could be normalized if external normalization, and restricted to a system
+     * @param {integer} time: time point/sample to consider
+     * @param {boolean} normalized; use normalized value if available, only for NORM_external
+     * @param {string} germline: a system to consider, undefined by default
+     * @return {integer} time - time index 
+     * */
+    getSampleReads: function (time, normalized = true, germline = undefined) {
+        if (normalized == true && this.normalization_mode == this.NORM_EXTERNAL && this.reads.normalized != undefined) {
+            if (germline) {
+                return this.reads.normalized[germline][time];
+            } else {
+                return this.reads.normalized.normalized_total[time];
+            }
+        } else {
+            if (germline) {
+                return this.reads.germline[germline][time];
+            } else {
+                return this.reads.segmented[time];
+            }
+        }
+    },
+
+    
     /**
      * return a name that can be displayed gracefully <br>
      * (either with a real filename, or a name coming from the database).
