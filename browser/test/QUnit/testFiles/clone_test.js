@@ -580,6 +580,63 @@ QUnit.test("size", function(assert) {
 
 });
 
+
+QUnit.test("size with MRD normalization", function(assert) {
+    
+    var m = new Model();
+    m.parseJsonData(json_data)
+
+    var clone1_copy = JSON.parse(JSON.stringify(json_clone1));
+    clone1_copy.normalized_reads = [1000]
+    c1 = new Clone(clone1_copy, m, 0, c_attributes)
+
+    var clone2_copy = JSON.parse(JSON.stringify(json_clone2));
+    clone2_copy.normalized_reads = [100]
+    c2 = new Clone(clone2_copy, m, 1, c_attributes)
+    
+        var m = new Model();
+    m.parseJsonData(json_data, 100)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    var c2 = new Clone(json_clone2, m, 1, c_attributes)
+    var c6 = new Clone(json_clone6, m, 2, c_attributes) // normalized clonotype
+    m.initClones()
+
+    // Switch normalization to external (field normalized_reads)
+    m.set_normalization(m.NORM_EXTERNAL)
+    assert.equal(c6.getSize(), 0.1, "external normalization: 20 / 200")
+    assert.includes(c6.getPrintableSize(), "10 reads [20 normalized] (10.00%", "external normalization: 10 / 200, getPrintableSize")
+    assert.equal(c6.getSize(2), 0, "external normalization: 0 / 100")
+    assert.equal(c6.getSize(3), 0.3, "external normalization: 30 / 100")
+    assert.equal(c2.getSize(), 0.05, "external normalization have no effect on clone without field")
+
+    // We add normlized reads number into global reads values
+    c6.normalized_reads = [750, 100, 0, null]
+    m.reads.normalized = {"normalized_total": [1000, 200, 100, 50]}
+    
+    // getSize should have updated values
+    assert.equal(c6.getSize(), 0.75, "external normalization: 750/1000")
+    assert.includes(c6.getPrintableSize(), "10 reads [750 normalized] (75.00%", "external normalization: 10 / 200, getPrintableSize")
+    // TODO: modify string if normalized ?
+    assert.equal(c6.getSize(2), 0, "external normalization time 2: 0 / 100")
+    assert.equal(c6.getSize(3), 0.60, "external normalization time 3: 30 / 50")
+    assert.equal(c2.getSize(), 0.01, "external normalization have effect on clone without field as denominator is changed")
+      
+    // We add normlized reads number into global reads values
+    c6.normalized_reads = [750, 100, 0, null]
+    m.reads.normalized = {"normalized_total": [1000, 200, 100, 50], "germline": {"IGH": [900, 150, 50, 40], "TRG": [100,50,50,10]}}
+    
+    // getSize should have updated values
+    assert.equal(c6.getSize(), 750/1000, "external normalization: 750/900")
+    assert.includes(c6.getPrintableSize(), "10 reads [750 normalized] (75.00%", "external normalization: 10 / 200, getPrintableSize")
+    // TODO: modify string if normalized ?
+    assert.equal(c6.getSize(2), 0, "external normalization time 2: 0 / 100")
+    assert.equal(c6.getSize(3), 0.6, "external normalization time 3: 30 / 50")
+    assert.equal(c2.getSize(), 0.01, "external normalization have effect on clone without field as denominator is changed")
+      
+});
+
+
+
 QUnit.test("system", function(assert) {
     
     var m = new Model();
