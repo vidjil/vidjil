@@ -434,6 +434,7 @@ QUnit.test("normalization", function(assert) {
     var c5 = new Clone(json_clone5, m, 5, c_attributes)
     var c6 = new Clone(json_clone6, m, 6, c_attributes)
     m.initClones()
+    
     m.set_normalization(m.NORM_FALSE)
     assert.equal(c2.getSize(),0.05,"clone3 size")
     m.set_normalization(m.NORM_EXPECTED)
