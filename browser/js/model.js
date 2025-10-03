@@ -674,8 +674,8 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * */
     getSampleReads: function (time, normalized = true, germline = undefined) {
         if (normalized == true && this.normalization_mode == this.NORM_EXTERNAL && this.reads.normalized != undefined) {
-            if (germline) {
-                return this.reads.normalized[germline][time];
+            if (germline && "germline" in this.reads.normalized && germline in this.reads.normalized.germline) {
+                return this.reads.normalized.germline[germline][time];
             } else {
                 return this.reads.normalized.normalized_total[time];
             }
