@@ -1156,13 +1156,8 @@ Clone.prototype = {
 
         for (var j = 0; j < cluster.length; j++) {
             var clone = this.m.clone(cluster[j])
-            if (this.m.normalization_mode == this.m.NORM_EXTERNAL && clone.normalize_reads != undefined) {
-                result += clone.normalize_reads[time];
-            } else if (raw) {
-                result += clone.reads[time]
-            } else {
-                result += this.m.normalize_reads(clone, time, raw);
-            }
+            result += this.m.normalize_reads(clone, time, raw);
+
         }
         return result
     },
