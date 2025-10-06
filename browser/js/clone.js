@@ -877,12 +877,13 @@ Clone.prototype = {
     getSystemSize: function (time) {
         time = this.m.getTime(time)
         
+        var system_reads;
         if (this.germline in this.m.reads.germline){
             // Return full sample reads number
-            var system_reads = this.m.getSampleReads(time, true, this.germline)
+            system_reads = this.m.getSampleReads(time, true, this.germline)
         } else {
             // return only value for current germline
-            var system_reads = this.m.getSampleReads(time, true, false)
+            system_reads = this.m.getSampleReads(time, true, false)
         }
 
         if (system_reads === 0) { 
@@ -1056,7 +1057,7 @@ Clone.prototype = {
         if (this.m.reads.segmented[time] === 0 ) return 0
         var result = this.getReads(time, undefined, false) / this.m.getSampleReads(time, true, false)
 
-        if (!this.m.normalization_mode == this.m.NORM_EXTERNAL){
+        if (this.m.normalization_mode == this.m.NORM_EXTERNAL){
             return result
         }
         return this.m.normalize(result, time)
@@ -1146,11 +1147,11 @@ Clone.prototype = {
         time = this.m.getTime(time)
         var result = 0;
 
-        
+        var cluster;
         if (cluster_count == true){
-            var cluster = this.getCluster()
+            cluster = this.getCluster()
         } else {
-            var cluster = [this.index]
+            cluster = [this.index]
         }
 
         for (var j = 0; j < cluster.length; j++) {
