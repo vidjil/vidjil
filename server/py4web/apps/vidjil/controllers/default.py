@@ -714,7 +714,7 @@ def get_custom_data():
             data = tasks.custom_fuse(samples)
         except IOError as io_error:
             return error_message(str(io_error))
-        
+
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
@@ -755,7 +755,7 @@ def get_custom_data():
             )
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(
-                name + "_" + filename+ " (sequence file "+id+")"
+                name + "_" + filename + " (sequence file " + id + ")"
             )
             data["samples"]["timestamp"].append(
                 str(db.sequence_file[sequence_file_id].sampling_date)
@@ -764,11 +764,14 @@ def get_custom_data():
             data["samples"]["commandline"].append(db.config[config_id].command)
             data["samples"]["sequence_file_id"].append(sequence_file_id)
 
-
-        generic_info = "Compare samples" if len(samples) > 1 else f"Sample {data['samples']['original_names'][0]}"
+        generic_info = (
+            "Compare samples"
+            if len(samples) > 1
+            else f"Sample {data['samples']['original_names'][0]}"
+        )
         data["sample_name"] = generic_info
         data["dataFileName"] = generic_info
-        data["info"] = f"Compare samples" if len(samples) > 1 else generic_info
+        data["info"] = "Compare samples" if len(samples) > 1 else generic_info
 
         log.info("load custom data #TODO log db")
 
