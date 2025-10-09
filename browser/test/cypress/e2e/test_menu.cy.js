@@ -169,4 +169,13 @@ describe('Test menu', function () {
     //   .click()
   })
 
+  it('07-default hidden menus',  function() {
+    // Tested here without server, so should never be visible
+    cy.get('#db_menu')
+      .should('not.be.visible')
+
+    cy.get('#static_file_menu')
+      .should('not.be.visible')
+  })
+
 })
