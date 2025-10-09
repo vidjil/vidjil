@@ -1877,7 +1877,12 @@ class TestFileController:
             # Then : We get file list (with a filter on file type and directories)
             assert len(result) == 4
             titles = [item["li_attr"]["title"] for item in result]
-            expected_titles = ["Demo-X5.fa", "results", "logs", "analysis-example.vidjil" ]
+            expected_titles = [
+                "Demo-X5.fa",
+                "results",
+                "logs",
+                "analysis-example.vidjil",
+            ]
             assert collections.Counter(titles) == collections.Counter(expected_titles)
         finally:
             settings.FILE_SOURCE = save_file_source
