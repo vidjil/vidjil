@@ -45,7 +45,7 @@ void testOnlineBioReaderIgnoreUpper() {
   fa->next();
   fa->next();
   s = fa->getSequence();
-  TAP_TEST_EQUAL(s.label, "seq", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.label, "", TEST_O_FASTA_GET_SEQUENCE, "");
   TAP_TEST_EQUAL(s.sequence, "AT", TEST_O_FASTA_IGNORE_UPPER, "");
   TAP_TEST(! fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
 }
