@@ -593,6 +593,7 @@ void testGuessFormat() {
 
 void testTools() {
   testOnlineBioReader1();
+  testOnlineBioReaderIgnoreUpper();
   testOnlineBioReaderMaxNth();
   testFastaNbSequences();
   testFasta1();
