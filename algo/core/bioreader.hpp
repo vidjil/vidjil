@@ -198,6 +198,7 @@ public:
   string name;
   string basename;
   list<string> filenames;
+  bool ignore_uppercase_nt;
   int size() const;
   size_t totalSize() const;
 
