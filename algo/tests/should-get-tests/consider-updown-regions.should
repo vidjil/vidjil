@@ -1,0 +1,16 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/consider-updown-regions.fa
+
+$ Detect 1 read
+1:junction detected in 1 read
+
+$ As the J is only downstream, the clonotype is not named
+r1: Possibly IGH.*IGH UNSEG only V
+
+# We retry when allowing updown regions in segmentation
+!LAUNCH: $VIDJIL_DIR/$EXEC --keep-uppercase-nucleotides -r 1 -g $VIDJIL_DIR/germline/homo-sapiens.g $VIDJIL_DATA/consider-updown-regions.fa
+
+$ Detect 1 read
+1:junction detected in 1 read
+
+$ J gene is now called correctly (the allele is undetermined as we only have the J region)
+1:IGHV7-40.01 55//80 IGHJ6
