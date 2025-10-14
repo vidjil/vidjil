@@ -57,7 +57,7 @@ void OnlineBioReader::init() {
   nb_sequences_parsed = 0;
   nb_sequences_returned = 0;
   char_nb = 0;
-  current.marked_pos = 0;
+  current.marked_pos[CDR3_POS] = ~0;
   current_gaps = 0;
 }
 
@@ -97,12 +97,12 @@ void OnlineBioReader::addLineToCurrentSequence(string line)
         current_gaps++;
         continue ;
       }
-      if (! ignore_uppercase_nt || (c >= 'a' && c <= 'z'))
-          current.sequence += c;
+      current.sequence += c;
 
       if (mark_pos) {
-        if ((int) current.sequence.length() + current_gaps == mark_pos)
-          current.marked_pos = current.sequence.length();
+        if ((int) current.sequence.length() + current_gaps == mark_pos) {
+          current.marked_pos[CDR3_POS] = current.sequence.length();
+        }
       }
     }
 }
@@ -234,9 +234,8 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
     out << ">";
   out << seq.label;
 
-  if (seq.marked_pos) {
-    out << " !@" << seq.marked_pos ;
-  }
+  if (seq.marked_pos.count(CDR3_POS) > 0 && seq.marked_pos.at(CDR3_POS) != ~0)
+    out << " !@" << seq.marked_pos.at(CDR3_POS) ;
 
   out << endl;
 

@@ -149,12 +149,11 @@ void GermlineElement<Affect>::add(std::string locus, std::string segment) {
 
 template<typename Affect>
 void GermlineElement<Affect>::addToIndex(IKmerStore<Affect> *index, bool ignore_uppercase_nt) {
-  BioReader indexReader(2, "|", getMarkPos());
+  BioReader indexReader(2, "|", getMarkPos(), ignore_uppercase_nt);
   indexReader.add(filename, false);
   index->insert(indexReader, affect, this, max_indexing, seed);
 
-  reader = std::make_shared<BioReader>(2, "|", getMarkPos(), ignore_uppercase_nt);
-  reader->add(filename, true);
+  reader = std::make_shared<BioReader>(indexReader);
   if (build_filter) {
     filter = new FilterWithACAutomaton(*reader, seed, KEYS_COMPRESS);
   }

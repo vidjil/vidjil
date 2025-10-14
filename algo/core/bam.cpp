@@ -88,6 +88,9 @@ void OnlineBAM::next() {
   current.quality = string(qualities);
   current.label_full = string(bam_get_qname(bam_entry));
   current.label = extract_from_label(current.label_full, extract_field, extract_separator);
+  current.marked_pos[START_GENE] = 0;
+  current.marked_pos[CDR3_POS] = ~0;
+  current.marked_pos[END_GENE] = current.sequence.size() - 1;
 
   free(seq);
   free(qualities);

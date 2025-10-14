@@ -7,7 +7,7 @@
 void testWSAdd() {
   map<string, string> labels;
   WindowsStorage<KmerAffect> ws(labels);
-  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
+  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", {}};
   json jconfig = {{"order", {"5", "3"}},
     {"segments", {{"5", {{"seed", ""}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
                   {"3", {{"seed", ""}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};
@@ -124,8 +124,8 @@ void testWSAddWithLimit() {
   ws.setScorer(&rqs);
   ws.setMaximalNbReadsPerWindow(3);
   ws.setBinParameters(1, 20);
-  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", 0};
-  Sequence seq_long = {"label", "l", "GATACATTAGACAGCTTATATATATATTTATAT", "", 0};
+  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", {}};
+  Sequence seq_long = {"label", "l", "GATACATTAGACAGCTTATATATATATTTATAT", "", {}};
   json jconfig = {{"order", {"5", "3"}},
     {"segments", {{"5", {{"seed", ""}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},
                   {"3", {{"seed", ""}, {"code", "J"}, {"build", "0"}, {"index", "1"}}}}}};

@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-
+#include <map>
 #include <iostream>
 #include <iomanip>
 
@@ -124,12 +124,12 @@ class DynProg
   int first_j ;                 /* Start at 1 */
 
   string str_back ;
-  int marked_pos_i ; // To be computed (in x)
-  int marked_pos_j ; // Given (in y)
+  std::map<size_t, size_t> marked_pos_i ; // To be computed (in x). Stored in the order type -> position
+  std::map<size_t, size_t> marked_pos_j ; // Given (in y) Stored in the order position -> type
 
   DynProg(const string &x, const string &y, DynProgMode mode, const Cost &c,
           const bool reverse_x=false, const bool reverse_y=false,
-          const int marked_pos_j=0);
+          const std::map<size_t, size_t> marked_pos_j=std::map<size_t, size_t>());
   ~DynProg();
   void init();
 

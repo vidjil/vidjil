@@ -27,10 +27,17 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 #include <stdexcept>
 
 #define STDIN_FILENAME "-"
 #define SAMPLE_APPROX_NB_SEQUENCES 2000
+
+enum {
+START_GENE,
+END_GENE,
+CDR3_POS
+};
 
 using namespace std;
 
@@ -42,7 +49,7 @@ typedef struct read_t
   string label;
   string sequence; // Sequence: original string representation
   string quality;
-  size_t    marked_pos; // Some marked position in the sequence
+  std::map<size_t, size_t>    marked_pos; // Some marked position in the sequence. Keys are the enum above.
 } Sequence;
 
 typedef enum {

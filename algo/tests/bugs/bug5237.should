@@ -14,7 +14,7 @@ r1:>clone.*1 55 56 124.*IGH
 !LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -3 -r 1 -g $VIDJIL_DIR/germline bug5237-2.fa
 
 $ Check that stop position of J is correct
-j:clones[0].seg.3.stop:427
+j:clones[0].seg.3.stop:428
 
 $ Check that clone is productive
 j:clones[0].seg.junction.productive:True

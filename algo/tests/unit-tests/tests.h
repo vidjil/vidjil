@@ -227,6 +227,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_LABEL, "Fasta/Fastq label");
   RECORD_TAP_TEST(TEST_FASTA_LABEL_FULL, "Fasta/Fastq full label");
   RECORD_TAP_TEST(TEST_FASTA_SEQUENCE, "Fasta/Fastq sequence");
+  RECORD_TAP_TEST(TEST_FASTA_MARK, "Marked positions");
   RECORD_TAP_TEST(TEST_BAM_SIZE, "Bam size");
   RECORD_TAP_TEST(TEST_BAM_LABEL, "Bam label");
   RECORD_TAP_TEST(TEST_BAM_LABEL_FULL, "Bam full label");
