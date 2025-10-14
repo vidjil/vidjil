@@ -52,6 +52,7 @@ void testOnlineBioReaderIgnoreUpper() {
   TAP_TEST_EQUAL(s.marked_pos[START_GENE], 1, TEST_O_FASTA_IGNORE_UPPER, "");
   TAP_TEST_EQUAL(s.marked_pos[END_GENE], 2, TEST_O_FASTA_IGNORE_UPPER, "");
   TAP_TEST(! fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  delete fa;
 }
 
 void testOnlineBioReaderMaxNth() {
