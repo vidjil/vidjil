@@ -150,7 +150,7 @@ void GermlineElement<Affect>::add(std::string locus, std::string segment) {
 template<typename Affect>
 void GermlineElement<Affect>::addToIndex(IKmerStore<Affect> *index, bool ignore_uppercase_nt) {
   BioReader indexReader(2, "|", getMarkPos(), ignore_uppercase_nt);
-  indexReader.add(filename, false);
+  indexReader.add(filename);
   index->insert(indexReader, affect, this, max_indexing, seed);
 
   reader = std::make_shared<BioReader>(indexReader);
