@@ -23,7 +23,7 @@ $ Detect the recombination with only one k-mer
 
 $ Sadly, detect and designate the read with a random J but with a spurious k-mer
 1:>clone.*random
-1:>clone.*random.*TRDV1.* 10/.*/0 TRDD3
+1:>clone.*random.*TRDV1.* 10/.*/22 TRDD3
 
 
 ### --e-value-kmer 1e12

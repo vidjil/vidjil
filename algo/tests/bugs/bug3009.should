@@ -5,6 +5,4 @@ $ Segmented as TRD+
 1: SEG_\+ -> 1
 
 $ VDJ assignation
-1:TRDD2.01 1//2 TRDD3.01
-# The correct deletion is not found as the updown stream region
-# is not taken into account anymore when doing the alignment
+1:TRDD2.01 28/CAA/2 TRDD3.01
