@@ -234,7 +234,7 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
     out << ">";
   out << seq.label;
 
-  if (seq.marked_pos.count(CDR3_POS) > 0 && seq.marked_pos.at(CDR3_POS) != ~0)
+  if (seq.marked_pos.count(CDR3_POS) > 0 && seq.marked_pos.at(CDR3_POS) != (size_t)~0)
     out << " !@" << seq.marked_pos.at(CDR3_POS) ;
 
   out << endl;

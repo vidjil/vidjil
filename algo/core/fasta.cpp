@@ -101,6 +101,8 @@ void OnlineFasta::next() {
     current.label = extract_from_label(current.label_full, extract_field, extract_separator);
 
     line = getInterestingLine();
+    start_gene_sequence = 0;
+    end_gene_sequence = current.sequence.size() - 1;
     while (hasNextData() && ((state != FASTX_FASTA || line[0] != '>')
                          && (state != FASTX_FASTQ_QUAL || line[0] != '@'))) {
 
@@ -135,8 +137,6 @@ void OnlineFasta::next() {
     if (state >= FASTX_FASTQ_ID && state < FASTX_FASTQ_QUAL) 
       unexpectedEOF();
 
-    start_gene_sequence = 0;
-    end_gene_sequence = current.sequence.size() - 1;
     int state = 0;               // uppercase state
     for (size_t i = 0; i < current.sequence.size(); i++) {
       if (state == 1 && current.sequence[i] >= 'A' && current.sequence[i] <= 'Z') {
@@ -154,10 +154,10 @@ void OnlineFasta::next() {
       }
     }
 
+    current.marked_pos[START_GENE] = start_gene_sequence;
+    current.marked_pos[END_GENE] = end_gene_sequence;
   } else
     unexpectedEOF();
-  current.marked_pos[START_GENE] = start_gene_sequence;
-  current.marked_pos[END_GENE] = end_gene_sequence;
 
   skipToNthSequence();
 }
