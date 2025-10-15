@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <sstream>
 
+#define THRESHOLD_CLOSE_EVALUE .9 // ratio of e-value exponents
+
 bool operator==(const affect_infos &ai1, const affect_infos &ai2) {
   return ai1.first_pos_max == ai2.first_pos_max
   && ai1.last_pos_max == ai2.last_pos_max
@@ -591,13 +593,14 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 #endif
       frexp(max(proba, best_proba), &exp1);
       frexp(min(proba, best_proba), &exp2);
-      if (exp1*1./exp2 >= 0.9) { // The exponent are in base2 but the ratio is identical in base 10
-                                 // as the exponents are just at a constant factor of log10(2)
+        // Test if values are (almost) equal
+      if (exp1*1./exp2 >= THRESHOLD_CLOSE_EVALUE) {
+        // The exponent are in base2 but the ratio is identical in base 10
+        // as the exponents are just at a constant factor of log10(2)
 #ifdef DEBUG
         cerr << "proba = " << proba << ", best_proba = " << best_proba << ", fabs = " << fabs(proba - best_proba)
              << ", threshold = " << (proba+best_proba)/1e10 << endl;
 #endif
-        // Test if values are (almost) equal
         best_proba = min(proba, best_proba);
         best_affect.insert(affect);
       } else if (proba < best_proba) {
@@ -669,7 +672,7 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 #endif
         frexp(max(proba, second_best_proba), &exp1);
         frexp(min(proba, second_best_proba), &exp2);
-        if (exp1*1./exp2 >= 0.9) {
+        if (exp1*1./exp2 >= THRESHOLD_CLOSE_EVALUE) {
           // Test if values are (almost) equal
           second_best_proba = min(proba, second_best_proba);
           second_best_affect.insert(affect);
