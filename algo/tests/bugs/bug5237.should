@@ -3,7 +3,7 @@
 $ Check that positions of J (and V) are correct
 r1:>clone.*1 55 56 77.*IGH
 
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -r 1 --keep-uppercase-nucleotides -g $VIDJIL_DIR/germline bug5237-1.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS -r 1 --case-insensitive -g $VIDJIL_DIR/germline bug5237-1.fa
 
 $ But when keeping the downstream J region, we don't have the same boundaries anymore
 r1:>clone.*1 55 56 124.*IGH
@@ -21,7 +21,7 @@ j:clones[0].seg.junction.productive:True
 
 # Now when keeping the downstream J region
 !OUTPUT_FILE: out/bug5237-2.vidjil
-!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --keep-uppercase-nucleotides -3 -r 1 -g $VIDJIL_DIR/germline bug5237-2.fa
+!LAUNCH: $VIDJIL_DIR/$EXEC $VIDJIL_DEFAULT_OPTIONS --case-insensitive -3 -r 1 -g $VIDJIL_DIR/germline bug5237-2.fa
 
 $ Check that stop position of J isn't correct
 j:clones[0].seg.3.stop:489

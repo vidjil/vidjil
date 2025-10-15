@@ -671,10 +671,10 @@ int main(int argc, char **argv) {
         ->level();
 
     bool keep_uppercase_nt = false;
-    app.add_flag("--keep-uppercase-nucleotides", keep_uppercase_nt,
+    app.add_flag("--case-insensitive", keep_uppercase_nt,
                  "By default uppercase nucleotides are not considered "
-                 "in the designation as they come from upstream or downstream "
-                 "intronic regions. Whenever you use custom germlines you may want "
+                 "as being part of the genes, they are provided as useful context."
+                 " Whenever you use custom germlines you may want "
                  "to consider the uppercase nucleotides")
         ->group(group)
         ->level();
