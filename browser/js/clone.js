@@ -804,6 +804,24 @@ Clone.prototype = {
     }, //end getSize
     
     /**
+     * compute the clone size ( ratio of all clones clustered ) at a given time
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {integer} size - number of reads as externally normalized, if available
+     * */
+    getNormalizedExternalSize: function (time) {
+        if (!this.quantifiable) return this.NOT_QUANTIFIABLE_SIZE
+
+        if (this.normalized_reads != undefined &&
+            this.normalized_reads[time] != null) {
+              return this.normalized_reads[time] ;
+        } else if (this.hasSizeDistrib() && !isNaN(this.current_reads[time])){          
+          return this.current_reads[time]
+        } else {
+          return this.reads[time] ;
+        }
+    },
+    
+    /**
      * compute the clone size (ratio of all clones clustered) at a given time <br>
      * return 'undefined' in case of empty clone <br>
      * @param {integer} time - tracking point (default value : current tracking point)
