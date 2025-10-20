@@ -869,14 +869,26 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         //reset reads.segmented
         for (var h=0 ; h<this.reads.segmented.length; h++){
             this.reads.segmented[h]=0
+            if ("normalized" in this.reads 
+                && "normalized_total" in this.reads.normalized 
+                && "germline" in this.reads.normalized) {
+                    this.reads.normalized.normalized_total[h]=0
+            }
         }
 
         //compute new reads.segmented value (sum of reads.segmented of selected system)
         for (var i=0; i<this.system_selected.length; i++){
-            var key = this.system_selected[i]
+            var germline = this.system_selected[i]
             for (var j=0; j<this.reads.segmented.length; j++){
-                this.reads.segmented[j] += this.reads.germline[key][j]
+                this.reads.segmented[j] += this.reads.germline[germline][j]
+                
+                if ("normalized" in this.reads && 
+                    "normalized_total" in this.reads.normalized && 
+                    "germline" in this.reads.normalized) {
+                        this.reads.normalized.normalized_total[j] += this.reads.normalized.germline[germline][j]
+                }
             }
+                
         }
         
         // mark analysis as changed
