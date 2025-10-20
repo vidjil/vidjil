@@ -577,7 +577,21 @@ QUnit.test("size", function(assert) {
     assert.equal(c1.getSize().toFixed(2), 0.20, "c1 get correct size after normalisation");
     assert.equal(c1.getSize(undefined, true), 0.10, "c1 return size with no norm if parameter is setted for");
 
+});
 
+
+QUnit.test("Number of reads with external normalization", function(assert) {
+    var m = new Model();
+    m.parseJsonData(json_data)
+
+    var clone1_copy = JSON.parse(JSON.stringify(json_clone1));
+    clone1_copy.normalized_reads = [1000]
+    c1raw  = new Clone(json_clone1, m, 1, c_attributes) // Without norm
+    c1norm = new Clone(clone1_copy, m, 0, c_attributes) // with norm
+    m.initClones()
+
+    assert.equal(c1raw.getNormalizedExternalSize(0), 10, "c1raw getNormalizedExternalSize()");
+    assert.equal(c1norm.getNormalizedExternalSize(0), 1000, "c1norm getNormalizedExternalSize()");
 });
 
 
@@ -594,7 +608,7 @@ QUnit.test("size with MRD normalization", function(assert) {
     clone2_copy.normalized_reads = [100]
     c2 = new Clone(clone2_copy, m, 1, c_attributes)
     
-        var m = new Model();
+    var m = new Model();
     m.parseJsonData(json_data, 100)
     var c1 = new Clone(json_clone1, m, 0, c_attributes)
     var c2 = new Clone(json_clone2, m, 1, c_attributes)

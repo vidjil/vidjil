@@ -813,11 +813,11 @@ Clone.prototype = {
 
         if (this.normalized_reads != undefined &&
             this.normalized_reads[time] != null) {
-              return this.normalized_reads[time] ;
-        } else if (this.hasSizeDistrib() && !isNaN(this.current_reads[time])){          
-          return this.current_reads[time]
+            return this.normalized_reads[time];
+        } else if (this.hasSizeDistrib() && !isNaN(this.current_reads[time])) {
+            return this.current_reads[time]
         } else {
-          return this.reads[time] ;
+            return this.reads[time];
         }
     },
     
