@@ -87,7 +87,7 @@ describe("Test specific bugs", function () {
 
         // 5070 - get_reads
         cy.openCloneInfo(1);
-        cy.get(":nth-child(2) > .icon-down").click();
+        cy.get(":nth-child(2) > .icon-download").click();
 
         const downloadsFolder = Cypress.config("downloadsFolder");
         cy.log(Cypress.config("downloadsFolder"));

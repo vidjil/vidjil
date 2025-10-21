@@ -8,7 +8,7 @@ import copy
 import sys
 
 def dump(j, out):
-    print "  ==> %-50s   %3d glyphs" % (out, len(j['glyphs']))
+    print( "  ==> %-50s   %3d glyphs" % (out, len(j['glyphs'])) )
     json.dump(j, open(out, 'w'), indent=2)
 
 
@@ -23,7 +23,7 @@ glyphs = j['glyphs']
 srcs = set(icon['src'] for icon in glyphs)
 
 
-family_code = [ 0xE900, 0xEA00, 0xEB00, 0xEC00 ]
+family_code = [ 0xE900, 0xEA00, 0xEB00, 0xEC00 , 0xED00 , 0xEE00 , 0xEF00 ]
 family = 0
 
 for src in srcs:
