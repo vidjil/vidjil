@@ -872,9 +872,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         //reset reads.segmented
         for (var h=0 ; h<this.reads.segmented.length; h++){
             this.reads.segmented[h]=0
-            if ("normalized" in this.reads 
-                && "normalized_total" in this.reads.normalized 
-                && "germline" in this.reads.normalized) {
+            if ("normalized" in this.reads &&
+                "normalized_total" in this.reads.normalized &&
+                "germline" in this.reads.normalized) {
                     this.reads.normalized.normalized_total[h]=0
             }
         }
