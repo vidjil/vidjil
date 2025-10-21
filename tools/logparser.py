@@ -112,7 +112,7 @@ class FlashLogParser(LogParser):
             if(log_line.startswith('WARNING')):
                 if not "warning" in parsed_log.keys():
                     parsed_log['warnings'] = [[]]
-                key, value = self.getkeyvalue(log_line)
+                value = log_line.split(":")[1].strip()
                 parsed_log['warnings'][0].append(value)
 
                 pass

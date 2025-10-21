@@ -5,7 +5,10 @@ j:warn
 
 # two warns in sample 0, one in sample 2
 $ Correct number of warnings in sample level
-j3:warn
+j: warn[0].level: "warn"
+j: warn[1].level: "warn"
+j: warn[2].level: "warn"
+j0: warn[3]
 
 $ Correct sample value for each warnings in sample level
 j:warn[0].sample: 0

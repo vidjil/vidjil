@@ -31,9 +31,9 @@ j: samples.pre_process.stats.combined_pairs: [3000, null]
 $ Fuse with one pre-process file(second); pre_process key
 j: samples.pre_process
 $ Fuse with one pre-process file(second); producer
-j: samples.pre_process.producer: [null, FLASH v2.2.00"]
+j: samples.pre_process.producer: [null, "FLASH v2.2.00"]
 $ Fuse with one pre-process file(second); commandline
-j: samples.pre_process.commandline: [null, pre_process commandline"]
+j: samples.pre_process.commandline: [null, "pre_process commandline"]
 $ Fuse with one pre-process file(second); combined_pairs
 j: samples.pre_process.stats.combined_pairs: [null, 3000]
 
