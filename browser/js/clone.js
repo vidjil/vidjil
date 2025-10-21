@@ -792,7 +792,7 @@ Clone.prototype = {
         
         // Compute size based on whether removed clones should be considered
         var reads = this.getReads(time);
-        var total_reads = this.m.reads.segmented[time];
+        var total_reads = this.m.getSampleReads(time, true, false)
         var result = true_size_removed ? (reads / total_reads) : (reads / (total_reads - this.m.removed_clones_reads_of_active_locus[time]));
         if (this.id && this.id.includes("removed")) return (reads / total_reads)
 
@@ -802,6 +802,24 @@ Clone.prototype = {
         }
         return this.m.normalize(result, time) 
     }, //end getSize
+    
+    /**
+     * compute the clone size ( ratio of all clones clustered ) at a given time
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {integer} size - number of reads as externally normalized, if available
+     * */
+    getNormalizedExternalSize: function (time) {
+        if (!this.quantifiable) return this.NOT_QUANTIFIABLE_SIZE
+
+        if (this.normalized_reads != undefined &&
+            this.normalized_reads[time] != null) {
+            return this.normalized_reads[time];
+        } else if (this.hasSizeDistrib() && !isNaN(this.current_reads[time])) {
+            return this.current_reads[time]
+        } else {
+            return this.reads[time];
+        }
+    },
     
     /**
      * compute the clone size (ratio of all clones clustered) at a given time <br>
@@ -877,10 +895,18 @@ Clone.prototype = {
     getSystemSize: function (time) {
         time = this.m.getTime(time)
         
-        var system_reads = this.m.reads.segmented[time]
-        if (this.germline in this.m.reads.germline) system_reads = this.m.reads.germline[this.germline][time]
-        
-        if (system_reads === 0 ) return 0
+        var system_reads;
+        if (this.germline in this.m.reads.germline){
+            // Return full sample reads number
+            system_reads = this.m.getSampleReads(time, true, this.germline)
+        } else {
+            // return only value for current germline
+            system_reads = this.m.getSampleReads(time, true, false)
+        }
+
+        if (system_reads === 0) { 
+            return 0 
+        }
         var result     = this.getReads(time) / system_reads
         return this.m.normalize(result, time)
     },
@@ -1047,7 +1073,11 @@ Clone.prototype = {
         time = this.m.getTime(time)
         
         if (this.m.reads.segmented[time] === 0 ) return 0
-        var result = this.get('reads',time) / this.m.reads.segmented[time]
+        var result = this.getReads(time, undefined, false) / this.m.getSampleReads(time, true, false)
+
+        if (this.m.normalization_mode == this.m.NORM_EXTERNAL){
+            return result
+        }
         return this.m.normalize(result, time)
     }, //end getSequenceSize
 
@@ -1129,16 +1159,24 @@ Clone.prototype = {
     /* compute the clone reads number ( sum of all reads of clones clustered )
      * @time : tracking point (default value : current tracking point)
      * @raw: do not normalize
+     * @cluster: boolean, include in number of reads all cluster component
      * */
-    getReads: function (time, raw) {
+    getReads: function (time, raw, cluster_count=true) {
         time = this.m.getTime(time)
         var result = 0;
 
-        var cluster = this.getCluster()
-        for (var j = 0; j < cluster.length; j++) {
-            result += this.m.normalize_reads(this.m.clone(cluster[j]), time, raw);
+        var cluster;
+        if (cluster_count == true){
+            cluster = this.getCluster()
+        } else {
+            cluster = [this.index]
         }
 
+        for (var j = 0; j < cluster.length; j++) {
+            var clone = this.m.clone(cluster[j])
+            result += this.m.normalize_reads(clone, time, raw);
+
+        }
         return result
     },
 
@@ -1527,6 +1565,11 @@ Clone.prototype = {
             for (var i =0; i< this.m.reads.segmented.length; i++) {
                 if(oldGermline != "custom") {this.m.reads.germline[oldGermline][i] -= this.reads[i]}
                 if(newGermline != "custom") {this.m.reads.germline[newGermline][i] += this.reads[i]}
+                if (this.m.normalization_mode == this.m.NORM_EXTERNAL){
+                    if(oldGermline != "custom") {this.m.reads.germline[oldGermline][i] -= this.reads[i]}
+                    if(newGermline != "custom") {this.m.reads.germline[newGermline][i] += this.reads[i]}
+                }
+                    
                 if (newGermline == "custom" && newGermline != oldGermline) {
                     this.m.reads.segmented_all[i] -= this.reads[i]
                 } else if (oldGermline == "custom" && newGermline != "custom"){
@@ -1708,7 +1751,7 @@ Clone.prototype = {
                 html += "<td>"
                 html += this.getRawReads(this.m.samples.order[j]) + "  (" + this.m.reads.segmented[this.m.samples.order[j]] + ")"
                 if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
-                  html += "<br />[" + this.getReads(this.m.samples.order[j]).toFixed(2) + "]"
+                  html += "<br />[" + this.getReads(this.m.samples.order[j]) + "/" + this.m.getSampleReads(j, true, false) + "]"
                 }
                 if (typeof this.m.db_key.config != 'undefined' &&
                     this.m.samples.sequence_file_id != undefined &&
@@ -1769,7 +1812,7 @@ Clone.prototype = {
         } else {
             html += "<tr><td>total clonotypes size<br/>(n-reads (total reads))</td>"
         }
-        for (var l = 0; l < time_length; l++) {
+        for (var l = 0; l < time_length; l++) { // never take into account normalisation here ?
             html += "<td>" + this.get('reads',this.m.samples.order[l]) + 
                     "  (" + this.m.reads.segmented[this.m.samples.order[l]] + ")</td>"
         }

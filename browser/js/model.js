@@ -664,6 +664,31 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return typeof time !== 'undefined' ? time : this.t
     },
 
+
+    /**
+     * Return reads number of a sample. This value could be normalized if external normalization, and restricted to a system
+     * @param {integer} time: time point/sample to consider
+     * @param {boolean} normalized; use normalized value if available, only for NORM_external
+     * @param {string} germline: a system to consider, undefined by default
+     * @return {integer} time - time index 
+     * */
+    getSampleReads: function (time, normalized = true, germline = undefined) {
+        if (normalized == true && this.normalization_mode == this.NORM_EXTERNAL && this.reads.normalized != undefined) {
+            if (germline && "germline" in this.reads.normalized && germline in this.reads.normalized.germline) {
+                return this.reads.normalized.germline[germline][time];
+            } else {
+                return this.reads.normalized.normalized_total[time];
+            }
+        } else {
+            if (germline) {
+                return this.reads.germline[germline][time];
+            } else {
+                return this.reads.segmented[time];
+            }
+        }
+    },
+
+    
     /**
      * return a name that can be displayed gracefully <br>
      * (either with a real filename, or a name coming from the database).
@@ -844,14 +869,26 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         //reset reads.segmented
         for (var h=0 ; h<this.reads.segmented.length; h++){
             this.reads.segmented[h]=0
+            if ("normalized" in this.reads &&
+                "normalized_total" in this.reads.normalized &&
+                "germline" in this.reads.normalized) {
+                    this.reads.normalized.normalized_total[h]=0
+            }
         }
 
         //compute new reads.segmented value (sum of reads.segmented of selected system)
         for (var i=0; i<this.system_selected.length; i++){
-            var key = this.system_selected[i]
+            var germline = this.system_selected[i]
             for (var j=0; j<this.reads.segmented.length; j++){
-                this.reads.segmented[j] += this.reads.germline[key][j]
+                this.reads.segmented[j] += this.reads.germline[germline][j]
+                
+                if ("normalized" in this.reads && 
+                    "normalized_total" in this.reads.normalized && 
+                    "germline" in this.reads.normalized) {
+                        this.reads.normalized.normalized_total[j] += this.reads.normalized.germline[germline][j]
+                }
             }
+                
         }
         
         // mark analysis as changed
