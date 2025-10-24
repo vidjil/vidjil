@@ -71,4 +71,105 @@ describe('Visibility of panels', function () {
         cy.get('#preprocess_info_4')
           .should("have.attr", "title").and("equal", "test 2")
     })
+
+  it('03-name of custom fuse (issue #5205)', function () {
+    cy.goToPatientPage()
+
+    const fname = "fname"
+    const lname = "lname"
+    const runname = "run_name"
+    const preprocess = undefined;
+    const filename1 = "Demo-X5-no-clone.vidjil";
+    const filename2 = undefined;
+    const samplingDate = "2021-01-01";
+    const sampleInformation = "c #cy";
+
+
+    cy.createPatient("", fname, lname, "", "c", "public")
+      .then((patientId) => {
+
+       cy.addSample(
+          preprocess,
+          "nfs",
+          filename1,
+          filename2,
+          samplingDate,
+          sampleInformation
+        ).then((sampleId) => {
+          cy.log("added sample " + sampleId);
+
+          // Launch process and wait for result, as vidjil import, should be instant
+          const configId = "9";
+          cy.launchProcess(configId, sampleId);
+          cy.waitAnalysisCompleted(configId, sampleId);
+
+          cy.get(`#open_sample_result_${sampleId} > .icon-export`)
+            .click()
+
+          cy.get(`a#open_sample_result_${sampleId}`)
+            .invoke('attr', 'href')
+            .then((href) => {
+              const urlParams = new URLSearchParams(href.split('?')[1]);
+              const result_id = urlParams.get('custom');
+              cy.log('Result Id :', result_id); // Affiche "100"
+
+              // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
+              cy.get('#top_info') // as anon_ids is called, we used pateintId in sample set name
+                .should("contain", `Sample set ${lname} ${fname} (${patientId})`)
+                .should("contain", `sequence: ${filename1.split(".vidjil")[0]}`)
+                .should("not.contain", `result: ${result_id}`)
+
+              cy.get('#patient_info_text')
+                .should("contain", `Sample set ${lname} ${fname} (${patientId})`)
+                .should("contain", `sequence: ${filename1} (${sampleId})`)
+                .should("contain", `result: ${result_id}`)
+            })
+
+        })
+      })
+
+
+    cy.createRun("", runname, "2025-01-01", "info", "public")
+      .then((runId) => {
+
+       cy.addSample(
+          preprocess,
+          "nfs",
+          filename1,
+          filename2,
+          samplingDate,
+          sampleInformation
+        ).then((sampleId) => {
+          cy.log("added sample " + sampleId);
+
+          // Launch process and wait for result, as vidjil import, should be instant
+          const configId = "9";
+          cy.launchProcess(configId, sampleId);
+          cy.waitAnalysisCompleted(configId, sampleId);
+
+          cy.get(`#open_sample_result_${sampleId} > .icon-export`)
+            .click()
+
+          cy.get(`a#open_sample_result_${sampleId}`)
+            .invoke('attr', 'href')
+            .then((href) => {
+              const urlParams = new URLSearchParams(href.split('?')[1]);
+              const result_id = urlParams.get('custom');
+              cy.log('Result Id :', result_id); // Affiche "100"
+
+              // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
+              cy.get('#top_info') // as anon_ids is not called, we don't used pateintId in sample set name
+                .should("contain", `Sample set ${runname}`)
+                .should("contain", `sequence: ${filename1.split(".vidjil")[0]}`)
+                .should("not.contain", `result: ${result_id}`)
+
+              cy.get('#patient_info_text')
+                .should("contain", `Sample set ${runname}`)
+                .should("contain", `sequence: ${filename1} (${sampleId})`)
+                .should("contain", `result: ${result_id}`)
+            })
+
+        })
+      })
+  })
 })

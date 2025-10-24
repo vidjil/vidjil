@@ -754,8 +754,10 @@ def get_custom_data():
                 else patient_run.name
             )
             filename = db.sequence_file[sequence_file_id].filename
+            sample_name_to_show = f"set {name}; sequence: {filename} ({sequence_file_id}); result: {id}";
+                                                                    
             data["samples"]["original_names"].append(
-                name + "_" + filename + " (sequence file " + id + ")"
+                sample_name_to_show
             )
             data["samples"]["timestamp"].append(
                 str(db.sequence_file[sequence_file_id].sampling_date)
