@@ -72,7 +72,8 @@ describe('Visibility of panels', function () {
       .should("have.attr", "title").and("equal", "test 2")
   })
 
-  it('03-name of custom fuse (issue #5205)', function () {
+
+  it('03-name of custom fuse (issue #5205), direct button', function () {
     cy.goToPatientPage()
 
     const fname = "fname"
@@ -82,7 +83,7 @@ describe('Visibility of panels', function () {
     const filename1 = "Demo-X5-no-clone.vidjil";
     const filename2 = undefined;
     const samplingDate = "2021-01-01";
-    const sampleInformation = "c #cy";
+    const sampleInformation1 = "info of sample1";
 
 
     cy.createPatient("", fname, lname, "", "c", "public")
@@ -94,7 +95,7 @@ describe('Visibility of panels', function () {
           filename1,
           filename2,
           samplingDate,
-          sampleInformation
+          sampleInformation1
         ).then((sampleId) => {
           cy.log("added sample " + sampleId);
 
@@ -115,14 +116,14 @@ describe('Visibility of panels', function () {
 
               // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
               cy.get('#top_info') // as anon_ids is called, we used pateintId in sample set name
-                .should("contain", `Sample set ${lname} ${fname} (${patientId})`)
-                .should("contain", `sequence: ${filename1.split(".vidjil")[0]}`)
-                .should("not.contain", `result: ${result_id}`)
+                .should("contain", `${filename1.split(".vidjil")[0]}`)
+                .should("contain", `( .vidjil/`) // config name
+                .should("not.contain", `${lname} ${fname} (${patientId})`)
 
               cy.get('#patient_info_text')
-                .should("contain", `Sample set ${lname} ${fname} (${patientId})`)
-                .should("contain", `sequence: ${filename1} (${sampleId})`)
-                .should("contain", `result: ${result_id}`)
+                .should("contain", `${filename1}`)
+                .should("contain", `( .vidjil/`) // config name
+                .should("contain", `${lname} ${fname} (${patientId})`)
             })
 
         })
@@ -138,7 +139,7 @@ describe('Visibility of panels', function () {
           filename1,
           filename2,
           samplingDate,
-          sampleInformation
+          sampleInformation1
         ).then((sampleId) => {
           cy.log("added sample " + sampleId);
 
@@ -159,17 +160,96 @@ describe('Visibility of panels', function () {
 
               // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
               cy.get('#top_info') // as anon_ids is not called, we don't used pateintId in sample set name
-                .should("contain", `Sample set ${runname}`)
-                .should("contain", `sequence: ${filename1.split(".vidjil")[0]}`)
-                .should("not.contain", `result: ${result_id}`)
+                .should("contain", `${filename1.split(".vidjil")[0]}`)
+                .should("contain", `( .vidjil/`) // config name
+                .should("not.contain", `${runname} (${runId})`)
 
               cy.get('#patient_info_text')
-                .should("contain", `Sample set ${runname}`)
-                .should("contain", `sequence: ${filename1} (${sampleId})`)
-                .should("contain", `result: ${result_id}`)
+                .should("contain", `${filename1.split(".vidjil")[0]}`)
+                .should("contain", `( .vidjil/.clntab )`) // config name
+                .should("contain", `${runname}`)
             })
 
         })
       })
   })
+
+
+  it('04-name of custom fuse (issue #5205), multiple sample, compare view', function () {
+    cy.goToPatientPage()
+
+    const fname = "fname"
+    const lname = "lname"
+    const runname = "run_name"
+    const preprocess = undefined;
+    const filename1 = "Demo-X5-no-clone.vidjil";
+    const filename2 = undefined;
+    const samplingDate = "2021-01-01";
+    const sampleInformation = "c #cy";
+    const configId = "9";
+
+    const sampleInformation1 = "info of sample1";
+    const sampleInformation2 = "info of sample2";
+
+    cy.createPatient("", fname, lname, "", "c", "public")
+      .then((patientId) => {
+
+        cy.addSample(
+          preprocess,
+          "nfs",
+          filename1,
+          filename2,
+          samplingDate,
+          sampleInformation1
+        ).then((sampleId1) => {
+          cy.log("added sample 1: " + 1);
+
+          
+          // Add a second sample
+          cy.addSample(
+            preprocess,
+            "nfs",
+            filename1,
+            filename2,
+            samplingDate,
+            sampleInformation2
+          ).then((sampleId2) => {
+            cy.log("added sample 2: " + sampleId2);
+            
+            // Launch process and wait for result, as vidjil import, should be instant
+            cy.launchProcess(configId, sampleId1);
+            cy.get('#launch_all_unanalyzed_samples_9 > .icon-cog-2')
+            .click()
+
+            cy.waitAnalysisCompleted(configId, sampleId1);
+            cy.waitAnalysisCompleted(configId, sampleId2);
+
+            cy.get(`[onclick="db.call('sample_set/custom', {'id': '${patientId}', 'filter': ''} )"]`)
+              .click()
+
+            cy.get('#db_fixed_header > thead > tr > .column_20 > .checkbox_all')
+              .click()
+
+            cy.get(`[onclick="myUrl.loadCustomUrl(db, {'sample_set_id':${patientId} })"]`)
+              .click({force: true})
+
+            cy.get('#top_info')
+              .should("contain", `Compare 2 samples from set ${lname} ${fname} (${patientId})`)
+            
+            cy.get('#patient_info_text')
+              .should("contain", `Custom: Compare 2 samples from set ${lname} ${fname} (${patientId})`)
+
+            cy.get('#time0')
+              .click()
+              .should("contain", `${filename1} ( .vidjil/.clntab )`)
+              
+            cy.get('#time1')
+              .click()
+              .should("contain", `${filename1} ( .vidjil/.clntab )`)
+
+          })
+        })
+      })
+  })
+
 })

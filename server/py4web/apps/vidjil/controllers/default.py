@@ -715,11 +715,13 @@ def get_custom_data():
         except IOError as io_error:
             return error_message(str(io_error))
 
+        data["samples"]["names"] = []
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
         data["samples"]["commandline"] = []
         data["samples"]["sequence_file_id"] = []
+        data["samples"]["configuration"] = []
 
         for id in samples:
             sequence_file_id = db.results_file[id].sequence_file_id
@@ -748,15 +750,19 @@ def get_custom_data():
                 .first()
             )
             config_id = db.results_file[id].config_id
+            configuration = db.config[config_id].name
             name = (
                 vidjil_utils.anon_ids([patient_run.id])[0]
                 if sample_set.sample_type == sampleSet.SET_TYPE_PATIENT
                 else patient_run.name
             )
             filename = db.sequence_file[sequence_file_id].filename
-            sample_name_to_show = f"set {name}; sequence: {filename} ({sequence_file_id}); result: {id}";
+            sample_name_to_show = f"{filename} ({configuration})"
                                                                     
             data["samples"]["original_names"].append(
+                sample_name_to_show
+            )                                               
+            data["samples"]["names"].append(
                 sample_name_to_show
             )
             data["samples"]["timestamp"].append(
@@ -765,15 +771,16 @@ def get_custom_data():
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
             data["samples"]["sequence_file_id"].append(sequence_file_id)
+            data["samples"]["configuration"].append(configuration)
 
         generic_info = (
-            "Compare samples"
+            f"Compare {len(samples)} samples from set {name}"
             if len(samples) > 1
-            else f"Sample {data['samples']['original_names'][0]}"
+            else f"{data['samples']['original_names'][0]}"
         )
         data["sample_name"] = generic_info
         data["dataFileName"] = generic_info
-        data["info"] = "Compare samples" if len(samples) > 1 else generic_info
+        data["info"] = f"Custom: {f"{name}; " if len(samples) == 1 else ""}{generic_info}"
 
         log.info("load custom data #TODO log db")
 
