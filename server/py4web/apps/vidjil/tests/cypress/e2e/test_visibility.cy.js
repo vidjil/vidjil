@@ -85,93 +85,100 @@ describe('Visibility of panels', function () {
     const samplingDate = "2021-01-01";
     const sampleInformation1 = "info of sample1";
 
+    cy.createConfig(
+      ".vidjil/.clntab",
+      ["3", "Analysis with/for other software"],
+      undefined,
+      "x",
+      "f",
+      "i"
+    ).then((configId) => {
+      cy.createPatient("", fname, lname, "", "c", "public")
+        .then((patientId) => {
 
-    cy.createPatient("", fname, lname, "", "c", "public")
-      .then((patientId) => {
+          cy.addSample(
+            preprocess,
+            "nfs",
+            filename1,
+            filename2,
+            samplingDate,
+            sampleInformation1
+          ).then((sampleId) => {
+            cy.log("added sample " + sampleId);
 
-        cy.addSample(
-          preprocess,
-          "nfs",
-          filename1,
-          filename2,
-          samplingDate,
-          sampleInformation1
-        ).then((sampleId) => {
-          cy.log("added sample " + sampleId);
+            // Launch process and wait for result, as vidjil import, should be instant
+            cy.launchProcess(configId, sampleId);
+            cy.waitAnalysisCompleted(configId, sampleId);
 
-          // Launch process and wait for result, as vidjil import, should be instant
-          const configId = "9";
-          cy.launchProcess(configId, sampleId);
-          cy.waitAnalysisCompleted(configId, sampleId);
+            cy.get(`#open_sample_result_${sampleId} > .icon-export`)
+              .click()
 
-          cy.get(`#open_sample_result_${sampleId} > .icon-export`)
-            .click()
+            cy.get(`a#open_sample_result_${sampleId}`)
+              .invoke('attr', 'href')
+              .then((href) => {
+                const urlParams = new URLSearchParams(href.split('?')[1]);
+                const result_id = urlParams.get('custom');
+                cy.log('Result Id :', result_id); // Affiche "100"
 
-          cy.get(`a#open_sample_result_${sampleId}`)
-            .invoke('attr', 'href')
-            .then((href) => {
-              const urlParams = new URLSearchParams(href.split('?')[1]);
-              const result_id = urlParams.get('custom');
-              cy.log('Result Id :', result_id); // Affiche "100"
+                // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
+                cy.get('#top_info') // as anon_ids is called, we used pateintId in sample set name
+                  .should("contain", `${filename1.split(".vidjil")[0]}`)
+                  .should("contain", `( .vidjil/`) // config name
+                  .should("not.contain", `${lname} ${fname} (${patientId})`)
 
-              // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
-              cy.get('#top_info') // as anon_ids is called, we used pateintId in sample set name
-                .should("contain", `${filename1.split(".vidjil")[0]}`)
-                .should("contain", `( .vidjil/`) // config name
-                .should("not.contain", `${lname} ${fname} (${patientId})`)
+                cy.get('#patient_info_text')
+                  .should("contain", `${filename1}`)
+                  .should("contain", `( .vidjil/`) // config name
+                  .should("contain", `${lname} ${fname} (${patientId})`)
+              })
 
-              cy.get('#patient_info_text')
-                .should("contain", `${filename1}`)
-                .should("contain", `( .vidjil/`) // config name
-                .should("contain", `${lname} ${fname} (${patientId})`)
-            })
-
+          })
         })
-      })
 
 
-    cy.createRun("", runname, "2025-01-01", "info", "public")
-      .then((runId) => {
+      cy.createRun("", runname, "2025-01-01", "info", "public")
+        .then((runId) => {
 
-        cy.addSample(
-          preprocess,
-          "nfs",
-          filename1,
-          filename2,
-          samplingDate,
-          sampleInformation1
-        ).then((sampleId) => {
-          cy.log("added sample " + sampleId);
+          cy.addSample(
+            preprocess,
+            "nfs",
+            filename1,
+            filename2,
+            samplingDate,
+            sampleInformation1
+          ).then((sampleId) => {
+            cy.log("added sample " + sampleId);
 
-          // Launch process and wait for result, as vidjil import, should be instant
-          const configId = "9";
-          cy.launchProcess(configId, sampleId);
-          cy.waitAnalysisCompleted(configId, sampleId);
+            // Launch process and wait for result, as vidjil import, should be instant
+            const configId = "9";
+            cy.launchProcess(configId, sampleId);
+            cy.waitAnalysisCompleted(configId, sampleId);
 
-          cy.get(`#open_sample_result_${sampleId} > .icon-export`)
-            .click()
+            cy.get(`#open_sample_result_${sampleId} > .icon-export`)
+              .click()
 
-          cy.get(`a#open_sample_result_${sampleId}`)
-            .invoke('attr', 'href')
-            .then((href) => {
-              const urlParams = new URLSearchParams(href.split('?')[1]);
-              const result_id = urlParams.get('custom');
-              cy.log('Result Id :', result_id); // Affiche "100"
+            cy.get(`a#open_sample_result_${sampleId}`)
+              .invoke('attr', 'href')
+              .then((href) => {
+                const urlParams = new URLSearchParams(href.split('?')[1]);
+                const result_id = urlParams.get('custom');
+                cy.log('Result Id :', result_id); // Affiche "100"
 
-              // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
-              cy.get('#top_info') // as anon_ids is not called, we don't used pateintId in sample set name
-                .should("contain", `${filename1.split(".vidjil")[0]}`)
-                .should("contain", `( .vidjil/`) // config name
-                .should("not.contain", `${runname} (${runId})`)
+                // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
+                cy.get('#top_info') // as anon_ids is not called, we don't used pateintId in sample set name
+                  .should("contain", `${filename1.split(".vidjil")[0]}`)
+                  .should("contain", `( .vidjil/`) // config name
+                  .should("not.contain", `${runname} (${runId})`)
 
-              cy.get('#patient_info_text')
-                .should("contain", `${filename1.split(".vidjil")[0]}`)
-                .should("contain", `( .vidjil/.clntab )`) // config name
-                .should("contain", `${runname}`)
-            })
+                cy.get('#patient_info_text')
+                  .should("contain", `${filename1.split(".vidjil")[0]}`)
+                  .should("contain", `( .vidjil/.clntab )`) // config name
+                  .should("contain", `${runname}`)
+              })
 
+          })
         })
-      })
+    })
   })
 
 
@@ -186,11 +193,18 @@ describe('Visibility of panels', function () {
     const filename2 = undefined;
     const samplingDate = "2021-01-01";
     const sampleInformation = "c #cy";
-    const configId = "9";
 
     const sampleInformation1 = "info of sample1";
     const sampleInformation2 = "info of sample2";
 
+    cy.createConfig(
+      ".vidjil/.clntab",
+      ["3", "Analysis with/for other software"],
+      undefined,
+      "x",
+      "f",
+      "i"
+    ).then((configId) => {
     cy.createPatient("", fname, lname, "", "c", "public")
       .then((patientId) => {
 
@@ -204,7 +218,7 @@ describe('Visibility of panels', function () {
         ).then((sampleId1) => {
           cy.log("added sample 1: " + 1);
 
-          
+
           // Add a second sample
           cy.addSample(
             preprocess,
@@ -215,11 +229,11 @@ describe('Visibility of panels', function () {
             sampleInformation2
           ).then((sampleId2) => {
             cy.log("added sample 2: " + sampleId2);
-            
+
             // Launch process and wait for result, as vidjil import, should be instant
             cy.launchProcess(configId, sampleId1);
             cy.get('#launch_all_unanalyzed_samples_9 > .icon-cog-2')
-            .click()
+              .click()
 
             cy.waitAnalysisCompleted(configId, sampleId1);
             cy.waitAnalysisCompleted(configId, sampleId2);
@@ -231,18 +245,18 @@ describe('Visibility of panels', function () {
               .click()
 
             cy.get(`[onclick="myUrl.loadCustomUrl(db, {'sample_set_id':${patientId} })"]`)
-              .click({force: true})
+              .click({ force: true })
 
             cy.get('#top_info')
               .should("contain", `Compare 2 samples from set ${lname} ${fname} (${patientId})`)
-            
+
             cy.get('#patient_info_text')
               .should("contain", `Custom: Compare 2 samples from set ${lname} ${fname} (${patientId})`)
 
             cy.get('#time0')
               .click()
               .should("contain", `${filename1} ( .vidjil/.clntab )`)
-              
+
             cy.get('#time1')
               .click()
               .should("contain", `${filename1} ( .vidjil/.clntab )`)
@@ -250,6 +264,7 @@ describe('Visibility of panels', function () {
           })
         })
       })
+    })
   })
 
 })

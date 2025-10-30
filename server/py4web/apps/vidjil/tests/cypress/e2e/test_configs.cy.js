@@ -10,6 +10,7 @@ describe("Manipulate configs", function () {
       "f",
       "i"
     ).then((config_id) => {
+      cy.screenshot("starting_configuration")
       cy.createPatient("", "airr", "t", "", "Cy", "public");
       cy.addSample(
         undefined,
