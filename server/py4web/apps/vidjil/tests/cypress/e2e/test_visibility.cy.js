@@ -94,6 +94,8 @@ describe('Visibility of panels', function () {
       "f",
       "i"
     ).then((configId) => {
+      cy.log(`Create config "${conf_import_vidjil} with id ${configId}`)
+
       cy.createPatient("", fname, lname, "", "c", "public")
         .then((patientId) => {
 
@@ -208,65 +210,67 @@ describe('Visibility of panels', function () {
       "f",
       "i"
     ).then((configId) => {
-    cy.createPatient("", fname, lname, "", "c", "public")
-      .then((patientId) => {
+      cy.log(`Create config "${conf_import_vidjil} with id ${configId}`)
 
-        cy.addSample(
-          preprocess,
-          "nfs",
-          filename1,
-          filename2,
-          samplingDate,
-          sampleInformation1
-        ).then((sampleId1) => {
-          cy.log("added sample 1: " + 1);
+      cy.createPatient("", fname, lname, "", "c", "public")
+        .then((patientId) => {
 
-
-          // Add a second sample
           cy.addSample(
             preprocess,
             "nfs",
             filename1,
             filename2,
             samplingDate,
-            sampleInformation2
-          ).then((sampleId2) => {
-            cy.log("added sample 2: " + sampleId2);
+            sampleInformation1
+          ).then((sampleId1) => {
+            cy.log("added sample 1: " + 1);
 
-            // Launch process and wait for result, as vidjil import, should be instant
-            cy.launchProcess(configId, sampleId1);
-            cy.get('#launch_all_unanalyzed_samples_9 > .icon-cog-2')
-              .click()
 
-            cy.waitAnalysisCompleted(configId, sampleId1);
-            cy.waitAnalysisCompleted(configId, sampleId2);
+            // Add a second sample
+            cy.addSample(
+              preprocess,
+              "nfs",
+              filename1,
+              filename2,
+              samplingDate,
+              sampleInformation2
+            ).then((sampleId2) => {
+              cy.log("added sample 2: " + sampleId2);
 
-            cy.get(`[onclick="db.call('sample_set/custom', {'id': '${patientId}', 'filter': ''} )"]`)
-              .click()
+              // Launch process and wait for result, as vidjil import, should be instant
+              cy.launchProcess(configId, sampleId1);
+              cy.get('#launch_all_unanalyzed_samples_9 > .icon-cog-2')
+                .click()
 
-            cy.get('#db_fixed_header > thead > tr > .column_20 > .checkbox_all')
-              .click()
+              cy.waitAnalysisCompleted(configId, sampleId1);
+              cy.waitAnalysisCompleted(configId, sampleId2);
 
-            cy.get(`[onclick="myUrl.loadCustomUrl(db, {'sample_set_id':${patientId} })"]`)
-              .click({ force: true })
+              cy.get(`[onclick="db.call('sample_set/custom', {'id': '${patientId}', 'filter': ''} )"]`)
+                .click()
 
-            cy.get('#top_info')
-              .should("contain", `Compare 2 samples from set ${lname} ${fname} (${patientId})`)
+              cy.get('#db_fixed_header > thead > tr > .column_20 > .checkbox_all')
+                .click()
 
-            cy.get('#patient_info_text')
-              .should("contain", `Custom: Compare 2 samples from set ${lname} ${fname} (${patientId})`)
+              cy.get(`[onclick="myUrl.loadCustomUrl(db, {'sample_set_id':${patientId} })"]`)
+                .click({ force: true })
 
-            cy.get('#time0')
-              .click()
-              .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
+              cy.get('#top_info')
+                .should("contain", `Compare 2 samples from set ${lname} ${fname} (${patientId})`)
 
-            cy.get('#time1')
-              .click()
-              .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
+              cy.get('#patient_info_text')
+                .should("contain", `Custom: Compare 2 samples from set ${lname} ${fname} (${patientId})`)
 
+              cy.get('#time0')
+                .click()
+                .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
+
+              cy.get('#time1')
+                .click()
+                .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
+
+            })
           })
         })
-      })
     })
   })
 
