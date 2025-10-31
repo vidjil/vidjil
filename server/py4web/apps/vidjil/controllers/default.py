@@ -758,13 +758,9 @@ def get_custom_data():
             )
             filename = db.sequence_file[sequence_file_id].filename
             sample_name_to_show = f"{filename} ({configuration})"
-                                                                    
-            data["samples"]["original_names"].append(
-                sample_name_to_show
-            )                                               
-            data["samples"]["names"].append(
-                sample_name_to_show
-            )
+
+            data["samples"]["original_names"].append(sample_name_to_show)
+            data["samples"]["names"].append(sample_name_to_show)
             data["samples"]["timestamp"].append(
                 str(db.sequence_file[sequence_file_id].sampling_date)
             )
@@ -780,7 +776,9 @@ def get_custom_data():
         )
         data["sample_name"] = generic_info
         data["dataFileName"] = generic_info
-        data["info"] = f"Custom: {f"{name}; " if len(samples) == 1 else ""}{generic_info}"
+        data["info"] = (
+            f"Custom: {f'{name}; ' if len(samples) == 1 else ''}{generic_info}"
+        )
 
         log.info("load custom data #TODO log db")
 
