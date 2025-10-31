@@ -84,9 +84,10 @@ describe('Visibility of panels', function () {
     const filename2 = undefined;
     const samplingDate = "2021-01-01";
     const sampleInformation1 = "info of sample1";
+    const conf_import_vidjil = "import_vidjil_1";
 
     cy.createConfig(
-      ".vidjil/.clntab",
+      conf_import_vidjil,
       ["3", "Analysis with/for other software"],
       undefined,
       "x",
@@ -123,12 +124,12 @@ describe('Visibility of panels', function () {
                 // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
                 cy.get('#top_info') // as anon_ids is called, we used pateintId in sample set name
                   .should("contain", `${filename1.split(".vidjil")[0]}`)
-                  .should("contain", `( .vidjil/`) // config name
+                  .should("contain", `( ${conf_import_vidjil}`) // config name
                   .should("not.contain", `${lname} ${fname} (${patientId})`)
 
                 cy.get('#patient_info_text')
                   .should("contain", `${filename1}`)
-                  .should("contain", `( .vidjil/`) // config name
+                  .should("contain", `( ${conf_import_vidjil}`) // config name
                   .should("contain", `${lname} ${fname} (${patientId})`)
               })
 
@@ -197,8 +198,10 @@ describe('Visibility of panels', function () {
     const sampleInformation1 = "info of sample1";
     const sampleInformation2 = "info of sample2";
 
+    const conf_import_vidjil = "import_vidjil_2";
+
     cy.createConfig(
-      ".vidjil/.clntab",
+      conf_import_vidjil,
       ["3", "Analysis with/for other software"],
       undefined,
       "x",
@@ -255,11 +258,11 @@ describe('Visibility of panels', function () {
 
             cy.get('#time0')
               .click()
-              .should("contain", `${filename1} ( .vidjil/.clntab )`)
+              .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
 
             cy.get('#time1')
               .click()
-              .should("contain", `${filename1} ( .vidjil/.clntab )`)
+              .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
 
           })
         })
