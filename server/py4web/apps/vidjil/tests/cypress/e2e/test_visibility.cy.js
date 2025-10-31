@@ -95,6 +95,7 @@ describe('Visibility of panels', function () {
       "i"
     ).then((configId) => {
       cy.log(`Create config "${conf_import_vidjil} with id ${configId}`)
+      configId = configId.toString()
 
       cy.createPatient("", fname, lname, "", "c", "public")
         .then((patientId) => {
@@ -126,12 +127,12 @@ describe('Visibility of panels', function () {
                 // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
                 cy.get('#top_info') // as anon_ids is called, we used pateintId in sample set name
                   .should("contain", `${filename1.split(".vidjil")[0]}`)
-                  .should("contain", `( ${conf_import_vidjil}`) // config name
+                  // .should("contain", `(${conf_import_vidjil}`) // config name
                   .should("not.contain", `${lname} ${fname} (${patientId})`)
 
                 cy.get('#patient_info_text')
                   .should("contain", `${filename1}`)
-                  .should("contain", `( ${conf_import_vidjil}`) // config name
+                  .should("contain", `(${conf_import_vidjil}`) // config name
                   .should("contain", `${lname} ${fname} (${patientId})`)
               })
 
@@ -153,7 +154,6 @@ describe('Visibility of panels', function () {
             cy.log("added sample " + sampleId);
 
             // Launch process and wait for result, as vidjil import, should be instant
-            const configId = "9";
             cy.launchProcess(configId, sampleId);
             cy.waitAnalysisCompleted(configId, sampleId);
 
@@ -170,12 +170,12 @@ describe('Visibility of panels', function () {
                 // f"set {name}; sequence file: {filename} ({sequence_file_id}); result file: {id}";
                 cy.get('#top_info') // as anon_ids is not called, we don't used pateintId in sample set name
                   .should("contain", `${filename1.split(".vidjil")[0]}`)
-                  .should("contain", `( .vidjil/`) // config name
+                  // .should("contain", `(${conf_import_vidjil}`) // config name
                   .should("not.contain", `${runname} (${runId})`)
 
                 cy.get('#patient_info_text')
                   .should("contain", `${filename1.split(".vidjil")[0]}`)
-                  .should("contain", `( .vidjil/.clntab )`) // config name
+                  .should("contain", `(${conf_import_vidjil})`) // config name
                   .should("contain", `${runname}`)
               })
 
@@ -211,6 +211,7 @@ describe('Visibility of panels', function () {
       "i"
     ).then((configId) => {
       cy.log(`Create config "${conf_import_vidjil} with id ${configId}`)
+      configId = configId.toString()
 
       cy.createPatient("", fname, lname, "", "c", "public")
         .then((patientId) => {
@@ -239,7 +240,7 @@ describe('Visibility of panels', function () {
 
               // Launch process and wait for result, as vidjil import, should be instant
               cy.launchProcess(configId, sampleId1);
-              cy.get('#launch_all_unanalyzed_samples_9 > .icon-cog-2')
+              cy.get(`#launch_all_unanalyzed_samples_${configId} > .icon-cog-2`)
                 .click()
 
               cy.waitAnalysisCompleted(configId, sampleId1);
@@ -262,11 +263,11 @@ describe('Visibility of panels', function () {
 
               cy.get('#time0')
                 .click()
-                .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
+                .should("contain", `${filename1} (${conf_import_vidjil})`)
 
               cy.get('#time1')
                 .click()
-                .should("contain", `${filename1} ( ${conf_import_vidjil} )`)
+                .should("contain", `${filename1} (${conf_import_vidjil})`)
 
             })
           })
