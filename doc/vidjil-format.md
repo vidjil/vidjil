@@ -49,44 +49,71 @@ or `clusters`, to further cluster some clones, see below).
     "producer": "program xyz version xyz",
     "timestamp": "2014-10-01 12:00:11",
     "vidjil_json_version": "2016b",
-
     "samples": {
-         "number": 1, 
-         "original_names": ["T8045-BC081-Diag.fastq"],
-         "commandline": [
+        "number": 1,
+        "original_names": [
+            "T8045-BC081-Diag.fastq"
+        ],
+        "commandline": [
             "vidjil-algo -g germline/homo-sapiens.g -Z 100 -r 1 -3 Diag.fastq"
-         ]
+        ]
     },
-
-    "reads" : {
-        "total" :           [ 437164 ] ,
-        "segmented" :       [ 335662 ] ,
-        "germline" : {
-            "TRG" :         [ 250000 ] ,
-            "IGH" :         [ 85662  ]
+    "reads": {
+        "total": [
+            437164
+        ],
+        "segmented": [
+            335662
+        ],
+        "germline": {
+            "TRG": [
+                250000
+            ],
+            "IGH": [
+                85662
+            ]
         },
         "clones": {
-          "TRG" :         [ 2500 ],
-          "IGH" :         [ 856  ]
+            "TRG": [
+                2500
+            ],
+            "IGH": [
+                856
+            ]
         }
     },
-
     "clones": [
         {
             "id": "clone-001",
             "name": "TRGV5*01 5/CC/0 TRGJ1*02",
             "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
-    "reads" : [ 243241 ],
-            "_average_read_length": [ 119.3 ],
+            "reads": [
+                243241
+            ],
+            "_average_read_length": [
+                119.3
+            ],
             "germline": "TRG",
             "top": 1,
-            "seg":
-            {
-        "5": {"name": "TRGV5*01",  "start": 1,   "stop": 87, "delRight":5},
-        "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118,   "delLeft":0},
-                "cdr3": { "start": 78, "stop": 105, "seq": "gccacctgggccttattataagaaactc" }
-    }
-
+            "seg": {
+                "5": {
+                    "name": "TRGV5*01",
+                    "start": 1,
+                    "stop": 87,
+                    "delRight": 5
+                },
+                "3": {
+                    "name": "TRGJ1*02",
+                    "start": 89,
+                    "stop": 118,
+                    "delLeft": 0
+                },
+                "cdr3": {
+                    "start": 78,
+                    "stop": 105,
+                    "seq": "gccacctgggccttattataagaaactc"
+                }
+            }
         }
     ]
 }
