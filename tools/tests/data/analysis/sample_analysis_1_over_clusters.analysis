@@ -1,0 +1,19 @@
+{
+    "notes": "Sample with clone 1-5; default reads to 1000",
+    "vidjil_json_version": "2014.09",
+    "clones":
+    [],
+    "clusters":
+    [
+        [
+            "clone_shared_main",
+            "clone_shared_sub2",
+            "clone_shared_sub3",
+            "clone_shared_sub4"
+        ],
+        [
+            "clone_5A",
+            "clone_7"
+        ]
+    ]
+}

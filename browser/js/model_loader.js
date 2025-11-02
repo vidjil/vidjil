@@ -727,7 +727,7 @@ Model_loader.prototype = {
                 return true
             }
         }else{
-            this.analysis=this.mergeAnalysisContent(analysis)
+            this.analysis=analysis
         }
         
         //check version
