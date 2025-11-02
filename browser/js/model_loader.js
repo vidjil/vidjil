@@ -676,9 +676,9 @@ Model_loader.prototype = {
         }
         // Do merge
 
-        analysis["clusters"].forEach(cluster_other => {
+        analysis.clusters.forEach(cluster_other => {
             var found = False;
-            for (var cluster_obj in self["clusters"]){
+            for (var cluster_obj in self.clusters){
                 // # look if shared clonotype between cluster
                 // # cut id to keep only id sequence
                 const clean_cluster_obj = cluster_obj.map(clonotype => clonotype.split("-")[0]);
@@ -692,20 +692,21 @@ Model_loader.prototype = {
                 }
             }
             if (!found){
-                self["clusters"].push(cluster_other)
+                self.clusters.push(cluster_other)
             }
         })
 
         // # Should be empty for the moment; only fill on real analysis file, but in case...
-        analysis["clones"].forEach(clonotype_other => {
-            if (!clonotype_other["id"] in self.analysis["clones"].some(clonotype => clonotype["id"])) {
-                self.analysis["clones"].push(clonotype_other)
+        analysis.clones.forEach(clonotype_other => {
+            if (!(clonotype_other.id in self.analysis.clones.some(clonotype => clonotype.id))) {
+                self.analysis.clones.push(clonotype_other)
             } else {
-                existant_clonotype = self.analysis["clones"].find(clonotype => clonotype["id"] === clonotype_other["id"])
+                existant_clonotype = self.analysis.clones.find(clonotype => clonotype.id === clonotype_other.id)
                 existant_clonotype = mergeDictionaries(existant_clonotype, clonotype_other)
             }
         })
-        ["samples", "report_save", "saved_system_selected_by_config", "normalization"].forEach(field => {
+        var analysis_keys = ["samples", "report_save", "saved_system_selected_by_config", "normalization"]
+        analysis_keys.forEach(field => {
             self.analysis[field] = mergeDictionaries(analysis[field], self.analysis[field])
         })
     },
