@@ -3,7 +3,7 @@ import json
 from datetime import timedelta
 
 from py4web import action, request
-from pydal.validators import IS_NOT_IN_DB, IS_EMAIL
+from pydal.validators import IS_EMAIL, IS_NOT_IN_DB
 
 from ..common import T, auth, db, log
 from ..modules import vidjil_utils
@@ -146,13 +146,13 @@ def edit_form():
     )
 
     current_value = dict(db(db.auth_user.id == request.params["id"]).select()[0])
-              
+
     email = request.params["email"]
     if email != "":
         if current_value["email"] == email:
             pass
         elif current_value["email"] != email and not auth.is_admin():
-            error = f"You cannot change yourself your email adress. Please contact an administrator to do this change."
+            error = "You cannot change yourself your email adress. Please contact an administrator to do this change."
             res = {"success": "false", "message": f"new_email: {error}"}
             log.error(res)
             return json.dumps(res, separators=(",", ":"))
@@ -161,18 +161,25 @@ def edit_form():
             db.auth_user.email.requires = (
                 IS_EMAIL(),
                 IS_NOT_IN_DB(
-                    db, "auth_user.email",
-                    ignore_common_filters=[current_value["email"]], # Ignore current user
-                    error_message="Email already exists"
-                )
+                    db,
+                    "auth_user.email",
+                    ignore_common_filters=[
+                        current_value["email"]
+                    ],  # Ignore current user
+                    error_message="Email already exists",
+                ),
             )
-            new_email, error = db.auth_user.email.validate(email) # Don't work anymore as IS_NOT_IN_DB is include in Field declaration for email value
+            new_email, error = db.auth_user.email.validate(
+                email
+            )  # Don't work anymore as IS_NOT_IN_DB is include in Field declaration for email value
             if error:
                 res = {"success": "false", "message": f"new_email: {error}"}
                 log.error(res)
                 return json.dumps(res, separators=(",", ":"))
             updated_user["email"] = new_email
-            log.debug(f"Admin update email address of user {current_value["id"]} from '{current_value["email"]}' to '{email}'")
+            log.debug(
+                f"Admin update email address of user {current_value['id']} from '{current_value['email']}' to '{email}'"
+            )
 
     log.debug(f"updated_user : {updated_user}")
 
