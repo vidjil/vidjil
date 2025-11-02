@@ -43,6 +43,8 @@ The actual values used for X- and Y- axis in the V/J grid plot are `seg.5.name` 
 Note that other elements could be added by some program (such as `tag`, to identify some clones,
 or `clusters`, to further cluster some clones, see below).
 
+Since release web-2025-10, you can include analysis content inside vidjil filen under `analysis` key. This allow to have some process that pre-compute some extra-information as clustering.
+
 <!-- tangle: analysis-example1.vidjil -->
 ``` javascript
 {
@@ -115,7 +117,12 @@ or `clusters`, to further cluster some clones, see below).
                 }
             }
         }
-    ]
+    ],
+    "analysis": {
+      "cluster": [
+        "clone-001"
+      ]
+    }
 }
 ```
 
