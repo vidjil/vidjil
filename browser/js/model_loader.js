@@ -499,7 +499,7 @@ Model_loader.prototype = {
             this.loadAllDistribClones()
         }
         if (data.analysis != undefined){
-            console.default.log("Load analysis from vidjil file")
+            // console.log({"type": "popup", "default": "Load analysis from vidjil file"});
             this.parseJsonAnalysis(data.analysis)
         }
         this.is_ready = true
