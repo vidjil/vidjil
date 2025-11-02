@@ -120,6 +120,8 @@ functional_server_cypress:
 
 ###############################
 
+qunit:
+	chromium-browser browser/test/QUnit/test_Qunit.html  2>/dev/null &
 
 ###
 
