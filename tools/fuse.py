@@ -668,10 +668,11 @@ class Analysis:
                 
 
         # Should be empty for the moment; only fill on real analysis file, but in case...
-        obj.d["clones"] = sorted(self.d["clones"], key=lambda x: x["id"])
-        for clonotype_other in other.d["clones"]:
-            if not clonotype_other["id"] in [clonotype["id"] for clonotype in obj.d["clones"]]:
-                    obj.d["clones"].append(clonotype_other)
+        if "clones" in self.d:
+            obj.d["clones"] = sorted(self.d["clones"], key=lambda x: x["id"])
+            for clonotype_other in other.d["clones"]:
+                if not clonotype_other["id"] in [clonotype["id"] for clonotype in obj.d["clones"]]:
+                        obj.d["clones"].append(clonotype_other)
         return obj
 
 

@@ -119,7 +119,7 @@ Since release web-2025-10, you can include analysis content inside vidjil filen 
         }
     ],
     "analysis": {
-      "cluster": [
+      "clusters": [
         "clone-001"
       ]
     }
