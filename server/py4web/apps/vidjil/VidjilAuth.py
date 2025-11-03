@@ -173,7 +173,7 @@ class VidjilAuth(Auth):
                     )
                     self.send_mail(
                         to=email,
-                        subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Your account have been locked",
+                        subject=f"{settings.SMTP_EMAIL_SUBJECT_START} Your account has been locked",
                         body=f"""{message}\nWe have detected multiple unsuccessful login attempts to your account.
 This may indicate that someone is trying to access your account without authorization.
 As a security precaution, your account has been temporarily locked.
