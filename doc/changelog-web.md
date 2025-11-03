@@ -24,6 +24,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 - Fix error at user edit when email value is present (#5532)
 - Allow admin to reset wrong password counter (#5513)
 - Cache again some developpment menu (#5526)
+- Fix some error on uploading of large sequence file (#5517, #5534)
 
 **Security**
 
@@ -32,7 +33,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 **Technical**
 
 - Update and fix shouldget pipeline to use and test json content (!1683)
-- Refactor server part to use compressed 
+- Refactor server part to use compressed  (#5535)
 - Update some should test to python3 (#5222)
 - Integrate some external librairies inside docker image to not depend of external CDN service (#5527)
 
