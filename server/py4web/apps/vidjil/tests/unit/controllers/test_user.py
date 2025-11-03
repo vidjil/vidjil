@@ -470,7 +470,82 @@ class TestUserController(unittest.TestCase):
         assert result["success"] == "false"
         assert result["message"] == user_controller.ACCESS_DENIED
 
-    def test_edit_form_myself_OK(self):
+    def test_edit_form_myself_with_mail_same_OK(self):
+        # Given : Logged as user 3
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            db_manipulation_utils.get_indexed_user_password(3),
+        )
+
+        # When : Trying and edit user 3
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={
+                "format": "json",
+                "id": self.user_3_id,
+                "first_name": "modified_first_name",
+                "last_name": "modified_last_name",
+                "email": db_manipulation_utils.get_indexed_user_email(3),
+                "password": "ComplicatedModifiedPassword",
+                "confirm_password": "ComplicatedModifiedPassword",
+            },
+        ):
+            json_result = user_controller.edit_form()
+
+        # Then : User 3 was modified
+        assert json_result is not None
+        result = json.loads(json_result)
+        # assert result["redirect"] == "back"
+        assert (
+            result["message"]
+            == f"{db_manipulation_utils.get_indexed_user_email(3)} (5) user edited"
+        )
+        user_3 = db.auth_user[self.user_3_id]
+        assert user_3["first_name"] == "modified_first_name"
+        assert user_3["last_name"] == "modified_last_name"
+        assert user_3["email"] == db_manipulation_utils.get_indexed_user_email(3)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            "ComplicatedModifiedPassword",
+        )
+
+    def test_edit_form_myself_with_mail_empty_OK(self):
+        # When : Trying and edit user 3
+        # But with empty email adress this time; should work as well
+        with Omboddle(
+            self.session,
+            keep_session=True,
+            params={
+                "format": "json",
+                "id": self.user_3_id,
+                "first_name": "modified_first_name",
+                "last_name": "modified_last_name",
+                "email": "",
+                "password": "ComplicatedModifiedPassword2",
+                "confirm_password": "ComplicatedModifiedPassword2",
+            },
+        ):
+            json_result = user_controller.edit_form()
+
+        # Then : User 3 was modified
+        assert json_result is not None
+        result = json.loads(json_result)
+        assert result["redirect"] == "back"
+        assert result["message"] == " (5) user edited"
+        user_3 = db.auth_user[self.user_3_id]
+        assert user_3["first_name"] == "modified_first_name"
+        assert user_3["last_name"] == "modified_last_name"
+        assert user_3["email"] == db_manipulation_utils.get_indexed_user_email(3)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(3),
+            "ComplicatedModifiedPassword2",
+        )
+
+    def test_edit_form_myself_with_mail_blocked(self):
         # Given : Logged as user 3
         db_manipulation_utils.log_in(
             self.session,
@@ -497,13 +572,11 @@ class TestUserController(unittest.TestCase):
         # Then : User 3 was modified
         assert json_result is not None
         result = json.loads(json_result)
-        assert result["redirect"] == "back"
-        assert result["message"].startswith("modified@email.com (")
-        assert result["message"].endswith(") user edited")
-        user_3 = db.auth_user[self.user_3_id]
-        assert user_3["first_name"] == "modified_first_name"
-        assert user_3["last_name"] == "modified_last_name"
-        assert user_3["email"] == "modified@email.com"
+        # assert result["redirect"] == "back"
+        assert (
+            result["message"]
+            == "new_email: You cannot change yourself your email adress. Please contact an administrator to do this change."
+        )
         db_manipulation_utils.log_in(
             self.session, "modified@email.com", "ComplicatedModifiedPassword"
         )
@@ -553,11 +626,7 @@ class TestUserController(unittest.TestCase):
 
     def test_edit_form_myself_wrong_email(self):
         # Given : Logged as user 3
-        db_manipulation_utils.log_in(
-            self.session,
-            db_manipulation_utils.get_indexed_user_email(3),
-            db_manipulation_utils.get_indexed_user_password(3),
-        )
+        db_manipulation_utils.log_in_as_default_admin(self.session)
 
         # When : Trying and edit user 3
         with Omboddle(
@@ -568,7 +637,7 @@ class TestUserController(unittest.TestCase):
                 "id": self.user_3_id,
                 "first_name": "modified_first_name",
                 "last_name": "modified_last_name",
-                "email": "modified_email.com",
+                "email": "not_an_email.com",
                 "password": "ComplicatedModifiedPassword",
                 "confirm_password": "ComplicatedModifiedPassword",
             },
@@ -583,10 +652,10 @@ class TestUserController(unittest.TestCase):
         user_3 = db.auth_user[self.user_3_id]
         assert user_3["first_name"] != "modified_first_name"
         assert user_3["last_name"] != "modified_last_name"
-        assert user_3["email"] != "modified_email.com"
+        assert user_3["email"] != "not_an_email.com"
         # cannot log in with new credentials
         log_in_result = db_manipulation_utils.log_in(
-            self.session, "modified_email.com", "ComplicatedModifiedPassword"
+            self.session, "not_an_email.com", "ComplicatedModifiedPassword"
         )
         assert log_in_result["message"] == "Invalid Credentials"
         # can log in with old credentials
@@ -660,7 +729,7 @@ class TestUserController(unittest.TestCase):
                 "id": self.user_3_id,
                 "first_name": "modified_first_name",
                 "last_name": "modified_last_name",
-                "email": "modified@email.com",
+                "email": db_manipulation_utils.get_indexed_user_email(3),
                 "password": "simple",
                 "confirm_password": "simple",
             },
