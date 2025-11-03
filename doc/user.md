@@ -609,7 +609,7 @@ process, and access to the results (`See results`, bottom right).
 <figure markdown>
   ![Adding a sample from a run set](./pictures/database_adding_sample.png)
   <figcaption>
-    We add 4 sample linked to a same run set (here "July 2025"). Each sample will be linked t othis runs as commons set is filled. Each samples will also be linked to a specific patient filled at the end of each line. 
+    We add 4 sample linked to a same run set (here "July 2025"). Each sample will be linked to this run as commons set is filled. Each samples will also be linked to a specific patient filled at the end of each line. 
     This patient is found from your database and search when you start typing in this field.
   </figcaption>
 </figure>
