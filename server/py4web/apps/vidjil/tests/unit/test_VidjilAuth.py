@@ -66,7 +66,6 @@ class TestVidjilAuth:
         user = db(db.auth_user.email == email).select().first()
         assert user.number_wrong_passwords == initial_number_wrong_passwords + 1
 
-
     def test_vidjil_auth_login_account_locked_sends_two_mails(self, mocker):
         # Given: a user with too many failed logins and a mocked send_mail
         email = db_manipulation_utils.get_indexed_user_email(1)
