@@ -183,7 +183,8 @@ If these login attempts were not made by you, please secure your account as soon
 
 As a precaution, we recommend:
 * Ensuring your password is strong and not reused elsewhere
-* Updating your password after your account is unlocked if you suspect it may have been compromised""")
+* Updating your password after your account is unlocked if you suspect it may have been compromised""",
+                    )
             else:
                 number_of_tries_left = (
                     settings.MAX_WRONG_PASSWORDS - updated_number_wrong_passwords
