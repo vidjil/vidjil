@@ -584,6 +584,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {integer[]} clusters - an array of list of clone_id
      * */
     loadCluster: function (clusters) {
+        
+        // reset cluster before applying new one
+        this.resetClusters(update=false);
 
     this.analysis_clusters = [] // will store unused clusters analysis
     
@@ -2316,8 +2319,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     /**
      * break all clusters to default 1-clone clusters
+     * @param {boolean} update Apply update of model after reset. In case of analysis overwrite, model is not fully loaded and cannot update
      * */
-    resetClusters: function () {
+    resetClusters: function (update=true) {
         this.saveClusters()
 
         for (var i = 0; i < this.clones.length; i++) {
@@ -2325,7 +2329,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.clone(i).mergedId = undefined
         }
 
-        this.update()
+        if (update){
+            this.update()
+        }
     },
 
 
