@@ -232,7 +232,7 @@ def header_igrec_results(ff_igrec):
     f = open(ff_igrec).__iter__()
 
     while True:
-        l = f.next()
+        l = next(f)
         result = IgReC_Result(l)
         yield result['Read id'].replace('_', ' '), result.to_vdj()
 
@@ -269,7 +269,7 @@ def header_mixcr_results(ff_mixcr):
 
     f = open(ff_mixcr).__iter__()
 
-    mixcr_first_line = f.next()
+    mixcr_first_line = next(f)
     globals()['mixcr_labels'] = mixcr_first_line.rstrip().split('\t')
 
     while True:
@@ -316,7 +316,7 @@ def header_vquest_results(ff_fasta, ff_vquest):
     f_fasta = open(ff_fasta).__iter__()
     f_vquest = open(ff_vquest).__iter__()
 
-    vquest_first_line = f_vquest.next()
+    vquest_first_line = next(f_vquest)
     globals()['vquest_labels'] = vquest_first_line.split('\t')
 
     # print vquest_labels
@@ -377,8 +377,8 @@ def header_vidjil_results(ff_fasta, ff_vidjil):
     f_fasta = open(ff_fasta).__iter__()
     vidjil = json.load(open(ff_vidjil))
 
-
-    globals()['vidjil_labels'] = vidjil["clones"][0].keys()
+    
+    globals()['vidjil_labels'] = list(vidjil["clones"][0].keys())
     clone_nb = 0
 
     while True:
@@ -505,7 +505,7 @@ def should_results_from_vidjil(program, f_should, f_log):
 
     exit_code = os.system(cmd)
     if exit_code:
-        print "Error. The program halted with exit code %s." % exit_code
+        print("Error. The program halted with exit code %s." % exit_code)
         sys.exit(3)
 
     return should_results_from_vidjil_output(f_log)

@@ -4,6 +4,39 @@
 This changelog concerns the Vidjil web application, client and server.
 We are using continuous integration and deployment, some features may be pushed on our servers between these releases.
 
+## Web 2025-10
+
+??? note "Milestone 2025-10"
+Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/23).
+
+**Improve analysis**
+
+- Use analysis content from vidjil result file. Allow to use pre-clustering as output of vidjil analysis (#)
+- Improve MRD values screening to have same behavior than not normlized value (#5536)
+- Add tooltip to see name and value of a clonotype on hover in scatterplot view (#5395)
+- Return name of sample, set and configuration at opening of one sample result or in compared view (#5205 and #2241)
+- Update some icons in interface (#5508)
+- Fix error of "deleted sample" naming on result of externally analyzed vidjil file (#3220)
+
+
+**Bug fixes**
+
+- Fix error at user edit when email value is present (#5532)
+- Allow admin to reset wrong password counter (#5513)
+- Cache again some developpment menu (#5526)
+- Fix some error on uploading of large sequence file (#5517, #5534)
+
+**Security**
+
+- Send email to user when account is blocked (#5530)
+
+**Technical**
+
+- Update and fix shouldget pipeline to use and test json content (!1683)
+- Refactor server part to use compressed  (#5535)
+- Update some should test to python3 (#5222)
+- Integrate some external librairies inside docker image to not depend of external CDN service (#5527)
+
 ## Web 2025-06
 
 ??? note "Milestone 2025-06"

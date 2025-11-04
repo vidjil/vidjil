@@ -20,8 +20,8 @@ doctests:
 	python3 -m doctest -v ../fuse.py
 	python3 -m doctest -v ../utils.py
 	python3 -m doctest -v ../vidjil-to-fasta.py
-	python2.7 -m doctest -v ../../algo/tests/should-vdj-to-tap.py
-	python2.7 -m doctest -v ../../algo/tests/repseq_vdj.py
+	python3 -m doctest -v ../../algo/tests/should-vdj-to-tap.py
+	python3 -m doctest -v ../../algo/tests/repseq_vdj.py
 	python3 ../org-babel-tangle.py --test
 	@echo "*** All python tests passed"
 

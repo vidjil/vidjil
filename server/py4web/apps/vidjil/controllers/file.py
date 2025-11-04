@@ -752,99 +752,129 @@ def upload_process(
     """
 
     error = []
-    sequence_file = db.sequence_file[sequence_id]
 
-    if sequence_file is None:
-        error.append("no sequence file with this id")
+    # Lock to prevent race issue on R1/R2 upload
+    sequence_file_lock = lock_if_needed(preprocess, sequence_id)
 
-    if not os.path.isfile(merged_file_path):
-        error.append(f"Expected merged file {merged_file_path} not found")
-
-    if error:
-        if sequence_file is not None:
-            sequence_file.update_record(pre_process_flag=tasks.STATUS_UPLOAD_FAILED)
-        raise HTTP(500, ", ".join(error))
-
-    mes = f"file {filename}({sequence_id}) "
-
-    # Store file in db by moving it to the correct location
     try:
-        if file_number == "2":
-            db_filename = ""
-            with io.BytesIO() as empty_file:
-                db_filename = db.sequence_file.data_file2.store(empty_file, filename)
-            shutil.move(
-                merged_file_path,
-                os.path.join(db.sequence_file.data_file2.uploadfolder, db_filename),
-            )
-            sequence_file.update_record(data_file2=db_filename)
-        else:
-            db_filename = ""
-            with io.BytesIO() as empty_file:
-                db_filename = db.sequence_file.data_file.store(empty_file, filename)
-            shutil.move(
-                merged_file_path,
-                os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
-            )
-            sequence_file.update_record(data_file=db_filename)
-    except IOError as e:
-        if str(e).find("File name too long") > -1:
-            error.append("Your filename is too long, please shorten it.")
-        else:
-            error.append("System error during processing of uploaded file.")
-            log.error(str(e))
-        sequence_file.update_record(pre_process_flag=tasks.STATUS_UPLOAD_FAILED)
-        raise HTTP(500, ", ".join(error))
+        with db.single_transaction():
+            # Run in a transaction to prevent race issue on R1/R2 upload
+            sequence_file = db.sequence_file[sequence_id]
 
-    data_file = sequence_file.data_file
-    data_file2 = sequence_file.data_file2
+            if sequence_file is None:
+                error.append("no sequence file with this id")
 
-    if file_number == "1" and data_file is None:
-        raise HTTP(500, "no data file")
-    if file_number == "2" and data_file2 is None:
-        raise HTTP(500, "no data file 2")
+            if not os.path.isfile(merged_file_path):
+                error.append(f"Expected merged file {merged_file_path} not found")
 
-    # Start preprocess if needed
-    number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
-    if preprocess is not None:
-        # Lock to prevent race issue on R1/R2 upload
-        host, port = settings.REDIS_SERVER.split(":")
-        my_redis = Redis(host=host, port=int(port))
-        sequence_file_lock = Redlock(
-            key=f"sequence_file_{sequence_id}",
-            masters={my_redis},
-            auto_release_time=10,
-            context_manager_blocking=True,
-            context_manager_timeout=10,
-        )
-        with sequence_file_lock:
-            if data_file is not None and (
-                data_file2 is not None if number_of_required_files == 2 else True
-            ):
-                sequence_file.update_record(pre_process_flag=tasks.STATUS_WAITING)
-                old_task_id = sequence_file.pre_process_scheduler_task_id
-                if db.scheduler_task[old_task_id] is not None:
-                    scheduler.control.revoke(old_task_id, terminate=True)
-                    db(db.scheduler_task.id == old_task_id).delete()
-                    db.commit()
-                tasks.schedule_pre_process(int(sequence_id), int(preprocess.id))
-                mes += f" | p{preprocess.id} start pre_process for {sequence_id}: {preprocess.name} "
+            if error:
+                if sequence_file is not None:
+                    sequence_file.update_record(
+                        pre_process_flag=tasks.STATUS_UPLOAD_FAILED
+                    )
+                raise HTTP(500, ", ".join(error))
 
-    # Compute and store file size
-    if file_number == "1" and data_file is not None:
-        seq_file = pathlib.Path(db.sequence_file.data_file.uploadfolder, data_file)
-        size = seq_file.stat().st_size
-        mes += f" ({vidjil_utils.format_size(size)})"
-        sequence_file.update_record(size_file=size)
-    if file_number == "2" and data_file2 is not None:
-        seq_file2 = pathlib.Path(db.sequence_file.data_file2.uploadfolder, data_file2)
-        size2 = seq_file2.stat().st_size
-        mes += f" ({vidjil_utils.format_size(size2)})"
-        sequence_file.update_record(size_file2=size2)
+            mes = f"file {filename}({sequence_id}) "
+
+            # Store file in db by moving it to the correct location
+            try:
+                size = store_file_in_db(
+                    file_number, filename, merged_file_path, sequence_file
+                )
+                mes += f" ({vidjil_utils.format_size(size)})"
+            except IOError as e:
+                if str(e).find("File name too long") > -1:
+                    error.append("Your filename is too long, please shorten it.")
+                else:
+                    error.append("System error during processing of uploaded file.")
+                    log.error(str(e))
+                sequence_file.update_record(pre_process_flag=tasks.STATUS_UPLOAD_FAILED)
+                raise HTTP(500, ", ".join(error))
+
+            if file_number == "1" and sequence_file.data_file is None:
+                raise HTTP(500, "no data file")
+            if file_number == "2" and sequence_file.data_file2 is None:
+                raise HTTP(500, "no data file 2")
+
+            # Start preprocess if needed
+            if start_preprocess_if_needed(sequence_file, preprocess):
+                mes += f"| p{preprocess.id} start pre_process for {sequence_file.id}: {preprocess.name}"
+    finally:
+        if sequence_file_lock is not None:
+            sequence_file_lock.release()
+            log.debug(f"Released lock for key {sequence_file_lock.key}")
 
     res = {"message": mes + " upload finished"}
     log.info(res)
     return json.dumps(res, separators=(",", ":"))
+
+
+def lock_if_needed(preprocess: Row, sequence_id: int) -> Redlock | None:
+    sequence_file_lock = None
+    number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
+    if (preprocess is not None) and (number_of_required_files == 2):
+        host, port = settings.REDIS_SERVER.split(":")
+        my_redis = Redis(host=host, port=int(port))
+        lock_key = f"sequence_file_{sequence_id}"
+        sequence_file_lock = Redlock(
+            key=lock_key,
+            masters={my_redis},
+            auto_release_time=10,
+        )
+        sequence_file_lock.acquire(timeout=15)
+        log.debug(f"Acquired lock for key {sequence_file_lock.key}")
+    return sequence_file_lock
+
+
+def store_file_in_db(
+    file_number: int,
+    filename: str,
+    merged_file_path: pathlib.Path,
+    sequence_file_to_update: Row,
+) -> int:
+    size = 0
+    if file_number == "2":
+        db_filename = ""
+        with io.BytesIO() as empty_file:
+            db_filename = db.sequence_file.data_file2.store(empty_file, filename)
+        db_filename_fullpath = pathlib.Path(
+            db.sequence_file.data_file2.uploadfolder, db_filename
+        )
+        shutil.move(merged_file_path, db_filename_fullpath)
+        size = db_filename_fullpath.stat().st_size
+        sequence_file_to_update.update_record(data_file2=db_filename, size_file2=size)
+    else:
+        db_filename = ""
+        with io.BytesIO() as empty_file:
+            db_filename = db.sequence_file.data_file.store(empty_file, filename)
+        db_filename_fullpath = pathlib.Path(
+            db.sequence_file.data_file.uploadfolder, db_filename
+        )
+        shutil.move(merged_file_path, db_filename_fullpath)
+        size = db_filename_fullpath.stat().st_size
+        sequence_file_to_update.update_record(data_file=db_filename, size_file=size)
+    return size
+
+
+def start_preprocess_if_needed(sequence_file: Row, preprocess: Row) -> bool:
+    number_of_required_files = vidjil_utils.getPreprocessRequiredFiles(preprocess)
+    if (
+        (preprocess is not None)
+        and (sequence_file.data_file is not None)
+        and (
+            sequence_file.data_file2 is not None
+            if number_of_required_files == 2
+            else True
+        )
+    ):
+        sequence_file.update_record(pre_process_flag=tasks.STATUS_WAITING)
+        old_task_id = sequence_file.pre_process_scheduler_task_id
+        if db.scheduler_task[old_task_id] is not None:
+            scheduler.control.revoke(old_task_id, terminate=True)
+            db(db.scheduler_task.id == old_task_id).delete()
+        tasks.schedule_pre_process(int(sequence_file.id), int(preprocess.id))
+        return True
+    return False
 
 
 @action("/vidjil/file/confirm", method=["POST", "GET"])

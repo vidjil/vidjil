@@ -177,7 +177,29 @@ describe('Scatterplot', function () {
   })
 
 
-  it('05-labels',  function() {
+  it('05-tooltips on clone in plot',  function() {
+    // # issue 4370; test tooltip content on graph
+    cy.openAnalysis("doc/analysis-example2.vidjil")
+
+    cy.get("#visu_tooltip")
+      .should('have.css', 'opacity', '0') // correct opacity of tooltip when label is NOT hover
+    cy.get('#visu_circle0')
+      .trigger('mouseover')
+
+    cy.get("#visu_tooltip")
+      .should('have.css', 'opacity', '0') // correct opacity of tooltip when label is NOT hover
+      .wait(1500) // A tleast 1sec to be fully opacified
+      .should('have.css', 'opacity', '1') // correct opacity of tooltip when label is hover after timeout
+
+    cy.get("#visu_tooltip") // tooltip text don't have '\n'; so split content testing
+      .should("contain", "clone-001")
+      .should("contain", "size: 119 nt, 243 241 reads (72.46%, 97.29% of TRG); top 1")
+      .should("contain", "V/5' gene: TRGV5")
+      .should("contain", "J/3' gene: TRGJ1")
+  })
+
+
+  it('06-labels',  function() {
     // Issue 4472; model precision is incorect if distributions clones are set
     cy.openAnalysis("browser/test/data/issues/4472.vidjil")
     cy.get('#text_container > [y="40"]').should("have.text", "100%")
@@ -188,13 +210,13 @@ describe('Scatterplot', function () {
     cy.get('#text_container > [y="40"]').should("have.text", "10%")
   })
 
-  it('06-Axis selector in menus',  function() {
+  it('07-Axis selector in menus',  function() {
     cy.openAnalysis("doc/analysis-example.vidjil")
     cy.get("#visu_V5_gene")
       .should('have.attr', 'title', "V gene (or 5' segment), gathering all alleles")
   })
 
-  it('07-legend interaction and update (issue 5125)',  function() {
+  it('08-legend interaction and update (issue 5125)',  function() {
     // Issue 5125; model update completly when click on a legend of scatterplot (missing update of graph view)
     cy.openAnalysis("doc/analysis-example2.vidjil")
     cy.get('#visu_id_label_y_TRGJ1').should("have.text", "TRGJ1")

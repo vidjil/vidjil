@@ -66,7 +66,7 @@ class TestVidjilAuth:
         user = db(db.auth_user.email == email).select().first()
         assert user.number_wrong_passwords == initial_number_wrong_passwords + 1
 
-    def test_vidjil_auth_login_account_locked_sends_mail(self, mocker):
+    def test_vidjil_auth_login_account_locked_sends_two_mails(self, mocker):
         # Given: a user with too many failed logins and a mocked send_mail
         email = db_manipulation_utils.get_indexed_user_email(1)
         password = "wrong_password"
@@ -80,15 +80,29 @@ class TestVidjilAuth:
         # When: calling login with wrong password to trigger lock
         _, error = auth.login(email, password)
 
-        # Then: login is blocked and send_mail is called
+        # Then: login is blocked and send_mail is called twice
         assert (
             error
             == "Max number of invalid credentials reached, account is locked. Please contact an administrator."
         )
-        assert mock_send_mail.called
-        args, kwargs = mock_send_mail.call_args
-        assert "Account locked" in kwargs["subject"]
-        assert email in kwargs["body"] or str(user.id) in kwargs["body"]
+
+        # Check that we sent 2 emails
+        assert mock_send_mail.call_count == 2
+
+        # Get each call
+        calls = mock_send_mail.call_args_list
+        call_admin = calls[0]
+        call_user = calls[1]
+
+        # Check call to admin
+        kwargs_admin = call_admin.kwargs
+        assert "Account locked" in kwargs_admin["subject"]
+        assert email in kwargs_admin["body"] or str(user.id) in kwargs_admin["body"]
+
+        # Check call to user
+        kwargs_user = call_user.kwargs
+        assert "Your account has been locked" in kwargs_user["subject"]
+        assert email in kwargs_user["body"]
 
     def test_vidjil_auth_login_account_locked(self):
         # Given: a user with too many failed logins

@@ -4,7 +4,7 @@
 !LAUNCH: $PYTHON ../../api_demo.py --public
 
 $ Correct url of server
-2: db.vidjil.org\/vidjil 
+2: app-back.vidjil.org\/vidjil 
 
 
 $ Successful login

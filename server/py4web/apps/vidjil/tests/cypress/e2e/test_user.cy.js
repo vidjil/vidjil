@@ -90,4 +90,95 @@ describe("Creation of users and groups", function () {
       );
     });
   });
+
+  it("02-User update", function () {
+    cy.goToUsersPage();
+    var random_number_user = Math.floor(Math.random() * 100000000)
+    cy.log(random_number_user)
+
+    // Create users
+    const first_name = "uf - User update";
+    const last_name = "ul - User update";
+    const email_admin = "plop@plop.com";
+    const email = `user-${random_number_user}@plop.com`;
+    const new_good_email = `user-update-${random_number_user}@plop.com`;
+    const new_bad_email = `not an real email`;
+
+    const password = "4P99n!vP3c_/kA]3Yv"; // complex password
+    const password_change = "new_password_4P99n!vP3c_/kA]3Yv"; // complex password
+
+    cy.createUser(
+      first_name + "2",
+      last_name + "2",
+      email + "B",
+      password + "2"
+    ).then((user1_id) => {
+
+      // Test change of password
+      cy.get(`[onclick="db.call('user/edit', {'id' :'${user1_id}'} )"] > .icon-pencil-2`)
+        .click()
+
+      cy.get('#password')
+        .type(password_change)
+      cy.get('#confirm_password')
+        .type(password_change)
+      cy.get('#update_user_btn')
+        .click()
+
+      cy.get('#page_user')
+        .should("exist")
+
+      //////////////////////////////////////////////
+      // test update of email, but with a bad email
+      cy.get(`[onclick="db.call('user/edit', {'id' :'${user1_id}'} )"] > .icon-pencil-2`)
+        .click()
+
+      cy.get('#email')
+        .clear()
+        .type(new_bad_email)
+
+      cy.get('#update_user_btn')
+        .click()
+
+      cy.get('#page_user')
+        .should("not.exist")
+
+      cy.get('.flash_2')
+        .should("contain", "Enter a valid email address")
+        .click()
+
+      ///////////////////////////////////////////////////
+      // Test update with a real new email, but of admin
+      cy.get('#email')
+        .clear()
+        .type(email_admin)
+
+      cy.get('#update_user_btn')
+        .click()
+
+      cy.get('#page_user')
+        .should("not.exist")
+
+
+      cy.get('.flash_2')
+        .should("contain", "Email already exist")
+
+      /////////////////////////////////////
+      // Test update with a real new email
+      cy.get('#email')
+        .clear()
+        .type(new_good_email)
+
+      cy.get('#update_user_btn')
+        .click()
+
+      cy.get('#page_user')
+        .should("exist")
+
+      cy.get(`[ondblclick="db.call('user/info', {'id' :'${user1_id}'} )"]`)
+        .should("contain", new_good_email)
+    })
+
+  });
+
 });

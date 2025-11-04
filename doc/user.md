@@ -606,6 +606,15 @@ process, and access to the results (`See results`, bottom right).
 
 #### Adding a sample
 
+<figure markdown>
+  ![Adding a sample from a run set](./pictures/database_adding_sample.png)
+  <figcaption>
+    We add 4 sample linked to a same run set (here "July 2025"). Each sample will be linked to this run as commons set is filled. Each samples will also be linked to a specific patient filled at the end of each line. 
+    This patient is found from your database and search when you start typing in this field.
+  </figcaption>
+</figure>
+
+
 To add a sample (`+ add samples`), you must add at least one sample file. Each sample file must
 be linked to a patient, a run or a set. One of those fields will be automatically
 completed depending on whether you accessed the sample page.
@@ -613,6 +622,10 @@ These fields provide autocompletion to help you enter the correct
 patient, run or sets. It is advised to fill in both fields (when it makes
 sense). However please note that the corresponding patients, runs and sets must have
 been created beforehand.
+
+One sample can be linked to one patient, one run and multiple generic sets at the same time.
+
+If you wish to add a same sample to a same set, you need to fill `common sets` field as on caption above. To add a sample to a specific set, you need to fill `other sets` field.
 
 #### Pre-processing
 

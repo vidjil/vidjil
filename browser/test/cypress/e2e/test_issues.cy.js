@@ -66,4 +66,75 @@ describe('Test sandbox', function () {
     return
 
   })
+
+
+  it('Normalized size as for MRD', function () {
+    // Sample with full normalized values (norm in clone, and norm in germline)
+    cy.openAnalysis("tools/tests/data/Demo-MRD_normalized_with_germline.vidjil")
+
+    // If size if 75%, we don't have germline value, and we compute size from simple total normalized value (from reads/normalization/total)
+    cy.getCloneSize("0").should("have.text", '75.00%')
+
+
+    cy.open_menu_settings()
+
+    cy.get('input[type="radio"][name="normalize_list"][value="-1"]')
+      .as("radio_no_norm")
+    cy.get('input[type="radio"][name="normalize_list"][id="reset_norm_external"]')
+      .as("radio_external_norm")
+
+
+    cy.get('@radio_no_norm')
+      .should('not.be.checked');
+    cy.get('@radio_external_norm')
+      .should('be.checked');
+
+
+    cy.get('@radio_no_norm')
+      .check({ force: true })
+      .should('be.checked');
+    cy.get('@radio_external_norm')
+      .should('not.be.checked');
+
+    cy.getCloneSize("0").should("have.text", '50.00%')
+
+    cy.get('@radio_external_norm')
+      .check({ force: true })
+      .should('be.checked');
+
+    cy.get('#toogleLocusSystemBox_TRB') // REmove TRB normalized value - 150reads
+      .click()
+
+    cy.getCloneSize("0").should("have.text", '83.33%') // 750/850
+
+    cy.get('#toogleLocusSystemBox_TRD') // REmove TRB normalized value - 100reads
+      .click()
+
+    cy.getCloneSize("0").should("have.text", '100.0%') //  750/750
+
+
+    cy.get('@radio_no_norm')
+      .check({ force: true })
+
+    cy.getCloneSize("0").should("have.text", '100.0%') // Value still at 100% as only IGH locus active
+
+    cy.get('#toogleLocusSystemBox_TRD')
+      .click()
+    cy.getCloneSize("0").should("have.text", '71.42%') // 50/70
+
+    // TODO; same data, but without normlize germline value. 
+    // In this case, size is computed against total normalization if present
+    cy.openAnalysis("tools/tests/data/Demo-MRD_normalized.vidjil")
+    cy.getCloneSize("0").should("have.text", '75.00%')
+    cy.get('#toogleLocusSystemBox_TRD').click() // No impact on size returned
+    cy.get('#toogleLocusSystemBox_TRB').click()
+    cy.getCloneSize("0").should("have.text", '75.00%')
+    
+    cy.get('input[type="radio"][name="normalize_list"][value="-1"]')
+      .check({ force: true })
+
+    cy.getCloneSize("0").should("have.text", '100.0%')
+    return
+
+  })
 })

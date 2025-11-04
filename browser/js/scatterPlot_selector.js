@@ -76,6 +76,15 @@ ScatterPlot_selector.prototype = {
             })
 
 
+        // Add one tooltip for this scatterplot that will be showed when an element will be hover
+        if (document.getElementById(this.id + "_tooltip") == null){
+            d3.select("body").append("div")
+              .attr("class", "tooltip")
+              .attr("id", this.id + "_tooltip")
+              .style("opacity", 0);
+        }
+
+
         //drag&drop/focus/select singlenode 
         this.plot_container.selectAll("circle")
             .call(d3.drag()
@@ -84,12 +93,30 @@ ScatterPlot_selector.prototype = {
                 .on("end", function(d){return self.dragended(d)})
             )            
             .on("mouseover", function(d) {
-                if (!self.isDragging)
+                if (!self.isDragging){
                     self.m.focusIn(d.id)
+                    
+                    var div = d3.select("#"+self.id + "_tooltip")
+                    var tooltip = self.getTooltip(d)
+                    
+                    div.transition()
+                       .delay(400)
+                       .duration(200)
+                       .style("opacity", 1);
+                    div.html(tooltip)
+                       .style("left", (d3.event.pageX + 24) + "px")
+                       .style("top", (d3.event.pageY - 32) + "px");
+
+                }
             })
             .on("mouseout", function(d) {
-                if (!self.isDragging)
+                if (!self.isDragging){
                     self.m.focusOut();
+                    var div = d3.select("#"+self.id + "_tooltip")
+                    div.transition()
+                       .duration(500)
+                       .style("opacity", 0);
+                }
             })
             .on("click", function(d) {
                 self.clickNode(d.id)
@@ -105,6 +132,12 @@ ScatterPlot_selector.prototype = {
             .on("click", function(d) {
                 self.clickNode(d.id);
             })
+    },
+
+    getTooltip: function(d){
+        var clone = this.m.clone(d.id)
+        var time  = this.m.getTime()
+        return `${clone.getName()}<br>size: ${clone.getPrintableSize(time)}; top ${clone.top}<br>${this.axisX.name}: ${this.axisX.fct(clone)}<br>${this.axisY.name}: ${this.axisY.fct(clone)}`
     },
 
     dragstarted: function(d)
