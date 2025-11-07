@@ -138,7 +138,7 @@ void testSegmentOverlap(IndexTypes index)
 
   for (int i = 0; i < data.size(); i++) {
     KmerSegmenter<KmerAffect> ks(data.read(i), germline1->getIndex(),
-                                    SEG_METHOD_MAX12, &mg, germline1);
+                                    SEG_METHOD_MAX12, false, &mg, germline1);
 
     TAP_TEST(ks.seg_V + ks.seg_N + ks.seg_J == data.sequence(i)
              || ks.seg_V + ks.seg_N + ks.seg_J == revcomp(data.sequence(i)), 
@@ -179,7 +179,7 @@ void testSegmentationCause(IndexTypes index) {
 
   for (int i = 0; i < data.size(); i++) {
     KmerSegmenter<KmerAffect> ks(data.read(i), germline->getIndex(),
-                                 SEG_METHOD_MAX12, &mg, germline, nullptr, 0.01);
+                                 SEG_METHOD_MAX12, false, &mg, germline, nullptr, 0.01);
     
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "seq is " << data.label(i));
@@ -311,7 +311,7 @@ void testBug2224(IndexTypes index) {
   mg.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline->getSeed("5"), true));
 
   KmerSegmenter<KmerAffect> ks(data.read(0), germline->getIndex(),
-                               SEG_METHOD_MAX12, &mg, germline);
+                               SEG_METHOD_MAX12,false, &mg, germline);
   TAP_TEST(ks.getKmerAffectAnalyser() == NULL, TEST_BUG2224, "");
 
   CloneOutput clone ;
@@ -528,10 +528,10 @@ void testDifferentSeeds(IndexTypes index) {
   mg4.addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, germline_small_seeds.getSeed("5"), true));
 
 
-  KmerSegmenter<KmerAffect> ks1(seq, mg1.getIndex(), SEG_METHOD_MAX12, &mg1, &germline_basic);
-  KmerSegmenter<KmerAffect> ks2(seq, mg2.getIndex(), SEG_METHOD_MAX12, &mg2, &germline_small_seed_5);
-  KmerSegmenter<KmerAffect> ks3(seq, mg3.getIndex(), SEG_METHOD_MAX12, &mg3, &germline_small_seed_3);
-  KmerSegmenter<KmerAffect> ks4(seq, mg4.getIndex(), SEG_METHOD_MAX12, &mg4, &germline_small_seeds);
+  KmerSegmenter<KmerAffect> ks1(seq, mg1.getIndex(), SEG_METHOD_MAX12, false, &mg1, &germline_basic);
+  KmerSegmenter<KmerAffect> ks2(seq, mg2.getIndex(), SEG_METHOD_MAX12, false, &mg2, &germline_small_seed_5);
+  KmerSegmenter<KmerAffect> ks3(seq, mg3.getIndex(), SEG_METHOD_MAX12, false, &mg3, &germline_small_seed_3);
+  KmerSegmenter<KmerAffect> ks4(seq, mg4.getIndex(), SEG_METHOD_MAX12, false, &mg4, &germline_small_seeds);
 
   TAP_TEST(! ks1.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
   TAP_TEST(! ks2.isSegmented(), TEST_KMER_IS_SEGMENTED, "");

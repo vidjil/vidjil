@@ -66,6 +66,7 @@ class WindowExtractor {
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           bool keep_unsegmented_as_clone=false,
                           double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1,
+                          bool include_unexpected = false,
                           VirtualReadScore *scorer = &DEFAULT_READ_SCORE,
                           SampleOutput *output = NULL);
 

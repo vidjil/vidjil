@@ -397,7 +397,7 @@ int main(int argc, char **argv) {
         ->type_name("FILE")
         ->level();
 
-    bool multi_germline_unexpected_recombinations_12 = true;
+    bool multi_germline_unexpected_recombinations_12 = false;
     app.add_flag("-2", multi_germline_unexpected_recombinations_12,
                  "try to detect unexpected recombinations")
         ->group(group);
@@ -1418,7 +1418,7 @@ int main(int argc, char **argv) {
 
         WindowsStorage<KmerAffect> *windowsStorage = we.extract(
             reads, wmer_size, windows_labels, only_labeled_windows, keep_unsegmented_as_clone,
-            expected_value_kmer, nb_reads_for_evalue, readScorer, &output);
+            expected_value_kmer, nb_reads_for_evalue, multi_germline_unexpected_recombinations_12, readScorer, &output);
         windowsStorage->setIdToAll();
         size_t nb_total_reads = we.getNbReads();
 
@@ -1764,6 +1764,7 @@ int main(int argc, char **argv) {
                         KmerSegmenter<KmerAffect> *kseg = new KmerSegmenter<KmerAffect>(
                             representative, multigermline->getIndex(),
                             multigermline->getGermlines().front()->getSegmentationMethod(),
+                            multi_germline_unexpected_recombinations_12,
                             multigermline, nullptr, nullptr, expected_value_kmer,
                             multigermline->getGermlines().size() * nb_reads_for_evalue);
                         if (verbose)
@@ -1833,7 +1834,8 @@ int main(int argc, char **argv) {
                         double fine_evalue_multiplier = MIN(expected_value_kmer, nb_fine_segmented);
 
                         FineSegmenter<KmerAffect> seg(
-                            representative, segmented_germline, segment_cost, expected_value,
+                            representative, segmented_germline, segment_cost, multi_germline_unexpected_recombinations_12,
+                            expected_value,  expected_value_kmer,
                             fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
                         if (seg.isSegmented()) {
@@ -2061,14 +2063,17 @@ int main(int argc, char **argv) {
             Sequence seq = reads->getSequence();
             KmerSegmenter<KmerAffect> *seg = new KmerSegmenter<KmerAffect>(
                 reads->getSequence(), multigermline->getIndex(),
-                multigermline->getGermlines().front()->getSegmentationMethod(), multigermline,
+                multigermline->getGermlines().front()->getSegmentationMethod(),
+                multi_germline_unexpected_recombinations_12,
+                multigermline,
                 nullptr, nullptr, expected_value_kmer,
                 multigermline->getGermlines().size() * nb_reads_for_evalue);
             Germline<KmerAffect> *germline = seg->segmented_germline;
             if (!germline) {
                 germline = Germline<KmerAffect>::getUnseg();
             }
-            FineSegmenter<KmerAffect> s(seq, germline, segment_cost, expected_value,
+            FineSegmenter<KmerAffect> s(seq, germline, segment_cost, multi_germline_unexpected_recombinations_12,
+                                        expected_value, expected_value_kmer,
                                         fine_evalue_multiplier, kmer_threshold, alternative_genes);
 
             string id = string_of_int(nb, 6);
@@ -2101,12 +2106,12 @@ int main(int argc, char **argv) {
             } else {
                 // Not designated, will output label as 'name' in .vidjil
                 s.code = seq.label;
-                g = Germline<KmerAffect>::getUnseg();
+                g = NULL;
             }
 
             s.toOutput(clone);
             s.checkWarnings(clone);
-            std::string code = PSEUDO_NOT_ANALYZED_CODE;
+            std::string code = PSEUDO_NOT_ANALYZED;
             if (g != NULL) {
                 code = g->getCode();
             }
@@ -2134,8 +2139,8 @@ int main(int argc, char **argv) {
                 output.set("reads", "germline", germline->getCode(),
                            {nb_segmented_by_germline[germline->getCode()]});
         }
-        output.set("reads", "germline", PSEUDO_NOT_ANALYZED_CODE,
-                   {nb_segmented_by_germline[PSEUDO_NOT_ANALYZED_CODE]});
+        output.set("reads", "germline", PSEUDO_NOT_ANALYZED,
+                   {nb_segmented_by_germline[PSEUDO_NOT_ANALYZED]});
 
     } else {
         cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;

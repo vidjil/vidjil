@@ -5,7 +5,7 @@ $ Display message with the estimation of read number
 1:reading from stdin, estimating 100 reads
 
 $ Detect recombinations in one read
-f1:junction detected in 1 reads
+1:junction detected in 1 reads
 
 $ Detect and designate one read on TRG
 1:TRG .* -> .* 1 

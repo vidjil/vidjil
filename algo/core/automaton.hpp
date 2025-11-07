@@ -11,6 +11,7 @@
 template <class Info>
 AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {
   null_info = Info();
+  all_index_load = 0;
 }
 
 template <class Info>
@@ -18,11 +19,8 @@ void AbstractACAutomaton<Info>::finish_building() {
   if (! IKmerStore<Info>::finished_building) {
     IKmerStore<Info>::finish_building();
     build_failure_functions();
-    all_index_load = 0;
     for(auto iter: kmers_inserted) {
       index_load[iter.first] = computeIndexLoad(iter.first);
-      if (iter.first.getStrand())
-        all_index_load += getIndexLoad(iter.first);
     }
   }
 }
@@ -216,11 +214,13 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
       ! this->multiple_info) {
     state->informations.front() += info;
     if (! state->informations.front().isAmbiguous()) {
+      this->all_index_load += 1. / (1 << (2*seq_length));
       this->kmers_inserted[info]++;
     }
   } else if (state->informations.size() == 0
              || (multiple_info && state->informations.back() != info)){
     this->kmers_inserted[info]++;
+    this->all_index_load += 1. / (1 << (2*seq_length));
     state->informations.push_back(info);
   }
 }

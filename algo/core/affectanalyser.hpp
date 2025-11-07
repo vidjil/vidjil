@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <sstream>
 
+#define THRESHOLD_CLOSE_EVALUE .9 // ratio of e-value exponents
+
 bool operator==(const affect_infos &ai1, const affect_infos &ai2) {
   return ai1.first_pos_max == ai2.first_pos_max
   && ai1.last_pos_max == ai2.last_pos_max
@@ -504,8 +506,8 @@ void CountKmerAffectAnalyser::buildCounts() {
 }
 
 
-MultipleAffectAnalyser::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq)
-  :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)) 
+MultipleAffectAnalyser::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq, bool include_unexpected)
+  :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)), include_unexpected(include_unexpected)
  {
   assert(seq.length() >=  (size_t)kms.getS());
  }
@@ -576,10 +578,10 @@ pair <set<KmerAffect>, set<KmerAffect>> MultipleAffectAnalyser::sortLeftRight(co
     return make_pair(ka2_set, ka1_set);
 }
 
-std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
-  assert(affectations.size() >= 2);
+std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnalyser::max12(const set<KmerAffect> forbidden, MultiGermline<KmerAffect> *germlines) const {
   set<KmerAffect> best_affect;
   double best_proba = 2;
+  int exp1, exp2;
 
   // Get the best affect first (with lowest proba)
   for (KmerAffect affect: getAffectations()) {
@@ -589,12 +591,16 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 #ifdef DEBUG
       cerr << "affect/proba: " << affect << " " << proba << endl;
 #endif
-      if (fabs(proba - best_proba) <= (proba+best_proba)/1e10) {
+      frexp(max(proba, best_proba), &exp1);
+      frexp(min(proba, best_proba), &exp2);
+        // Test if values are (almost) equal
+      if (exp1*1./exp2 >= THRESHOLD_CLOSE_EVALUE) {
+        // The exponent are in base2 but the ratio is identical in base 10
+        // as the exponents are just at a constant factor of log10(2)
 #ifdef DEBUG
         cerr << "proba = " << proba << ", best_proba = " << best_proba << ", fabs = " << fabs(proba - best_proba)
              << ", threshold = " << (proba+best_proba)/1e10 << endl;
 #endif
-        // Test if values are (almost) equal
         best_proba = min(proba, best_proba);
         best_affect.insert(affect);
       } else if (proba < best_proba) {
@@ -610,11 +616,17 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
   for (auto best: best_affect)
     PRINT_VAR(best);
 #endif
-  
+
   // Now get the second best proba but removes positions that are common with the best (we can only take the first one
   // as all should have the same bitset).
   double second_best_proba = 2;
   set<KmerAffect> second_best_affect;
+  if (best_proba == 2) {
+    best_affect.insert(KmerAffect::getAmbiguous());
+    second_best_affect.insert(KmerAffect::getAmbiguous());
+    return std::tuple<std::set<KmerAffect>, std::set<KmerAffect>, double, double>(best_affect, second_best_affect, best_proba, second_best_proba);
+  }
+
   BitSet best_bitset = (affectations.find(*(best_affect.begin()))->second);
   uint64_t best_bitset_count = best_bitset.count();
   for (auto it = best_affect.begin(); it != best_affect.end(); ) {
@@ -635,12 +647,32 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
   for (KmerAffect affect: getAffectations()) {
     if (forbidden.count(affect) == 0) {
       if (best_affect.find(affect) == best_affect.end()) {
+        bool unexpected_germline = true;
+        Tshortcut c = germlines->getRepository()->getShortcut(affect);
+        for (auto b: best_affect) {
+          Tshortcut c2 = germlines->getRepository()->getShortcut(b);
+          std::set<Tshortcut> shortcuts = {c, c2};
+          if (germlines->getGermline(shortcuts) != nullptr) {
+            unexpected_germline = false;
+            break;
+          }
+        }
+        KmerAffect tmp_affect = affect;
+        if (unexpected_germline) {
+          if (! include_unexpected)
+            continue;
+          else {
+            tmp_affect = KmerAffect::getAmbiguous();
+          }
+        }
         uint64_t count = (best_bitset & affectations.find(affect)->second).count();
-        double proba = getProbabilityAtLeastOrAbove(affect, count);
+        double proba = getProbabilityAtLeastOrAbove(tmp_affect, count);
 #ifdef DEBUG
         cerr << affect << "\t" << proba << "\t" << (best_bitset & affectations.find(affect)->second) << endl;
 #endif
-        if (fabs(proba - second_best_proba) <= max(sqrt(min(proba, second_best_proba)),(proba+second_best_proba)/1e10)) {
+        frexp(max(proba, second_best_proba), &exp1);
+        frexp(min(proba, second_best_proba), &exp2);
+        if (exp1*1./exp2 >= THRESHOLD_CLOSE_EVALUE) {
           // Test if values are (almost) equal
           second_best_proba = min(proba, second_best_proba);
           second_best_affect.insert(affect);
@@ -658,8 +690,10 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
     PRINT_VAR(second_best);
 #endif
   if (best_proba == 2 || second_best_proba == 2) {
-    best_affect.clear();
-    best_affect.insert(KmerAffect::getAmbiguous());
+    if (best_proba == 2) {
+      best_affect.clear();
+      best_affect.insert(KmerAffect::getAmbiguous());
+    }
     second_best_affect.clear();
     second_best_affect.insert(KmerAffect::getAmbiguous());
   }
@@ -667,7 +701,8 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
 }
 
 affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,
-                                                const KmerAffect &after, 
+                                                const KmerAffect &after,
+                                                MultiGermline<KmerAffect> *germlines,
                                                 float ratioMin,
                                                 int maxOverlap) {
   // TODO: Duplicated code from KmerAffectAnalyser -> factorize?
@@ -765,11 +800,16 @@ affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,
     if (bs_before.get(i))
       results.nb_before_right++;
   }
-  
-  left_evalue = kms.getProbabilityAtLeastOrAbove(before,
+
+  KmerAffect b = before, a = after;
+  if (! germlines->isCompatible({before, after}))
+    a = b = KmerAffect::getAmbiguous();
+
+
+  left_evalue = kms.getProbabilityAtLeastOrAbove(b,
                                                  results.nb_before_left,
                                                  1 + results.last_pos_max);
-  right_evalue = kms.getProbabilityAtLeastOrAbove(after,
+  right_evalue = kms.getProbabilityAtLeastOrAbove(a,
                                                   results.nb_after_right,
                                                   seq.size() - 1 - results.first_pos_max);
 

@@ -45,7 +45,7 @@ Germline<Affect>::Germline(std::string code, Tshortcut shortcut,
   std::map<std::string, BioReader> readers;
   size_t recombination_nb = 0;
 
-  seg_method = SEG_METHOD_MAX12;
+  seg_method = (segments.size() == 1) ? SEG_METHOD_ONE : SEG_METHOD_MAX12;
 
   for (const auto& filename_map : filenames) {
     for (const auto& item: filename_map.items()) {
@@ -120,7 +120,11 @@ GermlineElement<Affect>* Germline<Affect>::getGermlineElement(const Tshortcut &s
 
 template <typename Affect>
 std::set<GermlineElement<Affect>*> Germline<Affect>::getGermlineElements(const std::string &code) const {
-  return germline_elements.at(code);
+  try {
+    return germline_elements.at(code);
+  } catch (std::out_of_range &e) {
+    return {};
+  }
 }
 
 template <typename Affect>

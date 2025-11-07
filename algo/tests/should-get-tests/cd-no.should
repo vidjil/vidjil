@@ -1,5 +1,4 @@
-!EXIT_CODE: 139
 !NO_LAUNCHER:
 !LAUNCH: $VIDJIL_DIR/$EXEC -e 1e-2 -y 0 -g $VIDJIL_DIR/germline/homo-sapiens-cd.g $VIDJIL_DATA/Stanford_S22.fasta
 $ Do not segment any read with SEG_METHOD_ONE on homo-sapiens-cd.g
-f1: CD .* -> .* 0 .* 0
+1: CD .* -> .* 0 .* 0
