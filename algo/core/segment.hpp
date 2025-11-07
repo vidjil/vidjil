@@ -481,12 +481,18 @@ string KmerSegmenter<Affect>::getInfoLineWithAffects() const
 
   if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
  {
+   for (auto affect: this->getKmerAffectAnalyser()->getAffectations()) {
+     size_t affect_count = this->getKmerAffectAnalyser()->count(affect);
+     ss << endl;
+     ss << affect ;
+     ss << right << setw(5) << affect_count << setw(14)
+        << this->getKmerAffectAnalyser()->getProbabilityAtLeastOrAbove(affect, affect_count)
+       << " "
+        << this->getKmerAffectAnalyser()->toStringValues({affect}, false, true);
+     // ss << "$ " << right << setw(9) << germline << endl
+     //    << this->getKmerAffectAnalyser()->toStringSigns({affect}, false, true);
+   }
    ss << endl;
-   ss << "# " << right << setw(9) << germline << endl
-      << this->getKmerAffectAnalyser()->toStringValues();
-   ss << endl;
-   ss << "$ " << right << setw(9) << germline << endl
-      << this->getKmerAffectAnalyser()->toStringSigns();
  }
 
  return ss.str();
@@ -1628,16 +1634,19 @@ void KmerSegmenter<Affect>::toOutput(CloneOutput *clone, bool details) {
     clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(this->evalue_right)));
 
   if (getKmerAffectAnalyser() != NULL) {
+
     clone->setSeg("affectValues", {
       {"start", 1},
       {"stop", sequenceSize},
-      {"seq", getKmerAffectAnalyser()->toStringValues()}
+      {"seq", getKmerAffectAnalyser()->toStringValues(std::set<KmerAffect>({this->box_V->affect,
+             this->box_J->affect}))}
     });
 
     clone->setSeg("affectSigns", {
       {"start", 1},
       {"stop", sequenceSize},
-      {"seq", getKmerAffectAnalyser()->toStringSigns()}
+      {"seq", getKmerAffectAnalyser()->toStringSigns(std::set<KmerAffect>({this->box_V->affect,
+             this->box_J->affect}))}
     });
   }
 }

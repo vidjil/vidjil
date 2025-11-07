@@ -507,7 +507,8 @@ void CountKmerAffectAnalyser::buildCounts() {
 
 
 MultipleAffectAnalyser::MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq, bool include_unexpected)
-  :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)), include_unexpected(include_unexpected)
+  :kms(kms), seq(seq),  affectations(kms.getAllResults(seq, true)), include_unexpected(include_unexpected), string_values(""), string_strand(""),
+   affects_of_computed_string()
  {
   assert(seq.length() >=  (size_t)kms.getS());
  }
@@ -827,25 +828,56 @@ affect_infos MultipleAffectAnalyser::getMaximum(const KmerAffect &before,
   return results;
 }
 
-string MultipleAffectAnalyser::toString() const {
+string MultipleAffectAnalyser::toString()  {
   return toStringValues();
 }
 
-string MultipleAffectAnalyser::toStringValues() const {
-  std::stringstream result;
-  for (KmerAffect affect: getAffectations()) {
-    result << setw(6) << affect.toString();
-    result << setw(4) << right << count(affect);
-    result << setw(12) << getProbabilityAtLeastOrAbove(affect, count(affect)) << " ";
-    result << affectations.find(affect)->second;
-    result << std::endl;
+void MultipleAffectAnalyser::computeString(std::set<KmerAffect> &affects, bool revcomp, bool binary) {
+  string_values = "";
+  string_strand = "";
+  affects_of_computed_string = affects;
+  std::string result = "";
+  if (affects.size() == 0)
+    affects = getAffectations();
+  for (KmerAffect affect: affects) {
+    auto it = affectations.find(affect);
+    if (it == affectations.end())
+      break;
+    BitSet bs = it->second;
+    char neutral = (binary) ? '0' : ' ';
+    if (string_values == "") {
+      string_values = std::string(bs.size(), neutral);
+      string_strand = std::string(bs.size(), neutral);
+    }
+
+    for (size_t i = 0; i < bs.size(); i++) {
+      if (bs.get(i)) {
+        size_t pos = i;
+        if (revcomp && affect.getStrand() == -1)
+          pos = string_values.size() - i - affect.getLength();
+        if (binary) {
+          string_values[pos] = '1';
+          string_strand[pos] = '1';
+        } else {
+          string_values[pos] = (string_values[pos]== neutral) ? affect.getLabel()[0] : '?';
+          char strand_char = (affect.getStrand() == 1) ? '+' : '-';
+          string_strand[pos] = (string_strand[pos]== ' ' || string_strand[pos] == strand_char) ? strand_char : '?';
+        }
+      }
+    }
   }
-  return result.str();
 }
 
-string MultipleAffectAnalyser::toStringSigns() const {
-  // TODO
-  return "";
+string MultipleAffectAnalyser::toStringValues(std::set<KmerAffect> affects, bool revcomp, bool binary) {
+  if (string_values.size() == 0 || affects != affects_of_computed_string)
+    computeString(affects, revcomp, binary);
+  return string_values;
+}
+
+string MultipleAffectAnalyser::toStringSigns(std::set<KmerAffect> affects, bool revcomp, bool binary) {
+  if (string_strand.size() == 0 || affects != affects_of_computed_string)
+    computeString(affects, revcomp, binary);
+  return string_strand;
 }
 
 #endif

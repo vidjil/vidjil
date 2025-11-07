@@ -360,6 +360,8 @@ class MultipleAffectAnalyser {
   map<KmerAffect, BitSet> affectations;
   double left_evalue, right_evalue;
   bool include_unexpected;
+  string string_values, string_strand;
+  std::set<KmerAffect> affects_of_computed_string;
 
  public:
   /**
@@ -415,10 +417,20 @@ class MultipleAffectAnalyser {
 
   std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12(const set<KmerAffect> forbidden, MultiGermline<KmerAffect> *germlines) const;
 
-  string toString() const;
+  string toString();
 
-  string toStringValues() const;
+  /**
+   * @param affects: set of affects to include in the string (if empty → all)
+   * @param revcomp: reverse the position of the affect if the affect is on the reverse strand
+   * @param binary: only output a binary string
+   */
+  string toStringValues(std::set<KmerAffect> affects={}, bool revcomp=true, bool binary = false);
 
-  string toStringSigns() const;
+  string toStringSigns(std::set<KmerAffect> affects={}, bool revcomp=true, bool binary = false);
+  private:
+    /**
+     * Compute the strings returned by toStringValues and toStringSigns
+     */
+    void computeString(std::set<KmerAffect> &affects, bool revcomp=true, bool binary = false);
 };
 #endif
