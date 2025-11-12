@@ -34,9 +34,10 @@ public:
   std::set<std::string> getCodes() const;
 
   /**
+   * @param nb_match: minimal number of shortcuts to match
    * @return the germline that has a recombination involving the provided shortcuts or nullptr if no such germline exists
    */
-  Germline<Affect> *getGermline(const std::set<Tshortcut> &shortcuts) const;
+  Germline<Affect> *getGermline(const std::set<Tshortcut> &shortcuts, size_t nb_match=2) const;
   
   /**
    * @return the germline that has the provided code (eg. IGH) or nullptr if no such germline exists
@@ -66,6 +67,12 @@ public:
    * @return the reference species
    */
   std::string getSpecies() const;
+
+  /**
+   * @return true iff the affects are compatible, ie. if their corresponding shortcuts return
+   * a non-null Germline to the getGermline() method.
+   */
+  bool isCompatible(std::set<Affect> affects) const;
 
   /**
    * @return the taxon ID
@@ -136,9 +143,9 @@ std::set<std::string> MultiGermline<Affect>::getCodes() const {
 }
 
 template <typename Affect>
-Germline<Affect> *MultiGermline<Affect>::getGermline(const std::set<Tshortcut> &shortcuts) const {
+Germline<Affect> *MultiGermline<Affect>::getGermline(const std::set<Tshortcut> &shortcuts, size_t nb_match) const {
   for (const auto& germline : germlines) {
-    if (germline->hasRecombination(shortcuts)) {
+    if (germline->hasRecombination(shortcuts, nb_match)) {
       return germline;
     }
   }
@@ -183,6 +190,19 @@ std::string MultiGermline<Affect>::getSpecies() const {
 template <typename Affect>
 int MultiGermline<Affect>::getTaxonId() const {
   return species_taxon_id;
+}
+
+template <typename Affect>
+bool MultiGermline<Affect>::isCompatible(std::set<Affect> affects) const {
+  std::set<Tshortcut> shortcuts;
+  int strand = (*affects.begin()).getStrand();
+  for (auto a: affects)
+    try {
+      if (a.getStrand() != strand)
+        return false;
+      shortcuts.insert(this->getRepository()->getShortcut(a));
+    } catch(std::invalid_argument &e) {}
+  return this->getGermline(shortcuts) != nullptr;
 }
 
 template <typename Affect>

@@ -4,6 +4,7 @@
 
 #include "kmerstore.h"
 #include "kmeraffect.h"
+#include "multi_germline.hpp"
 #include "BitSet.hpp"
 #include <set>
 #include <vector>
@@ -358,14 +359,18 @@ class MultipleAffectAnalyser {
   const string &seq;
   map<KmerAffect, BitSet> affectations;
   double left_evalue, right_evalue;
+  bool include_unexpected;
+  string string_values, string_strand;
+  std::set<KmerAffect> affects_of_computed_string;
 
  public:
   /**
    * @param kms: the index storing the affectation for the k-mers
    *             (parameter is not copied)
    * @param seq: the sequence to analyse (parameter is not copied)
+   * @param include_unexpected: include the search for unexpected recombinations?
    */
-  MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq);
+  MultipleAffectAnalyser(IKmerStore<KmerAffect> &kms, const string &seq, bool include_unexpected);
 
   /**
    * Count the number of unique affectations (excluding the unknown one)
@@ -397,7 +402,8 @@ class MultipleAffectAnalyser {
    */
   pair <double, double> getLeftRightProbabilityAtLeastOrAbove() const;
 
-  affect_infos getMaximum(const KmerAffect &before, const KmerAffect &after, 
+  affect_infos getMaximum(const KmerAffect &before, const KmerAffect &after,
+                          MultiGermline<KmerAffect> *germlines,
                           float ratioMin=1.9, int maxOverlap=1);
 
   const string &getSequence() const;
@@ -409,12 +415,22 @@ class MultipleAffectAnalyser {
    */
   pair <set<KmerAffect>, set<KmerAffect>> sortLeftRight(const set<KmerAffect> &ka1_set, const set<KmerAffect> & ka2_set) const;
 
-  std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12(const set<KmerAffect> forbidden) const;
+  std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> max12(const set<KmerAffect> forbidden, MultiGermline<KmerAffect> *germlines) const;
 
-  string toString() const;
+  string toString();
 
-  string toStringValues() const;
+  /**
+   * @param affects: set of affects to include in the string (if empty → all)
+   * @param revcomp: reverse the position of the affect if the affect is on the reverse strand
+   * @param binary: only output a binary string
+   */
+  string toStringValues(std::set<KmerAffect> affects={}, bool revcomp=true, bool binary = false);
 
-  string toStringSigns() const;
+  string toStringSigns(std::set<KmerAffect> affects={}, bool revcomp=true, bool binary = false);
+  private:
+    /**
+     * Compute the strings returned by toStringValues and toStringSigns
+     */
+    void computeString(std::set<KmerAffect> &affects, bool revcomp=true, bool binary = false);
 };
 #endif

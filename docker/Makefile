@@ -48,10 +48,15 @@ clean_deploy:
 	docker ps
 
 build_and_run_dev:
-	ln -s docker-compose-dev.yml docker-compose.override.yml
 	$(MAKE) build-server build-client
+	$(MAKE) run_dev
+
+run_dev:
+	ln -s docker-compose-dev.yml docker-compose.override.yml || true
+	$(MAKE) down
 	docker compose up -d mysql uwsgi
-	$(MAKE) set_rights
+	$(MAKE) -C ../browser
+	$(MAKE) -C ../germline
 	$(MAKE) up
 	docker ps
 
