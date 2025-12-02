@@ -16,7 +16,6 @@ tabulate
 biopython
 numpy
 
-parasail
 legacy-cgi==2.6.3
 matplotlib-venn==1.1.2
 parasail==1.3.4
