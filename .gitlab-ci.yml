@@ -222,7 +222,7 @@ test_browser_unit:
 
 # Code security
 audit_dependencies:
-    image: python:3.12-slim
+    image: python:3.12
     stage: dependencies_audit
     script:
       - python3 -m pip install pip-audit
