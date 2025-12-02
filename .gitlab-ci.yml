@@ -228,7 +228,7 @@ audit_dependencies:
       - python3 -m pip install pip-audit
       - pip-audit -r requirements.txt
     only:
-      - feature-sct/gitlab-ci_ajout_audit_depensences
+      - merge_requests
 
 # Code quality
 
