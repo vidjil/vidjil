@@ -225,7 +225,7 @@ audit_dependencies:
   image: ghcr.io/pypa/pip-audit:latest
   stage: dependencies_audit
   script:
-    - pip-audit -r requirements.txt
+    - pip-audit --no-virtualenv -r requirements.txt
   only:
     - merge_requests
 
