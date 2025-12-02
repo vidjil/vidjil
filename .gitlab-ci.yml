@@ -25,6 +25,7 @@ before_script:
 
 
 stages:
+  - dependencies_audit
   - test_tools
   - test_quality
   - build_test_server_docker
