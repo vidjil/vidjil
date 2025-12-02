@@ -4,7 +4,6 @@ uwsgi
 py4web == 1.20240428.1
 pydal == 20241111.2
 pymysql
-celery
 celery[redis]
 pottery
 ruff
