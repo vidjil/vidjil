@@ -225,6 +225,7 @@ audit_dependencies:
   image: python:3.12-slim
   stage: dependencies_audit
   script:
+    - apt-get install python3-venv
     - python3 -m pip install --upgrade pip setuptools wheel
     - python3 -m pip install pip-audit
     - pip-audit -r requirements.txt
