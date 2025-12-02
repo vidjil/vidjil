@@ -219,7 +219,15 @@ test_browser_unit:
   extends:
     - .need_for_quick_test
 
-
+# Code security
+audit_dependencies:
+    image: python:3.12-slim
+    stage: test_unit
+    script:
+      - python3 -m pip install pip-audit
+      - pip-audit -r requirements.txt
+    only:
+      - feature-sct/gitlab-ci_ajout_audit_depensences
 
 # Code quality
 
