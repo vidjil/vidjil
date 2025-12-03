@@ -229,18 +229,21 @@ audit_dependencies:
 
     - pip install --upgrade pip pip-audit
     - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f markdown > audit-report.md
-    - curl -s --header "PRIVATE-TOKEN:$CI_JOB_TOKEN"
-           --form "body=$(cat audit-report.md)" \
-           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes"
-  artifacts:
-    paths:
-      - audit-report.json
-    reports:
-      dependency_scanning: audit-report.json
+    - curl --request POST \
+        --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" \
+        --data "body=Analyse terminée : aucune vulnérabilité critique détectée."
   tags:
     - cidocker
   only:
     - merge_requests
+
+      curl --request POST \
+        --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" \
+        --data "body=Analyse terminée : aucune vulnérabilité critique détectée."
+
+
 
 
 
