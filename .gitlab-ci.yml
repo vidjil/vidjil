@@ -222,9 +222,10 @@ test_browser_unit:
 
 # Code security
 audit_dependencies:
-  image: python:3.11
+  image: python:3.11-slim
   stage: dependencies_audit
   script:
+    - apt-get install python3-virtualenv
     - pip install --upgrade pip pip-audit
     - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f json -o audit-report.json
   artifacts:
