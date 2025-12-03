@@ -224,14 +224,10 @@ test_browser_unit:
 audit_dependencies:
   image: python:3.11
   stage: dependencies_audit
-  before_script:
-    - python3 -m pip install --upgrade pip
-    - python3 -m pip install --upgrade pip
-    - python3 -m ensurepip --version
-    - python3 -m venv --help
   script:
-    - python3 -m venv venv-audit
+    - python3 -m venv --without-pip venv-audit
     - source venv-audit/bin/activate
+    - curl https://bootstrap.pypa.io/get-pip.py | python
     - pip install --upgrade pip pip-audit
     - pip-audit -r requirements.txt
   only:
