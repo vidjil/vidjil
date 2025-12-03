@@ -225,7 +225,7 @@ audit_dependencies:
   image: python:3.11
   stage: dependencies_audit
   script:
-    - python3 -m venv --without-pip venv-audit
+    - /usr/local/bin/python3 -m venv --without-pip venv-audit
     - source venv-audit/bin/activate
     - curl https://bootstrap.pypa.io/get-pip.py | python
     - pip install --upgrade pip pip-audit
