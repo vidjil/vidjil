@@ -226,7 +226,8 @@ audit_dependencies:
   stage: dependencies_audit
   before_script:
     - python3 -m pip install --upgrade pip
-    - python3 -m pip install pip-audit
+    - python3 -m pip install --user pip-audit
+    - python3 -m pip show pip-audit  
   script:
     - python3 -m pip-audit --no-virtualenv -r requirements.txt
   only:
