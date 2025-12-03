@@ -226,7 +226,7 @@ audit_dependencies:
   stage: dependencies_audit
   script:
     - pip install --upgrade pip pip-audit
-    - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements-tests.txt -f json -o audit-report.json
+    - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f json -o audit-report.json
   artifacts:
     paths:
       - audit-report.json
