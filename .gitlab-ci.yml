@@ -227,9 +227,8 @@ audit_dependencies:
   before_script:
     - python3 -m pip install --upgrade pip
     - python3 -m pip install pip-audit
-    - python3 -m venv /tmp/venv
   script:
-    - pip-audit -r requirements.txt
+    - python3 -m pip-audit --no-virtualenv -r requirements.txt
   only:
     - merge_requests
 
