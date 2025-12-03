@@ -222,11 +222,10 @@ test_browser_unit:
 
 # Code security
 audit_dependencies:
-  image: python:3.11-slim
+  image: python:3.11
   stage: dependencies_audit
   before_script:
-    - apt-get update && apt-get install -y sudo
-    - sudo apt-get update && sudo apt-get install -y python3-venv
+    - apt-get update && sudo apt-get install -y python3-venv
     - python3 -m pip install --upgrade pip
     - python3 -m pip install pip-audit
   script:
