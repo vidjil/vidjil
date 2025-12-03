@@ -231,6 +231,8 @@ audit_dependencies:
     - curl https://bootstrap.pypa.io/get-pip.py | python
     - pip install --upgrade pip pip-audit
     - pip-audit -r requirements.txt
+  tags:
+    - cidocker
   only:
     - merge_requests
 
