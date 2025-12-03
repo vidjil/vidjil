@@ -225,7 +225,8 @@ audit_dependencies:
   image: python:3.11-slim
   stage: dependencies_audit
   script:
-    - apt-get update && apt-get install -y python3-virtualenv
+    - apt-get update && apt-get install -y python3-virtualenv curl
+
     - pip install --upgrade pip pip-audit
     - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f markdown > audit-report.md
     - curl -s --header "PRIVATE-TOKEN:$CI_JOB_TOKEN"
