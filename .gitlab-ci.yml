@@ -222,13 +222,15 @@ test_browser_unit:
 
 # Code security
 audit_dependencies:
-  image: ghcr.io/pypa/pip-audit:latest
+  image: python:3.11-slim
   stage: dependencies_audit
+  before_script:
+    - pip install --upgrade pip
+    - pip install pip-audit
   script:
     - pip-audit -r requirements.txt
   only:
     - merge_requests
-
 # Code quality
 
 code_quality_custom:
