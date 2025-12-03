@@ -227,7 +227,10 @@ audit_dependencies:
   script:
     - apt-get update && apt-get install -y python3-virtualenv
     - pip install --upgrade pip pip-audit
-    - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f json -o audit-report.json
+    - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f markdown > audit-report.md
+    - curl -s --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
+           --form "body=$(cat audit-report.md)" \
+           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes"
   artifacts:
     paths:
       - audit-report.json
@@ -237,6 +240,8 @@ audit_dependencies:
     - cidocker
   only:
     - merge_requests
+
+
 
 # Code quality
 
