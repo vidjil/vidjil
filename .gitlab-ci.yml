@@ -228,7 +228,7 @@ audit_dependencies:
     - apt-get update && apt-get install -y python3-virtualenv curl
 
     - pip install --upgrade pip pip-audit
-    - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f markdown 2>&1 > audit-report.md
+    - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f markdown 2>&1 | tee audit-report.md
     - cat audit-report.md
     - |
        curl --request POST --header "PRIVATE-TOKEN: $BOT_CI_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --data "body=$(cat audit-report.md)" -v
