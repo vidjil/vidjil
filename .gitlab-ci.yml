@@ -230,7 +230,7 @@ audit_dependencies:
     - pip install --upgrade pip pip-audit
     - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f markdown > audit-report.md
     - |
-       curl --request POST --header "PRIVATE-TOKEN: $BOT_CI_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --data "body=Analyse terminée : aucune vulnérabilité critique détectée." -v
+       curl --request POST --header "PRIVATE-TOKEN: $BOT_CI_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --data "body=$(cat audit-report.md)" -v
   tags:
     - cidocker
   only:
