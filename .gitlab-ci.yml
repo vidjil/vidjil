@@ -226,6 +226,9 @@ audit_dependencies:
   stage: dependencies_audit
   before_script:
     - python3 -m pip install --upgrade pip
+    - python3 -m pip install --upgrade pip
+    - python3 -m ensurepip --version
+    - python3 -m venv --help
   script:
     - python3 -m venv venv-audit
     - source venv-audit/bin/activate
