@@ -228,9 +228,8 @@ audit_dependencies:
     - python3 -m pip install --upgrade pip
     - python3 -m pip install --user pip-audit
     - export PYTHONPATH=$PYTHONPATH:/home/gitlab-runner/.local/lib/python3.6/site-packages
-    - ls /home/gitlab-runner/.local/bin/
   script:
-    - python3 -m /home/gitlab-runner/.local/bin/pip-audit --no-virtualenv -r requirements.txt
+    - python3 -m pip_audit --no-virtualenv -r requirements.txt
   only:
     - merge_requests
 
