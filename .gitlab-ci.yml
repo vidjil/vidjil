@@ -234,7 +234,9 @@ audit_dependencies:
   rules:
     - if: $CI_MERGE_REQUEST_IID                
       changes:
-        - requirements*  
+        - "requirements*"
+      when: on_changes
+    - when: never    
   tags:
     - cidocker
 
