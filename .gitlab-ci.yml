@@ -232,7 +232,7 @@ audit_dependencies:
     - |
        curl --request POST --header "PRIVATE-TOKEN: $BOT_CI_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --data "body=$(cat audit-report.md)"
   rules:
-    - if: $CI_MERGE_REQUEST_IID                
+    - !reference [.rules_client]      
       changes:
         - "requirements*"
     - when: never    
