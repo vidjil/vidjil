@@ -27,10 +27,17 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 #include <stdexcept>
 
 #define STDIN_FILENAME "-"
 #define SAMPLE_APPROX_NB_SEQUENCES 2000
+
+enum {
+START_GENE,
+END_GENE,
+CDR3_POS
+};
 
 using namespace std;
 
@@ -42,7 +49,7 @@ typedef struct read_t
   string label;
   string sequence; // Sequence: original string representation
   string quality;
-  size_t    marked_pos; // Some marked position in the sequence
+  std::map<size_t, size_t>    marked_pos; // Some marked position in the sequence. Keys are the enum above.
 } Sequence;
 
 typedef enum {
@@ -71,13 +78,16 @@ protected:
   int nb_sequences_parsed;
   int nb_sequences_returned;
   int nb_sequences_max;
-  int only_nth_sequence;  
+  int only_nth_sequence;
+
+  bool ignore_uppercase_nt;
 public:
   /**
    * Default constructor
    */
   OnlineBioReader(int extract_field=0, string extract_separator="|",
-                  int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+                  int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1,
+                  bool ignore_uppercase_nt = false);
 
   /**
    * Open the file. No sequence is read at first.
@@ -89,6 +99,8 @@ public:
    *                          (default: NO_LIMIT_VALUE)
    * @param only_nth_sequence: modulo of the sequence to retrieve
    *                           (default: 1 (ie. all))
+   * @param ignore_uppercase_nt: when true keeps only lowercase nucleotides
+   *                             within the sequences
    * @post getSequence() does not return the first sequence yet. 
    *       next() must be called first.
    * @throws invalid_argument if file cannot be opened or is not
@@ -96,7 +108,8 @@ public:
    */
   OnlineBioReader(const string &input_filename, 
                   int extract_field=0, string extract_separator="|",
-                  int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+                  int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1,
+                  bool ignore_uppercase_nt = false);
 
   virtual ~OnlineBioReader();
 
@@ -164,7 +177,8 @@ protected:
 
 class BioReader
 {
-  void init(int extract_field, string extract_separator, size_t mark_pos=0);
+  void init(int extract_field, string extract_separator, size_t mark_pos=0,
+            bool ignore_uppercase_nt=false);
 
   size_t total_size;
   int extract_field;
@@ -175,7 +189,7 @@ class BioReader
   // ostream *oout ;
 
 public:
-  BioReader(int extract_field=0, string extract_separator="|", int mark_pos=0);
+  BioReader(int extract_field=0, string extract_separator="|", int mark_pos=0, bool ignore_uppercase_nt=false);
   /**
    * Read all the sequences in the input filename and record them in the object.
    *
@@ -191,6 +205,7 @@ public:
   string name;
   string basename;
   list<string> filenames;
+  bool ignore_uppercase_nt;
   int size() const;
   size_t totalSize() const;
 
@@ -250,6 +265,7 @@ public:
    * @throws invalid_argument if the file could not be opened
    */
   static OnlineBioReader *create(const string &filename,int extract_field=0, string extract_separator="|",
+                                 bool ignore_uppercase_nt=false,
                                  int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 };
 #endif

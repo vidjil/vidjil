@@ -24,7 +24,7 @@ void testCluster() {
    map<string, string> labels;
    WindowsStorage<KmerAffect> windows = WindowsStorage<KmerAffect>(labels);
 
-   Sequence seq = {"", "", "", "", 0};
+   Sequence seq = {"", "", "", "", {}};
 
    windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", seq, 0, 0);
    windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", seq, 0, 0);

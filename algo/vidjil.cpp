@@ -669,6 +669,15 @@ int main(int argc, char **argv) {
         ->capture_default_str()
         ->group(group)
         ->level();
+
+    bool keep_uppercase_nt = false;
+    app.add_flag("--case-insensitive", keep_uppercase_nt,
+                 "By default uppercase nucleotides are not considered "
+                 "as being part of the genes, they are provided as useful context."
+                 " Whenever you use custom germlines you may want "
+                 "to consider the uppercase nucleotides")
+        ->group(group)
+        ->level();
     // ----------------------------------------------------------------------------------------------------------------------
     group = "Additional clustering (third pass, experimental)";
 
@@ -1130,7 +1139,7 @@ int main(int argc, char **argv) {
     }
 
     std::map<std::string, bool> do_filter_automata = {{"5", (kmer_threshold != NO_LIMIT_VALUE)}};
-    MultiGermline<KmerAffect> *multigermline = new MultiGermline<KmerAffect>();
+    MultiGermline<KmerAffect> *multigermline = new MultiGermline<KmerAffect>(! keep_uppercase_nt);
 
     json json_germlines;
 
@@ -1254,7 +1263,7 @@ int main(int argc, char **argv) {
     OnlineBioReader *reads;
 
     try {
-        reads = OnlineBioReaderFactory::create(f_reads, 1, read_header_separator,
+        reads = OnlineBioReaderFactory::create(f_reads, 1, read_header_separator, false,
                                                max_reads_processed, only_nth_read);
     } catch (const invalid_argument &e) {
         cerr << ERROR_STRING << PROGNAME << " cannot open reads file " << f_reads << ": "

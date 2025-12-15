@@ -65,8 +65,8 @@ $ Check md5 in germline/, other sequences
 1:e749633dffa7c87299b46de3c81d8cfe gallus-gallus/IGHD.up.fa
 1:c3738ee3e9fcc3c4cd242fc66df00299 gallus-gallus/IGHJ.down.fa
 1:84f820d3e567520266a1a5f0d28b37fc gallus-gallus/IGLJ.down.fa
-1:af41c26c0b8f7703e620bde67dc9071f homo-sapiens/CD.fa
-1:f8590ae92973e11ffbfffc7c4821eb96 homo-sapiens/CD-sorting.fa
+1:effe72687ec7ed5dd7c242b8075f3f57 homo-sapiens/CD.fa
+1:536615d7d5ec2db50255d399fcf78704 homo-sapiens/CD-sorting.fa
 1:ae554d1a1a8fdc1e19ed6b84c28fc4d1 homo-sapiens/IGHC=A1.fa
 1:b1ea36c4255c63d775ecdb03967ec89e homo-sapiens/IGHC=A2.fa
 1:43c54f3ddedfde87f70b0e0bea2d6d5f homo-sapiens/IGHC=D.fa
@@ -81,9 +81,9 @@ $ Check md5 in germline/, other sequences
 1:1a780d50f3a3a01d658a70711f77cb30 homo-sapiens/IGHC=M.fa
 1:c9225cb408d44457ffa55ad94673260c homo-sapiens/IGHD.up.fa
 1:248b4d7edf22bbb1cf0cdbb29c40779e homo-sapiens/IGHJ.down.fa
-1:7d6247262807ad5478b7a4e52a59c568 homo-sapiens/IGK-INTRON.fa
+1:b2596ad58b149e66a0763e26fbd8ebc9 homo-sapiens/IGK-INTRON.fa
 1:1db120e1709fdc20f4f87da49c6dbf01 homo-sapiens/IGKJ.down.fa
-1:1147a04c4e8a8dd534aae65db1ae13ca homo-sapiens/IGK-KDE.fa
+1:380395c2de60df062f8b794ccbabfc68 homo-sapiens/IGK-KDE.fa
 1:6e4f346dcd13c2d6d2ca6d977baf27c7 homo-sapiens/IGLJ.down.fa
 1:85e5405f33cb06a791823fb118c185bd homo-sapiens/TRAJ.down.fa
 1:425f89eeb5b10e6c43a6188821ccb3cf homo-sapiens/TRBD.up.fa

@@ -25,3 +25,6 @@ mv $tmpfile homo-sapiens/TRAV.fa
 awk '$0 ~ /^>/ { if ($0 ~ /\/DV/) {dv=1} else {dv=0}}  dv==1{print > "homo-sapiens/TRADV.fa"; next} {print}' homo-sapiens/TRDV.fa  > $tmpfile
 mv $tmpfile homo-sapiens/TRDV.fa
 
+for file in CD-sorting.fa CD.fa IGK-INTRON.fa IGK-KDE.fa; do
+    sed -ri '/^[^>#]/ s/^(.*)$/\L\1/' homo-sapiens/$file
+done

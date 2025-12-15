@@ -294,7 +294,7 @@ void testBug2224(IndexTypes index) {
   BioReader seqJ("../../germline/homo-sapiens/TRGJ.fa", 2);
 
   BioReader data(true, "virtual");
-  Sequence s = {">label", ">label", "ATTATATA", "", 0};
+  Sequence s = {">label", ">label", "ATTATATA", "", {}};
   data.add(s);
 
   json jconfig = {{"order", {"5", "3"}},
@@ -481,7 +481,7 @@ void testBestLengthShifts() {
 // }
 
 void testDifferentSeeds(IndexTypes index) {
-  Sequence  seq = {"seq", "seq", "AGAGAGAGCACACACA", "", 0};
+  Sequence  seq = {"seq", "seq", "AGAGAGAGCACACACA", "", {}};
 
   json jconfig = {{"order", {"5", "3"}},
                   {"segments", {{"5", {{"seed", ""}, {"code", "V"}, {"build", "0"}, {"index", "1"}}},

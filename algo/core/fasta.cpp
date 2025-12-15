@@ -35,13 +35,13 @@
 // OnlineFasta
 
 OnlineFasta::OnlineFasta(int extract_field, string extract_separator,
-                         int nb_sequences_max, int only_nth_sequence)
-  :OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence) {}
+                         int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt)
+  :OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt) {}
 
 OnlineFasta::OnlineFasta(const string &input_filename, 
                          int extract_field, string extract_separator,
-                         int nb_sequences_max, int only_nth_sequence)
-  :OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence) {this->init();}
+                         int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt)
+  :OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt) {this->init();}
 
 OnlineFasta::~OnlineFasta() {
   if (input_allocated)
@@ -76,13 +76,14 @@ bool OnlineFasta::hasNext() {
 
 void OnlineFasta::next() {
   fasta_state state = FASTX_UNINIT;
+  size_t start_gene_sequence, end_gene_sequence;
 
   // Reinit the Sequence object
   current.label_full.erase();
   current.label.erase();
   current.sequence.erase();
   current.quality.erase();
-  current.marked_pos = 0;
+  current.marked_pos[CDR3_POS] = ~0;
   current_gaps = 0;
   
   if  (hasNextData()) {
@@ -100,6 +101,8 @@ void OnlineFasta::next() {
     current.label = extract_from_label(current.label_full, extract_field, extract_separator);
 
     line = getInterestingLine();
+    start_gene_sequence = 0;
+    end_gene_sequence = current.sequence.size() - 1;
     while (hasNextData() && ((state != FASTX_FASTA || line[0] != '>')
                          && (state != FASTX_FASTQ_QUAL || line[0] != '@'))) {
 
@@ -134,9 +137,25 @@ void OnlineFasta::next() {
     if (state >= FASTX_FASTQ_ID && state < FASTX_FASTQ_QUAL) 
       unexpectedEOF();
 
-    // Sequence in uppercase
-    transform(current.sequence.begin(), current.sequence.end(), current.sequence.begin(), (int (*)(int))toupper);
+    int state = 0;               // uppercase state
+    for (size_t i = 0; i < current.sequence.size(); i++) {
+      if (state == 1 && current.sequence[i] >= 'A' && current.sequence[i] <= 'Z') {
+        state = 0;
+        if (ignore_uppercase_nt)
+          end_gene_sequence = i-1;
+      }
+      if (current.sequence[i] >= 'a' && current.sequence[i] <= 'z') {
+        if (state == 0) {
+          state = 1;
+          if (ignore_uppercase_nt)
+            start_gene_sequence = i;
+        }
+        current.sequence[i] = toupper(current.sequence[i]);
+      }
+    }
 
+    current.marked_pos[START_GENE] = start_gene_sequence;
+    current.marked_pos[END_GENE] = end_gene_sequence;
   } else
     unexpectedEOF();
 

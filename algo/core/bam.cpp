@@ -36,13 +36,16 @@
 // OnlineBAM
 
 OnlineBAM::OnlineBAM(int extract_field, string extract_separator,
-                         int nb_sequences_max, int only_nth_sequence)
-  :OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence) {}
+                     int nb_sequences_max, int only_nth_sequence,
+                     bool ignore_uppercase_nt)
+  :OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt) {}
 
 OnlineBAM::OnlineBAM(const string &input_filename, 
-                         int extract_field, string extract_separator,
-                         int nb_sequences_max, int only_nth_sequence)
-  :OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence) {this->init();}
+                     int extract_field, string extract_separator,
+                     int nb_sequences_max, int only_nth_sequence,
+                     bool ignore_uppercase_nt)
+  :OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max,
+                   only_nth_sequence, ignore_uppercase_nt) {this->init();}
 
 OnlineBAM::~OnlineBAM() {
   bam_destroy1(bam_entry);
@@ -85,6 +88,9 @@ void OnlineBAM::next() {
   current.quality = string(qualities);
   current.label_full = string(bam_get_qname(bam_entry));
   current.label = extract_from_label(current.label_full, extract_field, extract_separator);
+  current.marked_pos[START_GENE] = 0;
+  current.marked_pos[CDR3_POS] = ~0;
+  current.marked_pos[END_GENE] = current.sequence.size() - 1;
 
   free(seq);
   free(qualities);

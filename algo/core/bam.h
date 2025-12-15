@@ -32,7 +32,8 @@ class OnlineBAM: public OnlineBioReader {
    * Default constructor
    */
   OnlineBAM(int extract_field=0, string extract_separator="|",
-            int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+            int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1,
+            bool ignore_uppercase_nt=false);
 
   /**
    * Open the file. No sequence is read at first.
@@ -43,7 +44,8 @@ class OnlineBAM: public OnlineBioReader {
    */
   OnlineBAM(const string &input_filename, 
             int extract_field=0, string extract_separator="|",
-            int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
+            int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1,
+            bool ignore_uppercase_nt=false);
 
   virtual ~OnlineBAM();
 

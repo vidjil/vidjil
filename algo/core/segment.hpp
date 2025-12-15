@@ -1029,6 +1029,7 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
 {
 
   int best_score = MINUS_INF ;
+  std::map<size_t, size_t> best_marked_pos;
 
   box->rep = rep;
   box->ref_nb = MINUS_INF ;
@@ -1068,11 +1069,12 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
       // Alignment positions *on the read*
       box->start = dp.first_i;            // start position
       box->end = dp.best_i ;              // end position
-      box->marked_pos = dp.marked_pos_i ; // marked position
+      box->marked_pos = (dp.marked_pos_i.count(CDR3_POS) > 0 && dp.marked_pos_i[CDR3_POS] != (size_t)~0) ? dp.marked_pos_i[CDR3_POS] : 0 ; // marked position
 
       // Alignment positions *on the reference*
       box->del_left = dp.first_j;     // around start position
       best_best_j = dp.best_j;        // around end position
+      best_marked_pos = dp.marked_pos_i;
     }
 
     score_r.push_back(make_pair(score, r));
@@ -1111,6 +1113,19 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
                              local, box, segment_cost, false,evalue_threshold);
     return;
   }
+
+  if (best_marked_pos.count(START_GENE) && best_marked_pos[START_GENE] != (size_t)~0) {
+    box->start = max(box->start, (int)best_marked_pos.at(START_GENE));
+  }
+  if (best_marked_pos.count(END_GENE) && best_marked_pos[END_GENE] != (size_t)~0) {
+    box->end = min(box->end, (int)best_marked_pos.at(END_GENE));
+  }
+  // Sequence totally aligned before the start of the gene sequence
+  if (rep->read(box->ref_nb).marked_pos.at(START_GENE) > (size_t)best_best_j)
+    box->start = box->end;
+  // Sequence totally aligned after the end of the gene sequence
+  if (rep->read(box->ref_nb).marked_pos.at(END_GENE) < (size_t)box->del_left)
+    box->end = box->start;
 
 #ifdef DEBUG_SEGMENT
   cout << "reverse_both " << reverse_both << "   reverse_left " << reverse_ref << "   local " << local << endl;
