@@ -2,6 +2,12 @@
 !!! note
     This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
+## Algo 2025-12
+
+* Vidjil-algo behaviour is now similar to the release 2024-02, but still benefiting from the speedup (#5429 #5434)
+* Fix the export of affect values (#5437 #5465)
+* Fix computation of gene border positions (do not take into account upstream/downstream regions as being within the gene anymore, #5237). This fixes some issues with productivity computation.
+
 ## Algo 2025-02
 
 * Large refactor, one-pass Aho-Corasick automaton (!1527)
