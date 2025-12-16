@@ -24,8 +24,8 @@ else
 	if [[ $HOST != local ]]
 	then
 		sed -i "s|use_database: true,|use_database: false,|g" "/app/vidjil/browser/js/conf.js"
-		sed -i "s|cgi_address: \"https://localhost/cgi/\"|cgi_address: \"https://db.vidjil.org/cgi/\"|g" "/app/vidjil/browser/js/conf.js"
-		sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://db.vidjil.org/vidjil/\"|g" "/app/vidjil/browser/js/conf.js"
+		sed -i "s|cgi_address: \"https://localhost/cgi/\"|cgi_address: \"https://app-back.vidjil.org/cgi/\"|g" "/app/vidjil/browser/js/conf.js"
+		sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://app-back.vidjil.org/vidjil/\"|g" "/app/vidjil/browser/js/conf.js"
 	fi
 
 	sed -i "s/server_version: \".*\"/server_version: \"test\"/g" "/app/vidjil/browser/js/conf.js"

@@ -342,7 +342,8 @@ QUnit.test("system selection", function(assert) {
     m.parseJsonData(json_data, 100)
     assert.deepEqual(m.system_selected, m.system_available, "All systems should be selected by default")
     analysis_data_systems = JSON.parse(JSON.stringify(analysis_data))
-    analysis_data_systems.system_selected = ["TRG"]
+    m.db_key = { sample_set_id: "7", config: 2 }
+    analysis_data_systems.saved_system_selected_by_config = {2:["TRG"]}
     m.parseJsonAnalysis(analysis_data_systems)
 
     assert.notEqual(m.system_available.indexOf("IGH"), -1, "IGH system is available after analysis load")
@@ -423,6 +424,75 @@ QUnit.test("model: primer detection", function(assert) {
 
 
 
+QUnit.test("getSampleReads", function(assert) {
+    // getSampleReads: function (time, normalized = true, germline = undefined)
+
+    //////////////////////
+    // First step, sample with no normalization data
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    data_copy.clones = []
+    m.parseJsonData(data_copy)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    m.initClones()
+
+    assert.equal(m.getSampleReads(0, false, undefined), 200, "getSampleReads, no norm data, unnorm, all seg")
+    assert.equal(m.getSampleReads(0, true, undefined), 200,  "getSampleReads, no norm data, normalize, all seg")
+    assert.equal(m.getSampleReads(0, false, "IGH"), 100,     "getSampleReads, no norm data, unnorm, only IGH")
+
+    m.set_normalization(m.NORM_EXPECTED) // no value setted for this norm
+    assert.equal(m.getSampleReads(0, true, undefined), 200, "getSampleReads, no norm data, norm expected, all seg")
+
+    m.set_normalization(m.NORM_FALSE)
+    assert.equal(m.getSampleReads(0, true, undefined), 200, "getSampleReads, no norm data, norm but without norm, all seg")
+
+
+    m.set_normalization(m.NORM_EXTERNAL)
+    // no norm data in sample; in this case return data without normalization. 
+    // Should never be, as norm external should not be allowed if not defined in interface.
+    assert.equal(m.getSampleReads(0, false, undefined), 200, "getSampleReads, normalized_total data, norm external, ask not mornalize, all seg")
+    assert.equal(m.getSampleReads(0, true, undefined), 200, "getSampleReads, normalized_total data, norm external, ask  mornalize, all seg")
+    // If no germline data, same behavior thant usaul, use global number
+    assert.equal(m.getSampleReads(0, true, "IGH"), 100, "getSampleReads, normalized_total data, norm external, IGH only; same behavior thant")
+
+    //////////////////////
+    // New external norm data, but not splitted by germline
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    data_copy.clones = []
+    m.parseJsonData(data_copy)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    m.initClones()
+    m.reads.normalized = {"normalized_total": [1000, 200, 100, 50]}
+
+    assert.equal(m.getSampleReads(0, false, undefined), 200, "getSampleReads, normalized_total data,  unnorm, all seg")
+
+    m.set_normalization(m.NORM_EXTERNAL)
+    assert.equal(m.getSampleReads(0, false, undefined), 200, "getSampleReads, normalized_total data, norm external, ask not mornalize, all seg")
+    assert.equal(m.getSampleReads(0, true, undefined), 1000, "getSampleReads, normalized_total data, norm external, ask  mornalize, all seg")
+    // If no germline data, same behavior thant usaul, use global number
+    assert.equal(m.getSampleReads(0, true, "IGH"), 1000, "getSampleReads, normalized_total data, norm external, IGH only; same behavior thant")
+
+    //////////////////////
+    // New extrenal norm data, also splitted by germline
+    var m = new Model();
+    var data_copy = JSON.parse(JSON.stringify(json_data));
+    data_copy.clones = []
+    m.parseJsonData(data_copy)
+    var c1 = new Clone(json_clone1, m, 0, c_attributes)
+    m.initClones()
+    m.reads.normalized = {"normalized_total": [1000, 200, 100, 50], "germline": {"IGH": [900, 150, 50, 40], "TRG": [100,50,50,10]}}
+
+    assert.equal(m.getSampleReads(0, true, undefined), 200, "getSampleReads, normalized_total+germline data,  unnorm, all seg")
+
+    m.set_normalization(m.NORM_EXTERNAL)
+    assert.equal(m.getSampleReads(0, true, undefined), 1000, "getSampleReads, normalized_total+germline data, norm external, all seg")
+    assert.equal(m.getSampleReads(0, true, "IGH"), 900, "getSampleReads, normalized_total+germline data, norm external, IGH only")
+
+
+});
+
+
 QUnit.test("normalization", function(assert) {
     var m = new Model();
     m.parseJsonData(json_data, 100)
@@ -433,6 +503,7 @@ QUnit.test("normalization", function(assert) {
     var c5 = new Clone(json_clone5, m, 5, c_attributes)
     var c6 = new Clone(json_clone6, m, 6, c_attributes)
     m.initClones()
+    
     m.set_normalization(m.NORM_FALSE)
     assert.equal(c2.getSize(),0.05,"clone3 size")
     m.set_normalization(m.NORM_EXPECTED)

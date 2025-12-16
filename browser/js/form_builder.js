@@ -200,8 +200,6 @@ function add_file(target_id, index, group_ids) {
 }
 
 function validateFileNames(fileId) {
-  console.log("validateFileNames - fileId: " + fileId);
-
   const upload_1 = document.getElementById("file_upload_1_" + fileId);
   const upload_2 = document.getElementById("file_upload_2_" + fileId);
   const warning = document.getElementById("file_names_errors_" + fileId);
@@ -255,7 +253,6 @@ function validateFileNames(fileId) {
     upload_2.style.border = "1px solid red";
   }
 }
-
 
 
 function FormBuilder() {

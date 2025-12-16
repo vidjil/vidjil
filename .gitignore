@@ -126,6 +126,7 @@ server/py4web/apps/vidjil/tests/cypress/fixtures
 server/py4web/apps/vidjil/tests/cypress/support
 server/py4web/apps/vidjil/tests/cypress/plugins
 server/py4web/apps/vidjil/tests/cypress/integration
+server/py4web/apps/vidjil/tests/unit/resources/results/parts/test_identifier/*
 server/.coverage
 tools/tests/should.retry
 tools/tests/should.warned.retry
@@ -140,3 +141,5 @@ browser/test/cypress/integration/doc_tutorial_client.js
 browser/css/icons/*
 browser/test/cypress/e2e/doc_tutorial_client.cy.js
 server/py4web/apps/vidjil/tests/cypress/e2e/doc_tutorial_server.cy.js
+
+cypress_pipeline/*

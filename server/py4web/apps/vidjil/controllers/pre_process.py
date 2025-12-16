@@ -1,5 +1,6 @@
 import json
 import os
+import urllib.parse
 
 from py4web import action, request
 
@@ -43,6 +44,17 @@ def index():
         "view pre process list",
         extra={"user_id": auth.user_id, "record_id": None, "table_name": "pre_process"},
     )
+
+    for elt in query:
+        elt["clipboard"] = urllib.parse.quote(
+            json.dumps(
+                {
+                    "name": str(elt["name"]),
+                    "command": str(elt["command"]),
+                    "info": str(elt["info"]),
+                }
+            )
+        )
 
     return dict(
         message=T("Pre-process list"),

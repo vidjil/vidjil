@@ -1,4 +1,4 @@
-!REQUIRES: python3 $VIDJIL_DIR/tools/check_python3_version.py
+!REQUIRES: python3 $VIDJIL_DIR/tools/check_python_version.py
 !OUTPUT_FILE: out/json_content.vidjil
 !LAUNCH: $VIDJIL_DIR/$EXEC -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH --out-details -w 60 -r 5 -e 10 -b json_content  $VIDJIL_DATA/Stanford_S22.fasta > /dev/null 
 #; cat out/data.vidjil
@@ -19,14 +19,14 @@ $ Number of detected reads
 :reads.segmented: [13153]
 
 $ Number of detected clonotypes
-:reads.clones.IGH: [10947]
+:reads.clones.IGH: [10943]
 
 $ Most abundant window
 :clones[0].id: CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC
 :clones[0].reads: [8]
 
 $ Affect values are over all the sequence
-f:clones[0].seg.affectSigns.seq: \+\+\+\+\+\+\+\+\+\+\+   \+  \+\+  \+\+\+\+\+\+\+\+\+      \+      \+\+\+\+\+\+\+     \+\+     \+                       -----            \+                     \+\+\+\+\+\+\+\+
+:clones[0].seg.affectSigns.seq:\+\+\+\+\+\+\+\+\+\+\+   \+  \+\+  \+\+\+\+\+\+\+\+\+      \+      \+\+\+\+\+\+\+     \+\+     \+                                        \+                     \+\+\+\+\+\+\+\+
 :clones[0].seg.affectSigns.start: 1
 :clones[0].seg.affectSigns.stop: 145
 

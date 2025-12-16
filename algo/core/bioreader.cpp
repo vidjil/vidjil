@@ -29,17 +29,21 @@
 #include "bam.h"
 
 OnlineBioReader::OnlineBioReader(int extract_field, string extract_separator,
-                     int nb_sequences_max, int only_nth_sequence):
+                                 int nb_sequences_max, int only_nth_sequence,
+                                 bool ignore_uppercase_nt):
   filename(""), extract_field(extract_field),
   extract_separator(extract_separator),
-  nb_sequences_max(nb_sequences_max), only_nth_sequence(only_nth_sequence){}
+  nb_sequences_max(nb_sequences_max), only_nth_sequence(only_nth_sequence),
+  ignore_uppercase_nt(ignore_uppercase_nt){}
 
 OnlineBioReader::OnlineBioReader(const string &input_filename, 
                      int extract_field, string extract_separator,
-                     int nb_sequences_max, int only_nth_sequence):
+                     int nb_sequences_max, int only_nth_sequence,
+                     bool ignore_uppercase_nt):
   filename(input_filename), extract_field(extract_field), 
   extract_separator(extract_separator),
-  nb_sequences_max(nb_sequences_max), only_nth_sequence(only_nth_sequence)
+  nb_sequences_max(nb_sequences_max), only_nth_sequence(only_nth_sequence),
+  ignore_uppercase_nt(ignore_uppercase_nt)
 {
   input_allocated = true;
   init();
@@ -53,7 +57,7 @@ void OnlineBioReader::init() {
   nb_sequences_parsed = 0;
   nb_sequences_returned = 0;
   char_nb = 0;
-  current.marked_pos = 0;
+  current.marked_pos[CDR3_POS] = ~0;
   current_gaps = 0;
 }
 
@@ -93,12 +97,12 @@ void OnlineBioReader::addLineToCurrentSequence(string line)
         current_gaps++;
         continue ;
       }
-
       current.sequence += c;
 
       if (mark_pos) {
-        if ((int) current.sequence.length() + current_gaps == mark_pos)
-          current.marked_pos = current.sequence.length();
+        if ((int) current.sequence.length() + current_gaps == mark_pos) {
+          current.marked_pos[CDR3_POS] = current.sequence.length();
+        }
       }
     }
 }
@@ -110,11 +114,13 @@ void OnlineBioReader::unexpectedEOF() {
 //// BioReader
 
 
-void BioReader::init(int extract_field, string extract_separator, size_t mark_pos)
+void BioReader::init(int extract_field, string extract_separator, size_t mark_pos,
+                     bool ignore_uppercase_nt)
 {
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ; 
   this -> mark_pos = mark_pos;
+  this -> ignore_uppercase_nt = ignore_uppercase_nt;
   total_size = 0;
   name = "";
   basename = "";
@@ -129,9 +135,9 @@ BioReader::BioReader(bool virtualfasta, string name)
   filenames.push_back(this->name);
 }
 
-BioReader::BioReader(int extract_field, string extract_separator, int mark_pos)
+BioReader::BioReader(int extract_field, string extract_separator, int mark_pos, bool ignore_uppercase_nt)
 {
-  init(extract_field, extract_separator, mark_pos);
+  init(extract_field, extract_separator, mark_pos, ignore_uppercase_nt);
 }
 
 BioReader::BioReader(const string &input, 
@@ -148,7 +154,7 @@ BioReader::BioReader(const string &input,
 
 void BioReader::add(const string &filename, bool verbose) {
   OnlineBioReader *reader = OnlineBioReaderFactory::create(filename, extract_field,
-                                                           extract_separator);
+                                                           extract_separator, ignore_uppercase_nt);
 
   if (name.size())
     name += " ";
@@ -228,9 +234,8 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
     out << ">";
   out << seq.label;
 
-  if (seq.marked_pos) {
-    out << " !@" << seq.marked_pos ;
-  }
+  if (seq.marked_pos.count(CDR3_POS) > 0 && seq.marked_pos.at(CDR3_POS) != (size_t)~0)
+    out << " !@" << seq.marked_pos.at(CDR3_POS) ;
 
   out << endl;
 
@@ -243,13 +248,14 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
 
 OnlineBioReader *OnlineBioReaderFactory::create(const string &filename,
                                                 int extract_field, string extract_separator,
+                                                bool ignore_uppercase_nt,
                                                 int nb_sequences_max, int only_nth_sequence) {
   string extension = filename.substr(filename.find_last_of(".") + 1);
   transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
   if (extension == "bam")
-    return new OnlineBAM(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence);
+    return new OnlineBAM(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
   else
-    return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence);
+    return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
 }
 
 // http://stackoverflow.com/a/5840160/4475279

@@ -2,7 +2,7 @@
 VIDJIL_ALGO_SRC = algo/
 VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
-CYPRESS_BROWSER = browsers/firefox_supported/chrome
+CYPRESS_BROWSER = browsers/chrome_supported/chrome
 
 TEE = python tools/tee.py -v
 
@@ -48,8 +48,8 @@ functional_browser_cypress_open:
 	mv browser/js/conf.js browser/js/conf.js.bak || true
 	cp browser/js/conf.js.sample browser/js/conf.js
 	sed -i "s|use_database: true,|use_database: false,|g" browser/js/conf.js
-	sed -i "s|cgi_address: \"https://localhost/cgi/\"|cgi_address: \"https://db.vidjil.org/cgi/\"|g" browser/js/conf.js
-	sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://db.vidjil.org/vidjil/\"|g" browser/js/conf.js
+	sed -i "s|cgi_address: \"https://localhost/cgi/\"|cgi_address: \"https://app-back.vidjil.org/cgi/\"|g" browser/js/conf.js
+	sed -i "s|db_address: \"https://localhost/vidjil/\"|db_address: \"https://app-backl.org/vidjil/\"|g" browser/js/conf.js
 	sed -i "s/server_version: \".*\"/server_version: \"test\"/g" browser/js/conf.js
 	ln -sf browser/test/cypress
 	ln -sf docker/ci/cypress.config.js
@@ -116,10 +116,12 @@ functional_server_cypress:
 		-v "`pwd`/docker/ci/script_preprocess.bash":"/app/script_preprocess.bash" \
 		-v "`pwd`/docker/ci/cypress.config.js":"/app/cypress.config.js" \
 		--network="host" \
-		--env BROWSER=$(CYPRESS_BROWSER) --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_table_db.cy.js"
+		--env BROWSER=$(CYPRESS_BROWSER) --env HOST=local --env SERVER=true "vidjilci/cypress_with_browsers:12.9" bash script.bash "/app/cypress/e2e/test_*.cy.js"
 
 ###############################
 
+qunit:
+	chromium-browser browser/test/QUnit/test_Qunit.html  2>/dev/null &
 
 ###
 

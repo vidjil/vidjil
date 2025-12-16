@@ -1,5 +1,15 @@
 [[extend 'db_layout.html']]
 
+<br/>
+Import configuration from clipboard: <button type="button" 
+        id="fillProcessConfigFormFromClipboard" 
+        onclick="fillConfigFormFromClipboard()"
+        title="Import process configuration copied in clipboard from configuration page">
+        <i class="icon-table"></i>
+    </button>
+<br/>
+<br/>
+
 <form id="data_form" action="DB_ADDRESS/config/add_form" enctype="multipart/form-data" method="post">
     <table>
         <tbody>
@@ -53,3 +63,5 @@
         </tbody>
     </table>
 </form>
+
+

@@ -49,15 +49,16 @@ $ Third sequence Stanford
 !NO_LAUNCHER:
 !LAUNCH: cat out/segment_S22.vidjil
 $ Json output
-j1:reads.germline.IGH:3
-j1:reads.segmented:3
-j1:reads.total:3
+j1:reads.germline.IGH: [3]
+j1:reads.segmented: [3]
+j1:reads.total: [3]
 
+# Use regexp for allele
 $ JSON first S22 sequence
-j1:clones[0].name:IGHV3-48.0. 1/CGATCCCCCG/0 IGHD3-22.0. 10/CCCAAAC/8 IGHJ4.0.
+j1:clones[0].name: IGHV3-48.0. 1/CGATCCCCCG/0 IGHD3-22.0. 10/CCCAAAC/8 IGHJ4.0.
 
 $ JSON second S22 sequence
-j1:clones[1].name:IGHV1-3.01 1/TGG/7 IGHD6-13.0. 2/C/0 IGHJ3.0.
+j1:clones[1].name: IGHV1-3.01 1/TGG/7 IGHD6-13.0. 2/C/0 IGHJ3.0.
 
 $ JSON third S22 sequence
-j1:clones[2].name:IGHV3-9.0. 0/AAATTGG/0 IGHD3-16.0. 5/TGGGT/10 IGHJ4.0.
+j1:clones[2].name: IGHV3-9.0. 0/AAATTGG/0 IGHD3-16.0. 5/TGGGT/10 IGHJ4.0.

@@ -23,7 +23,7 @@ def get_last_results(sequence_file, config_ids=None):
     # First get the max run dates for the good result files
     select_max_run = db(
         (db.results_file.sequence_file_id == sequence_file)
-        & (db.results_file.hidden == False)  # noqa: E712
+        & (db.results_file.hidden == False)
         & (select_on_config)
     )._select(
         db.results_file.run_date.max().with_alias("max"),

@@ -50,6 +50,7 @@ private:
   // which they are used. The integers denote the number of the recombination
   IKmerStore<Affect> *index;
   std::vector<std::set<std::string>> segments_by_recomb; // Store for each recombination the set of segments it has
+  bool ignore_uppercase_nt;
 public:
 
   /**
@@ -79,10 +80,13 @@ public:
    * @param repository: the repository of already used germline elements in order to not build them several times.
    * if NULL, the repository will be created.
    * @param max_indexing: the maximal number of bases to index (default: 0, everything).
+   * @param ignore_uppercase_nt: ignore all the nucleotides that are uppercase, once the germlines have
+   *                             been indexed. This means that those sequences will be ignored for all
+   *                             downstream analyses that do not rely on the k-mer index
    */
   Germline(std::string code, Tshortcut shortcut, std::string path, json filenames,
            json &config, GermlineElementRepository<Affect> *repository = NULL,
-           int max_indexing = 0);
+           int max_indexing = 0, bool ignore_uppercase_nt=false);
 
   ~Germline();
 

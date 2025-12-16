@@ -7,7 +7,7 @@ $ Should not have TRDD2 (length 9) with 12 deletions (second seq)
 f0:6 TRDD2.01 6
 
 $ Should not have IGHD5-24 (length 20) with 29 deletions
-0:17 IGHD5-24.01 12
+f0:17 IGHD5-24.01 12
 
 $ Should not have VDDDJ
 f0:VDDDJ

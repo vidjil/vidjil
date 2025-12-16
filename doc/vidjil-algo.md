@@ -292,6 +292,11 @@ However, it is not advised to use several time the same reference sequences.
 More generally, putting many sequences as `--find` will generate hits
 that may hide actual recombinations.
 
+!!! warning
+    By default uppercase nucleotides in the germline sequences are ignored during the V(D)J designation step.
+    Uppercase nucleotides are intended to be upstream or downstream intronic regions. If you want to disable
+    this behaviour, please use the `--keep-uppercase-nucleotides` option.
+
 ## Custom `germline/*.g` presets
 
 New `germline/*.g` presets for other species or for custom recombinations can be created, possibly referring to other `.fasta` files.

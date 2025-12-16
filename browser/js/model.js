@@ -367,6 +367,7 @@ Model.prototype = {
         }
 
         this.system_selected = []
+        this.saved_system_selected_by_config = {}
         this.top = 50
     },
     
@@ -375,13 +376,13 @@ Model.prototype = {
         for (var locus in germline){
             germl = locus.substring(0,3)
             if (typeof this.germline[germl]==="undefined") {
-             this.germline[germl]={};
+                this.germline[germl]={};
             }
             for (var allele in germline[locus]) {
-                    this.germline[germl][allele]="";
-                    this.germline [germl][allele]+=germline[locus][allele];
-                    }
+                this.germline[germl][allele]="";
+                this.germline [germl][allele]+=germline[locus][allele];
                 }
+            }
 
 
         return this.germline;
@@ -583,6 +584,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @param {integer[]} clusters - an array of list of clone_id
      * */
     loadCluster: function (clusters) {
+        
+        // reset cluster before applying new one
+        this.resetClusters(update=false);
 
     this.analysis_clusters = [] // will store unused clusters analysis
     
@@ -663,6 +667,31 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return typeof time !== 'undefined' ? time : this.t
     },
 
+
+    /**
+     * Return reads number of a sample. This value could be normalized if external normalization, and restricted to a system
+     * @param {integer} time: time point/sample to consider
+     * @param {boolean} normalized; use normalized value if available, only for NORM_external
+     * @param {string} germline: a system to consider, undefined by default
+     * @return {integer} time - time index 
+     * */
+    getSampleReads: function (time, normalized = true, germline = undefined) {
+        if (normalized == true && this.normalization_mode == this.NORM_EXTERNAL && this.reads.normalized != undefined) {
+            if (germline && "germline" in this.reads.normalized && germline in this.reads.normalized.germline) {
+                return this.reads.normalized.germline[germline][time];
+            } else {
+                return this.reads.normalized.normalized_total[time];
+            }
+        } else {
+            if (germline) {
+                return this.reads.germline[germline][time];
+            } else {
+                return this.reads.segmented[time];
+            }
+        }
+    },
+
+    
     /**
      * return a name that can be displayed gracefully <br>
      * (either with a real filename, or a name coming from the database).
@@ -843,14 +872,26 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         //reset reads.segmented
         for (var h=0 ; h<this.reads.segmented.length; h++){
             this.reads.segmented[h]=0
+            if ("normalized" in this.reads &&
+                "normalized_total" in this.reads.normalized &&
+                "germline" in this.reads.normalized) {
+                    this.reads.normalized.normalized_total[h]=0
+            }
         }
 
         //compute new reads.segmented value (sum of reads.segmented of selected system)
         for (var i=0; i<this.system_selected.length; i++){
-            var key = this.system_selected[i]
+            var germline = this.system_selected[i]
             for (var j=0; j<this.reads.segmented.length; j++){
-                this.reads.segmented[j] += this.reads.germline[key][j]
+                this.reads.segmented[j] += this.reads.germline[germline][j]
+                
+                if ("normalized" in this.reads && 
+                    "normalized_total" in this.reads.normalized && 
+                    "germline" in this.reads.normalized) {
+                        this.reads.normalized.normalized_total[j] += this.reads.normalized.germline[germline][j]
+                }
             }
+                
         }
         
         // mark analysis as changed
@@ -2278,8 +2319,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
 
     /**
      * break all clusters to default 1-clone clusters
+     * @param {boolean} update Apply update of model after reset. In case of analysis overwrite, model is not fully loaded and cannot update
      * */
-    resetClusters: function () {
+    resetClusters: function (update=true) {
         this.saveClusters()
 
         for (var i = 0; i < this.clones.length; i++) {
@@ -2287,7 +2329,9 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             this.clone(i).mergedId = undefined
         }
 
-        this.update()
+        if (update){
+            this.update()
+        }
     },
 
 

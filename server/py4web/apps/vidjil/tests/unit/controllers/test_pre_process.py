@@ -69,6 +69,11 @@ class TestPreProcessController(unittest.TestCase):
         assert collections.Counter(names) == collections.Counter(expected_names)
         assert result["isAdmin"] is True
 
+        assert (
+            result["query"][0]["clipboard"]
+            == "%7B%22name%22%3A%20%22test%20pre-process%202%22%2C%20%22command%22%3A%20%22dummy%20%26file1%26%20%26file2%26%20%3E%20%26result%26%22%2C%20%22info%22%3A%20%22test%202%22%7D"
+        )
+
     ##################################
     # Tests on pre_process_controller.add()
     ##################################

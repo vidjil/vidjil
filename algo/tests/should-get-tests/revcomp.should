@@ -1,4 +1,4 @@
-!LAUNCH: $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA -k 9 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa  -K -c clones $VIDJIL_DATA/revcomp.fa
+!LAUNCH: $LAUNCHER $VIDJIL_DIR/$EXEC $EXTRA -r 1 -k 9 -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa  -K -c clones $VIDJIL_DATA/revcomp.fa
 !NO_LAUNCHER:
 !LAUNCH: grep -P '1{50}' out/revcomp.affects | sed -r 's/[^1]//g'
 !LAUNCH: grep '^#'   out/revcomp.affects | grep -Po '[0-9.]+e-[0-9]+'
@@ -17,3 +17,9 @@ $ Same e-value for both reads
 4:7.37e-78
 # e-value for the V.
 2:9.13e-129
+
+!NO_LAUNCHER:
+!LAUNCH: grep -A1 affect out/revcomp.vidjil
+
+r1:B{50}
+r1:-{50}

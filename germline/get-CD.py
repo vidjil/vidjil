@@ -7,7 +7,7 @@ import urllib
 
 from ncbi import *
 
-HUGO_REQUEST = 'http://www.genenames.org/cgi-bin/download?'
+HUGO_REQUEST = 'https://www.genenames.org/cgi-bin/download?'
 HUGO_COLS = '&col=gd_hgnc_id&col=md_refseq_id&col=gd_other_ids_list&col=gd_app_sym&col=gd_app_name&col=gd_status&col=gd_prev_sym&col=gd_aliases&col=gd_pub_chrom_map&col=gd_pub_acc_ids&col=gd_pub_refseq_ids'
 
 # HUGO query on 'hcdm.org' entries

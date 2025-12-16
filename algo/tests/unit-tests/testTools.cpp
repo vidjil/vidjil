@@ -27,8 +27,36 @@ void testOnlineBioReader1() {
   delete fq;
 }
 
+void testOnlineBioReaderIgnoreUpper() {
+  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa", 0, "|", true);
+  TAP_TEST(fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  fa->next();
+  Sequence s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "seq1", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "ACAAC", TEST_O_FASTA_GET_SEQUENCE, "");
+  fa->next();
+  s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "seq2", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "CGACCCCCAA", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.marked_pos[START_GENE], 0, TEST_O_FASTA_IGNORE_UPPER, "");
+  TAP_TEST_EQUAL(s.marked_pos[END_GENE], 1, TEST_O_FASTA_IGNORE_UPPER, "");
+  fa->next();
+  s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "seq3", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "A", TEST_O_FASTA_GET_SEQUENCE, "");
+  fa->next();
+  fa->next();
+  s = fa->getSequence();
+  TAP_TEST_EQUAL(s.label, "", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.sequence, "AATN", TEST_O_FASTA_GET_SEQUENCE, "");
+  TAP_TEST_EQUAL(s.marked_pos[START_GENE], 1, TEST_O_FASTA_IGNORE_UPPER, "");
+  TAP_TEST_EQUAL(s.marked_pos[END_GENE], 2, TEST_O_FASTA_IGNORE_UPPER, "");
+  TAP_TEST(! fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  delete fa;
+}
+
 void testOnlineBioReaderMaxNth() {
-  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa", 0, "|", 2, 2);
+  OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa", 0, "|", false, 2, 2);
 
   // First sequence is 'seq2', because only_nth_sequence = 2
   TAP_TEST(fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
@@ -210,16 +238,16 @@ void testFastaLabelAndMark() {
   BioReader fa("data/testMarks.fa", 1, "=", 9);
 
   TAP_TEST_EQUAL(fa.read(0).label, "tic", TEST_FASTA_LABEL, "");
-  TAP_TEST_EQUAL(fa.read(0).marked_pos, 9, TEST_FASTA_MARK, "");
+  TAP_TEST_EQUAL(fa.read(0).marked_pos.at(CDR3_POS), 9, TEST_FASTA_MARK, "");
 
-  TAP_TEST_EQUAL(fa.read(1).marked_pos, 7, TEST_FASTA_MARK, "");
+  TAP_TEST_EQUAL(fa.read(1).marked_pos.at(CDR3_POS), 7, TEST_FASTA_MARK, "");
 
-  TAP_TEST_EQUAL(fa.read(2).marked_pos, 0, TEST_FASTA_MARK, "");
+  TAP_TEST_EQUAL(fa.read(2).marked_pos.at(CDR3_POS), (size_t)~0, TEST_FASTA_MARK, "");
 }
 
 void testSequenceOutputOperator() {
   ostringstream oss;
-  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", 0};
+  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", {}};
   oss << seq;
 
   TAP_TEST_EQUAL(oss.str(), "@a\nGATTACA\n+\nAIIIIIH\n", TEST_SEQUENCE_OUT, oss.str());
@@ -570,6 +598,7 @@ void testGuessFormat() {
 
 void testTools() {
   testOnlineBioReader1();
+  testOnlineBioReaderIgnoreUpper();
   testOnlineBioReaderMaxNth();
   testFastaNbSequences();
   testFasta1();

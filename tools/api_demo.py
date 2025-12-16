@@ -10,7 +10,7 @@ TAGS_UNDEFINED = []
 DOWNLOAD_PATH = "download/"
 
 ### Public database server behind app.vidjil.org
-PUBLIC_SERVER = "https://db.vidjil.org/vidjil"
+PUBLIC_SERVER = "https://app-back.vidjil.org/vidjil"
 PUBLIC_SSL = ""
 PUBLIC_USER = "demo@vidjil.org"
 PUBLIC_PASSWORD = "demo"

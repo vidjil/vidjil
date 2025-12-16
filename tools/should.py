@@ -22,11 +22,11 @@
 
 import sys
 
-if not (sys.version_info >= (3, 4)):
-    print("Python >= 3.4 required")
+if not (sys.version_info >= (3, 7)):
+    print("Python >= 3.7 supported")
     sys.exit(1)
 
-__version_info__ = ('3','0','0')
+__version_info__ = ('3','1','0')
 __version__ = '.'.join(__version_info__)
 
 import re
@@ -664,6 +664,64 @@ class TestCase(TestCaseAbstract):
     >>> TestCase('wr2', 'a.c').test(['bli abc axc bla'])
     True
 
+    
+    >>> TestCase('j', 'key').test(['{ "key": ["abc", "def"]}'])
+    True
+    >>> TestCase('j', 'key: ["abc", "def"]').test(['{ "key": ["abc", "def"]}'])
+    True
+    >>> TestCase('j', 'key: ["abc"      , "def"]').test(['{ "key": ["abc",       "def"]}'])
+    True
+    >>> TestCase('j', 'key[1]: "def"').test(['{ "key": ["abc", "def"]}'])
+    True
+    >>> TestCase('j', 'key.subkey[1]: "def"').test(['{ "key": {"subkey": ["abc", "def"]}}'])
+    True
+
+    >>> data = ['{ "key": [{"subkey": ["abc", "def"]}, "test"]}']
+    >>> TestCase('j', 'key[0].subkey: ["abc", "def"]').test(data)
+    True
+    >>> TestCase('j', 'key[0].subkey[1]: "def"').test(data)
+    True
+    >>> TestCase('j', 'key[0]: "test"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
+    True
+    >>> TestCase('j', 'key[1][0]: "subtest"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
+    True
+
+    >>> TestCase('j', 'key[0]: "test"').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[0]: test').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[0]: te').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[0]: "te"').test(['{ "key": ["test", 313, 0.33, true]}'])
+    False
+    >>> TestCase('j', 'key[1]: 313').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[1]: "313"').test(['{ "key": ["test", 313, 0.33, true]}'])
+    False
+    >>> TestCase('j', 'key[1]: 313.0').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[2]: 0.33').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[3]: true').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[3]: tru').test(['{ "key": ["test", 313, 0.33, true]}'])
+    True
+    >>> TestCase('j', 'key[3]: "tru"').test(['{ "key": ["test", 313, 0.33, true]}'])
+    False
+
+
+    >>> TestCase('j', 'key[2][3]: "subtest"').test(['{ "key": ["test", ["subtest", "subretest"], "retest"]}'])
+    False
+
+    >>> TestCase('j', 'key').test(['{ "badkey": ["abc", "def"]}'])
+    False
+    >>> TestCase('j', 'badkey').test(['{ "key": ["abc", "def"]}'])
+    False
+    >>> TestCase('j', 'key: ["abc", "xyz", "def"]').test(['{ "key": ["abc", "def"]}'])
+    False
+    >>> TestCase('j', 'key[1]: "xyz"').test(['{ "key": ["abc", "def"]}'])
+    False
+
 
     >>> repr(TestCase('x3y', 'hello'))
     'xy3:hello'
@@ -699,7 +757,7 @@ class TestCase(TestCaseAbstract):
             self.mods.count_all = True
 
         self.expression = expression if self.mods.ltspaces else expression.strip()
-        if self.mods.blanks:
+        if self.mods.blanks and not self.mods.json:
             while '  ' in self.expression:
                 self.expression = self.expression.replace('  ', ' ')
             self.expression = self.expression.replace(' ', '\s+')
@@ -722,6 +780,7 @@ class TestCase(TestCaseAbstract):
             expression_var = expression_var.upper()
 
         self.count = None
+        to_return = False
 
         # json handling
         if self.mods.json:
@@ -729,25 +788,31 @@ class TestCase(TestCaseAbstract):
                 d = json.loads(lines[0])
                 self.json_data = deep_get(d, self.key)
 
-                if expression_var:
-                    # An expression is provided: prepare data for further count
-                    if type(self.json_data) is list:
-                        lines = [json.dumps(x) for x in self.json_data]
-                    elif type(self.json_data) is dict:
-                        lines = [json.dumps(x) for x in self.json_data.values()]
-                    else:
-                        lines = [str(self.json_data)]
-                else:
-                    # No expression provided: we just count the keys
-                    if type(self.json_data) in [list, dict]:
-                        self.count = len(self.json_data)
-                    else:
+                if expression_var != "": # test combo key/value as python variable
+                    self.expression_data = json.loads(self.expression)
+                    self.count = 1 if self.json_data == self.expression_data else 0
+                    to_return = True
+                else: # test only key, should already be positive as keep_get don't throw error
+                    if type(self.json_data ) == int or type(self.json_data) == float or type(self.json_data) == bool:
                         self.count = 1
-
+                    else:
+                        self.count = len(self.json_data)
+                    to_return = True
+                
             except (ValueError, KeyError):
                 # No json, or non-existent key: count is 0
-                self.json_data = JSON_KEY_NOT_FOUND
-                self.count = 0
+                if self.json_data == None:
+                    self.json_data = JSON_KEY_NOT_FOUND
+                    self.count = 0
+                    to_return = True
+                else: # existant key, but tested content is not json
+                    # count if as regular case
+                    lines = [json.dumps(self.json_data)]
+                    to_return = False
+            finally:
+                if to_return:
+                    self.compute_status()
+                    return self.status.or_alias()
 
         # Main count
         if self.count is None:
@@ -763,7 +828,10 @@ class TestCase(TestCaseAbstract):
                     l = l.upper()
                 if expression_var in l:
                     self.count += l.count(expression_var) if self.mods.count_all else 1
-
+        self.compute_status()
+        return self.status.or_alias()
+    
+    def compute_status(self):
         # Compute status
         if self.expected_count == NOT_ZERO:
             sta = (self.count > 0)
@@ -781,7 +849,7 @@ class TestCase(TestCaseAbstract):
 
         self.status = Sta(sta)
 
-        return self.status.or_alias()
+        return
 
     def str_additional_status(self, verbose=False):
         s = ''

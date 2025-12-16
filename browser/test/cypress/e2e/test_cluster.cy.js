@@ -1,9 +1,9 @@
 /// <reference types="cypress" />
 
 var localhost = true
-console.log( Cypress.env('workdir') )
-var url = "./"+ Cypress.env('workdir')+"/browser/index.html"
-console.log( url )
+console.log(Cypress.env('workdir'))
+var url = "./" + Cypress.env('workdir') + "/browser/index.html"
+console.log(url)
 
 // This script allow to make some action in a sandbox to quicly change made on the client when you code
 describe('Test sandbox', function () {
@@ -90,7 +90,7 @@ describe('Test sandbox', function () {
 
         cy.get('#polyline4').should('have.class','graph_line');
 
-        
+
         // it('07-cluster_not_ordered',  function() {
 
         cy.get('#cluster5')
@@ -111,7 +111,7 @@ describe('Test sandbox', function () {
         cy.get('#list_split_all > .icon-plus').click()
         cy.getCloneInSegmenter(5) .should("be.visible")
         cy.getCloneInSegmenter(6) .should("be.visible")
-        
+
 
         //   # Add test on order of clones in list
         cy.get('#cluster5')
@@ -120,6 +120,66 @@ describe('Test sandbox', function () {
                 assert.equal($li[0].id, "_6", ">> first clone in cluster is the 6th")
                 assert.equal($li[1].id, "_5", ">> second clone in cluster is the 5th")
             })
+    })
+
+
+    it('02-load analysis from file', function () {
+
+        cy.openAnalysis("tools/tests/data/analysis/sample_analysis_1.vidjil")
+        cy.update_icon()
+
+        cy.get('#cluster0')
+            .should("exist")
+            .should('not.be.visible');
+
+
+        cy.getCloneInList(0).should('be.visible');
+        cy.getCloneInList(1).should('not.be.visible');
+
+        cy.getCloneInList(4).should('be.visible');
+        cy.getCloneInList(5).should('not.be.visible');
+        cy.getCloneInList(6).should('be.visible');
+
+
+        cy.openClusterClone('0')
+        cy.get('#cluster0')
+            .should('be.visible');
+
+    })
+
+
+    it('03-load analysis from file + overwrite by analysis file', function () {
+        ///////////////////////////////////////
+        // Open sample with real analysis file
+        // Analysis content from analysis file should replace content of analysis from vidjil file
+        cy.openAnalysis(
+            "tools/tests/data/analysis/sample_analysis_1.vidjil", // cluster [5A, 6A]
+            "tools/tests/data/analysis/sample_analysis_1_over_clusters.analysis" // cluster [5A, 7]
+        )
+        cy.update_icon()
+
+        cy.get('#cluster0')
+            .should("exist")
+            .should('not.be.visible');
+
+
+        cy.getCloneInList(0).should('be.visible');
+        cy.getCloneInList(1).should('not.be.visible');
+
+        cy.getCloneInList(4).should('be.visible');
+        cy.getCloneInList(5).should('be.visible');
+        cy.getCloneInList(6).should('not.be.visible');
+
+
+        cy.openClusterClone('0')
+        cy.get('#cluster0')
+            .should('be.visible');
+
+        cy.openClusterClone('4')
+        cy.get('#cluster4')
+            .should('be.visible');
+
+
     })
 
 

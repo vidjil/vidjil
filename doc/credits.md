@@ -98,8 +98,8 @@ and [Septenville 2022] (assessment of mutational status in CLL).
 
 Cyprien Borée et al.,
 *Alignment-free detection and seed-based identification of multi-loci V(D)J recombinations in Vidjil-algo*,
-2025, in revision for PCI Math Comp Bio,
-<https://hal.science/hal-04361907>
+Peer Community Journal (5), 2025
+<https://doi.org/10.24072/pcjournal.547>
 
 Marc Duez et al.,
 *Vidjil: A web platform for analysis of high-throughput repertoire sequencing*,

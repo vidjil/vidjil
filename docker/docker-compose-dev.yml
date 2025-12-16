@@ -18,10 +18,12 @@ services:
             - ../demo:/mnt/data/src
             - ../doc:/usr/share/vidjil/doc
             - ./:/usr/share/vidjil/docker
-            - ../server/:/usr/share/vidjil/server/
+            - ../server/py4web/apps/vidjil:/usr/share/vidjil/server/py4web/apps/vidjil
             - ../tools:/usr/share/vidjil/tools
+            - ./vidjil-server/conf/uwsgi.ini:/etc/uwsgi/sites/uwsgi.ini
             # CloneDB
             - ../../clonedb:/usr/share/clonedb
+            - ${VOLUME_PATH:-./volumes/vidjil/}/clonedb/sequences:/usr/share/clonedb/sequences
             # Use contrib folder
             - ../../contrib:/usr/share/vidjil/tools/scripts
             - ../../contrib/third-party-softwares/compiled:/binaries
@@ -91,6 +93,7 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+                restart: true
         links:
             - mysql:mysql
         networks:

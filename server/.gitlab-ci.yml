@@ -43,12 +43,6 @@
     CYPRESS_PATH: server/py4web/apps/vidjil/tests/cypress
     HOST: local
     TEST_FILES_PATTERN: "/app/cypress/e2e/test_*.js"
-  only: &onlyServerBranches
-    - /^feature-.*s.*\/.*$/
-    - /^hotfix-.*s.*\/.*$/
-    - /^prod-server/
-    - dev
-
 
 
 ## Cypress with server
@@ -57,9 +51,12 @@ server1-ff-supported:
     - .test_cypress_server
     - .need_for_moderate_server
   variables:
-    BROWSER: firefox_supported/firefox
+    BROWSER: chrome_supported/chrome
   needs:
-    - [build_test_server_docker]
+    - job: build_test_server_docker
+      optional: true
+  rules:
+    - !reference [.rules_server]
 
 ## Cypress with server
 s2:
@@ -68,12 +65,15 @@ s2:
   parallel:
     matrix:
       - BROWSER: [
+          firefox_supported/firefox,
           firefox_latest/firefox,
           firefox_legacy/firefox,
-          chrome_supported/chrome,
           chrome_latest/chrome,
           chrome_legacy/chrome
         ]
+  rules:
+    - !reference [.rules_server]
+
 
 
 ## Cypress TUTORIAL with server
@@ -94,9 +94,12 @@ tuto-s1-ff-supported:
     - .tuto-server
     - .need_for_moderate_server
   variables:
-    BROWSER: firefox_supported/firefox
+    BROWSER: chrome_supported/chrome
   needs:
-    - [build_test_server_docker]
+    - job: build_test_server_docker
+      optional: true
+  rules:
+    - !reference [.rules_server]
 
 
 ## Cypress with server
@@ -107,10 +110,13 @@ tuto-s2:
   parallel:
     matrix:
       - BROWSER: [
+          firefox_supported/firefox,
           firefox_latest/firefox,
           firefox_legacy/firefox,
-          chrome_supported/chrome,
           chrome_latest/chrome,
           chrome_legacy/chrome
         ]
+  rules:
+    - !reference [.rules_server]
+
 

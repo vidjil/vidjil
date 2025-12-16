@@ -16,6 +16,9 @@ QUnit.test("loadCluster", function(assert) {
     m.initClones()
     m.parseJsonAnalysis(analysis_data_clusters)
 
+    console.log(analysis_data_clusters)
+    console.log(m.analysis_clusters)
+
     // Control fake clusters
     assert.deepEqual(m.analysis_clusters.length,  2, "Correct number of non found clusters" )
     assert.deepEqual(m.analysis_clusters[0],  ["id_fake_1", "id_fake_2"], "Correct values for first non found cluster" )
@@ -49,6 +52,43 @@ QUnit.test("loadCluster", function(assert) {
     assert.deepEqual(m.clusters[0],  [0, 2, 1], "another top order; Correct cluster for clone 0" )
     assert.deepEqual(m.clusters[1],         [], "another top order; Correct cluster for clone 1" )
     assert.deepEqual(m.clusters[2],         [], "another top order; Correct cluster for clone 2" )
+
+
+    //////////////////
+    // Tests usage of analysis data from vidjil file
+    //////////////////
+    var m = new Model();
+    var json_data_bis = JSON.parse(JSON.stringify(json_data)) // hard copy
+    json_data_bis["analysis"] = analysis_data_clusters
+    m.parseJsonData(json_data_bis, 100)
+    m.initClones()
+
+    // Control fake clusters
+    assert.deepEqual(m.analysis_clusters.length,  2, "Correct number of non found clusters" )
+    assert.deepEqual(m.analysis_clusters[0],  ["id_fake_1", "id_fake_2"], "Correct values for first non found cluster" )
+    assert.deepEqual(m.analysis_clusters[1],  ["id_fake_1b", "id_fake_2b"], "Correct values for second non found cluster (don't get real clone Id)" )
+
+
+    //////////////////
+    // test usage of analysis from both vidjil and analysis file
+    // analysis content from vidjil file should be overwrited by analysis file content
+    //////////////////
+    var m = new Model();
+    var json_data_bis = JSON.parse(JSON.stringify(json_data)) // hard copy
+    json_data_bis["analysis"] = JSON.parse(JSON.stringify(analysis_data_clusters))
+    json_data_bis["analysis"]["clusters"] = [ // Modification; No more same cluster than analysis file content
+      ["id2", "id3", "id1"], 
+      ["id_fake_1", "id_fake_2", "id_fake_1b", "id_fake_2b"]
+    ]
+
+    m.parseJsonData(json_data_bis, 100)
+    m.initClones()
+    m.parseJsonAnalysis(analysis_data_clusters)
+
+    // Control fake clusters; same as with only analysis cluster loading
+    assert.deepEqual(m.analysis_clusters.length,  2, "Correct number of non found clusters" )
+    assert.deepEqual(m.analysis_clusters[0],  ["id_fake_1", "id_fake_2"], "Correct values for first non found cluster" )
+    assert.deepEqual(m.analysis_clusters[1],  ["id_fake_1b", "id_fake_2b"], "Correct values for second non found cluster (don't get real clone Id)" )
 
 });
 

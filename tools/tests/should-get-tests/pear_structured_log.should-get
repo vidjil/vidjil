@@ -4,28 +4,33 @@
 !OPTIONS: --mod jR
 
 $ Correct number of assembled reads
-:reads.reads_assembled_number: 2972
+j:reads.reads_assembled_number: 2972
 :reads.reads_total_number: 3000
 
 $ Correct number of unassembled reads
 :reads.reads_not_assembled_number: 28
 
 $ Correct information on input files used by pear
-:output_file.assembled_reads: demo_set.fastq.assembled.fastq
-:output_file.discarded_reads: demo_set.fastq.discarded.fastq
-:output_file.unassembled_forward: demo_set.fastq.unassembled.forward.fastq
-:output_file.unassembled_reverse: demo_set.fastq.unassembled.reverse.fastq
+:output_file.assembled_reads: "demo_set.fastq.assembled.fastq"
+:output_file.discarded_reads: "demo_set.fastq.discarded.fastq"
+:output_file.unassembled_forward: "demo_set.fastq.unassembled.forward.fastq"
+:output_file.unassembled_reverse: "demo_set.fastq.unassembled.reverse.fastq"
 
-$ Correct parameter return
-:settings.forward_file: sequence_R1.fastq
-:settings.minimum_overlap: 10
-:settings.phred: 33
-:settings.reverse_file: sequence_R2.fastq
-:settings.scoring_methode: Scaled score
-:settings.version: PEAR v0.9.10 \[May 30, 2016\]
+$ Correct parameter return: forward_file
+:settings.forward_file: "sequence_R1.fastq"
+$ Correct parameter return: minimum_overlap
+:settings.minimum_overlap: "10"
+$ Correct parameter return: phred
+:settings.phred: "33"
+$ Correct parameter return: reverse_file
+:settings.reverse_file: "sequence_R2.fastq"
+$ Correct parameter return: scoring_methode
+:settings.scoring_methode: "Scaled score"
+$ Correct parameter return: version
+:settings.version: "PEAR v0.9.10 [May 30, 2016]"
 
 $ Correct nucleotides frequencies
-:base_frequency.base_frequency_a: 0.269874
-:base_frequency.base_frequency_c: 0.257653
-:base_frequency.base_frequency_g: 0.238808
-:base_frequency.base_frequency_t: 0.233665
+:base_frequency.base_frequency_a: "0.269874"
+:base_frequency.base_frequency_c: "0.257653"
+:base_frequency.base_frequency_g: "0.238808"
+:base_frequency.base_frequency_t: "0.233665"

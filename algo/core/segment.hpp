@@ -481,12 +481,18 @@ string KmerSegmenter<Affect>::getInfoLineWithAffects() const
 
   if (this->getSegmentationStatus() != UNSEG_TOO_SHORT)
  {
+   for (auto affect: this->getKmerAffectAnalyser()->getAffectations()) {
+     size_t affect_count = this->getKmerAffectAnalyser()->count(affect);
+     ss << endl;
+     ss << affect ;
+     ss << right << setw(5) << affect_count << setw(14)
+        << this->getKmerAffectAnalyser()->getProbabilityAtLeastOrAbove(affect, affect_count)
+       << " "
+        << this->getKmerAffectAnalyser()->toStringValues({affect}, false, true);
+     // ss << "$ " << right << setw(9) << germline << endl
+     //    << this->getKmerAffectAnalyser()->toStringSigns({affect}, false, true);
+   }
    ss << endl;
-   ss << "# " << right << setw(9) << germline << endl
-      << this->getKmerAffectAnalyser()->toStringValues();
-   ss << endl;
-   ss << "$ " << right << setw(9) << germline << endl
-      << this->getKmerAffectAnalyser()->toStringSigns();
  }
 
  return ss.str();
@@ -542,7 +548,10 @@ template <typename Affect>
 KmerSegmenter<Affect>::KmerSegmenter() { kaa = 0 ; }
 
 template <typename Affect>
-KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method, MultiGermline<Affect> *germlines, Germline<Affect> *required_germline, ostream *out_unsegmented, double threshold, double multiplier)
+KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, int segmentation_method,
+                                     bool include_unexpected,
+                                     MultiGermline<Affect> *germlines, Germline<Affect> *required_germline,
+                                     ostream *out_unsegmented, double threshold, double multiplier)
 {
   set<KmerAffect> before_set, after_set;
 
@@ -580,7 +589,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
     return ;
   }
 
-  kaa = new MultipleAffectAnalyser(*(index), this->sequence);
+  kaa = new MultipleAffectAnalyser(*(index), this->sequence, include_unexpected);
 
   // Check strand consistency among the affectations.
   int strand=0;
@@ -598,22 +607,19 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
 
   this->reversed = (nb_strand[0] > nb_strand[1]) ;
 
-
-
   if (segmentation_method == SEG_METHOD_ONE) {
 
-    KmerAffectAnalyser ka(*(index), this->sequence);
+    std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> res = kaa->max12({}, germlines);
+    KmerAffect kmer = *(std::get<0>(res).begin());
+    if (kmer.isAmbiguous()) {
+      this->because = UNSEG_TOO_FEW_ZERO ;
+      return ;
+    }
 
-    std::set<GermlineElement<Affect>*> elements = required_germline->getGermlineElements("4");
-    GermlineElement<Affect> *element = *(elements.begin());
-    if (elements.size() > 1)
-      std::cerr << "WARNING: only one Germline element from segment 4 will be taken into account ("
-                << element->getFilename() << ")" << std::endl;
-    KmerAffect kmer = KmerAffect(element->getAffect(), 1, element->getSeed().size());
-    int c = ka.count(kmer);
+    int c = kaa->count(kmer);
 
     // E-value
-    double pvalue = ka.getProbabilityAtLeastOrAbove(kmer, c);
+    double pvalue = kaa->getProbabilityAtLeastOrAbove(kmer, c);
     this->evalue = pvalue * multiplier ;
 
     if (this->evalue >= threshold)
@@ -621,7 +627,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
       this->because = UNSEG_TOO_FEW_ZERO ;
       return ;
     }
-
+    KmerAffectAnalyser ka(*(index), this->sequence);
     int pos = ka.minimize(kmer, DEFAULT_MINIMIZE_ONE_MARGIN, DEFAULT_MINIMIZE_WIDTH);
 
     if (pos == NO_MINIMIZING_POSITION)
@@ -638,6 +644,9 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
     // getJunction() will be centered on pos
     this->box_V->end = pos;
     this->box_J->start = pos;
+    std::set<Tshortcut> shortc = {germlines->getRepository()->getShortcut(kmer)};
+    this->segmented_germline = germlines->getGermline(shortc, 1);
+    before = after = kmer;
     this->finishSegmentation();
 
     return ;
@@ -664,7 +673,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
          unique_affect = *(kaa->getAffectations().begin());
          max12 = std::make_tuple(set<KmerAffect>({unique_affect}), set<KmerAffect>({KmerAffect::getUnknown()}), kaa->getProbabilityAtLeastOrAbove(unique_affect, kaa->count(unique_affect)), 1);
        } else {
-         max12 = kaa->max12(forbidden);
+         max12 = kaa->max12(forbidden, germlines);
        }
        if (std::get<0>(max12).size() &&
            std::get<0>(max12).begin()->isAmbiguous()) {
@@ -733,7 +742,7 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
       this->segmented_germline = Germline<Affect>::getUnseg();
   }
   if (this->because == 0)
-    computeSegmentation(strand, before, after, threshold, multiplier);
+    computeSegmentation(strand, before, after, germlines, threshold, multiplier);
 
   if (out_unsegmented)
   {
@@ -748,17 +757,20 @@ void KmerSegmenter<Affect>::chooseGermline(MultiGermline<Affect> *germlines, set
   std::set<Tshortcut> before_shortcuts, after_shortcuts;
   std::list<Germline<Affect> *> possible_germlines;
   std::list<std::pair<KmerAffect, KmerAffect>> matching_affects;
-  std::map<Tshortcut, KmerAffect> shortcut_affect;
+  std::map<Tshortcut, KmerAffect[2]> shortcut_affect;
+  std::map<Tshortcut, int> shortcut_strand;
 
   for (auto val: before_set) {
     Tshortcut c = germlines->getRepository()->getShortcut(val);
     before_shortcuts.insert(c);
-    shortcut_affect[c] = val;
+    shortcut_affect[c][(val.getStrand()+1)/2] = val;
+    shortcut_strand[c] |= ((val.getStrand()+1)/2) + 1;
   }
   for (auto val: after_set) {
     Tshortcut c = germlines->getRepository()->getShortcut(val);
     after_shortcuts.insert(c);
-    shortcut_affect[c] = val;
+    shortcut_affect[c][(val.getStrand()+1)/2] = val;
+    shortcut_strand[c] |= ((val.getStrand()+1)/2) + 1;
   }
 
   assert(germlines != nullptr);
@@ -768,15 +780,16 @@ void KmerSegmenter<Affect>::chooseGermline(MultiGermline<Affect> *germlines, set
       std::set<Tshortcut> shortcuts = {left, right};
       Germline<Affect> *possible_germline = germlines->getGermline(shortcuts);
       if (possible_germline != nullptr && possible_germline->hasRecombination(shortcuts)) {
-        if (shortcut_affect[left].getStrand() == shortcut_affect[right].getStrand()) {
+        int common_strand = shortcut_strand[left] & shortcut_strand[right];
+        if (common_strand != 0) {
           possible_germlines.push_back(possible_germline);
-          matching_affects.push_back(std::make_pair(shortcut_affect[left], shortcut_affect[right]));
+          matching_affects.push_back(std::make_pair(shortcut_affect[left][(common_strand-1)%2],
+                                                    shortcut_affect[right][(common_strand-1)%2]));
         }
         // TODO: check segment order consistency
       }
     }
   }
-
   if (possible_germlines.size() >= 1) {
     if (possible_germlines.size() > 1) {
       // Select shorter codes as it will favor complete over incomplete recombinations
@@ -826,12 +839,13 @@ KmerSegmenter<Affect>::~KmerSegmenter() {
 
 template <typename Affect>
 void KmerSegmenter<Affect>::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
+                                                MultiGermline<Affect> *germlines,
                                                 double threshold, double multiplier) {
   // Try to segment, computing 'box_V->end' and 'box_J->start'
   // If not segmented, put the cause of unsegmentation in 'because'
 
   affect_infos max;
-  max = kaa->getMaximum(before, after);
+  max = kaa->getMaximum(before, after, germlines);
 
   // E-values
   pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();
@@ -1015,6 +1029,7 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
 {
 
   int best_score = MINUS_INF ;
+  std::map<size_t, size_t> best_marked_pos;
 
   box->rep = rep;
   box->ref_nb = MINUS_INF ;
@@ -1054,11 +1069,12 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
       // Alignment positions *on the read*
       box->start = dp.first_i;            // start position
       box->end = dp.best_i ;              // end position
-      box->marked_pos = dp.marked_pos_i ; // marked position
+      box->marked_pos = (dp.marked_pos_i.count(CDR3_POS) > 0 && dp.marked_pos_i[CDR3_POS] != (size_t)~0) ? dp.marked_pos_i[CDR3_POS] : 0 ; // marked position
 
       // Alignment positions *on the reference*
       box->del_left = dp.first_j;     // around start position
       best_best_j = dp.best_j;        // around end position
+      best_marked_pos = dp.marked_pos_i;
     }
 
     score_r.push_back(make_pair(score, r));
@@ -1098,6 +1114,19 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
     return;
   }
 
+  if (best_marked_pos.count(START_GENE) && best_marked_pos[START_GENE] != (size_t)~0) {
+    box->start = max(box->start, (int)best_marked_pos.at(START_GENE));
+  }
+  if (best_marked_pos.count(END_GENE) && best_marked_pos[END_GENE] != (size_t)~0) {
+    box->end = min(box->end, (int)best_marked_pos.at(END_GENE));
+  }
+  // Sequence totally aligned before the start of the gene sequence
+  if (rep->read(box->ref_nb).marked_pos.at(START_GENE) > (size_t)best_best_j)
+    box->start = box->end;
+  // Sequence totally aligned after the end of the gene sequence
+  if (rep->read(box->ref_nb).marked_pos.at(END_GENE) < (size_t)box->del_left)
+    box->end = box->start;
+
 #ifdef DEBUG_SEGMENT
   cout << "reverse_both " << reverse_both << "   reverse_left " << reverse_ref << "   local " << local << endl;
   cout << "best:   " << *box <<  "   read length: " << read.length() << "   ref length: " <<   box->ref.size()  << endl;
@@ -1113,7 +1142,9 @@ string format_del(int deletions)
 
 template <typename Affect>
 FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, Cost segment_c,
-                                     double threshold, double multiplier, int kmer_threshold, int alternative_genes)
+                                     bool include_unexpected,
+                                     double threshold, double threshold_kmer, double multiplier,
+                                     int kmer_threshold, int alternative_genes)
 {
   this->box_V = new AlignBox<Affect>("5");
   this->box_D = new AlignBox<Affect>("4");
@@ -1146,18 +1177,18 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   bool reverse_J = false ;
   GermlineElement<Affect> *g_left=NULL, *g_right=NULL;
 
+  // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
+  KmerSegmenter<Affect> kseg(seq, germline->getIndex(), germline->getSegmentationMethod(),
+                                                          include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
   if ((germline->getSegmentationMethod() == SEG_METHOD_MAX12) || (germline->getSegmentationMethod() == SEG_METHOD_MAX1U))
   {
-    // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
-    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
-    if (kseg->isSegmented())
+    if (kseg.isSegmented())
     {
-      this->reversed = kseg->isReverse();
+      this->reversed = kseg.isReverse();
 
-      KmerAffect left = this->reversed ? KmerAffect(kseg->after, true) : kseg->before ;
-         KmerAffect right = this->reversed ? KmerAffect(kseg->before, true) : kseg->after ;
+      KmerAffect left = this->reversed ? KmerAffect(kseg.after, true) : kseg.before ;
+         KmerAffect right = this->reversed ? KmerAffect(kseg.before, true) : kseg.after ;
 
-         delete kseg ;
 
          reverse_V = (left.getStrand() == -1);
          reverse_J = (right.getStrand() == -1);
@@ -1178,7 +1209,6 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
     }
     else
     {
-      delete kseg ;
       return ;
     }
   } else {
@@ -1186,9 +1216,9 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
     // Note that we use only the 'strand' component
     // When the KmerSegmenter fails, continue with positive strand
     // TODO: flag to force a strand / to test both strands ?
-    KmerSegmenter<Affect> *kseg = new KmerSegmenter<Affect>(seq, germline->getIndex(), germline->getSegmentationMethod(), germline->getMultiGermline(), germline, nullptr, THRESHOLD_NB_EXPECTED, 1);
-    this->reversed = kseg->isReverse();
-    delete kseg ;
+    KmerSegmenter<Affect> kseg(seq, germline->getIndex(), germline->getSegmentationMethod(),
+                               include_unexpected, germline->getMultiGermline(), germline, nullptr, threshold_kmer, 1);
+    this->reversed = kseg.isReverse();
   }
 
   this->sequence_or_rc = revcomp(this->sequence, this->reversed); // sequence, possibly reversed
@@ -1197,8 +1227,10 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   double standardised_threshold_evalue = threshold / multiplier;
 
   /* Read mapping */
-  if (germline->getSegmentationMethod() == SEG_METHOD_ONE)
+  if (germline->getSegmentationMethod() == SEG_METHOD_ONE && kseg.isSegmented())
   {
+    KmerAffect left = kseg.before;
+    g_left = *(germline->getIndex()->getLabel(left).begin());
     std::shared_ptr<BioReader> leftReader = g_left->getReader();
     align_against_collection(this->sequence_or_rc, leftReader, NO_FORBIDDEN_ID, false, false,
                              true, // local
@@ -1617,16 +1649,19 @@ void KmerSegmenter<Affect>::toOutput(CloneOutput *clone, bool details) {
     clone->setSeg("evalue_right", toJsonSegVal(scientific_string_of_double(this->evalue_right)));
 
   if (getKmerAffectAnalyser() != NULL) {
+
     clone->setSeg("affectValues", {
       {"start", 1},
       {"stop", sequenceSize},
-      {"seq", getKmerAffectAnalyser()->toStringValues()}
+      {"seq", getKmerAffectAnalyser()->toStringValues(std::set<KmerAffect>({this->box_V->affect,
+             this->box_J->affect}))}
     });
 
     clone->setSeg("affectSigns", {
       {"start", 1},
       {"stop", sequenceSize},
-      {"seq", getKmerAffectAnalyser()->toStringSigns()}
+      {"seq", getKmerAffectAnalyser()->toStringSigns(std::set<KmerAffect>({this->box_V->affect,
+             this->box_J->affect}))}
     });
   }
 }

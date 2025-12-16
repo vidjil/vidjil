@@ -11,7 +11,6 @@
 import datetime
 import json
 import logging
-import os
 import re
 import time
 from ast import literal_eval
@@ -499,13 +498,13 @@ def get_data():
             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
             & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
             & (db.results_file.sequence_file_id == db.sequence_file.id)
-            & (db.results_file.hidden == False)  # noqa: E712
+            & (db.results_file.hidden == False)
             & (db.results_file.config_id == request.query["config"])
         ).select(
             db.sequence_file.ALL,
             db.results_file.ALL,
             db.sample_set.id,
-            orderby=db.sequence_file.id | ~db.results_file.run_date,
+            orderby=db.sequence_file.id | db.results_file.run_date,
         )
 
         query2 = {}
@@ -533,6 +532,14 @@ def get_data():
         for i in range(len(data["samples"]["original_names"])):
             original_name = data["samples"]["original_names"][i].split("/")[-1]
 
+            # Now we include results file name used to make fuse in fused files
+            if "original_results_files" in data["samples"]:
+                resultfile_name = data["samples"]["original_results_files"][i].split(
+                    "/"
+                )[-1]
+            else:
+                resultfile_name = None
+
             if "distributions" in data and "repertoires" in data["distributions"]:
                 data["distributions"]["repertoires"][original_name] = data[
                     "distributions"
@@ -546,8 +553,8 @@ def get_data():
             data["samples"]["commandline"].append(command)
 
             found_sequence_file = False
-            found_result_file = False  # For AIRR files
-            found_filename = False  # for Vidjil files
+            found_result_file = False  # For AIRR or .vidjil/clntab files
+
             if original_name in query2:
                 found_sequence_file = True
             else:
@@ -559,20 +566,18 @@ def get_data():
                         break
                     # Vidjil file case
                     elif (
-                        os.path.splitext(original_name)[0]
-                        == os.path.splitext(
-                            query2[sequence_file].sequence_file.filename
-                        )[0]
-                    ):  # ne marche pas a cause de l'extension
-                        found_filename = sequence_file
+                        resultfile_name != None
+                        and resultfile_name
+                        == query2[sequence_file].results_file.data_file
+                    ):
+                        # We can found which sample is linked to each results and sequence_file.
+                        found_result_file = sequence_file
                         break
 
-            if found_sequence_file or found_result_file or found_filename:
+            if found_sequence_file or found_result_file:
                 if found_sequence_file:  # standard case
                     row = query2[original_name]
-                elif found_filename:  # case import vidjil file
-                    row = query2[found_filename]
-                else:  # case AIRR/clntab data
+                else:  # case import vidjil or AIRR/clntab data
                     row = query2[found_result_file]
 
                 # Use row to fill fields
@@ -710,17 +715,13 @@ def get_custom_data():
         except IOError as io_error:
             return error_message(str(io_error))
 
-        generic_info = (
-            "Compare samples" if len(samples) > 1 else "Sample %s" % samples[0]
-        )
-        data["sample_name"] = generic_info
-        data["dataFileName"] = generic_info
-        data["info"] = generic_info
+        data["samples"]["names"] = []
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
         data["samples"]["commandline"] = []
         data["samples"]["sequence_file_id"] = []
+        data["samples"]["configuration"] = []
 
         for id in samples:
             sequence_file_id = db.results_file[id].sequence_file_id
@@ -749,21 +750,35 @@ def get_custom_data():
                 .first()
             )
             config_id = db.results_file[id].config_id
+            configuration = db.config[config_id].name
             name = (
                 vidjil_utils.anon_ids([patient_run.id])[0]
                 if sample_set.sample_type == sampleSet.SET_TYPE_PATIENT
                 else patient_run.name
             )
             filename = db.sequence_file[sequence_file_id].filename
-            data["samples"]["original_names"].append(
-                name + "_" + filename + " (" + id + ")"
-            )
+            sample_name_to_show = f"{filename} ({configuration})"
+
+            data["samples"]["original_names"].append(sample_name_to_show)
+            data["samples"]["names"].append(sample_name_to_show)
             data["samples"]["timestamp"].append(
                 str(db.sequence_file[sequence_file_id].sampling_date)
             )
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
             data["samples"]["commandline"].append(db.config[config_id].command)
             data["samples"]["sequence_file_id"].append(sequence_file_id)
+            data["samples"]["configuration"].append(configuration)
+
+        generic_info = (
+            f"Compare {len(samples)} samples from set {name}"
+            if len(samples) > 1
+            else f"{data['samples']['original_names'][0]}"
+        )
+        data["sample_name"] = generic_info
+        data["dataFileName"] = generic_info
+        data["info"] = (
+            f"Custom: {f'{name}; ' if len(samples) == 1 else ''}{generic_info}"
+        )
 
         log.info("load custom data #TODO log db")
 

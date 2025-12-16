@@ -273,7 +273,7 @@ def metricsAll():
 def metricsByName():
     """Allow to get metrics asked by a given list in url (',' jointure')"""
     metrics = request.params["metric"].split(",")
-    print(f"Ask metrics list: {metrics}")
+    log.info(f"Ask metrics list: {metrics}")
     return getMetricsList(metrics, auth)
 
 
@@ -293,7 +293,7 @@ def set_creator_samples_set():
     for set_type in ["patient", "run", "generic"]:
         subquery_patient = db(
             (db.sample_set.sample_type == set_type)
-            & (db.sample_set.creator == None)  # noqa: E711
+            & (db.sample_set.creator == None)
             & (db.sample_set.id == db[set_type].sample_set_id)
             & (db[set_type].creator == db.auth_user.id)
         ).select(

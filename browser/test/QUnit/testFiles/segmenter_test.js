@@ -298,7 +298,7 @@ QUnit.test("align", function (assert) {
     segment.update();
 
     if (typeof config == 'undefined') config = {}; 
-    if (segment.getCGIAddress() == "") config.cgi_address = "https://db.vidjil.org/cgi/"
+    if (segment.getCGIAddress() == "") config.cgi_address = "https://app-back.vidjil.org/cgi/"
     
     //select 2 clones
     m.select(0)

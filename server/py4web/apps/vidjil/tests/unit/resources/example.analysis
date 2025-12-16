@@ -1,51 +1,333 @@
 {
   "producer": "browser",
-  "info": "Test analysis",
-  "timestamp": "2025-3-21 17:6:26",
+  "info": "",
+  "timestamp": "2025-7-24 15:41:33",
   "vidjil_json_version": "2014.09",
   "samples": {
     "id": [
-      "sequence_file.data_file.96ffc184def28023.RGVtby1YNS5mYQ==.fa"
+      "sequence_file.data_file.aff08ad2348d7cf1.cnVuMS1zYW1wbGUxLmZhc3Rh.fasta",
+      "sequence_file.data_file.9b6e6a96ffa41bcc.cnVuMS1zYW1wbGUyLmZhc3Rh.fasta",
+      "sequence_file.data_file.ab890e0bbf3eaa15.cnVuMS1zYW1wbGUzLmZhc3Rh.fasta",
+      "sequence_file.data_file.9692df9d29b414f1.cnVuMS1zYW1wbGUxLmZhc3Rh.fasta",
+      "sequence_file.data_file.8dfab5dd4d9bd045.cnVuMS1zYW1wbGUyLmZhc3Rh.fasta",
+      "sequence_file.data_file.83a4fd2edc330671.cnVuMS1zYW1wbGUzLmZhc3Rh.fasta",
+      "sequence_file.data_file.bf92b5c64728d218.cnVuMS1zYW1wbGUxLmZhc3Rh.fasta"
     ],
     "info": [
-      "Uploaded by API"
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
     ],
     "order": [
-      0
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
     ],
     "stock_order": [
-      0
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
     ],
     "names": [
-      "Demo-X5"
+      "run1-sample1",
+      "run1-sample2",
+      "run1-sample3",
+      "run1-sample1",
+      "run1-sample2",
+      "run1-sample3",
+      "run1-sample1"
     ]
   },
   "clones": [
     {
-      "id": "GATGTGTTTCATTGTGCCTTCCTATGGCAGTGCTACAAAACCTACAGAGA",
-      "sequence": "AGCGGGTGGTGATGGCAAAGTGCCAAGGAAAGGGAAAAAGGAAGAAGAGGGTTTTTATACTGATGTGTTTCATTGTGCCTTCCTATGGCAGTGCTACAAAACCTACAGAGACCTGTACAAAAACTGCAGGGGCAAAAGTGCCATTTCCCTGGGATATCCTCACCCTGGGTCCCATGCCTCAGGAGACAAACACAGCAAGCAGCTTCCCTC",
-      "tag": "clonotype_1"
+      "id": "GAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACC",
+      "sequence": "GGGGGAGGCTTGGTACAGCCTGGCAGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTGATGATTATGCCATGCACTGGGTCCGGCAAGCTCCAGGGAAGGGCCTGGAGTGGGTCTCAGGTATTAGTTGGAATAGTGGTAGCATAGGCTATGCGGACTCTGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACTCCCTGTATCTGCAAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCACCCGGAGGTATGGACGTCTGGGGCCAAGGGACCCTGGTCACCGTCTCCTCAGGT",
+      "tag": "dominant"
+    },
+    {
+      "id": "TGTGCAAAAGATATTCTTAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGTTCGAC",
+      "sequence": "AAATGAACAGTCTGAGAGCTGAGGACACGGCCTTGTATTACTGTGCAAAAGATATTCTTAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGTTCGACCCCTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT",
+      "tag": "clonotype_1",
+      "segEdited": true,
+      "germline": "IGH",
+      "seg": {
+        "3": {
+          "delLeft": 2,
+          "delRight": 59,
+          "name": "IGHJ5*02",
+          "start": 89,
+          "stop": 138
+        },
+        "4": {
+          "delLeft": 6,
+          "delRight": 3,
+          "name": "IGHD6-13*01",
+          "start": 69,
+          "stop": 80
+        },
+        "5": {
+          "delRight": 0,
+          "name": "IGHV3-9*01",
+          "stop": 53
+        },
+        "N1": {
+          "val": 15
+        },
+        "N2": {
+          "val": 8
+        },
+        "affectSigns": {
+          "seq": " --------------------------------------                                               ------------------------------------- ----            ",
+          "start": 0,
+          "stop": 139
+        },
+        "affectValues": {
+          "seq": "_hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh_______________________________________________HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH?HHHH____________",
+          "start": 0,
+          "stop": 139
+        },
+        "cdr3": {
+          "aa": "AKDILKSLKQQLATPNWFDP",
+          "seq": "GCAAAAGATATTCTTAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGTTCGACCCC",
+          "start": 44,
+          "stop": 103
+        },
+        "evalue": {
+          "val": "2.09e-88"
+        },
+        "evalue_left": {
+          "val": "1.16e-134"
+        },
+        "evalue_right": {
+          "val": "2.09e-88"
+        },
+        "junction": {
+          "aa": "CAKDILKSLKQQLATPNWFDPW",
+          "productive": true,
+          "start": 41,
+          "stop": 106
+        },
+        "quality": {
+          "seq": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!><=<;/==<<;<<:?>8;2;;;>>?:@;@?@@??@@@?;A;@?4@@@?:?>?9>8><=<1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+          "start": 0,
+          "stop": 139
+        },
+        "imgt": {
+          "Sequence ID": "(31)_#3_IGHV3-9*01_0/TTCTTAAATCACTTA/6_IGHD6-13*0",
+          "V-DOMAIN Functionality": "productive",
+          "V-GENE and allele": "Homsap IGHV3-9*01 F, or Homsap IGHV3-9*02 F",
+          "J-GENE and allele": "Homsap IGHJ5*02 F",
+          "D-GENE and allele": "Homsap IGHD6-13*01 F",
+          "V-D-J-REGION": "aaatgaacagtctgagagctgaggacacggccttgtattactgtgcaaaagatattcttaaatcacttaagcagcagctggccaccccgaactggttcgacccctggggccagggaaccctggtcaccgtctcctcag",
+          "V-J-REGION": "",
+          "V-REGION": "aaatgaacagtctgagagctgaggacacggccttgtattactgtgcaaaagata",
+          "FR1-IMGT": "",
+          "CDR1-IMGT": "",
+          "FR2-IMGT": "",
+          "CDR2-IMGT": "",
+          "FR3-IMGT": "aaatgaacagtctgagagctgaggacacggccttgtattactgt",
+          "CDR3-IMGT": "gcaaaagatattcttaaatcacttaagcagcagctggccaccccgaactggttcgacccc",
+          "JUNCTION": "tgtgcaaaagatattcttaaatcacttaagcagcagctggccaccccgaactggttcgacccctgg",
+          "3'V-REGION": "tgtgcaaaagata",
+          "(N-D)-J-REGION": "ttcttaaatcacttaagcagcagctggccaccccgaactggttcgacccctggggccagggaaccctggtcaccgtctcctcag",
+          "(N-D)-REGION": "ttcttaaatcacttaagcagcagctggccaccccg",
+          "P3'V": "t",
+          "N-REGION": "",
+          "N1-REGION": "tcttaaatcactta",
+          "P5'D": "",
+          "D-REGION": "agcagcagctgg",
+          "P3'D": "",
+          "P5'D1": "",
+          "D1-REGION": "",
+          "P3'D1": "",
+          "N2-REGION": "ccaccccg",
+          "P5'D2": "",
+          "D2-REGION": "",
+          "P3'D2": "",
+          "N3-REGION": "",
+          "P5'D3": "",
+          "D3-REGION": "",
+          "P3'D3": "",
+          "N4-REGION": "",
+          "P5'J": "",
+          "5'J-REGION": "aactggttcgacccctgg",
+          "D-J-REGION": "agcagcagctggccaccccgaactggttcgacccctggggccagggaaccctggtcaccgtctcctcag",
+          "J-REGION": "aactggttcgacccctggggccagggaaccctggtcaccgtctcctcag",
+          "FR4-IMGT": "tggggccagggaaccctggtcaccgtctcctcag",
+          "V-D-J-REGION start": "1",
+          "V-D-J-REGION end": "138",
+          "V-J-REGION start": "",
+          "V-J-REGION end": "",
+          "V-REGION start": "1",
+          "V-REGION end": "54",
+          "FR1-IMGT start": "",
+          "FR1-IMGT end": "",
+          "CDR1-IMGT start": "",
+          "CDR1-IMGT end": "",
+          "FR2-IMGT start": "",
+          "FR2-IMGT end": "",
+          "CDR2-IMGT start": "",
+          "CDR2-IMGT end": "",
+          "FR3-IMGT start": "1",
+          "FR3-IMGT end": "44",
+          "CDR3-IMGT start": "45",
+          "CDR3-IMGT end": "104",
+          "JUNCTION start": "42",
+          "JUNCTION end": "107",
+          "3'V-REGION start": "42",
+          "3'V-REGION end": "54",
+          "(N-D)-J-REGION start": "55",
+          "(N-D)-J-REGION end": "138",
+          "(N-D)-REGION start": "55",
+          "(N-D)-REGION end": "89",
+          "P3'V start": "55",
+          "P3'V end": "55",
+          "N-REGION start": "",
+          "N-REGION end": "",
+          "N1-REGION start": "56",
+          "N1-REGION end": "69",
+          "P5'D start": "",
+          "P5'D end": "",
+          "D-REGION start": "70",
+          "D-REGION end": "81",
+          "P3'D start": "",
+          "P3'D end": "",
+          "P5'D1 start": "",
+          "P5'D1 end": "",
+          "D1-REGION start": "",
+          "D1-REGION end": "",
+          "P3'D1 start": "",
+          "P3'D1 end": "",
+          "N2-REGION start": "82",
+          "N2-REGION end": "89",
+          "P5'D2 start": "",
+          "P5'D2 end": "",
+          "D2-REGION start": "",
+          "D2-REGION end": "",
+          "P3'D2 start": "",
+          "P3'D2 end": "",
+          "N3-REGION start": "",
+          "N3-REGION end": "",
+          "P5'D3 start": "",
+          "P5'D3 end": "",
+          "D3-REGION start": "",
+          "D3-REGION end": "",
+          "P3'D3 start": "",
+          "P3'D3 end": "",
+          "N4-REGION start": "",
+          "N4-REGION end": "",
+          "P5'J start": "",
+          "P5'J end": "",
+          "5'J-REGION start": "90",
+          "5'J-REGION end": "107",
+          "D-J-REGION start": "70",
+          "D-J-REGION end": "138",
+          "J-REGION start": "90",
+          "J-REGION end": "138",
+          "FR4-IMGT start": "105",
+          "FR4-IMGT end": "138",
+          "V-REGION reading frame": "3",
+          "V-REGION partial 5prime missing nt nb": "244",
+          "V-REGION uncertain nt nb": "0",
+          "J-REGION partial 3prime missing nt nb": "0",
+          "trimming_before": false,
+          "V-REGION score": "220",
+          "V-REGION identity %": "100.00",
+          "V-REGION identity nt": "44/44 nt",
+          "V-REGION identity % (with ins/del events)": "",
+          "V-REGION identity nt (with ins/del events)": "",
+          "J-REGION score": "237",
+          "J-REGION identity %": "96.08",
+          "J-REGION identity nt": "49/51 nt",
+          "D-REGION reading frame": "3",
+          "CDR1-IMGT length": "X",
+          "CDR2-IMGT length": "X",
+          "CDR3-IMGT length": "20",
+          "CDR-IMGT lengths": "X.X.20",
+          "FR-IMGT lengths": "[X.X.14.11]",
+          "AA JUNCTION": "CAKDILKSLKQQLATPNWFDPW",
+          "JUNCTION frame": "in-frame",
+          "Orientation": "+",
+          "V-DOMAIN Functionality comment": "",
+          "V-REGION potential ins/del": "",
+          "J-GENE and allele comment": "",
+          "V-REGION insertions": "",
+          "V-REGION deletions": "",
+          "Sequence": "aaatgaacagtctgagagctgaggacacggccttgtattactgtgcaaaagatattcttaaatcacttaagcagcagctggccaccccgaactggttcgacccctggggccagggaaccctggtcaccgtctcctcaggt",
+          "5prime trimmed-n nb": "0",
+          "3prime trimmed-n nb": "0",
+          "Analysed sequence length": "140",
+          "Sequence analysis category": "2 (indelcorr)"
+        },
+        "imgt2display": {
+          "V-REGION": {
+            "seq": "",
+            "tooltip": "Homsap IGHV3-9*01 F, or Homsap IGHV3-9*02 F",
+            "start": 0,
+            "stop": 53
+          },
+          "J-REGION": {
+            "seq": "",
+            "tooltip": "Homsap IGHJ5*02 F",
+            "start": 89,
+            "stop": 137
+          },
+          "D-REGION": {
+            "seq": "",
+            "tooltip": "Homsap IGHD6-13*01 F",
+            "start": 69,
+            "stop": 80
+          },
+          "CDR3-IMGT": {
+            "seq": "",
+            "tooltip": "CDR3-IMGT",
+            "start": 44,
+            "stop": 103
+          }
+        }
+      }
     }
   ],
-  "clusters": [
-    [
-      "TATTACTGCAGCTCATATACAAGCTTTCTTGGGTGTTCGGCGGAGGGACC",
-      "TACTACTGTGCCTGTGACACCCCCCTGTACTGGGGGATACGCACAGTGCT"
-    ]
-  ],
+  "clusters": [],
   "report_save": {},
-  "system_selected": [
-    "TRA",
-    "TRB",
-    "TRB+",
-    "TRG",
-    "TRD",
-    "TRA+D",
-    "TRD+",
-    "IGK",
-    "IGK+",
-    "IGL"
-  ],
+  "saved_system_selected_by_config": {
+    "2": [
+      "TRB",
+      "TRB+",
+      "TRD+",
+      "IGH",
+      "IGH+",
+      "IGK",
+      "IGK+",
+      "IGL"
+    ],
+    "6": [
+      "IGH"
+    ],
+    "7": [
+      "TRB",
+      "TRB+",
+      "TRG",
+      "TRD",
+      "TRA+D",
+      "IGH",
+      "IGH+",
+      "IGK",
+      "IGK+"
+    ]
+  },
   "normalization": {
     "method": "constant",
     "size_list": [],

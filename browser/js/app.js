@@ -1,4 +1,4 @@
-var DEFAULT_DB_ADDRESS="https://db.vidjil.org/";
+var DEFAULT_DB_ADDRESS = "https://app-back.vidjil.org/";
 
 requirejs.config({
     baseUrl: '',

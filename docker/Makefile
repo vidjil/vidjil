@@ -1,4 +1,4 @@
-.PHONY : up down clean_deploy reset_database set_rights restart backup_mysql restore_mysql_data backup_volume restore_volume build_server
+.PHONY : up down clean_deploy reset_database set_rights restart backup_mysql restore_mysql_data backup_volume restore_volume
 
 VOLUME_PATH := $(if $(VOLUME_PATH),$(VOLUME_PATH),"./volumes/vidjil")
 
@@ -48,10 +48,15 @@ clean_deploy:
 	docker ps
 
 build_and_run_dev:
-	ln -s docker-compose-dev.yml docker-compose.override.yml
 	$(MAKE) build-server build-client
+	$(MAKE) run_dev
+
+run_dev:
+	ln -s docker-compose-dev.yml docker-compose.override.yml || true
+	$(MAKE) down
 	docker compose up -d mysql uwsgi
-	$(MAKE) set_rights
+	$(MAKE) -C ../browser
+	$(MAKE) -C ../germline
 	$(MAKE) up
 	docker ps
 

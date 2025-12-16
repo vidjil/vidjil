@@ -4,8 +4,8 @@ import os
 import re
 import subprocess
 
-import redis
 from py4web import action, request
+from redis import Redis
 
 from .. import settings, tasks
 from ..common import auth, db, log, scheduler, send_mail
@@ -207,7 +207,7 @@ def repair_missing_files():
     if auth.is_admin():
         flist = ""
         for row in db(
-            db.sequence_file.id > 0 and db.sequence_file.data_file != None  # noqa: E711
+            db.sequence_file.id > 0 and db.sequence_file.data_file != None
         ).select():
             seq_file = settings.DIR_SEQUENCES + row.data_file
 
@@ -250,34 +250,34 @@ def load_backup():
 def repair():
     if auth.is_admin():
         flist = "fix creator "
-        for row in db(db.patient.creator == None).select():  # noqa: E711
+        for row in db(db.patient.creator == None).select():
             flist += " : " + str(row.id)
             db.patient[row.id].update_record(creator=auth.user_id)
 
         flist += "fix event "
-        for row in db(db.auth_event.user_id == None).select():  # noqa: E711
+        for row in db(db.auth_event.user_id == None).select():
             flist += " : " + str(row.id)
             db.auth_event[row.id].update_record(user_id=auth.user_id)
 
         flist += "fix permission "
-        db(db.auth_permission.group_id == None).delete()  # noqa: E711
+        db(db.auth_permission.group_id == None).delete()
 
         flist += "fix sequence_file provider "
-        for row in db(db.sequence_file.provider == None).select():  # noqa: E711
+        for row in db(db.sequence_file.provider == None).select():
             flist += " : " + str(row.id)
             db.sequence_file[row.id].update_record(provider=auth.user_id)
 
         flist += "fix sequence_file patient "
         db(
             (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-            & (db.sample_set_membership.sample_set_id == None)  # noqa: E711
+            & (db.sample_set_membership.sample_set_id == None)
         ).delete()
 
         flist += "fix results_file "
-        db(db.results_file.sequence_file_id == None).delete()  # noqa: E711
+        db(db.results_file.sequence_file_id == None).delete()
 
         flist += "fix fused file "
-        for row in db(db.fused_file.fuse_date == None).select():  # noqa: E711
+        for row in db(db.fused_file.fuse_date == None).select():
             flist += " : " + str(row.id)
             db.fused_file[row.id].update_record(fuse_date="1970-01-01 00:00:00")
 
@@ -302,9 +302,9 @@ def clean_workers_status():
     current_task_ids = []
 
     # Get tasks from redis
-    my_redis = redis.Redis(host="redis")
+    host, port = settings.REDIS_SERVER.split(":")
+    my_redis = Redis(host=host, port=int(port))
     redis_tasks = my_redis.lrange("short", 0, -1) + my_redis.lrange("long", 0, -1)
-    log.debug(f"{redis_tasks=}")
     for redis_task in redis_tasks:
         redis_task = json.loads(redis_task)
         if "headers" in redis_task and "argsrepr" in redis_task["headers"]:
@@ -327,7 +327,6 @@ def clean_workers_status():
     ).select(db.scheduler_task.id)
 
     # Set not corresponding tasks status to FAILED in DB
-    log.debug(f"{current_task_ids=}, {in_progress_task_ids.as_list()=}")
     dangling_task_ids = [
         in_progress_task.id
         for in_progress_task in in_progress_task_ids

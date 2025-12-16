@@ -7,13 +7,14 @@ import pathlib
 import shutil
 import unittest
 
+import pytest
 from py4web import HTTP, request
 from py4web.core import Session, _before_request
 
-from .... import settings
+from .... import settings, tasks
 from ....common import auth, db
 from ....controllers import file as file_controller
-from ....modules import sampleSet
+from ....modules import sampleSet, vidjil_utils
 from ...functional.db_initialiser import DBInitialiser
 from ..utils import db_manipulation_utils, test_utils
 from ..utils.omboddle import Omboddle
@@ -21,8 +22,9 @@ from ..utils.omboddle import Omboddle
 LOGGER = logging.getLogger(__name__)
 
 
-class TestFileController(unittest.TestCase):
-    def setUp(self):
+class TestFileController:
+    @pytest.fixture(autouse=True)
+    def setup(self):
         # init env
         os.environ["PY4WEB_APPS_FOLDER"] = os.path.sep.join(
             os.path.normpath(__file__).split(os.path.sep)[:-5]
@@ -35,6 +37,24 @@ class TestFileController(unittest.TestCase):
         # init db
         initialiser = DBInitialiser(db)
         initialiser.run()
+
+    ##################################
+    # Utils
+    ##################################
+
+    def mock_redlock(self, mocker) -> None:
+        mock_redlock = mocker.patch("apps.vidjil.controllers.file.Redlock")
+        mock_lock_instance = mocker.MagicMock()
+        mock_lock_instance.__enter__ = mocker.MagicMock(return_value=mock_lock_instance)
+        mock_lock_instance.__exit__ = mocker.MagicMock(return_value=None)
+        mock_redlock.return_value = mock_lock_instance
+
+    def create_mock_upload_process(self, mocker, expected_result) -> unittest.mock.Mock:
+        mock_upload_process = mocker.patch(
+            "apps.vidjil.controllers.file.upload_process",
+            return_value=json.dumps(expected_result),
+        )
+        return mock_upload_process
 
     ##################################
     # Tests on file_controller.form()
@@ -644,64 +664,7 @@ class TestFileController(unittest.TestCase):
             if chunk_path.exists():
                 chunk_path.unlink()
             if chunk_dir.exists():
-                chunk_dir.rmdir()
-
-    ##################################
-    # Tests on file_controller.resumable_upload_post()
-    ##################################
-
-    def test_resumable_upload_post(self):
-        """
-        Test resumable_upload_post to ensure chunks are correctly uploaded and merged.
-        """
-        # Given : Logged as a user with the necessary permissions
-        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
-        db_manipulation_utils.log_in(
-            self.session,
-            db_manipulation_utils.get_indexed_user_email(1),
-            db_manipulation_utils.get_indexed_user_password(1),
-        )
-        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
-        db_manipulation_utils.add_sequence_file(sample_set_id, user_id)
-        filename = "plop"
-        chunk_data = b"chunk data"
-        resumableIdentifier = "test_identifier"
-        resumableTotalChunks = 3
-        save_upload_folder = settings.UPLOAD_FOLDER
-        try:
-            settings.UPLOAD_FOLDER = test_utils.get_results_path()
-            # Upload chunks
-            for chunk_number in range(1, resumableTotalChunks + 1):
-                with Omboddle(
-                    self.session,
-                    keep_session=True,
-                    params={
-                        "resumableIdentifier": resumableIdentifier,
-                        "resumableChunkNumber": chunk_number,
-                        "resumableTotalChunks": resumableTotalChunks,
-                        "resumableFilename": filename,
-                        "format": "json",
-                    },
-                ):
-                    request.files["file"] = test_utils.UploadHelper(
-                        io.BytesIO(chunk_data), f"{filename}.part{chunk_number}"
-                    )
-                    json_result = file_controller.resumable_upload_post()
-                    assert json_result == "OK"
-
-            # Check if the final merged file exists
-            final_path = pathlib.Path(
-                settings.UPLOAD_FOLDER,
-                f"{resumableIdentifier}{file_controller.MERGED_SUFFIX}",
-            )
-            assert final_path.exists()
-            with final_path.open("rb") as f:
-                merged_data = f.read()
-                assert merged_data == chunk_data * resumableTotalChunks
-        finally:
-            settings.UPLOAD_FOLDER = save_upload_folder
-            if final_path.exists():
-                final_path.unlink()
+                shutil.rmtree(chunk_dir)
 
     def test_resumable_upload_get_missing_chunk(self):
         """
@@ -725,10 +688,6 @@ class TestFileController(unittest.TestCase):
                 resumableIdentifier,
             )
             chunk_dir.mkdir(parents=True, exist_ok=True)
-            chunk_path = (
-                chunk_dir / f"{resumableChunkNumber}{file_controller.PART_SUFFIX}"
-            )
-            chunk_path.write_bytes(b"chunk data")
 
             # When : Calling resumable_upload_get for a non-existing chunk
             with Omboddle(
@@ -740,21 +699,71 @@ class TestFileController(unittest.TestCase):
                     "format": "json",
                 },
             ):
-                with self.assertRaises(HTTP) as cm:
+                with pytest.raises(HTTP) as exc_info:
                     file_controller.resumable_upload_get()
-                assert cm.exception.status == 204
+                assert exc_info.value.status == 204
         finally:
             settings.UPLOAD_FOLDER = save_upload_folder
-            if chunk_path.exists():
-                chunk_path.unlink()
             if chunk_dir.exists():
-                chunk_dir.rmdir()
+                shutil.rmtree(chunk_dir)
+
+    ##################################
+    # Tests on file_controller.resumable_upload_post()
+    ##################################
+
+    def test_resumable_upload_post(self):
+        """
+        Test resumable_upload_post to ensure chunks are correctly uploaded.
+        """
+        # Given : Logged as a user with the necessary permissions
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        db_manipulation_utils.add_sequence_file(sample_set_id, user_id)
+        filename = "plop"
+        chunk_data = b"chunk data"
+        resumable_identifier = "test_identifier"
+        resumable_total_chunks = 3
+        save_upload_folder = settings.UPLOAD_FOLDER
+        try:
+            settings.UPLOAD_FOLDER = test_utils.get_results_path()
+            # When: Upload chunks
+            for chunk_number in range(1, resumable_total_chunks + 1):
+                with Omboddle(
+                    self.session,
+                    keep_session=True,
+                    params={
+                        "resumableIdentifier": resumable_identifier,
+                        "resumableChunkNumber": chunk_number,
+                        "resumableTotalChunks": resumable_total_chunks,
+                        "resumableFilename": filename,
+                        "format": "json",
+                    },
+                ):
+                    request.files["file"] = test_utils.UploadHelper(
+                        io.BytesIO(chunk_data), f"{filename}.part{chunk_number}"
+                    )
+                    json_result = file_controller.resumable_upload_post()
+                    assert json_result == "OK"
+
+            # Then: all chunks should be uploaded
+            chunk_dir = file_controller.get_chunk_dir(resumable_identifier)
+            for chunk_number in range(1, resumable_total_chunks + 1):
+                assert (
+                    chunk_dir / f"{chunk_number}{file_controller.PART_SUFFIX}"
+                ).exists()
+        finally:
+            settings.UPLOAD_FOLDER = save_upload_folder
 
     ##################################
     # Tests on file_controller.resumable_upload_process()
     ##################################
 
-    def test_resumable_upload_process(self):
+    def test_resumable_upload_process(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
@@ -767,26 +776,47 @@ class TestFileController(unittest.TestCase):
             sample_set_id, user_id
         )
         filename = "plop"
+
+        # Mock the Redlock context manager to avoid timeout issues
+        self.mock_redlock(mocker)
+
+        # Mock upload_process since it's tested elsewhere
+        expected_result = {
+            "message": f"file {filename}({sequence_file_id}) upload finished"
+        }
+        mock_upload_process = self.create_mock_upload_process(mocker, expected_result)
+
         save_upload_folder = settings.UPLOAD_FOLDER
         save_data_file_upload_folder = db.sequence_file.data_file.uploadfolder
         try:
             settings.UPLOAD_FOLDER = test_utils.get_results_path()
             db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
-            shutil.copy(
-                pathlib.Path(
-                    test_utils.get_resources_path(), "analysis-example.vidjil"
-                ),
-                pathlib.Path(
-                    db.sequence_file.data_file.uploadfolder,
-                    f"{sequence_file_id}-{filename}{file_controller.MERGED_SUFFIX}",
-                ),
-            )
-            # When : Calling upload
+
+            # Prepare chunks
+            chunk_data = "chunk data"
+            resumable_total_chunks = 3
+            temp_resumable_identifier = "test_identifier"
+            temp_chunk_dir = file_controller.get_chunk_dir(temp_resumable_identifier)
+            temp_chunk_dir.mkdir(parents=True, exist_ok=True)
+            total_size = 0
+            for chunk_number in range(1, resumable_total_chunks + 1):
+                chunk_file_path = (
+                    temp_chunk_dir / f"{chunk_number}{file_controller.PART_SUFFIX}"
+                )
+                with chunk_file_path.open("w") as chunk_file:
+                    chunk_file.write(f"{chunk_data}{chunk_number}\n")
+                total_size += chunk_file_path.stat().st_size
+            # update identifier
+            resumable_identifier = f"{sequence_file_id}-{filename}-{total_size}"
+            chunk_dir = file_controller.get_chunk_dir(resumable_identifier)
+            temp_chunk_dir.replace(chunk_dir)
+
+            # When : Calling upload process
             with Omboddle(
                 self.session,
                 keep_session=True,
                 params={
-                    "resumableIdentifier": f"{sequence_file_id}-{filename}",
+                    "resumableIdentifier": resumable_identifier,
                     "sequence_id": sequence_file_id,
                     "filename": filename,
                     "file_number": 1,
@@ -795,18 +825,41 @@ class TestFileController(unittest.TestCase):
             ):
                 json_result = file_controller.resumable_upload_process()
 
-            # Then : Check result
+            # Then : Check that chunks were merged and upload_process was called
             result = json.loads(json_result)
-            assert (
-                result["message"]
-                == f"file {filename}({sequence_file_id})  (35.6 kB) upload finished"
-            )
-            result_file = pathlib.Path(
-                test_utils.get_results_path(),
-                db.sequence_file[sequence_file_id].data_file,
-            )
-            assert result_file.exists()
-            os.remove(result_file)
+            assert result["message"] == expected_result["message"]
+
+            # Verify that upload_process was called with correct parameters
+            mock_upload_process.assert_called_once()
+            call_args = mock_upload_process.call_args[0]
+            (
+                merged_file_path,
+                called_sequence_id,
+                called_filename,
+                called_file_number,
+                called_preprocess,
+            ) = call_args
+            assert called_sequence_id == str(sequence_file_id)
+            assert called_filename == filename
+            assert called_file_number == "1"
+            assert called_preprocess is None
+
+            # Verify merged file was created and has correct size and content
+            assert merged_file_path.exists()
+            assert merged_file_path.stat().st_size == total_size
+            with merged_file_path.open() as merged_file:
+                line_number = 0
+                for line in merged_file:
+                    line_number += 1
+                    assert line == f"{chunk_data}{line_number}\n"
+                assert line_number == resumable_total_chunks
+
+            # Verify chunks directory was cleaned up
+            assert not chunk_dir.exists()
+
+            # Clean up merged file
+            if merged_file_path.exists():
+                os.remove(merged_file_path)
         finally:
             db.sequence_file.data_file.uploadfolder = save_data_file_upload_folder
             settings.UPLOAD_FOLDER = save_upload_folder
@@ -815,7 +868,7 @@ class TestFileController(unittest.TestCase):
     # Tests on file_controller.upload()
     ##################################
 
-    def test_upload(self):
+    def test_upload(self, mocker):
         # Given : Logged as other user, and add corresponding config, ...
         user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
         db_manipulation_utils.log_in(
@@ -834,6 +887,18 @@ class TestFileController(unittest.TestCase):
             filename = "plop"
             upload_helper = test_utils.UploadHelper(file, filename)
             save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+            # Mock the Redlock context manager to avoid timeout issues
+            self.mock_redlock(mocker)
+
+            # Mock upload_process since it's tested elsewhere
+            expected_result = {
+                "message": f"file {filename}({sequence_file_id}) upload finished"
+            }
+            mock_upload_process = self.create_mock_upload_process(
+                mocker, expected_result
+            )
+
             try:
                 db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
                 # When : Calling upload
@@ -847,20 +912,643 @@ class TestFileController(unittest.TestCase):
 
                 # Then : Check result
                 result = json.loads(json_result)
-                assert (
-                    result["message"]
-                    == f"file {filename}({sequence_file_id})  (35.6 kB) upload finished"
-                )
-                result_file = pathlib.Path(
-                    test_utils.get_results_path(),
-                    db.sequence_file[sequence_file_id].data_file,
-                )
-                assert result_file.exists()
-                os.remove(result_file)
+                assert result["message"] == expected_result["message"]
+
+                # Verify that upload_process was called once
+                mock_upload_process.assert_called_once()
+                call_args = mock_upload_process.call_args[0]
+                (
+                    uploaded_file_path,
+                    called_sequence_id,
+                    called_filename,
+                    called_file_number,
+                    called_preprocess,
+                ) = call_args
+
+                assert called_sequence_id == str(sequence_file_id)
+                assert called_filename == filename
+                assert called_file_number == "1"
+                assert called_preprocess is None
+
+                # Verify the uploaded file was created temporarily
+                assert uploaded_file_path.exists()
+
+                # Clean up the temporary file
+                if uploaded_file_path.exists():
+                    os.remove(uploaded_file_path)
             finally:
                 db.sequence_file.data_file.uploadfolder = save_upload_folder
 
-    # TODO: more tests for upload ? use data_file_2 ? preprocess ?
+    ##################################
+    # Tests on file_controller.upload_process()
+    ##################################
+
+    def test_upload_process_file_1_success(self):
+        # Given: Logged user with a sequence file for first file upload
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+
+        # Create a temporary file to upload
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(test_utils.get_results_path(), "temp_upload.fa")
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        filename = "test_file.fa"
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process for file 1
+            result_json = file_controller.upload_process(
+                temp_upload_file, str(sequence_file_id), filename, "1", None
+            )
+
+            # Then: Check successful upload
+            result = json.loads(result_json)
+            assert f"file {filename}({sequence_file_id})" in result["message"]
+            assert "upload finished" in result["message"]
+
+            # Verify file was moved and database updated
+            sequence_file = db.sequence_file[sequence_file_id]
+            assert sequence_file.data_file is not None
+            assert sequence_file.size_file > 0
+
+            # Verify temporary file was moved (not copied)
+            assert not temp_upload_file.exists()
+
+            # Verify actual file exists
+            actual_file = pathlib.Path(
+                db.sequence_file.data_file.uploadfolder, sequence_file.data_file
+            )
+            assert actual_file.exists()
+
+            # Clean up
+            if actual_file.exists():
+                os.remove(actual_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+
+    def test_upload_process_file_2_success(self):
+        # Given: Logged user with a sequence file for second file upload
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+
+        # Create a temporary file to upload
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(
+            test_utils.get_results_path(), "temp_upload_2.fa"
+        )
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        filename = "test_file_2.fa"
+        save_upload_folder = db.sequence_file.data_file2.uploadfolder
+
+        try:
+            db.sequence_file.data_file2.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process for file 2
+            result_json = file_controller.upload_process(
+                temp_upload_file, str(sequence_file_id), filename, "2", None
+            )
+
+            # Then: Check successful upload
+            result = json.loads(result_json)
+            assert f"file {filename}({sequence_file_id})" in result["message"]
+            assert "upload finished" in result["message"]
+
+            # Verify file was moved and database updated
+            sequence_file = db.sequence_file[sequence_file_id]
+            assert sequence_file.data_file2 is not None
+            assert sequence_file.size_file2 > 0
+
+            # Verify temporary file was moved
+            assert not temp_upload_file.exists()
+
+            # Verify actual file exists
+            actual_file = pathlib.Path(
+                db.sequence_file.data_file2.uploadfolder, sequence_file.data_file2
+            )
+            assert actual_file.exists()
+
+            # Clean up
+            if actual_file.exists():
+                os.remove(actual_file)
+        finally:
+            db.sequence_file.data_file2.uploadfolder = save_upload_folder
+
+    def test_upload_process_invalid_sequence_id(self):
+        # Given: Invalid sequence file ID
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(test_utils.get_results_path(), "temp_upload.fa")
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        try:
+            # When: Calling upload_process with invalid sequence ID
+            with pytest.raises(HTTP) as exc_info:
+                file_controller.upload_process(
+                    temp_upload_file, "999999", "test.fa", "1", None
+                )
+
+            # Then: Should raise HTTP 500 error
+            assert exc_info.value.status == 500
+            assert "no sequence file with this id" in str(exc_info.value.body)
+        finally:
+            if temp_upload_file.exists():
+                os.remove(temp_upload_file)
+
+    def test_upload_process_missing_file(self):
+        # Given: Logged user with valid sequence file but missing upload file
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+
+        non_existent_file = pathlib.Path(test_utils.get_results_path(), "missing.fa")
+
+        # When: Calling upload_process with missing file
+        with pytest.raises(HTTP) as exc_info:
+            file_controller.upload_process(
+                non_existent_file, str(sequence_file_id), "missing.fa", "1", None
+            )
+
+        # Then: Should raise HTTP 500 error
+        assert exc_info.value.status == 500
+        assert f"Expected merged file {non_existent_file} not found" in str(
+            exc_info.value.body
+        )
+
+    def test_upload_process_with_preprocess_single_file(self, mocker):
+        # Given: Logged user with preprocess requiring 1 file
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+        pre_process_id = db_manipulation_utils.add_pre_process()
+        preprocess = db.pre_process[pre_process_id]
+
+        # Create temporary file
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(
+            test_utils.get_results_path(), "temp_preprocess.fa"
+        )
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        # Mock Redlock and scheduler
+        self.mock_redlock(mocker)
+        mock_schedule = mocker.patch(
+            "apps.vidjil.controllers.file.tasks.schedule_pre_process"
+        )
+        # Mock getPreprocessRequiredFiles to return 1
+        mocker.patch(
+            "apps.vidjil.controllers.file.vidjil_utils.getPreprocessRequiredFiles",
+            return_value=1,
+        )
+
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process with preprocess
+            result_json = file_controller.upload_process(
+                temp_upload_file,
+                str(sequence_file_id),
+                "test_preprocess.fa",
+                "1",
+                preprocess,
+            )
+
+            # Then: Check that preprocess is scheduled
+            result = json.loads(result_json)
+            assert f"p{pre_process_id} start pre_process" in result["message"]
+            mock_schedule.assert_called_once_with(
+                int(sequence_file_id), int(pre_process_id)
+            )
+
+            # Verify pre_process_flag is updated
+            sequence_file = db.sequence_file[sequence_file_id]
+            assert sequence_file.pre_process_flag == tasks.STATUS_WAITING
+
+            # Clean up
+            actual_file = pathlib.Path(
+                db.sequence_file.data_file.uploadfolder, sequence_file.data_file
+            )
+            if actual_file.exists():
+                os.remove(actual_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+
+    def test_upload_process_with_preprocess_two_files_incomplete(self, mocker):
+        # Given: Logged user with preprocess requiring 2 files, but only 1 uploaded
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+        pre_process_id = db_manipulation_utils.add_pre_process()
+        preprocess = db.pre_process[pre_process_id]
+
+        # Mock getPreprocessRequiredFiles to return 2
+        mocker.patch(
+            "apps.vidjil.controllers.file.vidjil_utils.getPreprocessRequiredFiles",
+            return_value=2,
+        )
+
+        # Create temporary file
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(
+            test_utils.get_results_path(), "temp_incomplete.fa"
+        )
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        # Mock Redlock and scheduler
+        self.mock_redlock(mocker)
+        mock_schedule = mocker.patch(
+            "apps.vidjil.controllers.file.tasks.schedule_pre_process"
+        )
+
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process with preprocess requiring 2 files but only uploading 1
+            result_json = file_controller.upload_process(
+                temp_upload_file,
+                str(sequence_file_id),
+                "test_incomplete.fa",
+                "1",
+                preprocess,
+            )
+
+            # Then: Check that preprocess is NOT scheduled yet
+            result = json.loads(result_json)
+            assert f"p{pre_process_id} start pre_process" not in result["message"]
+            mock_schedule.assert_not_called()
+
+            # Clean up
+            sequence_file = db.sequence_file[sequence_file_id]
+            actual_file = pathlib.Path(
+                db.sequence_file.data_file.uploadfolder, sequence_file.data_file
+            )
+            if actual_file.exists():
+                os.remove(actual_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+
+    def test_upload_process_with_preprocess_two_files_complete(self, mocker):
+        # Given: Logged user with preprocess requiring 2 files, both uploaded
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+        pre_process_id = db_manipulation_utils.add_pre_process()
+        preprocess = db.pre_process[pre_process_id]
+
+        # Mock getPreprocessRequiredFiles to return 2
+        mocker.patch(
+            "apps.vidjil.controllers.file.vidjil_utils.getPreprocessRequiredFiles",
+            return_value=2,
+        )
+
+        save_upload_folder_1 = db.sequence_file.data_file.uploadfolder
+        save_upload_folder_2 = db.sequence_file.data_file2.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+            db.sequence_file.data_file2.uploadfolder = test_utils.get_results_path()
+
+            # First, upload data_file manually to simulate it's already there
+            file_to_upload = pathlib.Path(
+                test_utils.get_resources_path(), "analysis-example.vidjil"
+            )
+
+            with io.BytesIO() as empty_file:
+                db_filename = db.sequence_file.data_file.store(empty_file, "file1.fa")
+            shutil.copy(
+                file_to_upload,
+                os.path.join(db.sequence_file.data_file.uploadfolder, db_filename),
+            )
+            db.sequence_file[sequence_file_id].update_record(data_file=db_filename)
+
+            # Now upload second file
+            temp_upload_file = pathlib.Path(
+                test_utils.get_results_path(), "temp_complete.fa"
+            )
+            shutil.copy(file_to_upload, temp_upload_file)
+
+            # Mock Redlock and scheduler
+            self.mock_redlock(mocker)
+            mock_schedule = mocker.patch(
+                "apps.vidjil.controllers.file.tasks.schedule_pre_process"
+            )
+
+            # When: Calling upload_process for second file with preprocess
+            result_json = file_controller.upload_process(
+                temp_upload_file, str(sequence_file_id), "file2.fa", "2", preprocess
+            )
+
+            # Then: Check that preprocess is now scheduled
+            result = json.loads(result_json)
+            assert f"p{pre_process_id} start pre_process" in result["message"]
+            mock_schedule.assert_called_once_with(
+                int(sequence_file_id), int(pre_process_id)
+            )
+
+            # Verify pre_process_flag is updated
+            sequence_file = db.sequence_file[sequence_file_id]
+            assert sequence_file.pre_process_flag == tasks.STATUS_WAITING
+
+            # Clean up
+            if sequence_file.data_file:
+                result_file_1 = pathlib.Path(
+                    test_utils.get_results_path(), sequence_file.data_file
+                )
+                if result_file_1.exists():
+                    os.remove(result_file_1)
+            if sequence_file.data_file2:
+                result_file_2 = pathlib.Path(
+                    test_utils.get_results_path(), sequence_file.data_file2
+                )
+                if result_file_2.exists():
+                    os.remove(result_file_2)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder_1
+            db.sequence_file.data_file2.uploadfolder = save_upload_folder_2
+
+    def test_upload_process_revoke_old_preprocess_task(self, mocker):
+        # Given: Logged user with sequence file that has an existing preprocess task
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+        pre_process_id = db_manipulation_utils.add_pre_process()
+        preprocess = db.pre_process[pre_process_id]
+
+        # Create a fake old task
+        old_task_id = db.scheduler_task.insert(
+            task_name="test_task", function_name="test_function", status="PENDING"
+        )
+        db.sequence_file[sequence_file_id].update_record(
+            pre_process_scheduler_task_id=old_task_id
+        )
+
+        # Create temporary file
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(test_utils.get_results_path(), "temp_revoke.fa")
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        # Mock Redlock and scheduler
+        self.mock_redlock(mocker)
+        mock_scheduler_revoke = mocker.patch(
+            "apps.vidjil.controllers.file.scheduler.control.revoke"
+        )
+        mock_schedule = mocker.patch(
+            "apps.vidjil.controllers.file.tasks.schedule_pre_process"
+        )
+        # Mock getPreprocessRequiredFiles to return 1
+        mocker.patch(
+            "apps.vidjil.controllers.file.vidjil_utils.getPreprocessRequiredFiles",
+            return_value=1,
+        )
+
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process with preprocess
+            file_controller.upload_process(
+                temp_upload_file,
+                str(sequence_file_id),
+                "test_revoke.fa",
+                "1",
+                preprocess,
+            )
+
+            # Then: Check that old task is revoked and new one is scheduled
+            mock_scheduler_revoke.assert_called_once_with(old_task_id, terminate=True)
+            mock_schedule.assert_called_once_with(
+                int(sequence_file_id), int(pre_process_id)
+            )
+
+            # Verify old task is deleted from database
+            assert db.scheduler_task[old_task_id] is None
+
+            # Clean up
+            sequence_file = db.sequence_file[sequence_file_id]
+            actual_file = pathlib.Path(
+                db.sequence_file.data_file.uploadfolder, sequence_file.data_file
+            )
+            if actual_file.exists():
+                os.remove(actual_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+
+    def test_upload_process_io_error_filename_too_long(self, mocker):
+        # Given: Logged user with a sequence file
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+
+        # Create temporary file
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(test_utils.get_results_path(), "temp_long.fa")
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        # Mock store method to raise IOError with filename too long message
+        mocker.patch.object(
+            db.sequence_file.data_file,
+            "store",
+            side_effect=IOError("File name too long"),
+        )
+
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process with long filename
+            with pytest.raises(HTTP) as exc_info:
+                file_controller.upload_process(
+                    temp_upload_file, str(sequence_file_id), "test_long.fa", "1", None
+                )
+
+            # Then: Should raise HTTP 500 error with specific message
+            assert exc_info.value.status == 500
+            assert "Your filename is too long, please shorten it." in str(
+                exc_info.value.body
+            )
+
+            # Verify pre_process_flag is set to upload failed
+            sequence_file = db.sequence_file[sequence_file_id]
+            assert sequence_file.pre_process_flag == tasks.STATUS_UPLOAD_FAILED
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+            if temp_upload_file.exists():
+                os.remove(temp_upload_file)
+
+    def test_upload_process_io_error_system_error(self, mocker):
+        # Given: Logged user with a sequence file
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+
+        # Create temporary file
+        file_to_upload = pathlib.Path(
+            test_utils.get_resources_path(), "analysis-example.vidjil"
+        )
+        temp_upload_file = pathlib.Path(test_utils.get_results_path(), "temp_system.fa")
+        shutil.copy(file_to_upload, temp_upload_file)
+
+        # Mock store method to raise generic IOError
+        mocker.patch.object(
+            db.sequence_file.data_file, "store", side_effect=IOError("System error")
+        )
+
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process with system error
+            with pytest.raises(HTTP) as exc_info:
+                file_controller.upload_process(
+                    temp_upload_file, str(sequence_file_id), "test_system.fa", "1", None
+                )
+
+            # Then: Should raise HTTP 500 error with generic message
+            assert exc_info.value.status == 500
+            assert "System error during processing of uploaded file." in str(
+                exc_info.value.body
+            )
+
+            # Verify pre_process_flag is set to upload failed
+            sequence_file = db.sequence_file[sequence_file_id]
+            assert sequence_file.pre_process_flag == tasks.STATUS_UPLOAD_FAILED
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
+            if temp_upload_file.exists():
+                os.remove(temp_upload_file)
+
+    def test_upload_process_file_size_calculation(self):
+        # Given: Logged user uploading files of different sizes
+        user_id = db_manipulation_utils.add_indexed_user(self.session, 1)
+        db_manipulation_utils.log_in(
+            self.session,
+            db_manipulation_utils.get_indexed_user_email(1),
+            db_manipulation_utils.get_indexed_user_password(1),
+        )
+        sample_set_id = db_manipulation_utils.add_patient(1, user_id, auth)[1]
+        sequence_file_id = db_manipulation_utils.add_sequence_file(
+            sample_set_id, user_id
+        )
+
+        # Create temporary file with known content
+        temp_upload_file = pathlib.Path(test_utils.get_results_path(), "temp_size.fa")
+        test_content = "ATCGATCGATCG" * 100  # Known size content
+        temp_upload_file.write_text(test_content)
+        expected_size = temp_upload_file.stat().st_size
+
+        save_upload_folder = db.sequence_file.data_file.uploadfolder
+
+        try:
+            db.sequence_file.data_file.uploadfolder = test_utils.get_results_path()
+
+            # When: Calling upload_process
+            result_json = file_controller.upload_process(
+                temp_upload_file, str(sequence_file_id), "test_size.fa", "1", None
+            )
+
+            # Then: Check that file size is correctly calculated and stored
+            sequence_file = db.sequence_file[sequence_file_id]
+            assert sequence_file.size_file == expected_size
+
+            result = json.loads(result_json)
+            assert vidjil_utils.format_size(expected_size) in result["message"]
+
+            # Clean up
+            actual_file = pathlib.Path(
+                db.sequence_file.data_file.uploadfolder, sequence_file.data_file
+            )
+            if actual_file.exists():
+                os.remove(actual_file)
+        finally:
+            db.sequence_file.data_file.uploadfolder = save_upload_folder
 
     ##################################
     # Tests on file_controller.confirm()
@@ -1187,9 +1875,14 @@ class TestFileController(unittest.TestCase):
                 result = file_controller.filesystem()
 
             # Then : We get file list (with a filter on file type and directories)
-            assert len(result) == 3
+            assert len(result) == 4
             titles = [item["li_attr"]["title"] for item in result]
-            expected_titles = ["Demo-X5.fa", "results", "logs"]
+            expected_titles = [
+                "Demo-X5.fa",
+                "results",
+                "logs",
+                "analysis-example.vidjil",
+            ]
             assert collections.Counter(titles) == collections.Counter(expected_titles)
         finally:
             settings.FILE_SOURCE = save_file_source
