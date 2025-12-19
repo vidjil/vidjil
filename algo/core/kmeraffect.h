@@ -1,6 +1,9 @@
 #ifndef KMER_AFFECT_H
 #define KMER_AFFECT_H
 
+#if __EMSCRIPTEN__
+typedef unsigned int uint;
+#endif
 #include <string>
 #include <iostream>
 
