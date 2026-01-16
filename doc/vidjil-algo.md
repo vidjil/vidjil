@@ -147,6 +147,16 @@ make LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
 make MAKE=gmake CXXFLAGS="-std=c++11 -O2 Wall -D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"   ### old FreeBSD
 ```
 
+#### WASM
+
+
+When compiling for WASM, you should compile using:
+```bash
+emmake make -j 10 wasm
+```
+
+This will generate three files: `vidjil-algo.data`, `vidjil-algo.wasm` and `vidjil-algo.js`.
+
 ### Self-tests (optional)
 
 You can run the tests with the following commands:
