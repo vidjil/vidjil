@@ -1,4 +1,5 @@
 CXX?=g++
+EMCXX?=em++
 
 ifeq (${COVERAGE},1)
 	COVERAGE_OPTION=--coverage
@@ -12,6 +13,9 @@ endif
 override CXXFLAGS += $(COVERAGE_OPTION) $(DEBUG)
 ifeq ($(LDFLAGS),)
   LDFLAGS := $(COVERAGE_OPTION)
+endif
+ifeq ($(EM_FLAGS),)
+  EM_FLAGS := -s USE_ZLIB=1 -s INVOKE_RUN=0 -s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=["callMain","FS","PROXYFS","WORKERFS"] -s MODULARIZE=1 -s ENVIRONMENT="web,worker" -s ALLOW_MEMORY_GROWTH=1 -lworkerfs.js -lproxyfs.js -sNO_DISABLE_EXCEPTION_CATCHING
 endif
 COV_OUTFILE?=lcov.out
 BASE_PATH=$(dir $(abspath .))
@@ -52,6 +56,7 @@ CGIDIR=../tools/
 TOOLDIR=tools/
 
 VIDJIL=$(BINDIR)$(EXEC)
+VIDJIL_JS=$(VIDJIL).js
 ALIGN_CGI=$(CGIDIR)align.cgi
 SIMILARITY_CGI=$(CGIDIR)similarity.cgi
 SIMILARITY_TOOL=$(TOOLDIR)similarity
@@ -60,15 +65,18 @@ CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-gi
 
 TEE = python3 ../tools/tee.py -v
 
-.PHONY: all core lib clean forcedep gcovr_reports
+.PHONY: all core lib clean forcedep gcovr_reports wasm
 
 all: $(VIDJIL) $(ALIGN_CGI) $(SIMILARITY_CGI) $(SIMILARITY_TOOL)
 	$(MAKE) -C $(TOOLDIR)
 
 base: $(VIDJIL)
 
+wasm: $(VIDJIL_JS)
+
 static:
 	$(MAKE) all LDFLAGS="-static -static-libstdc++"
+
 
 ###
 
@@ -125,6 +133,10 @@ $(VIDJIL): $(BINDIR)%: $(MAIN).o $(LIBCORE)
 	$(MAKE) -C lib
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
+$(VIDJIL_JS):
+	$(MAKE) DEBUG="$(EM_FLAGS)" $(VIDJIL)
+	$(EMCXX) -o $@  --preload-file ../germline@germline $(MAIN).o $(LIBCORE) $(EM_FLAGS) $(LDLIBS)
+
 ###
 # Subdirectories
 ###
@@ -139,7 +151,7 @@ clean:
 	$(MAKE) -C core $@
 	$(MAKE) -C lib $@
 	rm -f *.o cgi/*.o
-	cd $(BINDIR) ; rm -f $(EXEC)
+	cd $(BINDIR) ; rm -f $(EXEC) $(EXEC).js $(EXEC).wasm $(EXEC).data
 	$(MAKE) -C tests $@
 
 cleancoverage: clean
