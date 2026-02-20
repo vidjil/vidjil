@@ -26,6 +26,9 @@ from ..modules.controller_utils import error_message
 from ..modules.sampleSet import get_sample_set_id_from_results_file, get_set_group
 from ..modules.sequenceFile import check_space, get_patient_id
 
+ACCESS_DENIED = "access denied"
+
+
 # if request.environ.get("HTTP_ORIGIN") :
 #    response.headers['Access-Control-Allow-Origin'] = request.environ.get("HTTP_ORIGIN")
 #    response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -935,6 +938,15 @@ def save_analysis():
 @action("/vidjil/default/impersonate", method=["POST", "GET"])
 @action.uses(db, auth, session)
 def impersonate():
+    if not auth.is_admin():
+        res = {
+            "success": "false",
+            "message": ACCESS_DENIED,
+            "redirect": vidjil_utils.get_patient_redirect_url(),
+        }
+        log.info(res)
+        return json.dumps(res, separators=(",", ":"))
+    
     if auth.is_impersonating():
         log.info("impersonate << stop")
         auth.stop_impersonating(request.url)
