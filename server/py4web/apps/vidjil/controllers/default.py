@@ -946,7 +946,7 @@ def impersonate():
         }
         log.info(res)
         return json.dumps(res, separators=(",", ":"))
-    
+
     if auth.is_impersonating():
         log.info("impersonate << stop")
         auth.stop_impersonating(request.url)
