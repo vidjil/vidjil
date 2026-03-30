@@ -101,6 +101,9 @@ def index():
         query = sorted(query, key=lambda row: row.created, reverse=reverse)
     elif request.query["sort"] == "login":
         query = sorted(query, key=lambda row: row.last_login, reverse=reverse)
+    elif request.query["sort"] == "last_name":
+        # Trie par nom, puis par prénom pour les homonymes
+        query = sorted(query, key=lambda row: (row.last_name or "", row.first_name or ""), reverse=reverse)
     else:
         query = sorted(query, key=lambda row: row.id, reverse=False)
 

@@ -7,7 +7,7 @@
         <table class="db_table" id="table_users">
             <thead>
                 <tr><td class="column_50" onclick="db.call('user/index', {'sort' :'id'})">id</td>
-                    <td class="column_200"> name</td>
+                    <td class="column_200" onclick="db.call('user/index', {'sort' :'last_name'})"> name</td>
                     <td class="column_200"> @</td>
                     <td class="column_50">access</td>
                     <td class="column_200">groups</td>
@@ -15,9 +15,9 @@
                     <td class="column_100" onclick="db.call('user/index', {'sort' : 'login'
                     [[if not reverse and request.query["sort"]=="login" :]] , 'reverse' : true [[pass]] })">last login</td>
                     <td class="column_100" onclick="db.call('user/index', {'sort' :'patients'
-                  [[if not reverse and request.query["sort"]=="patients" :]] , 'reverse' : true [[pass]] })">patients created </td>
+                    [[if not reverse and request.query["sort"]=="patients" :]] , 'reverse' : true [[pass]] })">patients created </td>
                     <td class="column_100" onclick="db.call('user/index', {'sort' :'files'
-                  [[if not reverse and request.query["sort"]=="files" :]] , 'reverse' : true [[pass]] })">files uploaded </td>
+                    [[if not reverse and request.query["sort"]=="files" :]] , 'reverse' : true [[pass]] })">files uploaded </td>
                     <td class="column_20"> </td>
                     <td class="column_20"> </td>
                 </tr>
