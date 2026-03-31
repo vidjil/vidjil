@@ -459,6 +459,9 @@ Database.prototype = {
             
             //
             this.fixed_header()
+            
+            // Initialize column sorting for sortable tables
+            this.init_sort()
 
             // New page displayed, attempt to display header and login notifications
             let address=DB_ADDRESS + 'notification/get_active_notifications'
@@ -1211,6 +1214,82 @@ Database.prototype = {
                 fixedHeader.css("left", -1*offset)
             });
         }
+    },
+
+    // Initialize click listeners on sortable column headers
+    init_sort: function () {
+        var self = this;
+
+        // Reset sort state on each new page load
+        self.currentSortCol = null;
+        self.currentSortAsc = true;
+
+        document.querySelectorAll("thead td.sortable").forEach(function(th) {
+            th.style.cursor = "pointer";
+            // Set default icon
+            var icon = th.querySelector(".sort-icon");
+            if (icon) icon.textContent = " ↕";
+            // Bind click event
+            th.addEventListener("click", function() {
+                self.sort_table(th.dataset.sort);
+            });
+        });
+    },
+
+    // Sort table columns
+    sort_table: function (col) {
+        var self = this;
+
+        // If same column clicked again → reverse order
+        if (self.currentSortCol === col) {
+            self.currentSortAsc = !self.currentSortAsc;
+        } else {
+            self.currentSortCol = col;
+            self.currentSortAsc = true; // New column → start ascending
+        }
+
+        // Find the index of the clicked column
+        var headers = document.querySelectorAll("#table_users thead td");
+        var colIndex = -1;
+        headers.forEach(function(th, index) {
+            if (th.dataset.sort === col) colIndex = index;
+        });
+
+        if (colIndex === -1) return;
+
+        // Get and sort the rows
+        var tbody = document.querySelector("#table_users tbody");
+        var rows = Array.from(tbody.querySelectorAll("tr"));
+
+        rows.sort(function(rowA, rowB) {
+            var cellA = rowA.querySelectorAll("td")[colIndex].innerText.trim();
+            var cellB = rowB.querySelectorAll("td")[colIndex].innerText.trim();
+
+            var numA = parseFloat(cellA);
+            var numB = parseFloat(cellB);
+            var isNumeric = !isNaN(numA) && !isNaN(numB);
+
+            var comparison;
+            if (isNumeric) {
+                comparison = numA - numB;
+            } else {
+                comparison = cellA.localeCompare(cellB);
+            }
+
+            return self.currentSortAsc ? comparison : -comparison;
+        });
+
+        // Re-insert sorted rows
+        rows.forEach(function(row) { tbody.appendChild(row); });
+
+        // Update sort icons
+        document.querySelectorAll("#table_users thead td[data-sort]").forEach(function(th) {
+            var icon = th.querySelector(".sort-icon");
+            if (!icon) return;
+            icon.textContent = (th.dataset.sort === col)
+                ? (self.currentSortAsc ? " ↑" : " ↓")
+                : " ↕";
+        });
     },
     
     group_rights: function (value, name, right, id) {

@@ -6,18 +6,17 @@
     <div id="db_table_container">
         <table class="db_table" id="table_users">
             <thead>
-                <tr><td class="column_50" onclick="db.call('user/index', {'sort' :'id'})">id</td>
-                    <td class="column_200" onclick="db.call('user/index', {'sort' :'last_name'})"> name</td>
-                    <td class="column_200"> @</td>
+                <tr>
+                    <td class="column_50 sortable" data-sort="id">id <span class="sort-icon"></span></td>
+                    <td class="column_200 sortable" data-sort="firstName">first name <span class="sort-icon"></span></td>
+                    <td class="column_200 sortable" data-sort="lastName">last name <span class="sort-icon"></span></td>
+                    <td class="column_200">@</td>
                     <td class="column_50">access</td>
-                    <td class="column_200">groups</td>
+                    <td class="column_200 sortable" data-sort="groups">groups <span class="sort-icon"></span></td>
                     <td class="column_100">first login</td>
-                    <td class="column_100" onclick="db.call('user/index', {'sort' : 'login'
-                    [[if not reverse and request.query["sort"]=="login" :]] , 'reverse' : true [[pass]] })">last login</td>
-                    <td class="column_100" onclick="db.call('user/index', {'sort' :'patients'
-                    [[if not reverse and request.query["sort"]=="patients" :]] , 'reverse' : true [[pass]] })">patients created </td>
-                    <td class="column_100" onclick="db.call('user/index', {'sort' :'files'
-                    [[if not reverse and request.query["sort"]=="files" :]] , 'reverse' : true [[pass]] })">files uploaded </td>
+                    <td class="column_100 sortable" data-sort="last_login">last login <span class="sort-icon"></span></td>
+                    <td class="column_100 sortable" data-sort="patients">patients created <span class="sort-icon"></span></td>
+                    <td class="column_100 sortable" data-sort="files">files uploaded <span class="sort-icon"></span></td>
                     <td class="column_20"> </td>
                     <td class="column_20"> </td>
                 </tr>
@@ -26,7 +25,8 @@
            [[for row in query :]]
                <tr class="pointer" ondblclick="db.call('user/info', {'id' :'[[=row.id]]'} )">
                     <td> [[=row.id]]</td>
-                    <td> [[=row.first_name]] [[=row.last_name]]</td>
+                    <td> [[=row.first_name]] </td>
+                    <td> [[=row.last_name]] </td>
                     <td> [[=row.email]]  </td>
                     <td> [[=row.access]]  </td>
                     <td style="">
