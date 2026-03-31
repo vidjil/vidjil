@@ -1220,36 +1220,35 @@ Database.prototype = {
     init_sort: function () {
         var self = this;
 
-        // Reset sort state on each new page load
         self.currentSortCol = null;
         self.currentSortAsc = true;
 
         document.querySelectorAll("thead td.sortable").forEach(function(th) {
             th.style.cursor = "pointer";
-            // Set default icon
             var icon = th.querySelector(".sort-icon");
             if (icon) icon.textContent = " ↕";
-            // Bind click event
+
             th.addEventListener("click", function() {
-                self.sort_table(th.dataset.sort);
+                // Find the parent table's id to pass it to sort_table
+                var tableId = th.closest("table").id;
+                self.sort_table(th.dataset.sort, tableId);
             });
         });
     },
 
     // Sort table columns
-    sort_table: function (col) {
+    sort_table: function (col, tableId) {
         var self = this;
 
-        // If same column clicked again → reverse order
         if (self.currentSortCol === col) {
             self.currentSortAsc = !self.currentSortAsc;
         } else {
             self.currentSortCol = col;
-            self.currentSortAsc = true; // New column → start ascending
+            self.currentSortAsc = true;
         }
 
-        // Find the index of the clicked column
-        var headers = document.querySelectorAll("#table_users thead td");
+        // Replace the hardcoded #table_users with the dynamic tableId
+        var headers = document.querySelectorAll("#" + tableId + " thead td");
         var colIndex = -1;
         headers.forEach(function(th, index) {
             if (th.dataset.sort === col) colIndex = index;
@@ -1257,8 +1256,7 @@ Database.prototype = {
 
         if (colIndex === -1) return;
 
-        // Get and sort the rows
-        var tbody = document.querySelector("#table_users tbody");
+        var tbody = document.querySelector("#" + tableId + " tbody");
         var rows = Array.from(tbody.querySelectorAll("tr"));
 
         rows.sort(function(rowA, rowB) {
@@ -1279,11 +1277,10 @@ Database.prototype = {
             return self.currentSortAsc ? comparison : -comparison;
         });
 
-        // Re-insert sorted rows
         rows.forEach(function(row) { tbody.appendChild(row); });
 
-        // Update sort icons
-        document.querySelectorAll("#table_users thead td[data-sort]").forEach(function(th) {
+        // Update sort icons only within the active table
+        document.querySelectorAll("#" + tableId + " thead td[data-sort]").forEach(function(th) {
             var icon = th.querySelector(".sort-icon");
             if (!icon) return;
             icon.textContent = (th.dataset.sort === col)
@@ -1291,7 +1288,7 @@ Database.prototype = {
                 : " ↕";
         });
     },
-    
+
     group_rights: function (value, name, right, id) {
         
         var arg = {}
