@@ -462,6 +462,8 @@ Database.prototype = {
             
             // Initialize column sorting for sortable tables
             this.init_sort()
+            // Initialize search for rows filtering
+            this.init_search()
 
             // New page displayed, attempt to display header and login notifications
             let address=DB_ADDRESS + 'notification/get_active_notifications'
@@ -1233,6 +1235,45 @@ Database.prototype = {
                 var tableId = th.closest("table").id;
                 self.sort_table(th.dataset.sort, tableId);
             });
+        });
+    },
+
+    // Initialize search bar for filterable tables
+    init_search: function () {
+        var self = this;
+
+        // Find all search inputs whose id starts with "search_"
+        document.querySelectorAll("input[id^='search_']").forEach(function(input) {
+
+            // Derive the table id from the input id (e.g. "search_table_users" → "table_users")
+            var tableId = input.id.replace("search_", "");
+
+            // Trigger search on Enter key press
+            input.addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    self.filter_table(input.value, tableId);
+                }
+            });
+        });
+    },
+
+    // Filter table rows based on search query
+    filter_table: function (query, tableId) {
+        var normalizedQuery = query.trim().toLowerCase();
+        var rows = document.querySelectorAll("#" + tableId + " tbody tr");
+
+        rows.forEach(function(row) {
+            // Concatenate all cell texts in the row into one string
+            var rowText = Array.from(row.querySelectorAll("td"))
+                .map(function(td) { return td.innerText.toLowerCase(); })
+                .join(" ");
+
+            // Show or hide the row depending on whether it matches the query
+            if (normalizedQuery === "" || rowText.includes(normalizedQuery)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
         });
     },
 
