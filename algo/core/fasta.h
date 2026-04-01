@@ -41,11 +41,6 @@ class OnlineFasta: public OnlineBioReader {
   virtual ~OnlineFasta();
 
   /**
-   * @inherited
-   */
-  unsigned long long getPos();
-
-  /**
    * @return true iff we did not reach yet the end of the file.
    */
   bool hasNextData();

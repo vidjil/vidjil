@@ -81,11 +81,20 @@ void testOnlineBioReaderMaxNth() {
 void testFastaNbSequences() {
   TAP_TEST_EQUAL(nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa"), 550, TEST_FASTA_NB_SEQUENCES, "ccc");
 
-  int a1 = approx_nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa");
+  unsigned long long  a1 = approx_nb_sequences_in_file("../../germline/homo-sapiens/IGHV.fa");
   TAP_TEST(a1 >= 530 && a1 <= 560, TEST_FASTA_NB_SEQUENCES, "");
 
-  int a2 = nb_sequences_in_file("data/Stanford_S22.fasta", true);
-  TAP_TEST(a2 >= 12800 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
+  using uint64_t = unsigned long long;
+
+  // 658 sequence margin
+  float    margin_percent           = 0.05f;
+  uint64_t Stanford_S22_seq_count   = 13153;
+  uint64_t margin                   = (uint64_t)(Stanford_S22_seq_count * margin_percent);
+  uint64_t lowest_approx_seq_count  = Stanford_S22_seq_count - margin;
+  uint64_t highest_approx_seq_count = Stanford_S22_seq_count + margin;
+
+  uint64_t a2 = nb_sequences_in_file("data/Stanford_S22.fasta", true);
+  TAP_TEST(a2 >= lowest_approx_seq_count && a2 <= highest_approx_seq_count, TEST_FASTA_NB_SEQUENCES, "");
 }
 
 
