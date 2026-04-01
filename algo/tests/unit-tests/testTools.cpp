@@ -86,8 +86,7 @@ void testFastaNbSequences() {
 
   using uint64_t = unsigned long long;
 
-  // 658 sequence margin
-  float    margin_percent           = 0.05f;
+  float    margin_percent           = 0.025f;
   uint64_t Stanford_S22_seq_count   = 13153;
   uint64_t margin                   = (uint64_t)(Stanford_S22_seq_count * margin_percent);
   uint64_t lowest_approx_seq_count  = Stanford_S22_seq_count - margin;
