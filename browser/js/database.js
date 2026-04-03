@@ -1324,9 +1324,7 @@ Database.prototype = {
         document.querySelectorAll("#" + tableId + " thead td[data-sort]").forEach(function(th) {
             var icon = th.querySelector(".sort-icon");
             if (!icon) return;
-            icon.textContent = (th.dataset.sort === col)
-                ? (self.currentSortAsc ? " ↑" : " ↓")
-                : " ↕";
+            icon.textContent = (th.dataset.sort === col) ? (self.currentSortAsc ? " ↑" : " ↓") : " ↕";
         });
     },
 
