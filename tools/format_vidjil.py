@@ -3,6 +3,7 @@ import sys
 import json
 import datetime
 import argparse
+import shutil
 from typing import Union
 from collections import OrderedDict
 
@@ -304,10 +305,7 @@ if __name__ == '__main__':
         if isinstance(in_place, str):
             backup_suffix = in_place
             backup_file = inputfile + backup_suffix
-            with open(inputfile, 'r') as src:
-                content = src.read()
-            with open(backup_file, 'w') as dst:
-                dst.write(content)
+            shutil.copy2(inputfile, backup_file) #copy2 also keeps the timestamps
             if verbose:
                 print(f"Backup created: {backup_file}")
     else:
