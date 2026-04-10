@@ -259,7 +259,7 @@ OnlineBioReader *OnlineBioReaderFactory::create(const string &filename,
     return new OnlineBAM(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
   }
 
-  // The only other supported file format is FASTA/FASTQ, either plain and gzipped. If the file
+  // The only other supported file format is FASTA/FASTQ, either plain or gzipped. If the file
   // extension doesn't match, attempt to interpret the file as a FASTA/FASTQ anyway.
   //
   // By default, suppose that unrecognized file formats (meaning not one of .fasta, .fastq, .fa
