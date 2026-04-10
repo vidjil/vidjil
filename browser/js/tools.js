@@ -926,6 +926,20 @@ function fixDuplicateNames(names){
     return names
 }
 
+/**
+ * Toggle a log pre content div
+ */
+function toggleAccordion(header) {
+    const accordion = header.parentElement;
+    const isActive = accordion.classList.contains('active');
+
+
+    if (!isActive) {
+        accordion.classList.add('active');
+    } else {
+        accordion.classList.remove('active');
+    }
+}
 
 /**
  * Open a new tab and put content in it.
