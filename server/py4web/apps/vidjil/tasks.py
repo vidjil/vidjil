@@ -202,6 +202,7 @@ def run_vidjil(
 
         # Vidjil config
         vidjil_cmd = db.config[id_config].command
+        prefuse_cmd = db.config[id_config].prefuse_command
         if "next" in vidjil_cmd:
             vidjil_cmd = vidjil_cmd.replace("next", "")
             vidjil_cmd = vidjil_cmd.replace(" germline", settings.DIR_GERMLINE_NEXT)
@@ -273,8 +274,7 @@ def run_vidjil(
                 # TODO: Update when vidjil-algo fix that;
             log.info(f"===> {out_results}")
             results_filepath = os.path.abspath(out_results)
-            if not os.path.exists(results_filepath):
-                raise IOError(filename=results_filepath)
+
         except:
             error_message = f"!!! Vidjil failed : {traceback.format_exc()}\n\nSetting status to Failed."
             res = {
@@ -283,6 +283,60 @@ def run_vidjil(
             log.error(res)
             update_task(task_id, STATUS_FAILED)
             raise
+
+        if prefuse_cmd != "":
+            log.info("=== Launching Prefuse Step ===")
+            log.info(prefuse_cmd)
+            log.info("========================")
+            sys.stdout.flush()
+
+            previous_prefuse_output = out_results
+
+            print(f"{prefuse_cmd.split(";")=}")
+            for index, prefuse_command in enumerate(prefuse_cmd.split(";")):
+                try:
+                    prefuse_command = prefuse_command.strip()
+                    prefuse_script = prefuse_command.split(" ")[0]
+                    new_prefuse_output = f"{out_folder}/prefuse_{index}_{prefuse_script}.vidjil"
+                    prefuse_command  = f"{settings.DIR_PREFUSE}/{prefuse_command}  -i {previous_prefuse_output} -o {new_prefuse_output}"
+                    print(f"{prefuse_command=}")
+
+                    vidjil_log_file = open(out_log, "a", encoding="utf-8")
+                    vidjil_log_file.write(f"\n~~NEW LOG~~PREFUSE {prefuse_script}\n{prefuse_command}\n")
+                    vidjil_log_file.close() # close to effectivly write content before next stdout 
+
+                    vidjil_log_file = open(out_log, "a", encoding="utf-8")
+                    p = Popen(
+                        prefuse_command,
+                        shell=True,
+                        stdin=PIPE,
+                        stdout=vidjil_log_file,
+                        stderr=STDOUT,
+                        close_fds=True,
+                    )
+                    p.communicate()
+                    sys.stdout.flush()
+                    vidjil_log_file.write("")
+                    vidjil_log_file.close()
+
+                    log.info(f"Prefuse {prefuse_script} done, output logs in {out_log}")
+                    
+                    # Replace new result file, remove previous step vidjil result file
+                    results_filepath = new_prefuse_output
+                    os.remove(previous_prefuse_output) 
+                    previous_prefuse_output = new_prefuse_output
+
+                except:
+                    error_message = f"!!! Prefuse {prefuse_script} failed : {traceback.format_exc()}\n\nSetting status to Failed."
+                    res = {
+                        "message": f"[{id_data}] c{id_config}: {error_message}; log at {out_folder}/{output_filename}.vidjil.log"
+                    }
+                    log.error(res)
+                    update_task(task_id, STATUS_FAILED)
+                    raise
+        
+        if not os.path.exists(results_filepath):
+            raise IOError(filename=results_filepath)
 
         # Parse some info in .log
         info = ""
