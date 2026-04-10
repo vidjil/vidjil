@@ -62,6 +62,7 @@ gzstreambuf* gzstreambuf::open( const char* name, int open_mode) {
     if (fileh == 0)
         return (gzstreambuf*)0;
     file = gzdopen(fileno(fileh), fmode);
+    gzbuffer(file, 8196);
     if (file == 0)
         return (gzstreambuf*)0;
     opened = 1;
