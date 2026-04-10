@@ -53,6 +53,7 @@ def index():
                     "program": str(elt["program"]),
                     "classification": str(elt["classification"]),
                     "command": str(elt["command"]),
+                    "prefuse_command": str(elt["prefuse_command"]),
                     "fuse_command": str(elt["fuse_command"]),
                     "info": str(elt["info"]),
                 }
@@ -91,6 +92,7 @@ def add_form():
     error = []
 
     required_fields = [
+        # Prefuse and info are not mandatory
         "config_name",
         "config_command",
         "config_fuse_command",
@@ -122,6 +124,7 @@ def add_form():
         name=request.params["config_name"],
         info=request.params["config_info"],
         command=request.params["config_command"],
+        prefuse_command=request.params["config_prefuse_command"],
         fuse_command=request.params["config_fuse_command"],
         program=request.params["config_program"],
         classification=request.params["config_classification"],
@@ -174,6 +177,7 @@ def edit_form():
         "id",
         "config_name",
         "config_command",
+        "config_prefuse_command",
         "config_fuse_command",
         "config_program",
     ]
@@ -200,6 +204,7 @@ def edit_form():
         name=request.params["config_name"],
         info=request.params["config_info"],
         command=request.params["config_command"],
+        prefuse_command=request.params["config_prefuse_command"],
         fuse_command=request.params["config_fuse_command"],
         program=request.params["config_program"],
         classification=request.params["config_classification"],

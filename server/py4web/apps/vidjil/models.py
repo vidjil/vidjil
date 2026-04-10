@@ -189,6 +189,7 @@ db.define_table(
     Field("name", "string"),
     Field("program", "string"),
     Field("command", "string"),
+    Field("prefuse_command", "string"),
     Field("fuse_command", "string"),
     Field("info", "text"),
     Field("classification", "reference classification", ondelete="SET NULL"),
