@@ -12,6 +12,7 @@ import errno
 from collections import defaultdict
 from warnings import warn
 from datetime import datetime
+import time
 
 ### Particular module to load
 import subprocess
@@ -640,6 +641,57 @@ class Vidjil:
         open(filename, 'wb').write(reponse.content)
 
         return
+
+    def downloadReads(self, sequence_file_id:int, sample_set_id:int, config_id:int, grep_reads:str, filename:str, overwrite=True, timeout:int=240):
+        """Download a get_reads result from API. Getted file is stored inside filename file.
+
+        Args:
+            sequence_file_id (int): Id of hte sequence file
+            sample_set_id (int): Number of the sample set to use
+            config_id (int): Configuration of the analysis to download (for the moment, will be the same for all configutation, but needed)
+            grep_reads (str): Reads sequence to search
+            filename (str): name of the output file
+            overwrite (bool): Overwrite the file if a previous version already present
+            timeout (int): Timeout time for request process complete
+        """
+        url = f"{self.url_server}/default/run_request?sequence_file_id={sequence_file_id}&sample_set_id={sample_set_id}&config_id={config_id}&grep_reads={grep_reads}"
+        
+        reponse = self.session.get(url, verify=self.ssl)
+        # take arg to follow for results_file_id value
+        print(f"{reponse.content=}")
+        if " permission needed" in reponse.content.decode('utf-8'):
+            raise Exception('downloadReads', f"Persmission error. you do not have permission to launch process for this sample_set ({sample_set_id}) ")
+
+        getreads_processId = json.loads(reponse.content.decode('utf-8'))["results_file_id"]
+        print( f"==> get read launched; processId={getreads_processId}" )
+
+        # run a loop on this value until result is 'ok'
+        url_checkProcess = f"{self.url_server}/default/checkProcess?processId={getreads_processId}"
+        status_checkProcess = False
+        start = time.time()
+        while not status_checkProcess:
+            reponse_checkProcess = self.session.get(url_checkProcess, verify=self.ssl)
+            print(reponse_checkProcess.content)
+            data_getreads = json.loads(reponse_checkProcess.content.decode('utf-8'))
+            status_checkProcess = True if data_getreads["status"] == "COMPLETED" else False
+
+            if time.time() - start > timeout: # TODO; adapt time with parameter ?
+                raise Exception('download', "time exceeded to get get_reads results")
+
+        print( f"==> get read finised; processId={getreads_processId}; status={data_getreads["status"]}" )
+        sys.stdout.flush()
+
+        # launch request to get get_reads file
+        url_getfile      = f"{self.url_server}/default/download/{data_getreads["data"]["data_file"]}"
+        reponse_getfile = self.session.get(url_getfile, verify=self.ssl)
+
+        # download get_reads file 
+        if os.path.isfile(filename) and not overwrite:
+            raise Exception('download', "A file with same name already exist")
+        print( "==> %s " % filename, end='')
+        sys.stdout.flush()
+        open(filename, 'wb').write(reponse_getfile.content)
+
 
     def createSample(self, set_ids:list, sample_set_id:str, sample_type:str, file_filename:str, file_filename2:str, file_info:str, file_sampling_date:str=None, file_id:int="", file_set_ids:list="", source:str="computer", pre_process="0"):
         """Create a sample on the server, link it to various sets, and upload dat aas last part
