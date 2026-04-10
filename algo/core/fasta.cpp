@@ -50,11 +50,19 @@ OnlineFasta::~OnlineFasta() {
 
 void OnlineFasta::init() {
   if (filename == STDIN_FILENAME) {
-    input = &cin;
-    input_allocated = false;
+    this->input = &cin;
+    this->input_allocated = false;
+    this->is_gzip_compressed = false;
   }
   else if (! filename.empty()) {
-    input = new igzstream(filename.c_str());
+    // Check whether the file is gzip-compressed
+    const char* filename_cstr             = filename.c_str();
+    size_t      filename_length           = filename.length();
+    char        filename_penultimate_char = filename_cstr[filename_length - 2];
+    char        filename_ultimate_char    = filename_cstr[filename_length - 1];
+
+    this->is_gzip_compressed = (filename_penultimate_char == 'g') && (filename_ultimate_char == 'z');
+    this->input              = new igzstream(filename_cstr);
 
     if (this->input->fail()) {
       delete this->input;
@@ -62,7 +70,7 @@ void OnlineFasta::init() {
     }
   }
 
-  line = getInterestingLine();
+  this->line = getInterestingLine();
 }
 
 bool OnlineFasta::hasNextData() {
@@ -172,6 +180,13 @@ string OnlineFasta::getInterestingLine(int state) {
       line = "" ;
   }
   return line;
+}
+
+
+unsigned long long OnlineFasta::getPos() {
+  if (this->input_allocated && this->is_gzip_compressed)
+    return dynamic_cast<igzstream*>(input)->tellg();
+  return char_nb;
 }
 
 void OnlineFasta::unexpectedEOF() {
