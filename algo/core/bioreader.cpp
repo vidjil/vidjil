@@ -259,37 +259,16 @@ OnlineBioReader *OnlineBioReaderFactory::create(const string &filename,
     return new OnlineBAM(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
   }
 
-  if (extension == "gz")
-  {
-    // Find the previous '.' (if any) and extract characters between that '.' and the last one
-    size_t before_final_dot_pos          = final_dot_pos - 1;
-    size_t previous_dot_pos              = filename.find_last_of('.', before_final_dot_pos);
-    size_t uncompressed_extension_length = final_dot_pos - previous_dot_pos - 1;
-    string uncompressed_file_extension   = filename.substr(previous_dot_pos + 1, uncompressed_extension_length);
-    transform(uncompressed_file_extension.begin(),
-              uncompressed_file_extension.end(),
-              uncompressed_file_extension.begin(),
-              ::tolower);
-
-    // Check if those characters match the known FASTA/FASTQ extensions
-    if ((uncompressed_file_extension == "fasta") ||
-        (uncompressed_file_extension == "fastq") ||
-        (uncompressed_file_extension == "fa")    ||
-        (uncompressed_file_extension == "fq"))
-    {
-      return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
-    }
-  }
-  else if ((extension == "fasta") ||
-           (extension == "fastq") ||
-           (extension == "fa")    ||
-           (extension == "fq"))
-  {
-    return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
-  }
-
-  cerr << "Input file \"" << filename << "\" format is not BAM, FASTA nor FASTQ\n";
-  return nullptr;
+  // The only other supported file format is FASTA/FASTQ, either plain and gzipped. If the file
+  // extension doesn't match, attempt to interpret the file as a FASTA/FASTQ anyway.
+  //
+  // By default, suppose that unrecognized file formats (meaning not one of .fasta, .fastq, .fa
+  // or .fq) are gzipped
+  bool is_not_gzipped = (extension == "fasta") ||
+                        (extension == "fastq") ||
+                        (extension == "fa")    ||
+                        (extension == "fq");
+  return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt, is_not_gzipped);
 }
 
 // http://stackoverflow.com/a/5840160/4475279

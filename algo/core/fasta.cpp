@@ -36,12 +36,18 @@
 
 OnlineFasta::OnlineFasta(int extract_field, string extract_separator,
                          int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt)
-  :OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt) {}
+  : OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt),
+    is_not_gzipped{true}
+{}
 
 OnlineFasta::OnlineFasta(const string &input_filename, 
                          int extract_field, string extract_separator,
-                         int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt)
-  :OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt) {this->init();}
+                         int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt, bool is_not_gzipped)
+  : OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt),
+    is_not_gzipped{is_not_gzipped}
+{
+  this->init();
+}
 
 OnlineFasta::~OnlineFasta() {
   if (input_allocated)
@@ -52,17 +58,13 @@ void OnlineFasta::init() {
   if (filename == STDIN_FILENAME) {
     this->input = &cin;
     this->input_allocated = false;
-    this->is_gzip_compressed = false;
+    this->is_not_gzipped = false;
   }
   else if (! filename.empty()) {
-    // Check whether the file is gzip-compressed
-    const char* filename_cstr             = filename.c_str();
-    size_t      filename_length           = filename.length();
-    char        filename_penultimate_char = filename_cstr[filename_length - 2];
-    char        filename_ultimate_char    = filename_cstr[filename_length - 1];
-
-    this->is_gzip_compressed = (filename_penultimate_char == 'g') && (filename_ultimate_char == 'z');
-    this->input              = new igzstream(filename_cstr);
+    if (this->is_not_gzipped)
+      this->input = new ifstream(filename);
+    else
+      this->input = new igzstream(filename.c_str());
 
     if (this->input->fail()) {
       delete this->input;
@@ -184,8 +186,9 @@ string OnlineFasta::getInterestingLine(int state) {
 
 
 unsigned long long OnlineFasta::getPos() {
-  if (this->input_allocated && this->is_gzip_compressed)
+  if (!this->is_not_gzipped && input_allocated)
     return dynamic_cast<igzstream*>(input)->tellg();
+
   return char_nb;
 }
 
