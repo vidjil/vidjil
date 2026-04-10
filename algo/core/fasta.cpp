@@ -36,12 +36,18 @@
 
 OnlineFasta::OnlineFasta(int extract_field, string extract_separator,
                          int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt)
-  :OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt) {}
+  : OnlineBioReader(extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt),
+    is_not_gzipped{true}
+{}
 
 OnlineFasta::OnlineFasta(const string &input_filename, 
                          int extract_field, string extract_separator,
-                         int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt)
-  :OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt) {this->init();}
+                         int nb_sequences_max, int only_nth_sequence, bool ignore_uppercase_nt, bool is_not_gzipped)
+  : OnlineBioReader(input_filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt),
+    is_not_gzipped{is_not_gzipped}
+{
+  this->init();
+}
 
 OnlineFasta::~OnlineFasta() {
   if (input_allocated)
@@ -50,11 +56,15 @@ OnlineFasta::~OnlineFasta() {
 
 void OnlineFasta::init() {
   if (filename == STDIN_FILENAME) {
-    input = &cin;
-    input_allocated = false;
+    this->input = &cin;
+    this->input_allocated = false;
+    this->is_not_gzipped = false;
   }
   else if (! filename.empty()) {
-    input = new igzstream(filename.c_str());
+    if (this->is_not_gzipped)
+      this->input = new ifstream(filename);
+    else
+      this->input = new igzstream(filename.c_str());
 
     if (this->input->fail()) {
       delete this->input;
@@ -62,7 +72,7 @@ void OnlineFasta::init() {
     }
   }
 
-  line = getInterestingLine();
+  this->line = getInterestingLine();
 }
 
 bool OnlineFasta::hasNextData() {
@@ -174,9 +184,11 @@ string OnlineFasta::getInterestingLine(int state) {
   return line;
 }
 
+
 unsigned long long OnlineFasta::getPos() {
-  if (input_allocated)
+  if (!this->is_not_gzipped && input_allocated)
     return dynamic_cast<igzstream*>(input)->tellg();
+
   return char_nb;
 }
 

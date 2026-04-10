@@ -250,12 +250,25 @@ OnlineBioReader *OnlineBioReaderFactory::create(const string &filename,
                                                 int extract_field, string extract_separator,
                                                 bool ignore_uppercase_nt,
                                                 int nb_sequences_max, int only_nth_sequence) {
-  string extension = filename.substr(filename.find_last_of(".") + 1);
+  size_t final_dot_pos = filename.find_last_of('.');
+  string extension     = filename.substr(final_dot_pos + 1);
   transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+  
   if (extension == "bam")
+  {
     return new OnlineBAM(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
-  else
-    return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
+  }
+
+  // The only other supported file format is FASTA/FASTQ, either plain or gzipped. If the file
+  // extension doesn't match, attempt to interpret the file as a FASTA/FASTQ anyway.
+  //
+  // By default, suppose that unrecognized file formats (meaning not one of .fasta, .fastq, .fa
+  // or .fq) are gzipped
+  bool is_not_gzipped = (extension == "fasta") ||
+                        (extension == "fastq") ||
+                        (extension == "fa")    ||
+                        (extension == "fq");
+  return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt, is_not_gzipped);
 }
 
 // http://stackoverflow.com/a/5840160/4475279

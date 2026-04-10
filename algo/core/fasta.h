@@ -16,6 +16,7 @@ using namespace std;
  * The file is read online meaning that we cannot access a random sequence.
  */
 class OnlineFasta: public OnlineBioReader {
+  bool is_not_gzipped;
   istream *input;
  public:
 
@@ -36,7 +37,7 @@ class OnlineFasta: public OnlineBioReader {
   OnlineFasta(const string &input_filename, 
               int extract_field=0, string extract_separator="|",
               int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1,
-              bool ignore_uppercase_nt=false);
+              bool ignore_uppercase_nt=false, bool is_not_gzipped = false);
 
   virtual ~OnlineFasta();
 
