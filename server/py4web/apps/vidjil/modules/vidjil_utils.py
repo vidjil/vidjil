@@ -668,6 +668,16 @@ def log_links(s):
     return s
 
 
+def split_log(content:str):
+    """Split a vidjil log file. Include main process and prefuse. Split them and store it in a dict
+
+    Args:
+        content (str): Raw log content
+    """
+    splitted_logs = [{"title": log.split("\n")[0], "content": "\n".join(log.split("\n")[1:]) } for log in content.split("~~NEW LOG~~")]
+    return splitted_logs
+
+
 def check_enough_space(directory):
     import subprocess
 

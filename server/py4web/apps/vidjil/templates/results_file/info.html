@@ -55,8 +55,21 @@ task = db.scheduler_task[results_file.scheduler_task_id]
     </table>
 
     [[ if content_log: ]]
-        <pre style="height:calc(90%); width:calc(90%); overflow-y:scroll; overflow-x:scroll; background-color:gray; color:white;">[[=content_log]]</pre>
-    [[ pass]]
+        [[ for process_log in content_log: ]]
+            <div class="accordion active" >
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>[[=process_log["title"]]]</span>
+                    <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="inner">
+                        <pre style="height:calc(90%); background-color:gray; color:white;">[[=process_log["content"]]]</pre>
+                    </div>
+                </div>
+            </div>
+            <br/>
+        [[pass]]
+    [[pass]]
 
 </div>
 [[pass]]
