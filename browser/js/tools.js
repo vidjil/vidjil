@@ -977,6 +977,7 @@ async function fillConfigFormFromClipboard() {
         document.getElementById("config_classification").value = values.classification;
         document.getElementById("config_program").value = values.program;
         document.getElementById("config_command").value = values.command;
+        document.getElementById("config_prefuse_command").value = values.prefuse_command;
         document.getElementById("config_fuse_command").value = values.fuse_command;
         document.getElementById("config_info").value = values.info;
     } catch (err) {
