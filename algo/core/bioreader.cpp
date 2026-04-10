@@ -288,7 +288,7 @@ OnlineBioReader *OnlineBioReaderFactory::create(const string &filename,
     return new OnlineFasta(filename, extract_field, extract_separator, nb_sequences_max, only_nth_sequence, ignore_uppercase_nt);
   }
 
-  cerr << "Input file \"" << filename << " format is not BAM, FASTA nor FASTQ\n";
+  cerr << "Input file \"" << filename << "\" format is not BAM, FASTA nor FASTQ\n";
   return nullptr;
 }
 
