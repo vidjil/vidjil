@@ -297,13 +297,17 @@ def run_vidjil(
                 try:
                     prefuse_command = prefuse_command.strip()
                     prefuse_script = prefuse_command.split(" ")[0]
-                    new_prefuse_output = f"{out_folder}/prefuse_{index}_{prefuse_script}.vidjil"
-                    prefuse_command  = f"{settings.DIR_PREFUSE}/{prefuse_command}  -i {previous_prefuse_output} -o {new_prefuse_output}"
+                    new_prefuse_output = (
+                        f"{out_folder}/prefuse_{index}_{prefuse_script}.vidjil"
+                    )
+                    prefuse_command = f"{settings.DIR_PREFUSE}/{prefuse_command}  -i {previous_prefuse_output} -o {new_prefuse_output}"
                     print(f"{prefuse_command=}")
 
                     vidjil_log_file = open(out_log, "a", encoding="utf-8")
-                    vidjil_log_file.write(f"\n~~NEW LOG~~PREFUSE {prefuse_script}\n{prefuse_command}\n")
-                    vidjil_log_file.close() # close to effectivly write content before next stdout 
+                    vidjil_log_file.write(
+                        f"\n~~NEW LOG~~PREFUSE {prefuse_script}\n{prefuse_command}\n"
+                    )
+                    vidjil_log_file.close()  # close to effectivly write content before next stdout
 
                     vidjil_log_file = open(out_log, "a", encoding="utf-8")
                     p = Popen(
@@ -320,10 +324,10 @@ def run_vidjil(
                     vidjil_log_file.close()
 
                     log.info(f"Prefuse {prefuse_script} done, output logs in {out_log}")
-                    
+
                     # Replace new result file, remove previous step vidjil result file
                     results_filepath = new_prefuse_output
-                    os.remove(previous_prefuse_output) 
+                    os.remove(previous_prefuse_output)
                     previous_prefuse_output = new_prefuse_output
 
                 except:
@@ -334,7 +338,7 @@ def run_vidjil(
                     log.error(res)
                     update_task(task_id, STATUS_FAILED)
                     raise
-        
+
         if not os.path.exists(results_filepath):
             raise IOError(filename=results_filepath)
 
