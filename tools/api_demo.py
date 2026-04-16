@@ -12,6 +12,8 @@ DOWNLOAD_PATH = "download/"
 ### Public database server behind app.vidjil.org
 PUBLIC_SERVER = "https://app-back.vidjil.org/vidjil"
 PUBLIC_SSL = ""
+# Warning: demo use can't launch computation. 
+# Some part of the script "local" can't be done with him (create sample, launch analysis, get reads, ...)
 PUBLIC_USER = "demo@vidjil.org"
 PUBLIC_PASSWORD = "demo"
 
@@ -81,6 +83,20 @@ def demoReadFromServer(server, ssl, user, password, only_fast_tests=False):
                             filename,
                             sample["sequence_file"]["data_file"],
                             sample["sequence_file"]["filename"])
+
+    ### Test download of reads from a given clonotype in a sample file
+    # Note that you need to know sequence-file internal server id to give it as paramters
+    # User should have right to launch computation on target server. Here, demo will have a "permission needed" error
+    try:
+        sample_set_id =  4845  # Demo X5 demo patient
+        config_id     = 25     # multi+inc+xxx
+        seq_id = "GCCGTTTACTACTGTGCTGCGTGGAGACCCACTGGTTGGTTCAAGATATT" # clonotype id from vidjil file (TRGV10*02 5/AGAC/3 TRGJP1*01)
+        file_demo_x5 = 5872 # sequence demo file with 14 clonotype of 1 reads each.
+        vidjil.downloadReads(file_demo_x5, sample_set_id, config_id, seq_id, filename="download_reads_by_api.fasta", timeout=2400)
+    except Exception as e:
+        if "Persmission error" in str(e):
+            # You don't have right to launch computation
+            print( str(e))
 
 
 
@@ -167,6 +183,10 @@ if  __name__ =='__main__':
     if (args.stress or args.public):
         if PUBLIC_USER == "":
             PUBLIC_USER = input("Enter public login user:")
+        if PUBLIC_USER == "demo@vidjil.org":
+            print("Warning: demo use can't launch computation.")
+            print("Some part of the script 'local' can't be done with him (create sample, launch analysis, get reads, ...)")
+
         if PUBLIC_PASSWORD == "":
             print( "Attempted to log as '%s' on public server" % PUBLIC_USER)
             PUBLIC_PASSWORD = getpass.getpass("Password for public server:")

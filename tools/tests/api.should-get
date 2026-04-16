@@ -49,6 +49,16 @@ $  getSamplesOfSet(25736, 25); 5 lines
 1: LIL-L3-3.fastq.gz  Follow-up 2                                           Demo LIL-L3 \(analyzed\) \(patient 3241\)
 1: LIL-L3-4.fastq.gz  #relapse                                              Demo LIL-L3 \(analyzed\) \(patient 3241\)
 
-$ Download file
+$ Download vidjil result file
 1: download/set25736_sequence317_config25.vidjil 
 1: download/set25736_sequence318_config25.vidjil 
+
+
+# This test can't succeed as demo don't have right to launch computing task on main vidjil server
+$ Download get_reads - no result
+0: ==> get read launched
+0: ==> get read finised
+0: ==> download/download_reads_by_api.fasta
+
+$ Download get_reads - Permission error
+1: Persmission error
