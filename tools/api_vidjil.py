@@ -678,7 +678,7 @@ class Vidjil:
             if time.time() - start > timeout: # TODO; adapt time with parameter ?
                 raise Exception('download', "time exceeded to get get_reads results")
 
-        print( f"==> get read finised; processId={getreads_processId}; status={data_getreads["status"]}" )
+        print( f"==> get read finised; processId={getreads_processId}; status={data_getreads['status']}" )
         sys.stdout.flush()
 
         # launch request to get get_reads file
