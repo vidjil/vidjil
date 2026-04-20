@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import errno
 import json
 import os
 import pathlib
@@ -10,7 +11,6 @@ import subprocess
 import sys
 import time
 import traceback
-import errno
 import xmlrpc.client
 from subprocess import PIPE, STDOUT, Popen
 
