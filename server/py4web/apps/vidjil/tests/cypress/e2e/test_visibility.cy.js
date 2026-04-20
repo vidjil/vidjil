@@ -89,10 +89,11 @@ describe('Visibility of panels', function () {
     cy.createConfig(
       conf_import_vidjil,
       ["3", "Analysis with/for other software"],
-      undefined,
+      "vidjil",
       "x",
-      "f",
-      "i"
+      "prefuse",
+      "fuse",
+      "info"
     ).then((configId) => {
       cy.log(`Create config "${conf_import_vidjil} with id ${configId}`)
       configId = configId.toString()

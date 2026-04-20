@@ -3,12 +3,13 @@
 describe("Manipulate configs", function () {
   it("01-process-config", function () {
     cy.createConfig(
-      "c",
+      "conf name",
       ["3", "Analysis with/for other software"],
-      undefined,
+      "vijdil",
       "x",
-      "f",
-      "i"
+      "prefuse",
+      "fuse",
+      "info"
     ).then((config_id) => {
       cy.screenshot("starting_configuration")
       cy.createPatient("", "airr", "t", "", "Cy", "public");
