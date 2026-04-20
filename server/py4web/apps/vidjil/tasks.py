@@ -10,6 +10,7 @@ import subprocess
 import sys
 import time
 import traceback
+import errno
 import xmlrpc.client
 from subprocess import PIPE, STDOUT, Popen
 
@@ -340,7 +341,7 @@ def run_vidjil(
                     raise
 
         if not os.path.exists(results_filepath):
-            raise IOError(filename=results_filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
 
         # Parse some info in .log
         info = ""
@@ -442,7 +443,7 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
         log.info(f"===> {out_results}")
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
-            raise IOError(filename=results_filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
     except:
         log.error("!!! IgReC failed, no result file")
         res = {
@@ -581,7 +582,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         log.info(f"===> {out_results}")
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
-            raise IOError(filename=results_filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
     except:
         log.error("!!! MiXCR failed, no result file")
         res = {
@@ -659,7 +660,7 @@ def run_copy(
             res = {"message": f"[{id_data}] c{id_config}: 'copy' FAILED - {out_folder}"}
             log.error(res)
             update_task(task_id, STATUS_FAILED)
-            raise IOError(results_filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
 
         # insertion dans la base de donnée
         with open(results_filepath, "rb") as stream:
@@ -795,7 +796,7 @@ def run_fuse(
 
             fuse_filepath = os.path.abspath(output_file)
             if not os.path.exists(fuse_filepath):
-                raise IOError(filename=fuse_filepath)
+                raise IOError(errno.ENOENT, "unfoundable file", fuse_filepath)
         except:
             error_message = f"!!! Fuse failed : {traceback.format_exc()}."
             res = {
@@ -1032,7 +1033,7 @@ def run_pre_process(
 
         filepath = os.path.abspath(output_file)
         if not os.path.exists(filepath):
-            raise IOError(filename=filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", filepath)
 
         # Now we update the sequence file with the result of the pre-process
         # We forget the initial data_file (and possibly data_file2)
