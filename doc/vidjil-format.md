@@ -33,6 +33,10 @@ Software computing clonotypes may choose some relevant identifiers:
 
 ### `.vidjil` file – one sample
 
+??? Vidjil json schema
+A vidjil jsonchema is available to https://gitlab.inria.fr/vidjil/vidjil-format and allow to check is a file is coherent with vidjil expected format.  
+This tool is also use to test validity of script able to modify vidjil file.
+
 This is an almost minimal `.vidjil` file, describing clones in one sample.
 The `seg` element is optional: clones without `seg` elements will be shown on the grid with '?/?'.
 The `_average_read_length` is also optional, but allows to plot GENSCAN-like plots more precisely than getting only the length of the sequence.
