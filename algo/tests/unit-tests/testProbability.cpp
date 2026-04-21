@@ -32,12 +32,10 @@ void testProba1() {
   TAP_TEST_EQUAL(p.precomputed_proba[0.5][100].size(), 101, TEST_PROBA_PRECOMPUTER, "");
 
   TAP_TEST_EQUAL(p.precomputed_proba.count(0.4), 0, TEST_PROBA_PRECOMPUTER, "");
-  auto start = std::chrono::high_resolution_clock::now();
-  TAP_TEST_APPROX(p.getProba(0.4, 99, 100), 2.43e-38, 1e-38, TEST_PROBA_PRECOMPUTER, ""); 
-  uint64_t duration_precomputation = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count();
-  start = std::chrono::high_resolution_clock::now();
-  TAP_TEST_EQUAL(p.precomputed_proba[0.4][100].size(), 101, TEST_PROBA_PRECOMPUTER, "");
 
+  TAP_TEST_APPROX(p.getProba(0.4, 99, 100), 2.43e-38, 1e-38, TEST_PROBA_PRECOMPUTER, ""); 
+
+  TAP_TEST_EQUAL(p.precomputed_proba[0.4][100].size(), 101, TEST_PROBA_PRECOMPUTER, "");
 
   TAP_TEST_APPROX(p.getProba(0.4, 99, 100), 2.43e-38, 1e-38, TEST_PROBA_PRECOMPUTER, "");
   TAP_TEST_APPROX(p.getProba(0.4, 90, 100), 1.730e-25, 1e-28, TEST_PROBA_PRECOMPUTER, ""); 
@@ -48,13 +46,6 @@ void testProba1() {
   TAP_TEST_APPROX(p.getProba(0.4, 1, 100), 1, 1e-3, TEST_PROBA_PRECOMPUTER, ""); 
 
   // Test not pre-computed (too large for MAX_PRECOMPUTED_PROBA)
-  TAP_TEST(MAX_PRECOMPUTED_PROBA < 1000, TEST_PROBA_PRECOMPUTER, "If I'm failing change me AND the following test");
-  uint64_t duration_precomputed = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count();
-
-  PRINT_VAR(duration_precomputation);
-  PRINT_VAR(duration_precomputed);
-
-  start = std::chrono::high_resolution_clock::now();
   TAP_TEST_APPROX(p.getProba(0.4, 412, 1000), 0.229, 1e-3, TEST_PROBA_PRECOMPUTER, ""); 
   TAP_TEST_APPROX(p.getProba(0.4, 912, 1000), 4e-255, 1e-100, TEST_PROBA_PRECOMPUTER, ""); 
   TAP_TEST_APPROX(p.getProba(0.4, 800, 1000), 1.5e-147, 1e-148, TEST_PROBA_PRECOMPUTER, ""); 
@@ -63,11 +54,109 @@ void testProba1() {
   TAP_TEST_APPROX(p.getProba(0.4, 300, 1000), 1, 1e-3, TEST_PROBA_PRECOMPUTER, ""); 
   TAP_TEST_APPROX(p.getProba(0.4, 100, 1000), 1, 1e-3, TEST_PROBA_PRECOMPUTER, ""); 
   TAP_TEST_APPROX(p.getProba(0.4, 10, 1000), 1, 1e-3, TEST_PROBA_PRECOMPUTER, "");
-  uint64_t duration_not_precomputed = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count();
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //// Pre-computed vs. non-precomputed getProba() runtime execution time test
+  std::cerr << "Pre-computed vs. non-precomputed getProba() runtime execution time test "
+               "(" << __FILE__ << ":" << __LINE__ << "):\n";
+  const double index_load = 0.4;
+
+  // 1. Without pre-computations for in-range lengths, with allocations cost
+  p.precomputed_proba                = std::map<float, std::vector<std::vector<double>>>();
+  p.precomputed_proba_with_system    = std::map<float, std::vector<double>>();
+  p.precomputed_proba_without_system = std::map<float, std::vector<double>>();
+  double accumulator = 0.0;
+  auto start = std::chrono::high_resolution_clock::now();
+  for (int length = 1; length < MAX_PRECOMPUTED_PROBA; length++)
+  {
+    for (int at_least = 1; at_least <= length; at_least++)
+    {
+      accumulator += p.getProba(index_load, at_least, length);
+    }
+  }
+  auto end = std::chrono::high_resolution_clock::now();
+  uint64_t duration_precomputation = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+  // Accumulator is output to stderr so the call to getProba() doesn't get optimized out
+  std::cerr << "- duration_precomputation = " << duration_precomputation
+            <<" (accumulator = " << accumulator << ")\n";
+
+  // 2. With pre-computations for in-range lengths
+  accumulator = 0.0;
+
+  // 2.1. First prime the caches, branch predictor, memory pages, etc.
+  for (int length = 1; length < MAX_PRECOMPUTED_PROBA; length++)
+  {
+    for (int at_least = 1; at_least <= length; at_least++)
+    {
+      accumulator += p.getProba(index_load, at_least, length);
+    }
+  }
+
+  // 2.2. Then actually benchmark
+  start = std::chrono::high_resolution_clock::now();
+  for (int length = 1; length < MAX_PRECOMPUTED_PROBA; length++)
+  {
+    for (int at_least = 1; at_least <= length; at_least++)
+    {
+      accumulator += p.getProba(index_load, at_least, length);
+    }
+  }
+  end = std::chrono::high_resolution_clock::now();
+  uint64_t duration_precomputed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+  // Accumulator is output to stderr so the call to getProba() doesn't get optimized out
+  std::cerr << "- duration_precomputed = " << duration_precomputed
+            <<" (accumulator = " << accumulator << ")\n";
+
+
+  // 3. Without pre-computations for out-of-range lengths (skipping getProba() preamble)
+  const int end_length = MAX_PRECOMPUTED_PROBA + MAX_PRECOMPUTED_PROBA;
+  accumulator = 0.0;
+
+  // 3.1. First prime the caches, branch predictor, memory pages, etc.
+  for (int length = MAX_PRECOMPUTED_PROBA + 1; length < end_length; length++)
+  {
+    for (int at_least = MAX_PRECOMPUTED_PROBA + 1; at_least <= length; at_least++)
+    {
+      double probability_not_having_system = 1.0;
+      double probability_having_system = pow(index_load, length);
+
+      long double Cnk = 1;
+      for (int i = length; i >= at_least; i--)
+      {
+        accumulator += p.probabilityPreviousIteration(i, length, Cnk, probability_having_system,
+                                                      probability_not_having_system, index_load);
+      }
+    }
+  }
+
+  // 3.2. Then actually benchmark
+  start = std::chrono::high_resolution_clock::now();
+  for (int length = MAX_PRECOMPUTED_PROBA + 1; length < end_length; length++)
+  {
+    for (int at_least = MAX_PRECOMPUTED_PROBA + 1; at_least <= length; at_least++)
+    {
+      double probability_not_having_system = 1.0;
+      double probability_having_system = pow(index_load, length);
+
+      long double Cnk = 1;
+      for (int i = length; i >= at_least; i--)
+      {
+        accumulator += p.probabilityPreviousIteration(i, length, Cnk, probability_having_system,
+                                                      probability_not_having_system, index_load);
+      }
+    }
+  }
+  end = std::chrono::high_resolution_clock::now();
+  uint64_t duration_not_precomputed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+  // Accumulator is output to stderr so the call to probabilityPreviousIteration() doesn't get
+  // optimized out
+  std::cerr << "- duration_not_precomputed = " << duration_not_precomputed
+            << " (accumulator = " << accumulator << ")\n";
 
   if(! RUNNING_ON_VALGRIND) {
     TAP_TEST(duration_precomputed*50 < duration_not_precomputed, TEST_PROBA_PRECOMPUTER, "Make sure that precomputation is much faster than no precomputation");
-    PRINT_VAR(duration_not_precomputed);
   }
 }
 
