@@ -65,9 +65,6 @@ void testProba2()
   const double index_load = 0.4;
 
   // 1. Without pre-computations for in-range lengths, with allocations cost
-  p.precomputed_proba                = std::map<float, std::vector<std::vector<double>>>();
-  p.precomputed_proba_with_system    = std::map<float, std::vector<double>>();
-  p.precomputed_proba_without_system = std::map<float, std::vector<double>>();
   double accumulator = 0.0;
   auto start = std::chrono::high_resolution_clock::now();
   for (int length = 1; length < MAX_PRECOMPUTED_PROBA; length++)
