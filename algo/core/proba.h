@@ -46,6 +46,7 @@ public:
   double getProbaWith(double p, int nb);
 
   friend void testProba1();
+  friend void testProba2();
 };
 
 #endif
