@@ -682,7 +682,7 @@ class Vidjil:
         sys.stdout.flush()
 
         # launch request to get get_reads file
-        url_getfile      = f"{self.url_server}/default/download/{data_getreads["data"]["data_file"]}"
+        url_getfile      = f"{self.url_server}/default/download/{data_getreads['data']['data_file']}"
         reponse_getfile = self.session.get(url_getfile, verify=self.ssl)
 
         # download get_reads file 
