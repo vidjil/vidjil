@@ -3,6 +3,7 @@ import sys
 import json
 import datetime
 import argparse
+import shutil
 from typing import Union
 from collections import OrderedDict
 
@@ -265,6 +266,8 @@ def importData(data):
     if 'clones' in data and isinstance(data['clones'], list):
         for i in range(len(data["clones"])):
             data["clones"][i] = Clone(data["clones"][i])
+        # Sort clones by "top" value in descending order (highest to lowest)
+        data["clones"].sort(key=lambda clone: clone.raw.get("top", 0), reverse=True)
 
     return data
 
@@ -276,24 +279,44 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description= description)
 
 
-    parser.add_argument('--input',   '-i', help='input vidjil file')
-    parser.add_argument('--output',  '-o', help='output vidjil file',       default=False)
+    parser.add_argument('--input',   '-i', help='input vidjil file', required=True)
+    parser.add_argument('--output',  '-o', help='output vidjil file, not needed if using --in-place', default=None)
+    parser.add_argument('--in-place', help='modify the input file directly instead of creating an output file. Optionally specify a backup suffix (e.g., --in-place=.bak)', nargs='?', const=True, default=False)
     parser.add_argument('--compact', '-c', help='Compact vidjil file on one line, else make reorder', action="store_true",   default=False)
     parser.add_argument('--verbose', '-v', help='verbose mode', action="store_true",   default=False)
     args = parser.parse_args()
 
 
     inputfile      = args.input
-    outputfile     = args.output
-    if not outputfile:
-        outputfile = inputfile.replace(".vidjil", "_formated.vidjil")
-    verbose  = args.verbose
-    compact  = args.compact
+    in_place       = args.in_place
+    verbose        = args.verbose
+    compact        = args.compact
 
-    if not args.input:
-        print( "Missing args: input file")
-        print( parser.help)
-        exit()
+    # Validate arguments
+    if in_place and args.output:
+        print("Error: Cannot use both --in-place and --output options")
+        exit(1)
+    
+    # Determine output file and backup
+    backup_suffix = None
+    if in_place:
+        outputfile = inputfile
+        # If --in-place=suffix was provided
+        if isinstance(in_place, str):
+            backup_suffix = in_place
+            backup_file = inputfile + backup_suffix
+            shutil.copy2(inputfile, backup_file) #copy2 also keeps the timestamps
+            if verbose:
+                print(f"Backup created: {backup_file}")
+    else:
+        outputfile = args.output
+        if not outputfile:
+            outputfile = inputfile.replace(".vidjil", "_formated.vidjil")
+    
+    if not inputfile:
+        print("Missing args: input file")
+        parser.print_help()
+        exit(1)
     
     # Load json content
     with open(inputfile, 'r') as file:
