@@ -550,6 +550,14 @@ void testAlignmentBounds()
 {
   // The parameters are taken from test large-r.should, which used to return a JUNCTION ending at an
   // invalid 1-based position of 43 on a read of length 42
+  //
+  // dp.str_back output:
+  //  0 GTCACGACCTTCATAAGTCG
+  //    ||||||||||||||||||||
+  // 92 GTCACGACCTTCATAAGTCG
+  // score: 80
+  //
+  // GCTGAATACTTCCAGCACTG
   std::string              read         = "CCGTGTATTACTGTGCGAGAGAGCTGAATACTTCCAGCACTG";
   std::string              ighj1_01     = "GCTGAATACTTCCAGCACTGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAGGAGTCTGCTGTCTGGGGATAGCGGGGAGCCAGGTGTACTGGGCCAGGCAAGGGCTTTGGC";
   DynProg::DynProgMode     dpMode       = DynProg::LocalEndWithSomeDeletions;
@@ -560,7 +568,7 @@ void testAlignmentBounds()
   int  onlyBottomTriangleShift = BOTTOM_TRIANGLE_SHIFT;
 
   // Verify the CDR3, whose aligned position is just past the length of the read, isn't aligned,
-  // while the start of the read (once reversed) is aligned to the end of the gene
+  // while the end of the read (once reversed) is aligned to the start of the gene
   bool reverse_both = true;
   DynProg dp(read, ighj1_01, dpMode, cost, reverse_both, reverse_both, marked_pos);
   dp.compute(onlyBottomTriangle, onlyBottomTriangleShift);
