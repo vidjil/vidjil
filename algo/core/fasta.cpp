@@ -30,6 +30,7 @@
 #include "fasta.h"
 
 #include "../lib/gzstream.h"
+#include "locations_to_mark.h"
 
 
 // OnlineFasta
@@ -93,7 +94,7 @@ void OnlineFasta::next() {
   current.label.erase();
   current.sequence.erase();
   current.quality.erase();
-  current.marked_pos[CDR3_POS] = ~0;
+  current.marked_pos[CDR3_POS] = INVALID_POS;
   current_gaps = 0;
   
   if  (hasNextData()) {

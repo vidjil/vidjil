@@ -461,8 +461,8 @@ string Segmenter<Affect>::getInfoLine() const
   if (evalue_right > NO_LIMIT_VALUE)
     s += "/" + scientific_string_of_double(evalue_right);
 
-  if (CDR3start > 0)
-    s += " {" + string_of_int(JUNCTIONstart) + "(" + string_of_int(JUNCTIONend-JUNCTIONstart+1) + ")" + string_of_int(JUNCTIONend) + " "
+  if (CDR3start != INVALID_POS)
+    s += " {" + string_of_int(JUNCTIONstart + 1) + "(" + string_of_int(JUNCTIONend-JUNCTIONstart+1) + ")" + string_of_int(JUNCTIONend + 1) + " "
       + "up"[JUNCTIONproductive] + " " + JUNCTIONaa + "}";
 
   return s ;
@@ -559,11 +559,11 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
   this->box_D = new AlignBox<Affect>();
   this->box_J = new AlignBox<Affect>("3", J_COLOR);
 
-  this->CDR3start = -1;
-  this->CDR3end = -1;
+  this->CDR3start = INVALID_POS;
+  this->CDR3end = INVALID_POS;
 
-  this->JUNCTIONstart = -1;
-  this->JUNCTIONend = -1;
+  this->JUNCTIONstart = INVALID_POS;
+  this->JUNCTIONend = INVALID_POS;
 
   this->label = seq.label ;
   this->sequence = seq.sequence ;
@@ -1033,9 +1033,9 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
 
   box->rep = rep;
   box->ref_nb = MINUS_INF ;
-  box->start = (int) string::npos ;
-  box->end = (int) string::npos ;
-  int best_best_j = (int) string::npos ;
+  box->start = INVALID_POS ;
+  box->end = INVALID_POS ;
+  int best_best_j = INVALID_POS ;
 
   vector<pair<int, int> > score_r;
 
@@ -1069,7 +1069,7 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
       // Alignment positions *on the read*
       box->start = dp.first_i;            // start position
       box->end = dp.best_i ;              // end position
-      box->marked_pos = (dp.marked_pos_i.count(CDR3_POS) > 0 && dp.marked_pos_i[CDR3_POS] != (size_t)~0) ? dp.marked_pos_i[CDR3_POS] : 0 ; // marked position
+      box->marked_pos = dp.marked_pos_i[CDR3_POS];
 
       // Alignment positions *on the reference*
       box->del_left = dp.first_j;     // around start position
@@ -1114,10 +1114,10 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
     return;
   }
 
-  if (best_marked_pos.count(START_GENE) && best_marked_pos[START_GENE] != (size_t)~0) {
+  if (best_marked_pos[START_GENE] != (size_t)INVALID_POS) {
     box->start = max(box->start, (int)best_marked_pos.at(START_GENE));
   }
-  if (best_marked_pos.count(END_GENE) && best_marked_pos[END_GENE] != (size_t)~0) {
+  if (best_marked_pos[END_GENE] != (size_t)INVALID_POS) {
     box->end = min(box->end, (int)best_marked_pos.at(END_GENE));
   }
   // Sequence totally aligned before the start of the gene sequence
@@ -1161,14 +1161,14 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   this->evalue = NO_LIMIT_VALUE;
   this->evalue_left = NO_LIMIT_VALUE;
   this->evalue_right = NO_LIMIT_VALUE;
-  this->box_V->marked_pos = 0;
-  this->box_J->marked_pos = 0;
+  this->box_V->marked_pos = INVALID_POS;
+  this->box_J->marked_pos = INVALID_POS;
 
-  this->CDR3start = -1;
-  this->CDR3end = -1;
+  this->CDR3start = INVALID_POS;
+  this->CDR3end = INVALID_POS;
 
-  this->JUNCTIONstart = -1;
-  this->JUNCTIONend = -1;
+  this->JUNCTIONstart = INVALID_POS;
+  this->JUNCTIONend = INVALID_POS;
 
   if (germline == Germline<Affect>::getUnseg())
     return;
@@ -1473,16 +1473,16 @@ void FineSegmenter<Affect>::findCDR3(){
   // There are two cases when we can not detect a JUNCTION/CDR3:
   // - Germline V or J gene has no 'marked_pos'
   // - Sequence may be too short on either side, and thus the backtrack did not find a suitable 'marked_pos'
-  if (this->JUNCTIONstart == 0 || this->JUNCTIONend == 0) {
-    this->JUNCTIONstart = -1 ;
-    this->JUNCTIONend = -1 ;
+  if (this->JUNCTIONstart == INVALID_POS || this->JUNCTIONend == INVALID_POS) {
+    this->JUNCTIONstart = INVALID_POS;
+    this->JUNCTIONend = INVALID_POS;
     return;
   }
 
   // We require at least two codons
   if (this->JUNCTIONend - this->JUNCTIONstart + 1 < 6) {
-    this->JUNCTIONstart = -1 ;
-    this->JUNCTIONend = -1 ;
+    this->JUNCTIONstart = INVALID_POS;
+    this->JUNCTIONend = INVALID_POS;
     return ;
   }
 
@@ -1504,8 +1504,8 @@ void FineSegmenter<Affect>::findCDR3(){
   if (this->CDR3nuc.length() % 3 == 0)
   {
     this->CDR3aa = nuc_to_aa(this->CDR3nuc);
-    string sequence_startV_stopJ = subsequence(this->getSequence().sequence, this->box_V->start+1, this->box_J->end+1);
-    int frame = (this->JUNCTIONstart-1 - this->box_V->start) % 3;
+    string sequence_startV_stopJ = subsequence(this->getSequence().sequence, this->box_V->start, this->box_J->end);
+    int frame = (this->JUNCTIONstart - this->box_V->start) % 3;
 
     if (hasInFrameStopCodon(sequence_startV_stopJ, frame))
     {
@@ -1525,7 +1525,7 @@ void FineSegmenter<Affect>::findCDR3(){
 
     // We want to output a '#' somewhere around the end of the N, and then restart
     // at the start of the first codon fully included in the germline J
-    int CDR3startJfull = this->JUNCTIONend - ((this->JUNCTIONend - this->box_J->start) / 3) * 3 + 1 ;
+    int CDR3startJfull = this->JUNCTIONend - ((this->JUNCTIONend - this->box_J->start + 1) / 3) * 3 + 1;
 
     this->CDR3aa =
       nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3start, CDR3startJfull-1)) +
@@ -1535,12 +1535,10 @@ void FineSegmenter<Affect>::findCDR3(){
   this->JUNCTIONaa = nuc_to_aa(subsequence(this->getSequence().sequence, this->JUNCTIONstart, this->CDR3start-1))
     + this->CDR3aa + nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3end+1, this->JUNCTIONend));
 
-  // Reminder: JUNCTIONstart is 1-based
-
   // IGH without a {WP}GxG pattern
   if (this->JUNCTIONproductive && (this->segmented_germline->getCode().find("IGH") != string::npos))
   {
-    string FR4aastart = nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3end+1, this->CDR3end+1+11));
+    string FR4aastart = nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3end+1, this->CDR3end+1+12));
 
     if (!WPGxG(FR4aastart))
     {
@@ -1604,19 +1602,19 @@ void FineSegmenter<Affect>::toOutput(CloneOutput *clone, bool details){
       clone->setSeg("N", this->seg_N.size());
     }
 
-    if (this->CDR3start >= 0) {
+    if (this->CDR3start != INVALID_POS) {
       clone->setSeg("cdr3", {
-        {"start", this->CDR3start},
-        {"stop", this->CDR3end},
+        {"start", this->CDR3start + 1},
+        {"stop", this->CDR3end + 1},
         {"seq", this->CDR3nuc},
         {"aa", this->CDR3aa}
       });
     }
 
-    if (this->JUNCTIONstart >= 0) {
+    if (this->JUNCTIONstart != INVALID_POS) {
       clone->setSeg("junction", {
-        {"start", this->JUNCTIONstart},
-        {"stop", this->JUNCTIONend},
+        {"start", this->JUNCTIONstart + 1},
+        {"stop", this->JUNCTIONend + 1},
         {"aa", this->JUNCTIONaa},
         {"productive", this->JUNCTIONproductive}
       });

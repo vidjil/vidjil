@@ -5,6 +5,8 @@
 #include <vector>
 #include <tuple>
 
+#include <core/locations_to_mark.h>
+
 void testOnlineBioReader1() {
   OnlineBioReader *fa = OnlineBioReaderFactory::create("data/test1.fa");
   OnlineBioReader *fq = OnlineBioReaderFactory::create("data/test1.fq");
@@ -243,14 +245,14 @@ void testFastaAddThrows() {
 
 void testFastaLabelAndMark() {
 
-  BioReader fa("data/testMarks.fa", 1, "=", 9);
+  BioReader fa("data/testMarks.fa", 1, "=", 8);
 
   TAP_TEST_EQUAL(fa.read(0).label, "tic", TEST_FASTA_LABEL, "");
-  TAP_TEST_EQUAL(fa.read(0).marked_pos.at(CDR3_POS), 9, TEST_FASTA_MARK, "");
+  TAP_TEST_EQUAL(fa.read(0).marked_pos.at(CDR3_POS), 8, TEST_FASTA_MARK, "");
 
-  TAP_TEST_EQUAL(fa.read(1).marked_pos.at(CDR3_POS), 7, TEST_FASTA_MARK, "");
+  TAP_TEST_EQUAL(fa.read(1).marked_pos.at(CDR3_POS), 6, TEST_FASTA_MARK, "");
 
-  TAP_TEST_EQUAL(fa.read(2).marked_pos.at(CDR3_POS), (size_t)~0, TEST_FASTA_MARK, "");
+  TAP_TEST_EQUAL(fa.read(2).marked_pos.at(CDR3_POS), (size_t)INVALID_POS, TEST_FASTA_MARK, "");
 }
 
 void testSequenceOutputOperator() {
