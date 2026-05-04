@@ -44,7 +44,7 @@ struct OrderedGeneLocationsToMark
   // locations[i] = location associated to position positions[i]
   const unsigned char* locations;
 
-  // Positions associated to locations. These positions are currently considered 1-based
+  // Positions associated to locations.
   // positions[i] = position of the location locations[i]
   const unsigned short* positions;
 
