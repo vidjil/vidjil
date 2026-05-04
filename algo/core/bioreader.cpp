@@ -58,6 +58,7 @@ void OnlineBioReader::init() {
   nb_sequences_returned = 0;
   char_nb = 0;
   current_gaps = 0;
+  next_location_to_mark_idx = 0;
 }
 
 unsigned long long OnlineBioReader::getPos() {
