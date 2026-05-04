@@ -87,15 +87,15 @@ bool OnlineFasta::hasNext() {
 
 void OnlineFasta::next() {
   fasta_state state = FASTX_UNINIT;
-  size_t start_gene_sequence, end_gene_sequence;
 
   // Reinit the Sequence object
   current.label_full.erase();
   current.label.erase();
   current.sequence.erase();
   current.quality.erase();
-  current.marked_pos[CDR3_POS] = INVALID_POS;
+  current.marked_locations_pos.clear();
   current_gaps = 0;
+  next_location_to_mark_idx = 0;
   
   if  (hasNextData()) {
     switch(line[0]) {
@@ -112,8 +112,6 @@ void OnlineFasta::next() {
     current.label = extract_from_label(current.label_full, extract_field, extract_separator);
 
     line = getInterestingLine();
-    start_gene_sequence = 0;
-    end_gene_sequence = current.sequence.size() - 1;
     while (hasNextData() && ((state != FASTX_FASTA || line[0] != '>')
                          && (state != FASTX_FASTQ_QUAL || line[0] != '@'))) {
 
@@ -148,6 +146,8 @@ void OnlineFasta::next() {
     if (state >= FASTX_FASTQ_ID && state < FASTX_FASTQ_QUAL) 
       unexpectedEOF();
 
+    size_t start_gene_sequence = 0;
+    size_t end_gene_sequence   = current.sequence.size() - 1;
     int state = 0;               // uppercase state
     for (size_t i = 0; i < current.sequence.size(); i++) {
       if (state == 1 && current.sequence[i] >= 'A' && current.sequence[i] <= 'Z') {
@@ -165,8 +165,8 @@ void OnlineFasta::next() {
       }
     }
 
-    current.marked_pos[START_GENE] = start_gene_sequence;
-    current.marked_pos[END_GENE] = end_gene_sequence;
+    current.marked_locations_pos[START_GENE] = start_gene_sequence;
+    current.marked_locations_pos[END_GENE]   = end_gene_sequence;
   } else
     unexpectedEOF();
 

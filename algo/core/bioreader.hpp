@@ -45,7 +45,9 @@ typedef struct read_t
   string label;
   string sequence; // Sequence: original string representation
   string quality;
-  std::map<size_t, size_t>    marked_pos; // Some marked position in the sequence. Keys are the enum above.
+
+  // Some marked location positions in the sequence. Keys are the enum values of LocationToMark
+  std::map<size_t, size_t> marked_locations_pos;
 } Sequence;
 
 typedef enum {
@@ -69,7 +71,13 @@ protected:
   bool input_allocated;
   unsigned long long char_nb;
 
-  int mark_pos;
+  OrderedGeneLocationsToMark locations_to_mark;
+
+  // IMGT-provided FASTA germline genes of more than 60 nucleotides are split on several lines.
+  // next_location_to_mark_idx keeps track of regions to mark between each call to next(), which
+  // processes lines one by one
+  size_t next_location_to_mark_idx;
+
 
   int nb_sequences_parsed;
   int nb_sequences_returned;
@@ -112,7 +120,7 @@ public:
   /**
    * sets a position to be followed in gapped sequences
    */
-  void setMarkPos(int mark_pos);
+  void setLocationsToMark(OrderedGeneLocationsToMark marked_locations);
 
   /**
    * @return the position in the file
@@ -157,7 +165,7 @@ protected:
    * discards the . (and consider them as being gaps eg. for the IMGT gapped
    * sequences). It also discards spaces
    */
-  virtual void addLineToCurrentSequence(string line);
+  virtual void addLineToCurrentSequence(const string& line);
 
   /**
    * Skip to the next sequence that is a multiple of 'only_nth_sequence'
@@ -173,19 +181,23 @@ protected:
 
 class BioReader
 {
-  void init(int extract_field, string extract_separator, size_t mark_pos=INVALID_POS,
+  void init(int extract_field, string extract_separator,
+            OrderedGeneLocationsToMark locations_to_mark = germline_vj_locations_to_mark[VJ_GENE_NEITHER],
             bool ignore_uppercase_nt=false);
 
   size_t total_size;
   int extract_field;
-  int mark_pos;
+  OrderedGeneLocationsToMark locations_to_mark;
   string extract_separator;
 	
   vector<Sequence> reads;
   // ostream *oout ;
 
 public:
-  BioReader(int extract_field=0, string extract_separator="|", int mark_pos=INVALID_POS, bool ignore_uppercase_nt=false);
+  BioReader(int extract_field=0,
+            string extract_separator="|",
+            OrderedGeneLocationsToMark locations_to_mark = germline_vj_locations_to_mark[VJ_GENE_NEITHER],
+            bool ignore_uppercase_nt=false);
   /**
    * Read all the sequences in the input filename and record them in the object.
    *
@@ -193,8 +205,10 @@ public:
    *         valid
    */
   BioReader(const string &input, 
-            int extract_field=0, string extract_separator="|",
-            int mark_pos = INVALID_POS, bool verbose=true);
+            int extract_field=0,
+            string extract_separator="|",
+            OrderedGeneLocationsToMark locations_to_mark = germline_vj_locations_to_mark[VJ_GENE_NEITHER],
+            bool verbose=true);
 
   BioReader(bool virtualfasta, const string name); // virtualfasta unused
 

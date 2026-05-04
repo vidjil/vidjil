@@ -40,8 +40,23 @@ void testOnlineBioReaderIgnoreUpper() {
   s = fa->getSequence();
   TAP_TEST_EQUAL(s.label, "seq2", TEST_O_FASTA_GET_SEQUENCE, "");
   TAP_TEST_EQUAL(s.sequence, "CGACCCCCAA", TEST_O_FASTA_GET_SEQUENCE, "");
-  TAP_TEST_EQUAL(s.marked_pos[START_GENE], 0, TEST_O_FASTA_IGNORE_UPPER, "");
-  TAP_TEST_EQUAL(s.marked_pos[END_GENE], 1, TEST_O_FASTA_IGNORE_UPPER, "");
+
+  auto start_gene_it    = s.marked_locations_pos.find(START_GENE);
+  bool start_gene_found = (start_gene_it != s.marked_locations_pos.end());
+  TAP_TEST(start_gene_found, TEST_O_FASTA_HAS_NEXT, "");
+  if (start_gene_found)
+  {
+    TAP_TEST_EQUAL(start_gene_it->second, 0, TEST_O_FASTA_IGNORE_UPPER, "");
+  }
+
+  auto end_gene_it    = s.marked_locations_pos.find(END_GENE);
+  bool end_gene_found = (end_gene_it != s.marked_locations_pos.end());
+  TAP_TEST(end_gene_found, TEST_O_FASTA_HAS_NEXT, "");
+  if (end_gene_found)
+  {
+    TAP_TEST_EQUAL(end_gene_it->second, 1, TEST_O_FASTA_IGNORE_UPPER, "");
+  }
+  
   fa->next();
   s = fa->getSequence();
   TAP_TEST_EQUAL(s.label, "seq3", TEST_O_FASTA_GET_SEQUENCE, "");
@@ -51,8 +66,23 @@ void testOnlineBioReaderIgnoreUpper() {
   s = fa->getSequence();
   TAP_TEST_EQUAL(s.label, "", TEST_O_FASTA_GET_SEQUENCE, "");
   TAP_TEST_EQUAL(s.sequence, "AATN", TEST_O_FASTA_GET_SEQUENCE, "");
-  TAP_TEST_EQUAL(s.marked_pos[START_GENE], 1, TEST_O_FASTA_IGNORE_UPPER, "");
-  TAP_TEST_EQUAL(s.marked_pos[END_GENE], 2, TEST_O_FASTA_IGNORE_UPPER, "");
+
+  start_gene_it    = s.marked_locations_pos.find(START_GENE);
+  start_gene_found = (start_gene_it != s.marked_locations_pos.end());
+  TAP_TEST(start_gene_found, TEST_O_FASTA_HAS_NEXT, "");
+  if (start_gene_found)
+  {
+    TAP_TEST_EQUAL(start_gene_it->second, 1, TEST_O_FASTA_IGNORE_UPPER, "");
+  }
+
+  end_gene_it    = s.marked_locations_pos.find(END_GENE);
+  end_gene_found = (end_gene_it != s.marked_locations_pos.end());
+  TAP_TEST(end_gene_found, TEST_O_FASTA_HAS_NEXT, "");
+  if (end_gene_found)
+  {
+    TAP_TEST_EQUAL(end_gene_it->second, 2, TEST_O_FASTA_IGNORE_UPPER, "");
+  }
+
   TAP_TEST(! fa->hasNext(), TEST_O_FASTA_HAS_NEXT, "");
   delete fa;
 }
@@ -244,15 +274,31 @@ void testFastaAddThrows() {
 }
 
 void testFastaLabelAndMark() {
-
-  BioReader fa("data/testMarks.fa", 1, "=", 8);
+  const unsigned char  locations[] = {JUNCTION_POS};
+  const unsigned short positions[] = {8};
+  OrderedGeneLocationsToMark locations_to_mark = {locations, positions, 1};
+  BioReader fa("data/testMarks.fa", 1, "=", locations_to_mark);
 
   TAP_TEST_EQUAL(fa.read(0).label, "tic", TEST_FASTA_LABEL, "");
-  TAP_TEST_EQUAL(fa.read(0).marked_pos.at(CDR3_POS), 8, TEST_FASTA_MARK, "");
 
-  TAP_TEST_EQUAL(fa.read(1).marked_pos.at(CDR3_POS), 6, TEST_FASTA_MARK, "");
+  auto junction_0_it    = fa.read(0).marked_locations_pos.find(JUNCTION_POS);
+  bool junction_0_found = junction_0_it != fa.read(0).marked_locations_pos.end();
+  TAP_TEST(junction_0_found, TEST_FASTA_MARK, "");
+  if (junction_0_found)
+  {
+    TAP_TEST_EQUAL(junction_0_it->second, 8, TEST_FASTA_MARK, "");
+  }
 
-  TAP_TEST_EQUAL(fa.read(2).marked_pos.at(CDR3_POS), (size_t)INVALID_POS, TEST_FASTA_MARK, "");
+  auto junction_1_it    = fa.read(1).marked_locations_pos.find(JUNCTION_POS);
+  bool junction_1_found = junction_1_it != fa.read(1).marked_locations_pos.end();
+  TAP_TEST(junction_1_found, TEST_FASTA_MARK, "");
+  if (junction_1_found)
+  {
+    TAP_TEST_EQUAL(junction_1_it->second, 6, TEST_FASTA_MARK, "");
+  }
+
+  auto junction_2_it = fa.read(2).marked_locations_pos.find(JUNCTION_POS);
+  TAP_TEST(junction_2_it == fa.read(2).marked_locations_pos.end(), TEST_FASTA_MARK, "");
 }
 
 void testSequenceOutputOperator() {

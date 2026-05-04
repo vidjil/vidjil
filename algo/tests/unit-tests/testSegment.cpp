@@ -562,21 +562,35 @@ void testAlignmentBounds()
   std::string              ighj1_01     = "GCTGAATACTTCCAGCACTGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAGGAGTCTGCTGTCTGGGGATAGCGGGGAGCCAGGTGTACTGGGCCAGGCAAGGGCTTTGGC";
   DynProg::DynProgMode     dpMode       = DynProg::LocalEndWithSomeDeletions;
   Cost                     cost         = VDJ;
-  std::map<size_t, size_t> marked_pos   = {{START_GENE, 0}, {END_GENE, 51}, {CDR3_POS, 20}};
+  std::map<size_t, size_t> marked_pos   = {{START_GENE, 0}, {END_GENE, 51}, {JUNCTION_POS, 20}};
 
   bool onlyBottomTriangle      = false;
   int  onlyBottomTriangleShift = BOTTOM_TRIANGLE_SHIFT;
 
-  // Verify the CDR3, whose aligned position is just past the length of the read, isn't aligned,
+  // Verify the JUNTION, whose aligned position is just past the length of the read, isn't aligned,
   // while the end of the read (once reversed) is aligned to the start of the gene
   bool reverse_both = true;
   DynProg dp(read, ighj1_01, dpMode, cost, reverse_both, reverse_both, marked_pos);
   dp.compute(onlyBottomTriangle, onlyBottomTriangleShift);
   dp.backtrack();
 
-  TAP_TEST_EQUAL(dp.marked_pos_i[START_GENE], 22,                  TEST_KMER_ALIGNMENT_BOUNDS, "");
-  TAP_TEST_EQUAL(dp.marked_pos_i[END_GENE],   (size_t)INVALID_POS, TEST_KMER_ALIGNMENT_BOUNDS, "");
-  TAP_TEST_EQUAL(dp.marked_pos_i[CDR3_POS],   (size_t)INVALID_POS, TEST_KMER_ALIGNMENT_BOUNDS, "");
+  const auto end_it = dp.marked_pos_i.end();
+
+  auto start_gene_it    = dp.marked_pos_i.find(START_GENE);
+  bool start_gene_found = (start_gene_it != end_it);
+  TAP_TEST(start_gene_found, TEST_KMER_ALIGNMENT_BOUNDS, "The start of the gene should have been aligned, but isn't");
+  if (start_gene_found)
+  {
+    TAP_TEST_EQUAL(start_gene_it->second, 22, TEST_KMER_ALIGNMENT_BOUNDS, "");
+  }
+
+  auto end_gene_it        = dp.marked_pos_i.find(END_GENE);
+  bool end_gene_not_found = (end_gene_it == end_it);
+  TAP_TEST(end_gene_not_found, TEST_KMER_ALIGNMENT_BOUNDS, "");
+
+  auto junction_it        = dp.marked_pos_i.find(JUNCTION_POS);
+  bool junction_not_found = (junction_it == end_it);
+  TAP_TEST(junction_not_found, TEST_KMER_ALIGNMENT_BOUNDS, "");
 }
 
 
