@@ -46,6 +46,8 @@ void testProba1() {
   TAP_TEST_APPROX(p.getProba(0.4, 1, 100), 1, 1e-3, TEST_PROBA_PRECOMPUTER, ""); 
 
   // Test not pre-computed (too large for MAX_PRECOMPUTED_PROBA)
+  TAP_TEST(MAX_PRECOMPUTED_PROBA < 1000, TEST_PROBA_PRECOMPUTER, "If I'm failing change me AND the following test");
+
   TAP_TEST_APPROX(p.getProba(0.4, 412, 1000), 0.229, 1e-3, TEST_PROBA_PRECOMPUTER, ""); 
   TAP_TEST_APPROX(p.getProba(0.4, 912, 1000), 4e-255, 1e-100, TEST_PROBA_PRECOMPUTER, ""); 
   TAP_TEST_APPROX(p.getProba(0.4, 800, 1000), 1.5e-147, 1e-148, TEST_PROBA_PRECOMPUTER, ""); 
