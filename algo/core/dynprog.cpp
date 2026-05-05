@@ -30,6 +30,8 @@
 #include <string>
 #include <cmath>
 
+#include "locations_to_mark.h"
+
 #define SUBST '|'
 #define MISMATCH '.'
 #define INSER 'i'
@@ -159,8 +161,8 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
   this -> reverse_y = reverse_y ;
 
   for (auto p: marked_pos_j) {
-    this -> marked_pos_j[p.second] = p.first;
-    this -> marked_pos_i[p.first] = ~0;
+    this -> marked_pos_j[p.second + 1] = p.first;
+    this -> marked_pos_i[p.first] = INVALID_POS;
   }
 
   m = x.size();
@@ -500,15 +502,15 @@ void DynProg::backtrack()
   
   while (1) {
 
+    if  (B[i][j].type == FIN)
+      break ;
 
     if (marked_pos_j.size() > 0 && ((!reverse_y && (marked_pos_j.count(j) > 0))
         || (reverse_y && (marked_pos_j.count(n-j+1)))))
       {
-        marked_pos_i[marked_pos_j[ (!reverse_y) ? (j) : (n-j+1) ]] = (reverse_x) ? m-i+1 : i ;
+        marked_pos_i[marked_pos_j[ (!reverse_y) ? (j) : (n-j+1) ]] = (reverse_x) ? m-i : i-1;
       }
 
-    if  (B[i][j].type == FIN)
-      break ;
       
     // cout << "bt " << i << "/" << j << " " << B[i][j].type << " " << B[i][j].i << "," << B[i][j].j << endl ;
     

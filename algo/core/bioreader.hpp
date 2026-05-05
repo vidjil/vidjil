@@ -30,14 +30,10 @@
 #include <map>
 #include <stdexcept>
 
+#include "locations_to_mark.h"
+
 #define STDIN_FILENAME "-"
 #define SAMPLE_APPROX_NB_SEQUENCES 2000
-
-enum {
-START_GENE,
-END_GENE,
-CDR3_POS
-};
 
 using namespace std;
 
@@ -177,7 +173,7 @@ protected:
 
 class BioReader
 {
-  void init(int extract_field, string extract_separator, size_t mark_pos=0,
+  void init(int extract_field, string extract_separator, size_t mark_pos=INVALID_POS,
             bool ignore_uppercase_nt=false);
 
   size_t total_size;
@@ -189,7 +185,7 @@ class BioReader
   // ostream *oout ;
 
 public:
-  BioReader(int extract_field=0, string extract_separator="|", int mark_pos=0, bool ignore_uppercase_nt=false);
+  BioReader(int extract_field=0, string extract_separator="|", int mark_pos=INVALID_POS, bool ignore_uppercase_nt=false);
   /**
    * Read all the sequences in the input filename and record them in the object.
    *
@@ -198,7 +194,7 @@ public:
    */
   BioReader(const string &input, 
             int extract_field=0, string extract_separator="|",
-            int mark_pos = 0, bool verbose=true);
+            int mark_pos = INVALID_POS, bool verbose=true);
 
   BioReader(bool virtualfasta, const string name); // virtualfasta unused
 

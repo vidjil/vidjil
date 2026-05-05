@@ -9,6 +9,7 @@
 #include "core/segment.hpp"
 #include "core/output.h"
 #include "core/windowExtractor.h"
+#include "core/locations_to_mark.h"
 #include "lib/json.hpp"
 
 using namespace std;
@@ -542,7 +543,42 @@ void testDifferentSeeds(IndexTypes index) {
   TAP_TEST_EQUAL(ks2.getSegmentationStatus(), UNSEG_ONLY_V, TEST_KMER_SEGMENTATION_CAUSE, ks2.getInfoLineWithAffects());
   TAP_TEST_EQUAL(ks3.getSegmentationStatus(), UNSEG_ONLY_J, TEST_KMER_SEGMENTATION_CAUSE, ks3.getInfoLineWithAffects());
   TAP_TEST_EQUAL(ks4.getSegmentationStatus(), SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks4.getInfoLineWithAffects());
-}  
+}
+
+
+void testAlignmentBounds()
+{
+  // The parameters are taken from test large-r.should, which used to return a JUNCTION ending at an
+  // invalid 1-based position of 43 on a read of length 42
+  //
+  // dp.str_back output:
+  //  0 GTCACGACCTTCATAAGTCG
+  //    ||||||||||||||||||||
+  // 92 GTCACGACCTTCATAAGTCG
+  // score: 80
+  //
+  // GCTGAATACTTCCAGCACTG
+  std::string              read         = "CCGTGTATTACTGTGCGAGAGAGCTGAATACTTCCAGCACTG";
+  std::string              ighj1_01     = "GCTGAATACTTCCAGCACTGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAGGAGTCTGCTGTCTGGGGATAGCGGGGAGCCAGGTGTACTGGGCCAGGCAAGGGCTTTGGC";
+  DynProg::DynProgMode     dpMode       = DynProg::LocalEndWithSomeDeletions;
+  Cost                     cost         = VDJ;
+  std::map<size_t, size_t> marked_pos   = {{START_GENE, 0}, {END_GENE, 51}, {CDR3_POS, 20}};
+
+  bool onlyBottomTriangle      = false;
+  int  onlyBottomTriangleShift = BOTTOM_TRIANGLE_SHIFT;
+
+  // Verify the CDR3, whose aligned position is just past the length of the read, isn't aligned,
+  // while the end of the read (once reversed) is aligned to the start of the gene
+  bool reverse_both = true;
+  DynProg dp(read, ighj1_01, dpMode, cost, reverse_both, reverse_both, marked_pos);
+  dp.compute(onlyBottomTriangle, onlyBottomTriangleShift);
+  dp.backtrack();
+
+  TAP_TEST_EQUAL(dp.marked_pos_i[START_GENE], 22,                  TEST_KMER_ALIGNMENT_BOUNDS, "");
+  TAP_TEST_EQUAL(dp.marked_pos_i[END_GENE],   (size_t)INVALID_POS, TEST_KMER_ALIGNMENT_BOUNDS, "");
+  TAP_TEST_EQUAL(dp.marked_pos_i[CDR3_POS],   (size_t)INVALID_POS, TEST_KMER_ALIGNMENT_BOUNDS, "");
+}
+
 
 void testSegment() {
   //  testSegmentOverlap(KMER_INDEX);
@@ -560,4 +596,6 @@ void testSegment() {
   testBug2224(AC_AUTOMATON);
   testBestLengthShifts();
   testDifferentSeeds(AC_AUTOMATON); // KMER_INDEX can't deal with seeds of different sizes
+
+  testAlignmentBounds();
 }

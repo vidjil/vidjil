@@ -7,9 +7,7 @@
 #include <string>
 #include <memory>
 
-// JUNCTION/CDR3 extraction from gapped V/J sequences
-#define        CYS104_IN_GAPPED_V  310   // First nucleotide of Cys104
-#define PHE118_TRP118_IN_GAPPED_J   38   // Last nucleotide of Phe118/Trp118
+#include "locations_to_mark.h"
 
 #define KEYS_COMPRESS  1.65   //  enough for ~208 *01 genes (191 IGHV + ...) / 127
 
@@ -106,7 +104,7 @@ FilterWithACAutomaton *GermlineElement<Affect>::getFilter() const {
 
 template<typename Affect>
 int GermlineElement<Affect>::getMarkPos() const {
-  int mark_pos = 0;
+  int mark_pos = INVALID_POS;
   if (isRegular()) {
     if (segment.count("5")>0)
       mark_pos = CYS104_IN_GAPPED_V;

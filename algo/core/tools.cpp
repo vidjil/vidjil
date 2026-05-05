@@ -404,7 +404,7 @@ int remove_trailing_whitespaces(string &str) {
 }
 
 string subsequence(const string &seq, int start, int end) {
-  return seq.substr(start - 1, end - start + 1);
+  return seq.substr(start, end - start + 1);
 }
 
 string revcomp(const string &dna, bool do_revcomp) {

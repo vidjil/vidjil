@@ -249,7 +249,7 @@ std::string guess_sequence_format(std::string filename);
 int remove_trailing_whitespaces(string &str);
 
 /**
- * @return subsequence delimited by biological positions (starting from 1), including both positions
+ * @return subsequence delimited by biological positions (starting from 0), including both positions
  */
 string subsequence(const string &text, int start, int end);
 

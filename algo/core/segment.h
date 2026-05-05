@@ -59,6 +59,8 @@
                                           */
 #define FRACTION_ALIGNED_AT_WORST .5 /* Fraction of the sequence that should be aligned before deactivating the heuristics */
 
+#define INVALID_POS ~0
+
 #define SHOW_NAME_WIDTH 15
 #define SHOW_MAX_GENE_ALIGNMENT 20
 #define V_COLOR "\033[1;42m"
