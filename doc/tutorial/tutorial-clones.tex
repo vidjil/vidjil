@@ -22,7 +22,7 @@ In this sample, the most abundant clonotype
 is \texttt{IGHV3-9 7/CCCGGA/17 J6*02}.
 
 \question{Select this clonotype, either by clicking on the list or on the grid.
-  How many reads do this clonotype represent? (see again the bottom part to the right)}
+  How many reads does this clonotype represent? (see again the bottom part to the right)}
 
 \reponse{The bottom panel display information about currently selected clonotypes \fl 189 991 reads (9.665\,\%)}
 
@@ -70,7 +70,7 @@ There are several options to display the V(D)J designation.
 
 \end{verbatim}
 
-\question{Try also the options  \com{alleles in clonotype names} : by selecting \com{always}, the clonotype
+\question{Also try the options  \com{alleles in clonotype names} : by selecting \com{always}, the clonotype
   V gene is displayed as \com{IGHV3-9*01}. Revert to the default \com{when not
     *01}. This setting, which is the default, allows to have a more condensed
   V(D)J designation that doesn't make the \com{*01} appear (it is implicit).}
@@ -102,9 +102,8 @@ There are several options to display the V(D)J designation.
 \subsection{Showing more clonotypes}
 
 By default Vidjil displays, at each time point, the 50 most abundant clonotypes in the grid, and the 10 most abundant clonotypes in the timeline graph.
-With five time points, we may therefore have from 50 to 250 clonotypes displayed
-depending if the top 50 are always the same or always different or, more
-realistically, in-between.
+With five time points, there may therefore be 50 to 250 clonotypes displayed
+depending on whether the top 50 clonotypes remain identical or, more realistically, differ across time.
 This number can be increased to a maximum of 100 clonotypes by going to the \com{filter} menu and by putting the
 slider to its right end.
 \question{Notice how the IGH smaller clonotypes percentage (second clonotype displayed in the list) changes. What was its
@@ -197,7 +196,7 @@ Later you may want to filter clonotypes depending on the tags you have chosen.
 \end{verbatim}
 
 This is a way of filtering some clonotypes. This may be useful when we want to
-focus on some specific clonotypes. Some other way of doing so are to filter them by
+focus on some specific clonotypes. Some other ways of doing so are to filter them by
 their gene names, by their DNA sequences, 
 by their locus,
 or directly by hidding/focusing some clonotypes.
@@ -328,7 +327,7 @@ After this rename, you can see that the clonotype is still selected.
 
 \question{When you want to focus on the selected clonotypes, you can click on the
   focus button (eye icon) on the right, next to the number of selected clonotypes.
-  This feature is useful when you want to analyse some clonotypes more thoroughly
+  This feature is useful when you want to analyze some clonotypes more thoroughly
   without being annoyed by other clonotypes.}
 \begin{verbatim}
   /////////////////////////
@@ -500,7 +499,7 @@ The sequences of the clonotypes now appear in the bottom part of the browser (th
 by clicking on the \textit{flat up arrow} in the middle of menu bar of sequence panel.
  
 Then, the sequences in the sequence panel can be visually compared but you can also align
-them to see more easily their similarities.
+them to see their similarities more easily.
 
 
 \question{Click on the \com{Align} button on the left-hand side. The differences are
@@ -513,11 +512,11 @@ emphasized in bold.}
 
 \end{verbatim}
 
-Now it is the user's expertise to determine if sequences are sufficiently
-similar, depending on her or his specific question. 
-An efficiant hint to do so is to show the quality of each base of the Vidjil windows (menu sequence feature/quality). 
+Now it is up to the user's expertise to determine if sequences are sufficiently
+similar, depending on their specific question. 
+An efficient hint to do so is to show the quality of each base of the Vidjil windows (menu sequence feature/quality). 
 % dans l'exemple, on a des séquence très similaire, à une mutation près. Pourtant, l'id est fortement décallé (~20nt)
-We can easily consider that sequence with a mismtach but with a poor quality at this position is a sequencing artifact and could be considered as identical of the support clonotype.
+A mismatch and a poor read quality located at the same position on a read could be considered a sequencing artifact, and the related sequence deemed identical to the support clonotype.
 If some sequences don't appear to be similar enough, you can remove
 them from the sequence panel by clicking on the cross in front of the sequence in
 the sequence panel.
@@ -536,7 +535,7 @@ differences could be due to sequencing or PCR errors.
 These artifacts (mutations, homopolymers, insertions, deletions)
 depend on the sequencer and the PCR technique.
 
-\question{Cluster all those clonotypes in a single clonotype by clicking on the ``Cluster''
+\question{Cluster all those clonotypes in a single clonotype by clicking on the \com{Cluster}
   button, next to the \com{Align} button.}
 \begin{verbatim}
   //////////////////////////////////
@@ -552,8 +551,7 @@ depend on the sequencer and the PCR technique.
 
 \end{verbatim}
 
-All the clustered sequences now appear within a same clonotype. That can be seen
-in the list: the clonotype which hosts the subclonotypes appears with a $+$ on its
+All the clustered sequences now appear within the same clonotype in the list: the clonotype which hosts the subclonotypes appears with a $+$ on its
 left. You can click on the $+$ to see the subclonotypes that have been clustered in
 the main one.
 \question{Click on the $+$ and observe the changes in the grid.}
@@ -569,7 +567,7 @@ As you may have noticed the subclonotypes appear again in the grid. You can
 compare their sequences again if you'd like (for example to double check that
 you were right to cluster them). You can also remove some subclonotypes from the
 cluster by clicking on the cross at their left in the list.
-\question{For the sake of the exercise, remove the last clonotype of the cluster.}
+\question{For the sake of this exercise, remove the last clonotype of the cluster.}
 \begin{verbatim}
   ///////////////////
   cy.log("// test_B_clones_23")
@@ -581,7 +579,7 @@ cluster by clicking on the cross at their left in the list.
 \question{%
 %For the next step, choose the preset \com{V distribution} (keyboard shortcut \com{5}).
 % On n'a pas encore parlé ici des presets. 
-Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V/5}. What happened ? There are now two clonotypes with TRGV2. Why ?}
+Open the \com{cluster} menu at the top of the page, and choose \com{cluster by V/5}. What happened? There are now two clonotypes with TRGV2. Why?}
 \reponse{These two clonotypes have been clustered on their V gene, but they differ by their allele. You can verify this by changing scatterplot preset by `V/J (allele)`.}
 %%  Confirm this by changing the x axis into ``V allele``.
 %%% -> Problème, on n'a pas encore parlé des axes à cet endroit.
@@ -632,15 +630,15 @@ extrapolated from the germline sequence.
 \end{verbatim}
 
 This step is computationally intensive and apply on each clonotype of the analysis.
-More samples you have, more time it will take to finish.
+The more samples you have, the longer it will take to complete.
 
 \question{You should now see a Genescan-like plot.}
 
 This plot show only top clontypes, limited to the top 100 by default.
 
-\question{Change the color by value with \textit{Locus}. What do you see ? }
+\question{Change the color by value with \textit{Locus}. What do you see? }
 
-\question{Change the primer set to \textit{Euroclonality-NGS}. What happens ? }
+\question{Change the primer set to \textit{Euroclonality-NGS}. What happens? }
 
 \begin{verbatim}
 \end{verbatim}
@@ -699,7 +697,7 @@ and the $y$ axis selects the order of the boxes sharing a same $x$).
 %% \item Regarder les stats disponibles, mettre n°7 (taille des reads)
 
 \question{In the \com{plot} menu, switch between the ``bubble plot'' and the ``bar plot''.
-In the bar plot mode, pass the mouse over the bars: What happens?}
+In the bar plot mode, pass the mouse over the bars: what happens?}
 % on cherche a faire dire quoi ? Le highligth ? Dans ce cas est-il plus simple de le dire directement ? ou en tout cas sans le rapport avec le bar plot.
 \begin{verbatim}
   ///////////////////////////////////////////
@@ -736,7 +734,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 % it is possible that two dissimilar clones are close together or, conversely,
 % that two similar clones are far apart.
 
-\question{Press the keys \texttt{0} to \texttt{9} on the numeric keypad. What happens ?}
+\question{Press the keys \texttt{0} to \texttt{9} on the numeric keypad. What happens?}
 \reponse{This switches the grid preset. Use shift + number to access to presets 10-19.}
 \begin{verbatim}
   ///////////////////////////////////
@@ -822,7 +820,7 @@ In the bar plot mode, pass the mouse over the bars: What happens?}
 
 \end{verbatim}
 
-There is still a feature to help you analyse your data that we have not
+There is still a feature to help you analyze your data that we have not
 explored yet.
 You can change the colors to make it represent some variables of interest
 with the \com{color by} menu.
@@ -857,7 +855,7 @@ be similar.
   See that the color tiles in the info part (upper right) change to show the color key.}
 Discrete axes (as tags) are shown with a selector.
 Some axes with many values (such as V and J genes) will not be displayed here.
-Continuous axes are shown with a radient color.
+Continuous axes are shown with a gradient color.
 \begin{verbatim}
   //////////////////////////////////
   cy.log("// test_B_clones_31_color_gradient")
@@ -895,7 +893,7 @@ Continuous axes are shown with a radient color.
 \end{verbatim}
 
 
-Using those different features you should be able to analyse how similar your
+Using those different features you should be able to analyze how similar your
 sequences are, and potentially you could cluster them if you'd like or tag them.
 
 \question{
@@ -930,7 +928,7 @@ sequences are, and potentially you could cluster them if you'd like or tag them.
 
 \textit{This part is specific to samples analyzed with Vidjil-algo.}
 
-Some clonotypes may be less trustable than other ones\dots{} Let's see how to spot them.
+Some clonotypes may be less trustable than others\dots{} Let's see how to spot them.
 \question{In the clonotype list, search clonotypes with an orange warning at the
   right side. Click on the warning. What are the warnings due to?}
 \begin{verbatim}
@@ -960,11 +958,11 @@ Some clonotypes may be less trustable than other ones\dots{} Let's see how to sp
 There may have several reasons: 
 \begin{itemize}
 \item average coverage: in that case the clonal sequence displayed is short
-  compared to the reads in the clonotype. This may be the case when too different
+  compared to the reads in the clonotype. This may be the case when too many different
   sequences have been put in a clonotype. The value is generally $\geq 80\,\%$.
   % nuancer, toujours valable ? Si merge ou non ?
 \item $e$-value: It is a statistical value computed to ensure that
-  recombinations have not been spot by chance. This value is generally much
+  recombinations have not been spotted by chance. This value is generally much
   lower than 1 ($<10^{-5}$).
 \item Clonotype similar to another one: In that case Vidjil-algo tells you that
   other clonotypes have the same genes and may be similar
@@ -1018,7 +1016,7 @@ If you want to focus on specific locus, you can click on the locus name in
 the upper left part. One click will make the locus disappear, another one will
 make it appear again.
 If you hold the \texttt{Shift} key (the one which is usually above the left
-\texttt{Ctrl} key) while clicking it will hide all the loci but the one you
+\texttt{Ctrl} key) while clicking it, it will hide all the loci but the one you
 clicked on.
 
 \question{Click on \com{IGH}, while holding the \texttt{Shift} key. Now what is the
