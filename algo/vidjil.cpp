@@ -1866,7 +1866,7 @@ int main(int argc, char **argv) {
                                                      expected_value_D, fine_evalue_multiplier);
                             }
 
-                            seg.findCDR3();
+                            seg.findRegions();
 
                             // Check for identical code, outputs to out_edge
                             string code = seg.code;
@@ -2109,7 +2109,7 @@ int main(int argc, char **argv) {
                         s.FineSegmentD(germline, several_D, expected_value_D,
                                        fine_evalue_multiplier);
                 }
-                s.findCDR3();
+                s.findRegions();
 
                 g = germline;
             } else {
