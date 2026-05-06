@@ -9,11 +9,11 @@ $ Clone name
 1: "TRGV9.01 0/CA/0 TRGJP.01"
 
 $ Correct number of start positions (no V, but J, cdr3 and junction))
-3: "start"
+4: "start"
 
 $ Correct stop position of TRGJP*01
 1: "stop": 91
 
 $ The sequence is productive
-1: "productive": true
+3: "productive": true
 

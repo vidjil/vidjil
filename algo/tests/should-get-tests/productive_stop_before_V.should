@@ -6,23 +6,32 @@ $ first clone name
 $ second clone name
 1: "IGHV3-74.01 0/GACCG/6 IGHD1-7.01 0/GC/10 IGHJ4.02"
 
+# FRs & CDRs amino acids were verified with the help of the IMGT database
+# - 1st clone:
+#   - V: https://www.imgt.org/IMGTrepertoire/2D-3Dstruct/Colliers_dyn.php?latin=Homo%20sapiens&gene=IGHV1-69&domain=VH
+#   - J: https://imgt.org/IMGTrepertoire/Proteins/alleles/index.php?species=Homo%20sapiens&group=IGHJ&gene=IGHJ6
+# - 2nd clone:
+#   - V: https://www.imgt.org/IMGTrepertoire/2D-3Dstruct/Colliers_dyn.php?latin=Homo%20sapiens&gene=IGHV3-74&domain=VH
+#   - J: https://imgt.org/IMGTrepertoire/Proteins/alleles/index.php?species=Homo%20sapiens&group=IGHJ&gene=IGHJ4
+#
 # There are 10 = 2x5 segments (V, D, J, cdr3 and junction)
 
 $ Correct number of start positions
-10: "start"
+21: "start"
 
 $ Correct start position of IGHV1-69*06
-1: "start": 133
+2: "start": 133
 
 $ Correct stop position of IGHJ6*02
-1: "stop": 534
+2: "stop": 534
 
 $ Correct start position of IGHV3-74*01
-1: "start": 146
+2: "start": 146
 
-$ Correct number of stop positions (10-1, no stop positions for J on the second sequence)
-9: "stop"
+$ Correct number of stop positions (21-1, no stop positions for J on the second sequence)
+20: "stop"
 
+# 1st clone should have productive CDR1, CDR2, CDR3, FR1, FR2, FR3, FR4 and JUNCTION
+# 2nd clone should have productive CDR1, CDR2, CDR3, FR1, FR2, FR3 and JUNCTION
 $ The two sequences are productive
-2: "productive": true
-
+15: "productive": true
