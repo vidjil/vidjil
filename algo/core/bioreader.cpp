@@ -291,9 +291,21 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
     out << ">";
   out << seq.label;
 
-  auto junction_it = seq.marked_locations_pos.find(JUNCTION_POS);
-  if (junction_it != seq.marked_locations_pos.end())
-    out << " !@" << junction_it->second;
+  auto fr3_last_aa_mid_nuc_it = seq.marked_locations_pos.find(FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE);
+  if (fr3_last_aa_mid_nuc_it != seq.marked_locations_pos.end())
+  {
+    size_t junction_start_pos_1based = fr3_last_aa_mid_nuc_it->second;
+    out << " !@" << junction_start_pos_1based;
+  }
+  else
+  {
+    auto fr4_first_aa_mid_nuc_it = seq.marked_locations_pos.find(FR4_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE);
+    if (fr4_first_aa_mid_nuc_it != seq.marked_locations_pos.end())
+    {
+      size_t junction_end_pos_1based = fr4_first_aa_mid_nuc_it->second + 2 + 1;
+      out << " !@" << junction_end_pos_1based;
+    }
+  }
 
   out << endl;
 
