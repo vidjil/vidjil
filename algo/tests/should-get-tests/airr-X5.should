@@ -9,7 +9,7 @@ $ All clones have 1 reads
 14: \t1\t
 
 $ 8 clones with TR recombinations, some of them having special recombinations
-2:TRA
+2r:^TRA
 1:TRA[+]D
 
 2:TRB
