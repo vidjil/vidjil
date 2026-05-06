@@ -15,6 +15,7 @@
 #include "affectanalyser.h"
 #include "../lib/json_fwd.hpp"
 #include "filter.hpp"
+#include "locations_to_mark.h"
 #include <memory>
 
 // #define DEBUG_EVALUE
@@ -59,8 +60,6 @@
                                           */
 #define FRACTION_ALIGNED_AT_WORST .5 /* Fraction of the sequence that should be aligned before deactivating the heuristics */
 
-#define INVALID_POS ~0
-
 #define SHOW_NAME_WIDTH 15
 #define SHOW_MAX_GENE_ALIGNMENT 20
 #define V_COLOR "\033[1;42m"
@@ -94,12 +93,6 @@ const char* const segmented_mesg[] = { "?",
                                       } ;
 
 #define ALL_LOCI             "all"
-
-// Unproductivity causes
-#define UNPROD_TOO_SHORT     "too-short"
-#define UNPROD_OUT_OF_FRAME  "out-of-frame"
-#define UNPROD_STOP_CODON    "stop-codon"
-#define UNPROD_NO_WPGxG      "no-WPGxG-pattern"
 
 /**
  * An alignment box (AlignBox) gather all parameters for a recombined gene segment (V, D, J, other D...)
@@ -209,6 +202,79 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  Cost segment_cost, bool reverse_V = false,
                                  bool reverse_J = false);
 
+
+#define INVALID_BOUND_POS ((unsigned int)INVALID_POS)
+struct Bounds
+{
+  unsigned int start;
+  unsigned int end;
+
+  unsigned int length() const;
+};
+
+
+enum Segment
+{
+  FR1_SEGMENT,
+  FR2_SEGMENT,
+  FR3_SEGMENT,
+  FR4_SEGMENT,
+  CDR1_SEGMENT,
+  CDR2_SEGMENT,
+  CDR3_SEGMENT,
+  JUNCTION_SEGMENT,
+
+  SEGMENT_COUNT
+};
+
+extern const char* const segment_names[SEGMENT_COUNT];
+
+// Segment issues are problems encountered during segmentation, or defects causing unproductivity.
+// The issues of a segment are stored in the bits of a byte, as a bit mask/set. The meaning of each
+// bit is described by its matching index below.
+//
+// They are used as helpers to avoid jumps and overly-nested ifs, as well as with CDR and JUNCTION
+// segmentation. Their purpose isn't to assist in checking for all possible issues, only to simplify
+// code.
+//
+// Individual issues are macro defines instead of enum values because GCC emits pedantic warnings
+// related to C integer promotion rules when using enums with | and & operators.
+//
+// >>> IF A NEW ISSUE IS ADDED, PLEASE UDPATE SEGMENT_ISSUE_COUNT AND issues_str <<<
+#define SEGMENT_ISSUE_INDEX_START_NOT_FOUND  0
+#define SEGMENT_ISSUE_INDEX_END_NOT_FOUND    1
+#define SEGMENT_ISSUE_INDEX_TOO_SHORT        2
+#define SEGMENT_ISSUE_INDEX_TOO_LONG         3
+#define SEGMENT_ISSUE_INDEX_OUT_OF_FRAME     4
+#define SEGMENT_ISSUE_INDEX_NO_WPGXG_PATTERN 5
+#define SEGMENT_ISSUE_INDEX_STOP_CODON       6
+#define SEGMENT_ISSUE_COUNT                  7
+
+#define SEGMENT_ISSUE_NONE                  0
+#define SEGMENT_ISSUE_MASK_START_NOT_FOUND  (1 << SEGMENT_ISSUE_INDEX_START_NOT_FOUND)
+#define SEGMENT_ISSUE_MASK_END_NOT_FOUND    (1 << SEGMENT_ISSUE_INDEX_END_NOT_FOUND)
+#define SEGMENT_ISSUE_MASK_TOO_SHORT        (1 << SEGMENT_ISSUE_INDEX_TOO_SHORT)
+#define SEGMENT_ISSUE_MASK_TOO_LONG         (1 << SEGMENT_ISSUE_INDEX_TOO_LONG)
+#define SEGMENT_ISSUE_MASK_OUT_OF_FRAME     (1 << SEGMENT_ISSUE_INDEX_OUT_OF_FRAME)
+#define SEGMENT_ISSUE_MASK_NO_WPGXG_PATTERN (1 << SEGMENT_ISSUE_INDEX_NO_WPGXG_PATTERN)
+#define SEGMENT_ISSUE_MASK_STOP_CODON       (1 << SEGMENT_ISSUE_INDEX_STOP_CODON)
+
+#define SEGMENT_ISSUE_MASK_BOUNDS_NOT_FOUND  (SEGMENT_ISSUE_MASK_END_NOT_FOUND | SEGMENT_ISSUE_MASK_START_NOT_FOUND)
+
+typedef unsigned char SegmentIssueMask;
+
+extern const char* const issues_str[SEGMENT_ISSUE_COUNT];
+const char* getFirstIssueString(SegmentIssueMask issues);
+
+
+// Helpers that perform a variety of checks and return a mask with the bits of identified issues
+// set, if any
+SegmentIssueMask checkBoundsPositions(Bounds bounds);
+SegmentIssueMask checkBoundsOrder(Bounds bounds);
+SegmentIssueMask checkBoundsLength(unsigned int bounds_length, Segment segment);
+SegmentIssueMask checkStopCodon(const std::string& sequence, size_t frame);
+SegmentIssueMask checkWPGxGPattern(const std::string& sequence);
+
 template <typename Affect>
 class Segmenter {
 protected:
@@ -216,15 +282,10 @@ protected:
   string sequence_or_rc;
   string quality;
 
-  // JUNCTIONstart/end and CDR3start/end are 1-based
-  int JUNCTIONstart, JUNCTIONend;
-  string JUNCTIONaa;
-  bool JUNCTIONproductive;
-  string JUNCTIONunproductive;
-
-  int CDR3start, CDR3end;
-  string CDR3nuc;
-  string CDR3aa;
+  Bounds segments_nuc_pos[SEGMENT_COUNT];
+  std::string segments_nuc[SEGMENT_COUNT];
+  std::string segments_aa[SEGMENT_COUNT];
+  SegmentIssueMask segments_issues[SEGMENT_COUNT];
 
   bool reversed, segmented, dSegmented;
   bool junctionChanged;
@@ -239,6 +300,20 @@ protected:
   string removeChevauchement();
   bool finishSegmentation();
   bool finishSegmentationD();
+
+  void retrieveFRNucleotideBounds(LocationToMark          fr_first_aa_mid_nuc_loc,
+                                  LocationToMark          fr_last_aa_mid_nuc_loc,
+                                  Segment                 fr_segment,
+                                  const AlignBox<Affect>* box,
+                                  size_t                  read_length);
+
+  void segmentFR(Segment fr_segment, const std::string& read);
+  void segmentCDR(Segment prev_fr, Segment cdr_segment, Segment next_fr, const std::string& read);
+  void segmentJUNCTION(const std::string& read);
+
+  void arrangeCDR3IfOutOfFrame(const std::string& read);
+  void reportStopCodonIfAny(const std::string& read);
+  void lookForMissingWPGxGPatternIfIGH(const std::string& read);
 
  public:
   Germline<Affect> *segmented_germline;
@@ -459,7 +534,7 @@ class FineSegmenter : public Segmenter<Affect>
    * find JUNCTION/CDR3, by using marked Cys104 and Phe118/Trp118 positions
    * in the germline V and J genes and the backtrack of the DP matrix
    */
-  void findCDR3();
+  void findRegions();
 
   void checkWarnings(CloneOutput *clone, bool phony=true);
 
