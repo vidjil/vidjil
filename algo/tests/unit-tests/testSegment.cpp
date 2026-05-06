@@ -562,7 +562,7 @@ void testAlignmentBounds()
   std::string              ighj1_01     = "GCTGAATACTTCCAGCACTGGGGCCAGGGCACCCTGGTCACCGTCTCCTCAGGAGTCTGCTGTCTGGGGATAGCGGGGAGCCAGGTGTACTGGGCCAGGCAAGGGCTTTGGC";
   DynProg::DynProgMode     dpMode       = DynProg::LocalEndWithSomeDeletions;
   Cost                     cost         = VDJ;
-  std::map<size_t, size_t> marked_pos   = {{START_GENE, 0}, {END_GENE, 51}, {JUNCTION_POS, 20}};
+  std::map<size_t, size_t> marked_pos   = {{START_GENE, 0}, {END_GENE, 51}, {FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE, 20}};
 
   bool onlyBottomTriangle      = false;
   int  onlyBottomTriangleShift = BOTTOM_TRIANGLE_SHIFT;
@@ -588,7 +588,7 @@ void testAlignmentBounds()
   bool end_gene_not_found = (end_gene_it == end_it);
   TAP_TEST(end_gene_not_found, TEST_KMER_ALIGNMENT_BOUNDS, "");
 
-  auto junction_it        = dp.marked_pos_i.find(JUNCTION_POS);
+  auto junction_it        = dp.marked_pos_i.find(FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE);
   bool junction_not_found = (junction_it == end_it);
   TAP_TEST(junction_not_found, TEST_KMER_ALIGNMENT_BOUNDS, "");
 }
