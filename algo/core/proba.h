@@ -30,7 +30,7 @@ private:
    * Commpute the previous iteration for the probability (and updates the values Cnk, proba_with,
    * proba_without.
    */
-  inline double probabilityPreviousIteration(int iteration, int length, long double &Cnk, double &proba_with, double &proba_without, float index_load);
+  double probabilityPreviousIteration(int iteration, int length, long double &Cnk, double &proba_with, double &proba_without, float index_load);
 public:
   
   
@@ -46,6 +46,7 @@ public:
   double getProbaWith(double p, int nb);
 
   friend void testProba1();
+  friend void testProba2();
 };
 
 #endif
