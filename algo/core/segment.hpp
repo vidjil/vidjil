@@ -1719,10 +1719,33 @@ void Segmenter<Affect>::arrangeCDR3IfOutOfFrame(const std::string& read)
     // We want to output a '#' somewhere around the end of the N, and then restart
     // at the start of the first codon fully included in the germline J
     Bounds cdr3_bounds = this->segments_nuc_pos[CDR3_SEGMENT];
-    size_t CDR3startJfull = cdr3_bounds.end - ((cdr3_bounds.end - this->box_J->start + 1) / 3) * 3 + 1;
     
-    this->segments_aa[CDR3_SEGMENT] = nuc_to_aa(subsequence(read, cdr3_bounds.start, CDR3startJfull - 1)) +
-                                      nuc_to_aa(subsequence(read, CDR3startJfull, cdr3_bounds.end));
+    // box_J->start is the first aligned position of the germline J gene on the read, meaning:
+    //            ______________________ ___________________
+    //           |         CDR3         |        FR4        |
+    // _ _ ______|_____ __________ _____|___________________|
+    //         V       |    D     |            J            |
+    // ‾ ‾ ‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+    //  box_J->start could be here ^      ^ or possibly there
+    //
+    // box_J->start may be as far as the start of the FR4 because the removal and insertion of non-
+    // germinal nucleotides (N) between the V/D and J gene went that far during recombination, or
+    // possibly because hypermutations modified the region of the J genes that overlaps the end of
+    // the CDR3, or even because of a spontenous mutation on the anchor amino acid at the start of
+    // the FR4.
+    //
+    // bugs/bug2249.should shows an example with box_J->start > fr4_bounds.start
+    // In such a case, the codon reading frame cannot be modified in the middle of the CDR3 to
+    // insert an incomplete amino acid '#'. Additionally, if the first aligned position of the J
+    // gene is in the codon of the last amino acid of the CDR3, the incomplete amino acid '#' is
+    // going to be inserted exactly where it already is, so there is nothing to do
+    int j_start_to_cdr3_end_distance = cdr3_bounds.end - this->box_J->start;
+    if (j_start_to_cdr3_end_distance >= 2)
+    {
+      size_t CDR3startJfull = cdr3_bounds.end - ((j_start_to_cdr3_end_distance + 1) / 3) * 3 + 1;
+      this->segments_aa[CDR3_SEGMENT] = nuc_to_aa(subsequence(read, cdr3_bounds.start, CDR3startJfull - 1)) +
+                                        nuc_to_aa(subsequence(read, CDR3startJfull, cdr3_bounds.end));
+    }
   }
 }
 
