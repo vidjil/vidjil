@@ -1793,9 +1793,16 @@ void Segmenter<Affect>::lookForMissingWPGxGPatternIfIGH(const std::string& read)
 template <typename Affect>
 void FineSegmenter<Affect>::findRegions()
 {
+
   const Sequence     seq_info    = this->getSequence();
   const std::string& read        = seq_info.sequence;
   const size_t       read_length = seq_info.sequence.length();
+
+  size_t v_gene_aligned_location_count = this->box_V->aligned_locations_pos.size();
+  size_t j_gene_aligned_location_count = this->box_J->aligned_locations_pos.size();
+
+  if ((v_gene_aligned_location_count | j_gene_aligned_location_count) == 0)
+      return;
 
   // Retrieve FR1, FR2, FR3 and FR4 nucleotide bounds
   this->retrieveFRNucleotideBounds(FR1_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
@@ -1818,6 +1825,7 @@ void FineSegmenter<Affect>::findRegions()
                                    FR4_SEGMENT,
                                    this->box_J,
                                    read_length);
+
   this->segmentFR(FR1_SEGMENT, read);
   this->segmentFR(FR2_SEGMENT, read);
   this->segmentFR(FR3_SEGMENT, read);
