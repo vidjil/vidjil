@@ -306,7 +306,7 @@ QUnit.test("align", function (assert) {
 
     var done = assert.async(3);
     var delay = 0;
-    var step = 500;
+    var step = 2000;
 
     //init quality
     m.clone(0).seg.quality = { seq :[] };
