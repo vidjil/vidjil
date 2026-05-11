@@ -228,7 +228,7 @@ audit_dependencies:
     - apt-get update && apt-get install -y jq curl python3-virtualenv
     - pip install --upgrade pip --no-cache-dir pip-audit
   script:
-    - pip-audit -r requirements.txt -r requirements_dev.txt -f markdown -o vulnerability-report.json
+    - pip-audit -r requirements.txt -r requirements_dev.txt --format json -o vulnerability-report.json
   artifacts:
     when: always
     paths:
