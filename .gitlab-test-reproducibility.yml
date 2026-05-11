@@ -44,9 +44,7 @@ server_reproducibility:
   only:
     - /^feature-.*s.*\/.*$/
   allow_failure: true
-  tags:
-    - ci.inria.fr
-    - small
+
 
 server_reproducibility_manual:
   stage: test_cypress_server
@@ -60,9 +58,7 @@ server_reproducibility_manual:
   only:
     - /^feature-.*s.*\/.*$/
   allow_failure: true
-  tags:
-    - ci.inria.fr
-    - small
+
   
 client_reproducibility:
   stage: test_cypress_client
@@ -76,7 +72,4 @@ client_reproducibility:
   only:
     - /^feature-.*c.*\/.*$/
   allow_failure: true
-  tags:
-    - ci.inria.fr
-    - small
-  
+
