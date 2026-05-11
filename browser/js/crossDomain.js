@@ -45,6 +45,7 @@ function initImgtInput(species) {
     imgtInput.V_REGIONsearchIndel = "true";
     imgtInput.nbD_GENE = "";    // Default value: 1 for IGH, 1 for TRB, 3 for TRD
     imgtInput.sequences = "";
+    imgtInput.moleculeType = "Unknow";
     return imgtInput;
 }
 
