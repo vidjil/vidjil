@@ -121,6 +121,7 @@ LOGIN_EXPIRATION_TIME = int(os.getenv("LOGIN_EXPIRATION_TIME", default="7200"))
 # session settings
 SESSION_TYPE = "cookies"
 SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY", default="<my secret key>")
+SESSION_NAME = os.getenv("SESSION_NAME", default="vidjil_session")
 MEMCACHE_CLIENTS = ["127.0.0.1:11211"]
 REDIS_SERVER = "redis:6379"
 # single sign on Google (will be used if provided)
