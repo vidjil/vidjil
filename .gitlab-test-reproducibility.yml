@@ -1,5 +1,6 @@
 generate_server_reproducibility_yml:
   stage: test_tools
+  image: ubuntu:26.04
   variables:
     REPEAT: 10
   script: |
@@ -12,9 +13,12 @@ generate_server_reproducibility_yml:
     paths:
       - server-repro.yml
       - server-repro-manual.yml
+  tags:
+    - cidocker
 
 generate_client_reproducibility_yml:
   stage: test_tools
+  image: ubuntu:26.04
   variables:
     REPEAT: 10
   script:
@@ -25,6 +29,8 @@ generate_client_reproducibility_yml:
   artifacts:
     paths:
       - client-repro.yml
+  tags:
+    - cidocker
       
 server_reproducibility:
   stage: test_cypress_server
@@ -39,6 +45,7 @@ server_reproducibility:
     - /^feature-.*s.*\/.*$/
   allow_failure: true
 
+
 server_reproducibility_manual:
   stage: test_cypress_server
   needs: [generate_server_reproducibility_yml]
@@ -51,6 +58,7 @@ server_reproducibility_manual:
   only:
     - /^feature-.*s.*\/.*$/
   allow_failure: true
+
   
 client_reproducibility:
   stage: test_cypress_client
@@ -64,4 +72,4 @@ client_reproducibility:
   only:
     - /^feature-.*c.*\/.*$/
   allow_failure: true
-  
+
