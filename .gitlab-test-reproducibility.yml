@@ -1,5 +1,6 @@
 generate_server_reproducibility_yml:
   stage: test_tools
+  image: ubuntu:26.04
   variables:
     REPEAT: 10
   script: |
@@ -13,11 +14,11 @@ generate_server_reproducibility_yml:
       - server-repro.yml
       - server-repro-manual.yml
   tags:
-    - ci.inria.fr
-    - small
+    - cidocker
 
 generate_client_reproducibility_yml:
   stage: test_tools
+  image: ubuntu:26.04
   variables:
     REPEAT: 10
   script:
@@ -29,8 +30,7 @@ generate_client_reproducibility_yml:
     paths:
       - client-repro.yml
   tags:
-    - ci.inria.fr
-    - small
+    - cidocker
       
 server_reproducibility:
   stage: test_cypress_server
