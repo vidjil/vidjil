@@ -12,6 +12,9 @@ generate_server_reproducibility_yml:
     paths:
       - server-repro.yml
       - server-repro-manual.yml
+  tags:
+    - ci.inria.fr
+    - small
 
 generate_client_reproducibility_yml:
   stage: test_tools
@@ -25,6 +28,9 @@ generate_client_reproducibility_yml:
   artifacts:
     paths:
       - client-repro.yml
+  tags:
+    - ci.inria.fr
+    - small
       
 server_reproducibility:
   stage: test_cypress_server
@@ -38,6 +44,9 @@ server_reproducibility:
   only:
     - /^feature-.*s.*\/.*$/
   allow_failure: true
+  tags:
+    - ci.inria.fr
+    - small
 
 server_reproducibility_manual:
   stage: test_cypress_server
@@ -51,6 +60,9 @@ server_reproducibility_manual:
   only:
     - /^feature-.*s.*\/.*$/
   allow_failure: true
+  tags:
+    - ci.inria.fr
+    - small
   
 client_reproducibility:
   stage: test_cypress_client
@@ -64,4 +76,7 @@ client_reproducibility:
   only:
     - /^feature-.*c.*\/.*$/
   allow_failure: true
+  tags:
+    - ci.inria.fr
+    - small
   
