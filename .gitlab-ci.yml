@@ -228,26 +228,37 @@ audit_dependencies:
     - apt-get update && apt-get install -y jq curl python3-virtualenv
     - pip install --upgrade pip --no-cache-dir pip-audit
   script:
-    # 1. Audit habituel
-    - pip-audit -r requirements.txt -r requirements_dev.txt -r requirements_tests.txt -f markdown -o audit-report.md || true
-    
-    # 2. On cherche l'IID de la MR associée au commit actuel via l'API
-    - |
-      MR_IID=$(curl --header "PRIVATE-TOKEN: $BOT_CI_TOKEN" \
-        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/commits/$CI_COMMIT_SHA/merge_requests" \
-        | jq '.[0].iid')
+    # 1. Exécution de l'audit et génération du rapport Markdown
+    # On utilise || true pour ne pas bloquer le pipeline si des vulnérabilités sont trouvées
+    - pip-audit -r requirements.txt -r requirements_dev.txt -f markdown -o audit-report.md || true
 
-    # 3. On poste le commentaire seulement si une MR existe
+    # 2. Récupération de l'IID de la Merge Request liée au commit
     - |
-      if [ "$MR_IID" != "null" ] && [ -n "$MR_IID" ]; then
-        JSON_PAYLOAD=$(jq -n --arg body "$(cat audit-report.md)" '{body: $body}')
-        curl --request POST \
+      echo "Recherche de la Merge Request associée au commit $CI_COMMIT_SHA..."
+      RESPONSE=$(curl -s --header "PRIVATE-TOKEN: $BOT_CI_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/commits/$CI_COMMIT_SHA/merge_requests")
+      
+      # On extrait l'IID du premier élément du tableau. Si ce n'est pas un tableau, MR_IID sera vide.
+      MR_IID=$(echo "$RESPONSE" | jq -r '.[0].iid // empty')
+
+    # 3. Publication du commentaire si une MR a été trouvée
+    - |
+      if [ -z "$MR_IID" ] || [ "$MR_IID" == "null" ]; then
+        echo "INFO: Aucune Merge Request trouvée pour ce commit. Le rapport ne sera pas posté."
+        echo "Réponse API reçue : $RESPONSE"
+      else
+        echo "MR #$MR_IID détectée. Envoi du rapport..."
+        
+        # On prépare le contenu du fichier pour le JSON (gestion des sauts de ligne et guillemets)
+        BODY_CONTENT=$(cat audit-report.md)
+        JSON_PAYLOAD=$(jq -n --arg body "$BODY_CONTENT" '{body: $body}')
+        
+        curl -s --request POST \
           --header "PRIVATE-TOKEN: $BOT_CI_TOKEN" \
           --header "Content-Type: application/json" \
           --data "$JSON_PAYLOAD" \
           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$MR_IID/notes"
-      else
-        echo "Aucune Merge Request ouverte pour ce commit. Rapport généré mais non posté."
+          
+        echo "Rapport posté avec succès sur la MR $MR_IID."
       fi
   tags:
     - cidocker
