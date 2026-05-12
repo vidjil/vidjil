@@ -53,20 +53,20 @@ OnlineBioReader::~OnlineBioReader() {
 }
 
 void OnlineBioReader::init() {
-  mark_pos = INVALID_POS;
+  locations_to_mark = germline_vj_locations_to_mark[VJ_GENE_NEITHER];
   nb_sequences_parsed = 0;
   nb_sequences_returned = 0;
   char_nb = 0;
-  current.marked_pos[CDR3_POS] = INVALID_POS;
   current_gaps = 0;
+  next_location_to_mark_idx = 0;
 }
 
 unsigned long long OnlineBioReader::getPos() {
   return char_nb;
 }
 
-void OnlineBioReader::setMarkPos(int mark_pos) {
-  this -> mark_pos = mark_pos;
+void OnlineBioReader::setLocationsToMark(OrderedGeneLocationsToMark locations_to_mark) {
+  this -> locations_to_mark = locations_to_mark;
 }
 
 Sequence OnlineBioReader::getSequence() {
@@ -86,26 +86,77 @@ void OnlineBioReader::skipToNthSequence() {
       return  ;
 }
 
-void OnlineBioReader::addLineToCurrentSequence(string line)
+void OnlineBioReader::addLineToCurrentSequence(const std::string& line)
 {
-  for (char& c : line)
+  // Skip std::basic_string interface as much as possible to prevent unnecessary bounds checks: its
+  // length is known and is not going to change in this scope
+  const char*       line_str = line.c_str();
+  const char* const line_end = line_str + line.length();
+
+  unsigned short location_count = locations_to_mark.count;
+  if (next_location_to_mark_idx < location_count)
+  {
+    // Read the line while marking locations position
+    unsigned short sequence_length = (unsigned short)current.sequence.length();
+
+    const auto marked_locations_pos_begin = current.marked_locations_pos.begin();
+    while (line_str < line_end)
     {
-      if (c == ' ')
-        continue ;
+      char c = *line_str;
+      line_str += 1;
 
-      if (c == '.') {
-        current_gaps++;
-        continue ;
-      }
-      current.sequence += c;
+      int is_gap = c == '.';
+      if (is_gap || c == ' ')
+      {
+        current_gaps += is_gap;
 
-      if (mark_pos != INVALID_POS) {
-        size_t last_char_idx = current.sequence.length() - 1;
-        if ((int)(last_char_idx + current_gaps) == mark_pos) {
-          current.marked_pos[CDR3_POS] = last_char_idx;
+        // Since locations to mark are ordered, gaps in the middle of sequences may lead to skipping
+        // a location to mark. In that case, move to the next location to mark (if any)
+        unsigned short last_char_idx        = sequence_length - 1;
+        unsigned short gapped_last_char_idx = last_char_idx + current_gaps;
+        if (gapped_last_char_idx == locations_to_mark.positions[next_location_to_mark_idx])
+        {
+          next_location_to_mark_idx += 1;
+          if (next_location_to_mark_idx == location_count)
+            break;
         }
+
+        continue;
       }
+
+      current.sequence.push_back(c);
+
+      unsigned short gapped_last_char_idx = sequence_length + current_gaps;
+      if (gapped_last_char_idx == locations_to_mark.positions[next_location_to_mark_idx])
+      {
+        // Remember the nucleotide position of this location
+        size_t next_location = locations_to_mark.locations[next_location_to_mark_idx];
+        
+        // marked_locations_pos_begin isn't invalidated by emplace_hint()
+        current.marked_locations_pos.emplace_hint(marked_locations_pos_begin,
+                                                  next_location,
+                                                  sequence_length);
+        next_location_to_mark_idx += 1;
+        if (next_location_to_mark_idx == location_count)
+          break;
+      }
+
+      sequence_length += 1;
     }
+  }
+
+  // There are no more locations to mark. Keep reading to the end of the line
+  while (line_str < line_end)
+  {
+    char c = *line_str;
+    line_str += 1;
+
+    int is_gap = (c == '.');
+    if (c == ' ' || is_gap)
+      current_gaps += is_gap;
+    else
+      current.sequence.push_back(c);
+  }
 }
 
 void OnlineBioReader::unexpectedEOF() {
@@ -115,12 +166,13 @@ void OnlineBioReader::unexpectedEOF() {
 //// BioReader
 
 
-void BioReader::init(int extract_field, string extract_separator, size_t mark_pos,
+void BioReader::init(int extract_field, string extract_separator,
+                     OrderedGeneLocationsToMark locations_to_mark,
                      bool ignore_uppercase_nt)
 {
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ; 
-  this -> mark_pos = mark_pos;
+  this -> locations_to_mark = locations_to_mark;
   this -> ignore_uppercase_nt = ignore_uppercase_nt;
   total_size = 0;
   name = "";
@@ -136,16 +188,20 @@ BioReader::BioReader(bool virtualfasta, string name)
   filenames.push_back(this->name);
 }
 
-BioReader::BioReader(int extract_field, string extract_separator, int mark_pos, bool ignore_uppercase_nt)
+BioReader::BioReader(int extract_field, string extract_separator,
+                     OrderedGeneLocationsToMark locations_to_mark,
+                     bool ignore_uppercase_nt)
 {
-  init(extract_field, extract_separator, mark_pos, ignore_uppercase_nt);
+  init(extract_field, extract_separator, locations_to_mark, ignore_uppercase_nt);
 }
 
 BioReader::BioReader(const string &input, 
-                     int extract_field, string extract_separator,
-                     int mark_pos, bool verbose) 
+                     int extract_field,
+                     string extract_separator,
+                     OrderedGeneLocationsToMark locations_to_mark,
+                     bool verbose) 
 {
-  init(extract_field, extract_separator, mark_pos);
+  init(extract_field, extract_separator, locations_to_mark);
 
   if (!input.size()) // Do not open empty filenames (D germline if not segmentD)
     return ;
@@ -186,7 +242,7 @@ void BioReader::add(const string &filename, bool verbose) {
 void BioReader::add(OnlineBioReader &reader) {
   string line;
   Sequence read;
-  reader.setMarkPos(mark_pos);
+  reader.setLocationsToMark(locations_to_mark);
 
   while (reader.hasNext()) {
     reader.next();
@@ -235,8 +291,9 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
     out << ">";
   out << seq.label;
 
-  if (seq.marked_pos.count(CDR3_POS) > 0 && seq.marked_pos.at(CDR3_POS) != (size_t)INVALID_POS)
-    out << " !@" << seq.marked_pos.at(CDR3_POS) ;
+  auto junction_it = seq.marked_locations_pos.find(JUNCTION_POS);
+  if (junction_it != seq.marked_locations_pos.end())
+    out << " !@" << junction_it->second;
 
   out << endl;
 

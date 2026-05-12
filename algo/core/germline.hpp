@@ -142,7 +142,9 @@ MultiGermline<Affect> *Germline<Affect>::getMultiGermline() const {
 template <typename Affect>
 std::shared_ptr<BioReader> Germline<Affect>::getReader(const std::string &segment) const {
   std::set<GermlineElement<Affect>*> elements = getGermlineElements(segment);
-  std::shared_ptr<BioReader> reader = std::make_shared<BioReader>(2, "|", (*(elements.begin()))->getMarkPos(),
+  std::shared_ptr<BioReader> reader = std::make_shared<BioReader>(2,
+                                                                  "|",
+                                                                  (*(elements.begin()))->getLocationsToMark(),
                                                                   ignore_uppercase_nt);
   for (auto &element: elements) {
     reader->add(element->getFilename(), false);

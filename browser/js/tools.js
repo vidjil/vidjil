@@ -190,7 +190,7 @@ function tsvToArray(allText) {
     var lines = [];
 
     for (var i = 1; i < allTextLines.length; i++) {
-        var data = $.trim(allTextLines[i]).split('	');
+        var data = allTextLines[i].split('	');
         var tarr = {};
         switch (data.length) {
             case headers.length:

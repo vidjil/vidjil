@@ -46,7 +46,7 @@ public:
   /**
    * @return the marked position used for CDR3 computation (returns 0 when !isRegular()
    */
-  int getMarkPos() const;
+  OrderedGeneLocationsToMark getLocationsToMark() const;
   std::shared_ptr<BioReader> getReader() const;
   std::string getSeed() const;
   /**
@@ -103,15 +103,14 @@ FilterWithACAutomaton *GermlineElement<Affect>::getFilter() const {
 }
 
 template<typename Affect>
-int GermlineElement<Affect>::getMarkPos() const {
-  int mark_pos = INVALID_POS;
+OrderedGeneLocationsToMark GermlineElement<Affect>::getLocationsToMark() const {
   if (isRegular()) {
     if (segment.count("5")>0)
-      mark_pos = CYS104_IN_GAPPED_V;
+      return germline_vj_locations_to_mark[VJ_GENE_V];
     else if (segment.count("3") > 0)
-      mark_pos = PHE118_TRP118_IN_GAPPED_J;
+      return germline_vj_locations_to_mark[VJ_GENE_J];
   }
-  return mark_pos;
+  return germline_vj_locations_to_mark[VJ_GENE_NEITHER];
 }
 
 template<typename Affect>
@@ -147,7 +146,7 @@ void GermlineElement<Affect>::add(std::string locus, std::string segment) {
 
 template<typename Affect>
 void GermlineElement<Affect>::addToIndex(IKmerStore<Affect> *index, bool ignore_uppercase_nt) {
-  BioReader indexReader(2, "|", getMarkPos(), ignore_uppercase_nt);
+  BioReader indexReader(2, "|", getLocationsToMark(), ignore_uppercase_nt);
   indexReader.add(filename);
   index->insert(indexReader, affect, this, max_indexing, seed);
 

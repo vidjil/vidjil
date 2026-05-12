@@ -317,26 +317,27 @@ QUnit.test("processCloneDBContents", function(assert) {
 
 });
 
-QUnit.test("processImgtContents", function(assert) {
-    var ready = assert.async();
-    assert.expect(6);
 
-    var xhr = $.ajax({
-            url: 'testFiles/vquest_imgt.html',
-            dataType: 'html'
-        })
-        .done(function (html, status) {
-            assert.ok(html.length > 0, "Test file was injected, html code received");
-            var imgtArray = processImgtContents(html, "pre");
-            assert.ok(imgtArray[0]["Sequence number"] == "1", "first line is sequence 1");
-            assert.ok(imgtArray[0]["CDR3-IMGT"] == "gcggcggaaactc", "CDR3-IMGT's seq 1 is gcggcggaaactc");
-            assert.ok(imgtArray[3]["Sequence number"] == "4", "4th ligne is seq 4");
-            assert.ok(imgtArray[3]["CDR3-IMGT"] == undefined, "imgt did not return a cdr3 result for line 4");
-            assert.ok(imgtArray.length == 5, "5 sequences were identified");
-            ready();
-        });
-}
-);
+QUnit.test("processImgtContents", function (assert) {
+    assert.expect(8);
+    var html = vquest_imgt_data;
+
+    assert.ok(html.length > 0, "Test data is available from variable");
+
+    var imgtArray = processImgtContents(html, "pre");
+    assert.ok(imgtArray.length == 5, "5 sequences were identified");
+
+    // Correct TSV value
+    assert.ok(imgtArray[0]["Sequence number"] == "1", "first line is sequence 1");
+    assert.ok(imgtArray[0]["CDR3-IMGT"] == "gcggcggaaactc", "CDR3-IMGT's seq 1 is gcggcggaaactc");
+    // ImGt return no result for this sequence
+    assert.ok(imgtArray[3]["Sequence number"] == "4", "4th line is seq 4");
+    assert.ok(imgtArray[3]["CDR3-IMGT"] == undefined, "imgt did not return a cdr3 result for line 4");
+    // Imgt include an erronous number of tabulation, results should be empty
+    assert.ok(imgtArray[4]["Sequence number"] == "5", "5th line is seq 5");
+    assert.ok(imgtArray[4]["CDR3-IMGT"] == undefined, "imgt did not return a cdr3 result for line 5");
+});
+
 
 QUnit.test("endsWith", function(assert) {
     assert.equal(endsWith("toto", "o"), true, "toto finishes with o")

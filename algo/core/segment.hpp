@@ -1029,7 +1029,6 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
 {
 
   int best_score = MINUS_INF ;
-  std::map<size_t, size_t> best_marked_pos;
 
   box->rep = rep;
   box->ref_nb = MINUS_INF ;
@@ -1055,7 +1054,7 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
                          dpMode, // DynProg::SemiGlobalTrans,
                          segment_cost, // DNA
                          reverse_both, reverse_both,
-                         rep->read(r).marked_pos);
+                         rep->read(r).marked_locations_pos);
     int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
 
     if (score > best_score)
@@ -1069,12 +1068,12 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
       // Alignment positions *on the read*
       box->start = dp.first_i;            // start position
       box->end = dp.best_i ;              // end position
-      box->marked_pos = dp.marked_pos_i[CDR3_POS];
+
+      box->aligned_locations_pos = dp.marked_pos_i;
 
       // Alignment positions *on the reference*
       box->del_left = dp.first_j;     // around start position
       best_best_j = dp.best_j;        // around end position
-      best_marked_pos = dp.marked_pos_i;
     }
 
     score_r.push_back(make_pair(score, r));
@@ -1114,17 +1113,22 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
     return;
   }
 
-  if (best_marked_pos[START_GENE] != (size_t)INVALID_POS) {
-    box->start = max(box->start, (int)best_marked_pos.at(START_GENE));
-  }
-  if (best_marked_pos[END_GENE] != (size_t)INVALID_POS) {
-    box->end = min(box->end, (int)best_marked_pos.at(END_GENE));
-  }
+  const auto aligned_locations_pos_end = box->aligned_locations_pos.end();
+
+  auto start_gene_it = box->aligned_locations_pos.find(START_GENE);
+  if (start_gene_it != aligned_locations_pos_end)
+    box->start = max(box->start, (int)start_gene_it->second);
+
+  auto end_gene_it = box->aligned_locations_pos.find(END_GENE);
+  if (end_gene_it != aligned_locations_pos_end)
+    box->end = min(box->end, (int)end_gene_it->second);
+
   // Sequence totally aligned before the start of the gene sequence
-  if (rep->read(box->ref_nb).marked_pos.at(START_GENE) > (size_t)best_best_j)
+  if (rep->read(box->ref_nb).marked_locations_pos.at(START_GENE) > (size_t)best_best_j)
     box->start = box->end;
+
   // Sequence totally aligned after the end of the gene sequence
-  if (rep->read(box->ref_nb).marked_pos.at(END_GENE) < (size_t)box->del_left)
+  if (rep->read(box->ref_nb).marked_locations_pos.at(END_GENE) < (size_t)box->del_left)
     box->end = box->start;
 
 #ifdef DEBUG_SEGMENT
@@ -1161,8 +1165,6 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   this->evalue = NO_LIMIT_VALUE;
   this->evalue_left = NO_LIMIT_VALUE;
   this->evalue_right = NO_LIMIT_VALUE;
-  this->box_V->marked_pos = INVALID_POS;
-  this->box_J->marked_pos = INVALID_POS;
 
   this->CDR3start = INVALID_POS;
   this->CDR3end = INVALID_POS;
@@ -1466,18 +1468,22 @@ void FineSegmenter<Affect>::FineSegmentD(Germline<Affect> *germline, bool severa
 
 template <typename Affect>
 void FineSegmenter<Affect>::findCDR3(){
-
-  this->JUNCTIONstart = this->box_V->marked_pos;
-  this->JUNCTIONend = this->box_J->marked_pos;
-
+  
+  auto v_junction_it      = this->box_V->aligned_locations_pos.find(JUNCTION_POS);
+  auto j_junction_it      = this->box_J->aligned_locations_pos.find(JUNCTION_POS);
+  auto v_locations_end_it = this->box_V->aligned_locations_pos.end();
+  auto j_locations_end_it = this->box_J->aligned_locations_pos.end();
+  
   // There are two cases when we can not detect a JUNCTION/CDR3:
-  // - Germline V or J gene has no 'marked_pos'
-  // - Sequence may be too short on either side, and thus the backtrack did not find a suitable 'marked_pos'
-  if (this->JUNCTIONstart == INVALID_POS || this->JUNCTIONend == INVALID_POS) {
-    this->JUNCTIONstart = INVALID_POS;
-    this->JUNCTIONend = INVALID_POS;
+  // - Germline V or J gene has no aligned locations position
+  // - Sequence may be too short on either side, and thus the backtrack did not find any suitable
+  //   aligned locations position
+  if (v_junction_it == v_locations_end_it ||
+      j_junction_it == j_locations_end_it)
     return;
-  }
+
+  this->JUNCTIONstart = v_junction_it->second;
+  this->JUNCTIONend   = j_junction_it->second;
 
   // We require at least two codons
   if (this->JUNCTIONend - this->JUNCTIONstart + 1 < 6) {

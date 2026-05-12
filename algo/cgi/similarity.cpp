@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     if (!cgi_mode) cout <<endl;
 
     if (! error) {
-      BioReader fa(fdata, 1, " ", 0, !output_json);
+      BioReader fa(fdata, 1, " ", germline_vj_locations_to_mark[VJ_GENE_NEITHER], !output_json);
     
       list<Sequence> reads;
       reads = fa.getAll();
