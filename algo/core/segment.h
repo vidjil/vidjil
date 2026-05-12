@@ -120,7 +120,7 @@ class AlignBox
 
   int start;
   int end;
-  int marked_pos;    // Marked position, for Cys104 and Phe118/Trp118
+  std::map<size_t, size_t> aligned_locations_pos;
   int seq_length;
 
   /**

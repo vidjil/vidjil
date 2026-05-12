@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     if (!cgi_mode) cout <<endl;
 
     if (! error) {
-      BioReader fa(fdata, 1, " ", 0, !cgi_mode);
+      BioReader fa(fdata, 1, " ", germline_vj_locations_to_mark[VJ_GENE_NEITHER], !cgi_mode);
     
     
       string seq0 = fa.sequence(0);

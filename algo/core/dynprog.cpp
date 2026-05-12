@@ -162,7 +162,6 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
 
   for (auto p: marked_pos_j) {
     this -> marked_pos_j[p.second + 1] = p.first;
-    this -> marked_pos_i[p.first] = INVALID_POS;
   }
 
   m = x.size();
