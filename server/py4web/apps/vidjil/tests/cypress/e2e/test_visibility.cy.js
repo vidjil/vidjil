@@ -275,4 +275,25 @@ describe('Visibility of panels', function () {
     })
   })
 
+
+  it('05-sort collumns', function () {
+
+    // User page
+    cy.goToUsersPage()
+
+    cy.get('#db_table_container table tbody tr')
+      .eq(0)
+      .get(":nth-child(2)")
+      .should("contain", "3")
+
+    cy.get('[data-sort="lastName"] > .icon-arrow-combo')
+      .should("exist")
+
+    cy.get('[data-sort="lastName"]')
+      .click()
+    cy.get('[data-sort="lastName"] > .icon-sort-alt-up')
+      .should("exist")
+
+
+  })
 })

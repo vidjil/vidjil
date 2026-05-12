@@ -7,14 +7,17 @@
 
 <div class="db_search_bar">
     <input type="text" id="search_table_preprocess" placeholder="Search..." />
-    <button onclick="db.filter_table(document.getElementById('search_table_preprocess').value, 'table_preprocess')">Search</button>
+    <button
+        onclick="db.filter_table(document.getElementById('search_table_preprocess').value, 'table_preprocess')">Search</button>
 </div>
 
 <div id="db_table_container">
     <table class="db_table" id="table_preprocess">
         <thead>
-            <tr><td class="column_100 sortable" data-sort="num"> preprocess Id <span class="sort-icon"></span></td>
-                <td class="column_150 sortable" data-sort="name"> name <span class="sort-icon"></span></td>
+            <tr>
+                <td class="column_100 sortable" data-sort="num"> preprocess Id <span class="icon-arrow-combo"></span>
+                </td>
+                <td class="column_150 sortable" data-sort="name"> name <span class="icon-arrow-combo"></span></td>
                 <td> command </td>
                 <td> info </td>
 

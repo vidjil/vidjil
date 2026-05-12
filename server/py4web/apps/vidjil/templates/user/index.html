@@ -1,27 +1,28 @@
 [[extend 'db_layout.html']]
 [[from apps.vidjil.modules import vidjil_utils]]
 
-    <h3 id="page_user">Users</h3>
-    
-    <div class="db_search_bar">
-        <input type="text" id="search_table_users" placeholder="Search..." />
-        <button onclick="db.filter_table(document.getElementById('search_table_users').value, 'table_users')">Search</button>
-    </div>
+<h3 id="page_user">Users</h3>
+
+<div class="db_search_bar">
+    <input type="text" id="search_table_users" placeholder="Search..." />
+    <button
+        onclick="db.filter_table(document.getElementById('search_table_users').value, 'table_users')">Search</button>
+</div>
 
     <div id="db_table_container">
         <table class="db_table" id="table_users">
             <thead>
                 <tr>
-                    <td class="column_50 sortable" data-sort="id">user Id <span class="sort-icon"></span></td>
-                    <td class="column_200 sortable" data-sort="firstName">first name <span class="sort-icon"></span></td>
-                    <td class="column_200 sortable" data-sort="lastName">last name <span class="sort-icon"></span></td>
+                    <td class="column_50 sortable" data-sort="id">user Id <span class="icon-arrow-combo"></span></td>
+                    <td class="column_200 sortable" data-sort="firstName">first name <span class="icon-arrow-combo"></span></td>
+                    <td class="column_200 sortable" data-sort="lastName">last name <span class="icon-arrow-combo"></span></td>
                     <td class="column_200">@</td>
                     <td class="column_50">access</td>
-                    <td class="column_200 sortable" data-sort="groups">groups <span class="sort-icon"></span></td>
+                    <td class="column_200 sortable" data-sort="groups">groups <span class="icon-arrow-combo"></span></td>
                     <td class="column_100">first login</td>
-                    <td class="column_100 sortable" data-sort="last_login">last login <span class="sort-icon"></span></td>
-                    <td class="column_100 sortable" data-sort="patients">patients created <span class="sort-icon"></span></td>
-                    <td class="column_100 sortable" data-sort="files">files uploaded <span class="sort-icon"></span></td>
+                    <td class="column_100 sortable" data-sort="last_login">last login <span class="icon-arrow-combo"></span></td>
+                    <td class="column_100 sortable" data-sort="patients">patients created <span class="icon-arrow-combo"></span></td>
+                    <td class="column_100 sortable" data-sort="files">files uploaded <span class="icon-arrow-combo"></span></td>
                     <td class="column_20"> </td>
                     <td class="column_20"> </td>
                 </tr>

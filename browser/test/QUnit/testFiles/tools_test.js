@@ -450,8 +450,41 @@ QUnit.test("remove duplicates", function(assert) {
 
 QUnit.test("remove elt in decrease", function(assert) {
 
-  var listel = [0,1,2,4,5,7,8]
-  assert.deepEqual(removeEltAndDecrease(listel, 3), [0,1,2,3,4,6,7], "correct array after removeEltAndDecrease (3)")
+    var listel = [0, 1, 2, 4, 5, 7, 8]
+    assert.deepEqual(removeEltAndDecrease(listel, 3), [0, 1, 2, 3, 4, 6, 7], "correct array after removeEltAndDecrease (3)")
+});
+
+
+QUnit.test("isDate and comparison", function (assert) {
+
+    var date1a = "2025-12-09 15:01:41"
+    var date1b = "2026-12-09 15:01:41"
+    var date2 = "2025-12-09 15:01:41 and text"
+    var date3 = "2025-12-09"
+    var date4 = "plop"
+    var date5 = "-"
+
+    assert.equal(isDate(date1a), true, "real date (YYY-MM-DD HH-mm-ss) is true")
+    assert.equal(isDate(date1b), true, "real date (YYY-MM-DD HH-mm-ss) is true")
+    assert.equal(isDate(date2), false, "date + text is false")
+    assert.equal(isDate(date3), true, "real date (only YYY-MM-DD) is true")
+    assert.equal(isDate(date4), false, "Text 'plop' is false")
+    assert.equal(isDate(date5), false, "Text '-'  is false")
+
+    // Compare dates
+    assert.equal(new Date(date1a) - new Date(date1a) == 0, true, "dates comparison (same date)")
+    assert.equal(new Date(date1a) - new Date(date1b) < 0, true, "dates comparison (2025 - 2026)")
+    assert.equal(new Date(date1b) - new Date(date1a) > 0, true, "dates comparison (2026 - 2025)")
+
+    assert.equal(new Date(date1a) - new Date(date3) > 0, true, "dates comparison (full - YYY-MM-DD")
+    assert.deepEqual(new Date(date1a) - new Date(date4), NaN, "dates comparison")
+
+    // Only text comparison
+    assert.deepEqual(date1b - date2, NaN, "compare as string return NaN")
+
+    assert.deepEqual(date1b.localeCompare(date2) > 0, true, "compare as string return NaN")
+    console.log(date1b.localeCompare(date2))
+
 });
 
 

@@ -19,8 +19,8 @@ Cypress.Commands.add('createUser', (first_name, last_name, email, password) => {
     .click()
   cy.wait("@getActivities")
 
-  cy.get('#table_users')
-    .should("contain", `${first_name} ${last_name}`)
+  cy.contains('#table_users', `${first_name}`)
+  cy.contains('#table_users', `${last_name}`)
 
   return cy.getBiggestId("#table_users")
 })

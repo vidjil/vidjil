@@ -1227,10 +1227,8 @@ Database.prototype = {
 
         document.querySelectorAll("thead td.sortable").forEach(function(th) {
             th.style.cursor = "pointer";
-            var icon = th.querySelector(".sort-icon");
-            if (icon) icon.textContent = " ↕";
 
-            th.addEventListener("click", function() {
+            th.addEventListener("click", function () {
                 // Find the parent table's id to pass it to sort_table
                 var tableId = th.closest("table").id;
                 self.sort_table(th.dataset.sort, tableId);
@@ -1291,7 +1289,7 @@ Database.prototype = {
         // Replace the hardcoded #table_users with the dynamic tableId
         var headers = document.querySelectorAll("#" + tableId + " thead td");
         var colIndex = -1;
-        headers.forEach(function(th, index) {
+        headers.forEach(function (th, index) {
             if (th.dataset.sort === col) colIndex = index;
         });
 
@@ -1300,7 +1298,7 @@ Database.prototype = {
         var tbody = document.querySelector("#" + tableId + " tbody");
         var rows = Array.from(tbody.querySelectorAll("tr"));
 
-        rows.sort(function(rowA, rowB) {
+        rows.sort(function (rowA, rowB) {
             var cellA = rowA.querySelectorAll("td")[colIndex].innerText.trim();
             var cellB = rowB.querySelectorAll("td")[colIndex].innerText.trim();
 
@@ -1308,9 +1306,17 @@ Database.prototype = {
             var numB = parseFloat(cellB);
             var isNumeric = !isNaN(numA) && !isNaN(numB);
 
+            var dateA = isDate(cellA);
+            var dateB = isDate(cellB);
+            var valuesAreDate = !isNaN(dateA) && !isNaN(dateB);
+            console.log(valuesAreDate)
+
+
             var comparison;
             if (isNumeric) {
                 comparison = numA - numB;
+            } if (valuesAreDate) {
+                comparison = new Date(cellA) - new Date(cellB);
             } else {
                 comparison = cellA.localeCompare(cellB);
             }
@@ -1318,13 +1324,21 @@ Database.prototype = {
             return self.currentSortAsc ? comparison : -comparison;
         });
 
-        rows.forEach(function(row) { tbody.appendChild(row); });
+        rows.forEach(function (row) { tbody.appendChild(row); });
 
         // Update sort icons only within the active table
-        document.querySelectorAll("#" + tableId + " thead td[data-sort]").forEach(function(th) {
-            var icon = th.querySelector(".sort-icon");
+        document.querySelectorAll("#" + tableId + " thead td[data-sort]").forEach(function (th) {
+            var icon = th.querySelector("span");
             if (!icon) return;
-            icon.textContent = (th.dataset.sort === col) ? (self.currentSortAsc ? " ↑" : " ↓") : " ↕";
+            if (th.dataset.sort === col) {
+                if (self.currentSortAsc) {
+                    icon.className = "icon-sort-alt-up"
+                } else {
+                    icon.className = "icon-sort-alt-down"
+                }
+            } else {
+                icon.className = "icon-arrow-combo"
+            }
         });
     },
 
