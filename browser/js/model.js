@@ -369,6 +369,9 @@ Model.prototype = {
         this.system_selected = []
         this.saved_system_selected_by_config = {}
         this.top = 50
+        
+        // Reset primers selection when changing patient/data
+        this.primerSetCurrent = undefined
     },
     
     
