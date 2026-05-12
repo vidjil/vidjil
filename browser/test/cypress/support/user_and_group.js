@@ -39,7 +39,7 @@ Cypress.Commands.add("goToCorrespondingUserGroup", (user_id) => {
   cy.get("#table_users")
     .contains("tr td:nth-child(1)", user_id)
     .parent()
-    .contains("td:nth-child(5) > a", "user_")
+    .contains("td:nth-child(6) > a", "user_")
     .dblclick()
   cy.wait("@getActivities")
 
