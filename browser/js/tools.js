@@ -741,15 +741,6 @@ function sendErrorToDb(err, db) {
 }
 
 
-/**
- * Tell if a string value is a date or not
- */
-function isDate(str) {
-    const d = new Date(str);
-    return d instanceof Date && !isNaN(d.getTime());
-}
-
-
 /*
  * Removes all children from the specified node.
  * This function should be more efficient and faster than `innerHTML = ''`.

@@ -1306,17 +1306,11 @@ Database.prototype = {
             var numB = parseFloat(cellB);
             var isNumeric = !isNaN(numA) && !isNaN(numB);
 
-            var dateA = isDate(cellA);
-            var dateB = isDate(cellB);
-            var valuesAreDate = !isNaN(dateA) && !isNaN(dateB);
-            console.log(valuesAreDate)
 
 
             var comparison;
             if (isNumeric) {
                 comparison = numA - numB;
-            } if (valuesAreDate) {
-                comparison = new Date(cellA) - new Date(cellB);
             } else {
                 comparison = cellA.localeCompare(cellB);
             }
