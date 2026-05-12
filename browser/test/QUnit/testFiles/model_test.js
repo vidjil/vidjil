@@ -404,19 +404,26 @@ QUnit.test("model: primer detection", function(assert) {
     // Test switch to a Qunit dataset
     m.primersSetData = primersSetData // no primer for IGH, One primer for TRG
     assert.equal(m.switchPrimersSet("primer_test"), 0, "primer set 'primer_test' exist & are set")
-    var ready = assert.async(2)
-
+    var ready = assert.async(3)
+    
     setTimeout( function(){
         // primer found inside clones
         assert.equal(m.clones[2]["seg"]["primer5"], undefined, "Control neg primer 5 not in sequence")
         assert.equal(m.clones[2]["seg"]["primer3"], undefined, "Control neg primer 3 not in sequence")
         assert.deepEqual(m.clones[3]["seg"]["primer5"], { seq: "GGAAGGCCCCACAGCG", start: 0, stop: 15 },    "Found primer 5")
         assert.deepEqual(m.clones[3]["seg"]["primer3"], { seq: "AACTTCGCCTGGTAA",  start: 226, stop: 240 }, "Found primer 3")
+        assert.equal(m.primerSetCurrent, "primer_test", "primer set 'primer_test' is selected")
+        console.log(m.primerSetCurrent)
         m.cleanPreviousFeature("primer3")
         ready()
     }, 200)
     setTimeout( function(){
         assert.equal(typeof m.clones[3]["seg"]["primer3"], "undefined", "Feature has been deleted before new attribution")
+        ready()
+    }, 300)
+    setTimeout( function(){
+        m.parseJsonData(json_data, 100)
+        assert.equal(m.primerSetCurrent, undefined, "primer set is reset as undefined after reload of new analysis")
         ready()
     }, 300)
 

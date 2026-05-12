@@ -505,6 +505,7 @@ Database.prototype = {
             this.m.file_source = "database";
             this.m.loadGermline()
                 .initClones();
+            this.m.buildPrimersMenu()
             this.load_analysis(args);
             this.last_file = args
             this.close()

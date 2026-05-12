@@ -139,6 +139,33 @@ describe('Settings', function () {
       cy.get('#rs-save-select')
         .select("own_template_XXX")
       return 
+
+    })
+
+
+    it('05 - reset selected primerset',  function() {
+      cy.openAnalysis("doc/analysis-example2.vidjil")
+      
+      // At init, no primer gap computed
+      cy.changePreset("visu", "Primers gap")
+      cy.get("#visu_id_label_x_undefined")
+        .should("exist")
+      
+      // After primer set selection, undefined primer gap is no more present
+      cy.get("#primers_ecngs").click({force:true})
+      cy.get("#visu_id_label_x_undefined")
+        .should("not.be.visible")
+      cy.get("#visu_id_label_x_100")
+        .should("exist")
+      
+      // After loading of new analysis, primer set is reseted to undefined
+      cy.openAnalysis("doc/analysis-example2.vidjil")
+      cy.changePreset("visu", "Primers gap")
+      cy.get("#visu_id_label_x_undefined")
+        .should("exist")
+      cy.get("#visu_id_label_x_100")
+        .should("not.exist")
+
     })
 
   
