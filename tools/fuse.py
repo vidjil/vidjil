@@ -207,9 +207,10 @@ class Window:
         utils.concatenate_with_padding(obj.d,
                                  self.d, len(self.d["reads"]),
                                  other.d, len(other.d["reads"]),
-                                 myList)
+                                 myList, recursive=True)
+        
         # MRD data, only if none is empty
-        # TODO: Make this more generic to work with any MRD setup
+        # OLD MRD setup, will be deprecated in the future
         zeroed = {"copy_number": [0],
                   "R2": [0],
                   "family": ["None"],
@@ -222,6 +223,7 @@ class Window:
                     for warn in source.d["warn"]:
                         obj.d["warn"].append(warn)
 
+        # OLD MRD setup, will be deprecated in the future
         if "mrd" in self.d or "mrd" in other.d:
             if "mrd" in self.d:
                 first = self.d["mrd"]
@@ -498,6 +500,9 @@ class PreProcesses:
 
     def __setitem__(self, item, value):
         return self.d.__setitem__(item, value)
+
+    def get(self, key, default=None):
+        return self.d.get(key, default)
 
 class Samples:
 

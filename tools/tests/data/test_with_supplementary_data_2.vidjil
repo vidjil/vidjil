@@ -1,0 +1,1712 @@
+{
+  "clones": [
+    {
+      "_average_read_length": [
+        "177.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "177 bp (100% of 177.0 bp)"
+      ],
+      "germline": "TRB",
+      "id": "ATCTCTGTGCCAGCAGCTTAGGTCCCTCGTACGAGCAGTACTTCGGGCCG",
+      "name": "TRBV11-2*01 1/GTCC/0 TRBJ2-7*01",
+      "reads": [
+        800
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "TRBJ2-7*01",
+          "start": 141
+        },
+        "5": {
+          "delRight": 1,
+          "name": "TRBV11-2*01",
+          "stop": 136
+        },
+        "N": 4,
+        "cdr3": {
+          "aa": "ASSLGPSYEQY",
+          "seq": "GCCAGCAGCTTAGGTCCCTCGTACGAGCAGTAC",
+          "start": 124,
+          "stop": 156
+        },
+        "evalue": {
+          "val": "4.92e-74"
+        },
+        "junction": {
+          "aa": "CASSLGPSYEQYF",
+          "productive": true,
+          "start": 121,
+          "stop": 159
+        }
+      },
+      "sequence": "AACGGTGTAGTGGATGATTCACAGTTGCCTAAGGATCGATTTTCTGCAGAGAGGCTCAAAGGAGTAGACTCCACTCTCAAGATCCAGCCTGCAAAGCTTGAGGACTCGGCCGTGTATCTCTGTGCCAGCAGCTTAGGTCCCTCGTACGAGCAGTACTTCGGGCCGGGCACCAGGCTC",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            null
+          ],
+          "normalized_cells": [
+            null
+          ],
+          "normalized_reads": [
+            100
+          ]
+        }
+      },
+      "top": 1
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "IGK+",
+      "id": "GCCGTAGCCAGCTTTCCTTCTTTAGAGCCCTAGTGGCAGC",
+      "label": "cIT-QC  ALL/MIK  intron-Kde  intron 4/6/1 Kde  PCVCPIDAAVASFPSL#SPSGSPGR  unk",
+      "name": "intron-Kde  intron 4/6/1 Kde  PCVCPIDAAVASFPSL#SPSGSPGR  unk",
+      "reads": [
+        120
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "GCCGTAGCCAGCTTTCCTTCTTTAGAGCCCTAGTGGCAGC",
+          "start": 1,
+          "stop": 43
+        }
+      },
+      "sequence": "CACCGCGCTCTTGGGGCAGCCGCCTTGCCGCTAGTGGCCGTGGCCACCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTTCTTTAGAGCCCTAGTGGCAGCCCAGGGCGACTCCTCATGAGTCTGCAGCTGC",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            true
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            0.4166666666666667
+          ]
+        }
+      },
+      "top": 2,
+      "warn": [
+        {
+          "code": "W31",
+          "level": "warn",
+          "msg": "Outlier spike: normalization factor anomaly detected"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        "372.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "372 bp (100% of 372.0 bp)"
+      ],
+      "germline": "IGK",
+      "id": "CCTATTACTGCCAACAATATAATAGACTTTGGACGTTCGGCCAAGGGACC",
+      "name": "IGKV1-5*03 9/ACTT/1 IGKJ1*01",
+      "reads": [
+        120
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 1,
+          "delRight": 59,
+          "name": "IGKJ1*01",
+          "start": 316,
+          "stop": 352
+        },
+        "5": {
+          "delLeft": 0,
+          "delRight": 9,
+          "name": "IGKV1-5*03",
+          "start": 34,
+          "stop": 311
+        },
+        "N": 4,
+        "cdr3": {
+          "aa": "QQYNRLWT",
+          "seq": "CAACAATATAATAGACTTTGGACG",
+          "start": 298,
+          "stop": 321
+        },
+        "evalue": {
+          "val": "1.17e-53"
+        },
+        "junction": {
+          "aa": "CQQYNRLWTF",
+          "productive": true,
+          "start": 295,
+          "stop": 324
+        }
+      },
+      "sequence": "CTCCTGCTACTCTGGCTCCCAGGTGCCAAATGTGACATCCAGATGACCCAGTCTCCTTCCACCCTGTCTGCGTCTGTAGGAGACAGAGTCACCATCACCTGCCGGGCCAGTCAGAGTATTAATAACAACTTGGCCTGGTATCAGGAGAAGCCAGGGAAAGCCCCTAAGGTCCTGATCTATAAGGCGTCTAGTTTAGAAAGTGGGGTCCCATCAAGGTTCAGCGGCAGTGGATCTGGGACAGAATTCACTCTCACCATCAGCAGCCTGCAGCCTGATGATTTTGCAACCTATTACTGCCAACAATATAATAGACTTTGGACGTTCGGCCAAGGGACCAAGGTGGAAGTCAAACGAACTGTGGCTGCACCATCT",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            null
+          ],
+          "normalized_cells": [
+            null
+          ],
+          "normalized_reads": [
+            null
+          ]
+        }
+      },
+      "top": 3
+    },
+    {
+      "_average_read_length": [
+        "194.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "194 bp (100% of 194.0 bp)"
+      ],
+      "germline": "TRD",
+      "id": "CTTGGGGAATCTCGATTTCCTACCGTACTGGGGGATCTCGGGACACCGAT",
+      "name": "TRDV1*01 2/TCTCGATTTCCTACCGT/0 TRDD3*01 3/CTCGGG/0 TRDJ1*01",
+      "reads": [
+        100
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "TRDJ1*01",
+          "start": 147
+        },
+        "4": {
+          "delLeft": 0,
+          "delRight": 3,
+          "name": "TRDD3*01",
+          "start": 131,
+          "stop": 140
+        },
+        "5": {
+          "delRight": 2,
+          "name": "TRDV1*01",
+          "stop": 113
+        },
+        "N1": 17,
+        "N2": 6,
+        "cdr3": {
+          "aa": "ALGESRFPTVLGDLG#TDKLI",
+          "seq": "GCTCTTGGGGAATCTCGATTTCCTACCGTACTGGGGGATCTCGGGACACCGATAAACTCATC",
+          "start": 102,
+          "stop": 163
+        },
+        "evalue": {
+          "val": "3.58e-159"
+        },
+        "junction": {
+          "aa": "CALGESRFPTVLGDLG#TDKLIF",
+          "productive": false,
+          "start": 99,
+          "stop": 166,
+          "unproductive": "out-of-frame"
+        }
+      },
+      "sequence": "CAAAAAGTGGTCGCTATTCTGTCAACTTCAAGAAAGCAGCGAAATCCGTCGCCTTAACCATTTCAGCCTTACAGCTAGAAGATTCAGCAAAGTACTTTTGTGCTCTTGGGGAATCTCGATTTCCTACCGTACTGGGGGATCTCGGGACACCGATAAACTCATCTTTGGAAAAGGAACCCGTGTGACTGTGGAAC",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            null
+          ],
+          "normalized_cells": [
+            null
+          ],
+          "normalized_reads": [
+            null
+          ]
+        }
+      },
+      "top": 4
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "IGK+",
+      "id": "CCCTGTGTCTGCCCGATTAATGCTGCCGTAGCCAGCTTTCCGGAGCCCTAGTGGCAGCCCAGGGCGA",
+      "label": "cIT-QC  REH  intron-Kde  intron 5// Kde  PCVCPINAAVASF##SPSGSPGR  unk",
+      "name": "intron-Kde  intron 5// Kde  PCVCPINAAVASF##SPSGSPGR  unk",
+      "reads": [
+        100
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "CCCTGTGTCTGCCCGATTAATGCTGCCGTAGCCAGCTTTCCGGAGCCCTAGTGGCAGCCCAGGGCGA",
+          "start": 1,
+          "stop": 75
+        }
+      },
+      "sequence": "CACCGCGCTCTTGGGGCAGCCGCCTTGCCGCTAGTGGCCGTGGCCACCCTGTGTCTGCCCGATTAATGCTGCCGTAGCCAGCTTTCCGGAGCCCTAGTGGCAGCCCAGGGCGACTCCTCATGAGTCTGCAGCTGC",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 5,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "115.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "115 bp (100% of 115.0 bp)"
+      ],
+      "germline": "TRG",
+      "id": "GCCGTTTACTACTGTGCTGCGTGGAGACCCACTGGTTGGTTCAAGATATT",
+      "name": "TRGV10*02 6/AGAC/3 TRGJP1*01",
+      "reads": [
+        90
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 3,
+          "name": "TRGJP1*01",
+          "start": 65
+        },
+        "5": {
+          "delRight": 6,
+          "name": "TRGV10*02",
+          "stop": 60
+        },
+        "N": 4,
+        "cdr3": {
+          "aa": "AAWRPTGWFKI",
+          "seq": "GCTGCGTGGAGACCCACTGGTTGGTTCAAGATA",
+          "start": 52,
+          "stop": 84
+        },
+        "evalue": {
+          "val": "3.92e-114"
+        },
+        "junction": {
+          "aa": "CAAWRPTGWFKIF",
+          "productive": true,
+          "start": 49,
+          "stop": 87
+        }
+      },
+      "sequence": "ATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGAGACCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTT",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "normalized_cells": [
+            90.0
+          ],
+          "normalized_reads": [
+            10.956
+          ]
+        }
+      },
+      "top": 6
+    },
+    {
+      "_average_read_length": [
+        "155.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "155 bp (100% of 155.0 bp)"
+      ],
+      "germline": "TRA",
+      "id": "GCCTCTTACTTCTGCGCTGTGAGAGAGTATGAAAGTATTACCTCCCAGTT",
+      "name": "TRAV1-1*01 0//0 TRAJ1*01",
+      "reads": [
+        80
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "TRAJ1*01",
+          "start": 96
+        },
+        "5": {
+          "delRight": 0,
+          "name": "TRAV1-1*01",
+          "stop": 95
+        },
+        "N": 0,
+        "cdr3": {
+          "aa": "AVREYESITSQLQ",
+          "seq": "GCTGTGAGAGAGTATGAAAGTATTACCTCCCAGTTGCAA",
+          "start": 85,
+          "stop": 123
+        },
+        "evalue": {
+          "val": "1.06e-175"
+        },
+        "junction": {
+          "aa": "CAVREYESITSQLQF",
+          "productive": true,
+          "start": 82,
+          "stop": 126
+        }
+      },
+      "sequence": "TCTTCATTCCTTAGTCGCTCTGATAGTTATGGTTACCTCCTTCTACAGGAGCTCCAGATGAAAGACTCTGCCTCTTACTTCTGCGCTGTGAGAGAGTATGAAAGTATTACCTCCCAGTTGCAATTTGGCAAAGGAACCAGAGTTTCCACTTCTCC",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            null
+          ],
+          "normalized_cells": [
+            null
+          ],
+          "normalized_reads": [
+            null
+          ]
+        }
+      },
+      "top": 7
+    },
+    {
+      "_average_read_length": [
+        "152.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "152 bp (100% of 152.0 bp)"
+      ],
+      "germline": "TRB+",
+      "id": "GTGTAACATTGTGGGGACTAGTGTCAGTCCCCCTACGAGCAGTACTTCGG",
+      "name": "TRBD2*01 8/TGTCAGTCCC/2 TRBJ2-7*01",
+      "reads": [
+        70
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 2,
+          "delRight": 54,
+          "name": "TRBJ2-7*01",
+          "start": 102,
+          "stop": 146
+        },
+        "5": {
+          "delLeft": 0,
+          "delRight": 8,
+          "name": "TRBD2*01",
+          "start": 84,
+          "stop": 91
+        },
+        "N": 10,
+        "evalue": {
+          "val": "2.18e-100"
+        }
+      },
+      "sequence": "CTGCGCTTCCTGCCGCTGCCCAGTGGTTGGGGGAGGGGGACTAGCAGGGAGGAAACATTTTTGTATCATGGTGTAACATTGTGGGGACTAGTGTCAGTCCCCCTACGAGCAGTACTTCGGGCCGGGCACCAGGCTCACGGTTACAGGTAAGA",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "normalized_cells": [
+            70.0
+          ],
+          "normalized_reads": [
+            8.521333333333335
+          ]
+        }
+      },
+      "top": 8
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "TRG",
+      "id": "TGTGCCACCTGGGATAGGCCATTATAAGAAACTCTTT",
+      "label": "cIT-QC  Karpas299  VJ:Vg-Jg  V8 /2/5 J1=J2  CATWDR##YKKLF  unp",
+      "name": "VJ:Vg-Jg  V8 /2/5 J1=J2  CATWDR##YKKLF  unp",
+      "reads": [
+        70
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "TGTGCCACCTGGGATAGGCCATTATAAGAAACTCTTT",
+          "start": 1,
+          "stop": 38
+        }
+      },
+      "sequence": "TATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCCACCTGGGATAGGCCATTATAAGAAACTCTTTGGCAGTGGAACAACACT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 9,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "TRG",
+      "id": "CACCTGGGGATCCATATAGGTGAATTATTATAAGAAAC",
+      "label": "cIT-QC  JB6  VJ:Vg-Jg  V2 5/13/ J1=J2  CATWGSI*VNYYKKLF  unp",
+      "name": "VJ:Vg-Jg  V2 5/13/ J1=J2  CATWGSI*VNYYKKLF  unp",
+      "reads": [
+        60
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "CACCTGGGGATCCATATAGGTGAATTATTATAAGAAAC",
+          "start": 1,
+          "stop": 38
+        }
+      },
+      "sequence": "TATTACTGTGCCACCTGGGGATCCATATAGGTGAATTATTATAAGAAACT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 10,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "IGH+",
+      "id": "GTGAGGATATTGTAGTAGTACCAGCTGCTATTGAACTCTGCCAATGATGCTTTTGATATCTGG",
+      "label": "cIT-QC  TMM  DJ:Dh-Jh  D2-2 3/13/ J3  VRIL**YQLLLNSANDAFDIW  pop",
+      "name": "DJ:Dh-Jh  D2-2 3/13/ J3  VRIL**YQLLLNSANDAFDIW  pop",
+      "reads": [
+        60
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "GTGAGGATATTGTAGTAGTACCAGCTGCTATTGAACTCTGCCAATGATGCTTTTGATATCTGG",
+          "start": 1,
+          "stop": 64
+        }
+      },
+      "sequence": "GATTTTGTGGGGGTTCGTGTCACTGTGAGGATATTGTAGTAGTACCAGCTGCTATTGAACTCTGCCAATGATGCTTTTGATATCTGGGGCCAAGGGACAAT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 11,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "327.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "327 bp (100% of 327.0 bp)"
+      ],
+      "germline": "IGL",
+      "id": "TATTACTGCAGCTCATATACAAGCTTTCTTGGGTGTTCGGCGGAGGGACC",
+      "name": "IGLV2-14*01 12/TTTC/0 IGLJ3*02",
+      "reads": [
+        60
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 0,
+          "name": "IGLJ3*02",
+          "start": 300
+        },
+        "5": {
+          "delLeft": 0,
+          "delRight": 12,
+          "name": "IGLV2-14*01",
+          "start": 12,
+          "stop": 295
+        },
+        "N": 4,
+        "cdr3": {
+          "aa": "SSYTSF#WV",
+          "seq": "AGCTCATATACAAGCTTTCTTGGGTG",
+          "start": 281,
+          "stop": 306
+        },
+        "evalue": {
+          "val": "5.56e-49"
+        },
+        "junction": {
+          "aa": "CSSYTSF#WVF",
+          "productive": false,
+          "start": 278,
+          "stop": 309,
+          "unproductive": "out-of-frame"
+        }
+      },
+      "sequence": "GGTCCTGGGCCCAGTCTGCCCTGACTCAGCCTGCCTCCGTGTCTGGGTCTCCTGGACAGTCGATCACCATCTCCTGCACTGGAACCAGCAGTGACGTTGGTGGTTATAACTATGTCTCCTGGTACCAACAGCACCCAGGCAAAGCCCCCAAACTCATGATTTATGAGGTCAGTAATCGGCCCTCAGGGGTTTCTAATCGCTTCTCTGGCTCCAAGTCTGGCAACACGGCCTCCCTGACCATCTCTGGGCTCCAGGCGAGGACGAGGCTGATTATTACTGCAGCTCATATACAAGCTTTCTTGGGTGTTCGGCGGAGGGACCAAGCTG",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            null
+          ],
+          "normalized_cells": [
+            null
+          ],
+          "normalized_reads": [
+            null
+          ]
+        }
+      },
+      "top": 12
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "IGK+",
+      "id": "CCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTGAGCCCTAGTGGCAGCCCAGGGCGA",
+      "label": "cIT-QC  WSU-NHL  intron-Kde  intron 2//3 Kde  PCVCPIDAAVASFP##PSGSPGR  unk",
+      "name": "intron-Kde  intron 2//3 Kde  PCVCPIDAAVASFP##PSGSPGR  unk",
+      "reads": [
+        45
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "CCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTGAGCCCTAGTGGCAGCCCAGGGCGA",
+          "start": 1,
+          "stop": 75
+        }
+      },
+      "sequence": "CACCGCGCTCTTGGGGCAGCCGCCTTGCCGCTAGTGGCCGTGGCCACCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTGAGCCCTAGTGGCAGCCCAGGGCGACTCCTCATGAGTCTGCAGCTGC",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 13,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "TRG",
+      "id": "TGTGCTGCGTGGTCTTGAGGCTGGCGAAACTCTTT",
+      "label": "cIT-QC  JB6  VJ:Vg-Jg  V10 7/12/12 J1=J2  CAAWS*GW#KLF  unp",
+      "name": "VJ:Vg-Jg  V10 7/12/12 J1=J2  CAAWS*GW#KLF  unp",
+      "reads": [
+        40
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "TGTGCTGCGTGGTCTTGAGGCTGGCGAAACTCTTT",
+          "start": 1,
+          "stop": 35
+        }
+      },
+      "sequence": "TTACTACTGTGCTGCGTGGTCTTGAGGCTGGCGAAACTCTTTGGCAGTGG",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 14,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "IGK+",
+      "id": "CCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTCCGGAGCCCTAGTGGCAGCCCAGGGCGA",
+      "label": "cIT-QC  ALL/MIK  intron-Kde  intron 4/2/ Kde  PCVCPIDAAVASFP##SPSGSPGR  unk",
+      "name": "intron-Kde  intron 4/2/ Kde  PCVCPIDAAVASFP##SPSGSPGR  unk",
+      "reads": [
+        40
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "CCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTCCGGAGCCCTAGTGGCAGCCCAGGGCGA",
+          "start": 1,
+          "stop": 75
+        }
+      },
+      "sequence": "CACCGCGCTCTTGGGGCAGCCGCCTTGCCGCTAGTGGCCGTGGCCACCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTCCGGAGCCCTAGTGGCAGCCCAGGGCGACTCCTCATGAGTCTGCAGCTGC",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 15,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "TRB+",
+      "id": "GTGGGGACGGAGATCACCGGGGAGCTGTTTTTT",
+      "label": "cIT-QC  JB6  DJ:Db-Jb  D1 7/6/4 J2-2  VGTEITGELFF  pop",
+      "name": "DJ:Db-Jb  D1 7/6/4 J2-2  VGTEITGELFF  pop",
+      "reads": [
+        40
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "GTGGGGACGGAGATCACCGGGGAGCTGTTTTTT",
+          "start": 1,
+          "stop": 34
+        }
+      },
+      "sequence": "GCAGCTGCTCTGGTGGTCTCTCCCAGGCTCTGGGGGCGGACCCATGGGAGGGGCTGTTTTTGTACAAAGCTGTAACATTGTGGGGACGGAGATCACCGGGGAGCTGTTTTTTGGAGAAGGCTCTA",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 16,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "IGH+",
+      "id": "GTGGGGTATAGCAGCATCCCCCCCCCCTTACTTCCAGCACTGG",
+      "label": "cIT-QC  Raji  DJ:Dh-Jh  D6-13 8/12/6 J1  VGYSSIPPP#YFQHW  pop",
+      "name": "DJ:Dh-Jh  D6-13 8/12/6 J1  VGYSSIPPP#YFQHW  pop",
+      "reads": [
+        40
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "GTGGGGTATAGCAGCATCCCCCCCCCCTTACTTCCAGCACTGG",
+          "start": 1,
+          "stop": 43
+        }
+      },
+      "sequence": "GTTTCTGAAGGTGTCTGTGTCACAGTGGGGTATAGCAGCATCCCCCCCCCCTTACTTCCAGCACTGGGGCCAGGGCACCCT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 17,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "50.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "50 bp (100% of 50.0 bp)"
+      ],
+      "germline": "TRG",
+      "id": "CACCTGGGACGGGGGTTAAGTTCCTTTAGTGATTGGATCAAGA",
+      "label": "cIT-QC  Karpas299  VJ:Vg-Jg  V2 /13/4 JP2  CATWDGG*VP#SDWIKTF  unp",
+      "name": "VJ:Vg-Jg  V2 /13/4 JP2  CATWDGG*VP#SDWIKTF  unp",
+      "reads": [
+        40
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "CACCTGGGACGGGGGTTAAGTTCCTTTAGTGATTGGATCAAGA",
+          "start": 1,
+          "stop": 45
+        }
+      },
+      "sequence": "ATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACCTGTGCCACCTGGGACGGGGGTTAAGTTCCTTTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGG",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            false
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ],
+          "spike_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 18,
+      "warn": []
+    },
+    {
+      "_average_read_length": [
+        "353.00"
+      ],
+      "_coverage": [
+        1.0
+      ],
+      "_coverage_info": [
+        "353 bp (100% of 353.0 bp)"
+      ],
+      "germline": "IGH",
+      "id": "ATTACTGCCGCGGTCGATATTTTGACTGGTTATTACTTCGAACATGACTA",
+      "name": "IGHV3-74*02 7/CCGCGGT/6 IGHD3-9*01 4/CTTCGAACA/7 IGHJ4*02",
+      "reads": [
+        1
+      ],
+      "seg": {
+        "3": {
+          "delLeft": 7,
+          "delRight": 59,
+          "name": "IGHJ4*02",
+          "start": 311,
+          "stop": 351
+        },
+        "4": {
+          "delLeft": 6,
+          "delRight": 4,
+          "name": "IGHD3-9*01",
+          "start": 281,
+          "stop": 301
+        },
+        "5": {
+          "delRight": 7,
+          "name": "IGHV3-74*02",
+          "stop": 273
+        },
+        "N1": 7,
+        "N2": 9,
+        "cdr3": {
+          "aa": "RGRYFDWLLLRT#DY",
+          "seq": "CGCGGTCGATATTTTGACTGGTTATTACTTCGAACATGACTAC",
+          "start": 275,
+          "stop": 317
+        },
+        "evalue": {
+          "val": "1.93e-104"
+        },
+        "junction": {
+          "aa": "CRGRYFDWLLLRT#DYW",
+          "productive": false,
+          "start": 272,
+          "stop": 320,
+          "unproductive": "out-of-frame"
+        }
+      },
+      "sequence": "GGAGTCGGGGGGAGGCTTAGTTCAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTCAGTAGCTACTGGATGCACTGGGTCCGCCAAGCTCCAGGGAAGGGGCTGGTGTGGGTCTCACGTATTAATAGTGATGGGAGTAGCACAAGCTACGCGGACTCCGTGAAGGGCCGATTCACCATCTCCAGAGACAACGCCAAGAACACGCTGTATCTGCAAATGAACAGTCTGAGAGCCGAGGACACGGCTGTGTATTACTGCCGCGGTCGATATTTTGACTGGTTATTACTTCGAACATGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGGT",
+      "supplementary_data": {
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "locus_normalization_factor": [
+            null
+          ],
+          "normalized_cells": [
+            null
+          ],
+          "normalized_reads": [
+            null
+          ]
+        }
+      },
+      "top": 19
+    },
+    {
+      "_average_read_length": [
+        0
+      ],
+      "_coverage": [
+        0.0
+      ],
+      "_coverage_info": [
+        "0"
+      ],
+      "germline": "IGH+",
+      "id": "TAGTACCAGCTGCTATACAGACTACTGG",
+      "label": "cIT-QC  WSU-NHL  DJ:Dh-Jh  D2-2 1/1/8 J4  VRIL**YQLLY#DYW  pop",
+      "name": "DJ:Dh-Jh  D2-2 1/1/8 J4  VRIL**YQLLY#DYW  pop",
+      "reads": [
+        0
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "TAGTACCAGCTGCTATACAGACTACTGG",
+          "start": 1,
+          "stop": 28
+        }
+      },
+      "sequence": "AGGATATTGTAGTAGTACCAGCTGCTATACAGACTACTGGGGCCAGGGAA",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            true
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 20,
+      "warn": [
+        {
+          "code": "W32",
+          "level": "warn",
+          "msg": "Spike not detected in sample (generated with 0 reads)"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        0
+      ],
+      "_coverage": [
+        0.0
+      ],
+      "_coverage_info": [
+        "0"
+      ],
+      "germline": "TRB",
+      "id": "TTCTGTGCCAGCAGACTAGCGGGGGGACCAGATACGCAGT",
+      "label": "cIT-QC  JB6  VJ:Vb-(Db)-Jb  V12-3=V12-4 6/14/4 J2-3  CASRLAGGPDTQYF  pro",
+      "name": "VJ:Vb-(Db)-Jb  V12-3=V12-4 6/14/4 J2-3  CASRLAGGPDTQYF  pro",
+      "reads": [
+        0
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "TTCTGTGCCAGCAGACTAGCGGGGGGACCAGATACGCAGT",
+          "start": 1,
+          "stop": 40
+        }
+      },
+      "sequence": "TGTACTTCTGTGCCAGCAGACTAGCGGGGGGACCAGATACGCAGTATTTT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            true
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            null
+          ]
+        }
+      },
+      "top": 21,
+      "warn": [
+        {
+          "code": "W32",
+          "level": "warn",
+          "msg": "Spike not detected in sample (generated with 0 reads)"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        0
+      ],
+      "_coverage": [
+        0.0
+      ],
+      "_coverage_info": [
+        "0"
+      ],
+      "germline": "TRB",
+      "id": "TGCAGTGCTAGAGCCCAGATAGGGTCTAGCCCCCTCGAGCAGTACTTC",
+      "label": "cIT-QC  Karpas299  VJ:Vb-(Db)-Jb  V20-1 1/22/6 J2-7  CSARAQIGSSPLEQYF  pro",
+      "name": "VJ:Vb-(Db)-Jb  V20-1 1/22/6 J2-7  CSARAQIGSSPLEQYF  pro",
+      "reads": [
+        0
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "TGCAGTGCTAGAGCCCAGATAGGGTCTAGCCCCCTCGAGCAGTACTTC",
+          "start": 1,
+          "stop": 48
+        }
+      },
+      "sequence": "TCTGCAGTGCTAGAGCCCAGATAGGGTCTAGCCCCCTCGAGCAGTACTTC",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            true
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            null
+          ]
+        }
+      },
+      "top": 22,
+      "warn": [
+        {
+          "code": "W32",
+          "level": "warn",
+          "msg": "Spike not detected in sample (generated with 0 reads)"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        0
+      ],
+      "_coverage": [
+        0.0
+      ],
+      "_coverage_info": [
+        "0"
+      ],
+      "germline": "TRB",
+      "id": "CAGCAGGAGAGTTAGACGGGACAGGAACACTGAAGCTT",
+      "label": "cIT-QC  MOLT-13  VJ:Vb-(Db)-Jb  V10-1 6/18/1 J1-1  CASRRVRRDRNTEAFF  unp",
+      "name": "VJ:Vb-(Db)-Jb  V10-1 6/18/1 J1-1  CASRRVRRDRNTEAFF  unp",
+      "reads": [
+        0
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "CAGCAGGAGAGTTAGACGGGACAGGAACACTGAAGCTT",
+          "start": 1,
+          "stop": 38
+        }
+      },
+      "sequence": "TATTTCTGCGCCAGCAGGAGAGTTAGACGGGACAGGAACACTGAAGCTTT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            true
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            null
+          ]
+        }
+      },
+      "top": 23,
+      "warn": [
+        {
+          "code": "W32",
+          "level": "warn",
+          "msg": "Spike not detected in sample (generated with 0 reads)"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        0
+      ],
+      "_coverage": [
+        0.0
+      ],
+      "_coverage_info": [
+        "0"
+      ],
+      "germline": "TRB",
+      "id": "TGCAGTGCTAGAGGT",
+      "label": "cIT-QC  REH  VJ:Vb-(Db)-Jb  V20-1 1/2/26 J2-7  CSARG  unp",
+      "name": "VJ:Vb-(Db)-Jb  V20-1 1/2/26 J2-7  CSARG  unp",
+      "reads": [
+        0
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "TGCAGTGCTAGAGGT",
+          "start": 1,
+          "stop": 15
+        }
+      },
+      "sequence": "AGCTTCTACATCTGCAGTGCTAGAGGTGCACCAGGCTCACGGTCACAGGT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            true
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            null
+          ]
+        }
+      },
+      "top": 24,
+      "warn": [
+        {
+          "code": "W32",
+          "level": "warn",
+          "msg": "Spike not detected in sample (generated with 0 reads)"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        0
+      ],
+      "_coverage": [
+        0.0
+      ],
+      "_coverage_info": [
+        "0"
+      ],
+      "germline": "TRB+",
+      "id": "GTGGGGACAGGGGGCCTTAATTCACCCCTCCACTTT",
+      "label": "cIT-QC  Karpas299  DJ:Db-Jb  D1 /2/6 J1-6  VGTGGLNSPLHF  pop",
+      "name": "DJ:Db-Jb  D1 /2/6 J1-6  VGTGGLNSPLHF  pop",
+      "reads": [
+        0
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "GTGGGGACAGGGGGCCTTAATTCACCCCTCCACTTT",
+          "start": 1,
+          "stop": 36
+        }
+      },
+      "sequence": "CTGTAACATTGTGGGGACAGGGGGCCTTAATTCACCCCTCCACTTTGGGA",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            true
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 25,
+      "warn": [
+        {
+          "code": "W32",
+          "level": "warn",
+          "msg": "Spike not detected in sample (generated with 0 reads)"
+        }
+      ]
+    },
+    {
+      "_average_read_length": [
+        0
+      ],
+      "_coverage": [
+        0.0
+      ],
+      "_coverage_info": [
+        "0"
+      ],
+      "germline": "TRB+",
+      "id": "GTGGGGACAGGGGGCTCAGCCCCAGCATTTT",
+      "label": "cIT-QC  MOLT-13  DJ:Db-Jb  D1 //6 J1-5  VGTGG#QPQHF  pop",
+      "name": "DJ:Db-Jb  D1 //6 J1-5  VGTGG#QPQHF  pop",
+      "reads": [
+        0
+      ],
+      "seg": {
+        "junction": {
+          "aa": "spike",
+          "productive": false,
+          "seq": "GTGGGGACAGGGGGCTCAGCCCCAGCATTTT",
+          "start": 1,
+          "stop": 31
+        }
+      },
+      "sequence": "ACAAAGCTGTAACATTGTGGGGACAGGGGGCTCAGCCCCAGCATTTTGGT",
+      "supplementary_data": {
+        "mrd": {
+          "is_missing": [
+            true
+          ],
+          "is_outlier": [
+            false
+          ],
+          "is_spike": [
+            true
+          ],
+          "locus_normalization_factor": [
+            1.0
+          ]
+        }
+      },
+      "top": 26,
+      "warn": [
+        {
+          "code": "W32",
+          "level": "warn",
+          "msg": "Spike not detected in sample (generated with 0 reads)"
+        }
+      ]
+    }
+  ],
+  "config": {
+    "all": true,
+    "alternative-genes": "0",
+    "analysis-e-value-D": "0.05",
+    "analysis-filter": "1",
+    "case-insensitive": false,
+    "clean-memory": false,
+    "cluster-N": "10",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "cluster-save-matrix": false,
+    "consensus-on-longest-sequences": false,
+    "dir": "./out/",
+    "e-value": "1",
+    "e-value-kmer": "-1",
+    "filter-reads": false,
+    "germline": "/home/lscottod/code/vidjil-algo-2025.12/germline/homo-sapiens.g",
+    "gz": false,
+    "help-advanced": false,
+    "label-filter": false,
+    "label-json": "cIT_QC_config_test.json",
+    "max-consensus": "100",
+    "min-ratio": "0",
+    "min-reads": "5",
+    "no-airr": false,
+    "no-vidjil": false,
+    "not-analyzed-as-clones": false,
+    "out-affects": false,
+    "out-clone-files": false,
+    "out-details": false,
+    "out-detected": false,
+    "out-reads": false,
+    "out-undetected": false,
+    "out-vdjfa": false,
+    "plain-index": false,
+    "several-D": false,
+    "show-junction": false,
+    "verbose": false
+  },
+  "diversity": {
+    "index_Ds_diversity": {
+      "all": 1.0
+    },
+    "index_E_equitability": {
+      "all": 1.0000000027478353
+    },
+    "index_H_entropy": {
+      "all": 2.079441547393799
+    }
+  },
+  "germlines": {
+    "ref": "https://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
+    "species": "Homo sapiens",
+    "species_taxon_id": 9606
+  },
+  "reads": {
+    "clones": {
+      "IGH": [
+        2
+      ],
+      "IGK": [
+        4
+      ],
+      "IGL": [
+        1
+      ],
+      "TRA": [
+        1
+      ],
+      "TRB": [
+        1
+      ],
+      "TRB+": [
+        2
+      ],
+      "TRD": [
+        1
+      ],
+      "TRG": [
+        4
+      ]
+    },
+    "germline": {
+      "IGH": [
+        101
+      ],
+      "IGK": [
+        365
+      ],
+      "IGL": [
+        60
+      ],
+      "TRA": [
+        80
+      ],
+      "TRB": [
+        800
+      ],
+      "TRB+": [
+        110
+      ],
+      "TRD": [
+        100
+      ],
+      "TRG": [
+        210
+      ]
+    },
+    "segmented": [
+      1826
+    ],
+    "spikes": {
+      "clones": {
+        "IGH+": [
+          2
+        ],
+        "IGK+": [
+          4
+        ],
+        "TRB+": [
+          1
+        ],
+        "TRG": [
+          4
+        ],
+        "total": [
+          11
+        ]
+      },
+      "reads": {
+        "IGH+": [
+          100
+        ],
+        "IGK+": [
+          305
+        ],
+        "TRB+": [
+          40
+        ],
+        "TRG": [
+          210
+        ],
+        "total": [
+          655
+        ]
+      }
+    },
+    "total": [
+      1826
+    ]
+  },
+  "samples": {
+    "commandline": [
+      "./vidjil-algo demo/Demo-X5_mod.fa -g /home/lscottod/code/vidjil-algo-2025.12/germline/homo-sapiens.g --all "
+    ],
+    "log": [
+      "Test file with 5-case spike design (20 spikes in config, subset in vidjil):\nCase 1 TRB: 4 spikes in config, 0 in vidjil\nCase 2 TRB+: 3 spikes in config, 1 in vidjil (JB6)\nCase 3 IGH+: 3 spikes in config, 2 in vidjil (Raji, TMM)\nCase 4 IGK+: 4 spikes in config, 4 in vidjil (outlier: REH 100 copies, 3 reads)\nCase 5 TRG: 4 spikes in config, 4 in vidjil\nDemonstrates aggregation methods (median vs mean) and outlier detection\n"
+    ],
+    "number": 1,
+    "original_names": [
+      "demo/Demo-X5_mod.fa"
+    ],
+    "pre-fuse": {
+      "log": [
+        "MRD pipeline post-processus\n\n(cIT-QC normalization; 2026-05-13 09:19 # cIT-QC-normalization.py -i /home/lscottod/code/Vidjil_Lou_tests/MRD/test_mrd_with_outlier_spike.vidjil --aggregation-method mean -c cIT_QC_config_test.json --indent\n\nLoaded conf: Test EuroMRD spiking cIT-QC\n\nCheck the spikes present in the sample: IGH: expected spikes = 0\nIGH+: expected spikes = 3\ncIT-QC not found for IGH+: 1x\n\tcIT-QC  WSU-NHL  DJ:Dh-Jh  D2-2 1/1/8 J4  VRIL**YQLLY#DYW  pop\nIGK: expected spikes = 0\nIGK+: expected spikes = 4\nAll cIT-QC have been found for IGK+\nTRB: expected spikes = 4\ncIT-QC not found for TRB: 4x\n\tcIT-QC  JB6  VJ:Vb-(Db)-Jb  V12-3=V12-4 6/14/4 J2-3  CASRLAGGPDTQYF  pro\n\tcIT-QC  Karpas299  VJ:Vb-(Db)-Jb  V20-1 1/22/6 J2-7  CSARAQIGSSPLEQYF  pro\n\tcIT-QC  MOLT-13  VJ:Vb-(Db)-Jb  V10-1 6/18/1 J1-1  CASRRVRRDRNTEAFF  unp\n\tcIT-QC  REH  VJ:Vb-(Db)-Jb  V20-1 1/2/26 J2-7  CSARG  unp\nTRB+: expected spikes = 3\ncIT-QC not found for TRB+: 2x\n\tcIT-QC  Karpas299  DJ:Db-Jb  D1 /2/6 J1-6  VGTGGLNSPLHF  pop\n\tcIT-QC  MOLT-13  DJ:Db-Jb  D1 //6 J1-5  VGTGG#QPQHF  pop\nTRD: expected spikes = 0\nTRD+: expected spikes = 0\nTRG: expected spikes = 4\nAll cIT-QC have been found for TRG\n\nProcessing locus TRG with 4 spike(s), aggregation_method=mean\nLocus: TRG\n  cIT-QC  JB6  VJ:Vg-Jg  V10 7/12/12 J1=J2  CAAWS*GW#KLF  unp: 1.000\n  cIT-QC  JB6  VJ:Vg-Jg  V2 5/13/ J1=J2  CATWGSI*VNYYKKLF  unp: 1.000\n  cIT-QC  Karpas299  VJ:Vg-Jg  V2 /13/4 JP2  CATWDGG*VP#SDWIKTF  unp: 1.000\n  cIT-QC  Karpas299  VJ:Vg-Jg  V8 /2/5 J1=J2  CATWDR##YKKLF  unp: 1.000\n  No outliers detected for TRG\n  mean normalization factor [TRG] = 1.000 (mean (excluding outliers))\n\nProcessing locus IGK+ with 4 spike(s), aggregation_method=mean\nLocus: IGK+\n  cIT-QC  ALL/MIK  intron-Kde  intron 4/2/ Kde  PCVCPIDAAVASFP##SPSGSPGR  unk: 1.000\n  cIT-QC  ALL/MIK  intron-Kde  intron 4/6/1 Kde  PCVCPIDAAVASFPSL#SPSGSPGR  unk: 0.417\n  cIT-QC  REH  intron-Kde  intron 5// Kde  PCVCPINAAVASF##SPSGSPGR  unk: 1.000\n  cIT-QC  WSU-NHL  intron-Kde  intron 2//3 Kde  PCVCPIDAAVASFP##PSGSPGR  unk: 1.000\nWarning: 1 outlier(s) detected for IGK+:\n    - cIT-QC  ALL/MIK  intron-Kde  intron 4/6/1 Kde  PCVCPIDAAVASFPSL#SPSGSPGR  unk: factor=0.417 (bounds: 0.635 to 1.218750)\n      This spike may have been under- or over-represented in the sample.\n  mean normalization factor [IGK+] = 1.000 (mean (excluding outliers))\n\nProcessing locus TRB+ with 1 spike(s), aggregation_method=mean\nLocus: TRB+\n  cIT-QC  JB6  DJ:Db-Jb  D1 7/6/4 J2-2  VGTEITGELFF  pop: 1.000\n  No outliers detected for TRB+\n  mean normalization factor [TRB+] = 1.000 (mean (excluding outliers))\n\nProcessing locus IGH+ with 2 spike(s), aggregation_method=mean\nLocus: IGH+\n  cIT-QC  Raji  DJ:Dh-Jh  D6-13 8/12/6 J1  VGYSSIPPP#YFQHW  pop: 1.000\n  cIT-QC  TMM  DJ:Dh-Jh  D2-2 3/13/ J3  VRIL**YQLLLNSANDAFDIW  pop: 1.000\n  No outliers detected for IGH+\n  mean normalization factor [IGH+] = 1.000 (mean (excluding outliers))\n\nLocus normalization factor [TRG]: 1.0\nLocus normalization factor [IGK+]: 1.0\nLocus normalization factor [TRB+]: 1.0\nLocus normalization factor [IGH+]: 1.0\n\nGenerated clone for missing spike cIT-QC  WSU-NHL  DJ:Dh-Jh  D2-2 1/1/8 J4  VRIL**YQLLY#DYW  pop with 0 reads.\nGenerated clone for missing spike cIT-QC  JB6  VJ:Vb-(Db)-Jb  V12-3=V12-4 6/14/4 J2-3  CASRLAGGPDTQYF  pro with 0 reads.\nGenerated clone for missing spike cIT-QC  Karpas299  VJ:Vb-(Db)-Jb  V20-1 1/22/6 J2-7  CSARAQIGSSPLEQYF  pro with 0 reads.\nGenerated clone for missing spike cIT-QC  MOLT-13  VJ:Vb-(Db)-Jb  V10-1 6/18/1 J1-1  CASRRVRRDRNTEAFF  unp with 0 reads.\nGenerated clone for missing spike cIT-QC  REH  VJ:Vb-(Db)-Jb  V20-1 1/2/26 J2-7  CSARG  unp with 0 reads.\nGenerated clone for missing spike cIT-QC  Karpas299  DJ:Db-Jb  D1 /2/6 J1-6  VGTGGLNSPLHF  pop with 0 reads.\nGenerated clone for missing spike cIT-QC  MOLT-13  DJ:Db-Jb  D1 //6 J1-5  VGTGG#QPQHF  pop with 0 reads.\n\nSpike 'cIT-QC  ALL/MIK  intron-Kde  intron 4/6/1 Kde  PCVCPIDAAVASFPSL#SPSGSPGR  unk' marked as outlier.\n\n"
+      ]
+    },
+    "producer": [
+      "vidjil-algo 2025.12"
+    ],
+    "run_timestamp": [
+      "2026-03-12 14:34:30"
+    ],
+    "supplementary_data": {
+      "mrd": {
+        "locus_normalization_factor": {
+          "IGH": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": null
+            }
+          ],
+          "IGH+": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": 1.0
+            }
+          ],
+          "IGK": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": null
+            }
+          ],
+          "IGK+": [
+            {
+              "lower_bound": 0.6354166666666669,
+              "upper_bound": 1.21875,
+              "value": 1.0
+            }
+          ],
+          "IGL": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": null
+            }
+          ],
+          "TRA": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": null
+            }
+          ],
+          "TRB": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": null
+            }
+          ],
+          "TRB+": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": 1.0
+            }
+          ],
+          "TRD": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": null
+            }
+          ],
+          "TRD+": [
+            {
+              "lower_bound": null,
+              "upper_bound": null,
+              "value": null
+            }
+          ],
+          "TRG": [
+            {
+              "lower_bound": 1.0,
+              "upper_bound": 1.0,
+              "value": 1.0
+            }
+          ]
+        },
+        "normalization": [
+          true
+        ],
+        "outliers": [
+          {
+            "IGK+": {
+              "cIT-QC  ALL/MIK  intron-Kde  intron 4/6/1 Kde  PCVCPIDAAVASFPSL#SPSGSPGR  unk": {
+                "factor": 0.4166666666666667
+              }
+            }
+          }
+        ],
+        "total_cells": [
+          15000
+        ],
+        "total_normalized_reads": [
+          1030.4773333333333
+        ]
+      }
+    }
+  },
+  "vidjil_json_version": "2016b"
+}

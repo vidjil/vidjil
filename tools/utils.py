@@ -79,7 +79,7 @@ def concatenate_with_padding(
                 else:
                     d[key] += t2
             elif key == "normalized_reads":
-                d[key] += [None] * len(d2["reads"])
+                d[key] += [None] * d2_size
 
     for key in d2:
         if key in ignore_keys:
@@ -98,29 +98,31 @@ def concatenate_with_padding(
                 else:
                     d[key] = t1 + d2[key]
             elif key == "normalized_reads":
-                d[key] = [None] * len(d1["reads"]) + d2[key]
+                d[key] = [None] * d1_size + d2[key]
         else:
             d[key] = d[key] + d2[key]
 
     if recursive:
         keys = set(dict_keys)
         for k in keys:
-            if k not in d:
-                d[k] = {}
-            if k not in d1:
-                d1[k] = {}
-            if k not in d2:
-                d2[k] = {}
-            concatenate_with_padding(
-                d[k],
-                d1[k],
-                d1_size,
-                d2[k],
-                d2_size,
-                ignore_keys=ignore_keys,
-                recursive=True,
-                none_init=none_init,
-            )
+            # Only recurse when both d1[k] and d2[k] are dictionaries
+            if isinstance(d1.get(k), dict) or isinstance(d2.get(k), dict):
+                if k not in d:
+                    d[k] = {}
+                if k not in d1:
+                    d1[k] = {}
+                if k not in d2:
+                    d2[k] = {}
+                concatenate_with_padding(
+                    d[k],
+                    d1[k],
+                    d1_size,
+                    d2[k],
+                    d2_size,
+                    ignore_keys=None,
+                    recursive=True,
+                    none_init=none_init,
+                )
 
 
 class AccessedDict(dict):
