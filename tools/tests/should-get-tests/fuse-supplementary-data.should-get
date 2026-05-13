@@ -1,0 +1,99 @@
+################################
+### Fuse without any supplementary data
+!OUTPUT_FILE: fuse_supplementary_data_none.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS ../data/test_without_supplementary_data.vidjil ../data/test_without_supplementary_data.vidjil -o fuse_supplementary_data_none.vidjil;
+
+$ Fusion of two files without supplementary data works
+j: samples.number: 2
+
+$ Correct number of clones in merged output
+j: clones[18]
+j0: clones[19]
+
+$ No supplementary data in merged output
+j0: supplementary_data
+
+####################################
+### Fuse with supplementary data in one file only
+!OUTPUT_FILE: fuse_supplementary_data_partial.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS ../data/test_with_supplementary_data.vidjil ../data/test_without_supplementary_data.vidjil -o fuse_supplementary_data_partial.vidjil;
+
+$ Fusion with supplementary data in first file only
+j: samples.number: 2
+
+$ Correct number of clones in merged output
+j: clones[25]
+j0: clones[26]
+
+$ Supplementary data present in merged output at clone level
+j: clones[0].supplementary_data.mrd
+
+$ MRD data for the first clone is a list with correct values
+j: clones[0].supplementary_data.mrd.normalized_reads[0]: 200
+j: clones[0].supplementary_data.mrd.normalized_reads[1]: null
+
+$ MRD data at sample level is found
+j: samples.supplementary_data.mrd
+
+
+####################################
+### Fuse with supplementary data in both files
+!OUTPUT_FILE: fuse_supplementary_data_both.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS ../data/test_with_supplementary_data.vidjil ../data/test_with_supplementary_data_2.vidjil -o fuse_supplementary_data_both.vidjil;
+
+$ Fusion of two files with supplementary data
+j: samples.number: 2
+
+$ Correct number of clones in merged output
+j: clones[25]
+j0: clones[26]
+
+$ Supplementary data present in merged output at clone level
+j: clones[0].supplementary_data.mrd
+
+$ MRD data contains normalized_reads field
+j: clones[0].supplementary_data.mrd.normalized_reads
+
+$ MRD data for the first clone is a list with correct values
+j: clones[0].supplementary_data.mrd.normalized_reads[0]: 200
+j: clones[0].supplementary_data.mrd.normalized_reads[1]: 100
+
+$ MRD data at sample level is found
+j: samples.supplementary_data.mrd
+
+
+####################################
+### Fuse with multiple supplementary data in one file
+!OUTPUT_FILE: fuse_supplementary_data_multiple.vidjil
+!LAUNCH: $PYTHON ../../fuse.py $FUSE_OPTIONS ../data/test_with_supplementary_data.vidjil ../data/test_with_multiple_supplementary_data.vidjil -o fuse_supplementary_data_multiple.vidjil;
+
+$ Fusion of two files with supplementary data
+j: samples.number: 2
+
+$ Correct number of clones in merged output
+j: clones[25]
+j0: clones[26]
+
+$ Both supplementary data present in merged output at clone level
+j: clones[0].supplementary_data.mrd
+j: clones[0].supplementary_data.other_supplementary_data
+
+$ MRD data contains normalized_reads field
+j: clones[0].supplementary_data.mrd.normalized_reads
+
+$ other_supplementary_data contains "is_blue" key
+j: clones[0].supplementary_data.other_supplementary_data.is_blue 
+
+$ MRD data for the first clone are lists with correct values
+j: clones[0].supplementary_data.mrd.normalized_reads[0]: 200
+j: clones[0].supplementary_data.mrd.normalized_reads[1]: 100
+
+$ other_supplementary_data for the first clone is a list with correct values
+j: clones[0].supplementary_data.other_supplementary_data.is_blue[0]: false
+j: clones[0].supplementary_data.other_supplementary_data.is_blue[1]: true
+
+$ MRD data at sample level is found
+j: samples.supplementary_data.mrd
+
+$ other_supplementary_data at sample level is found
+j: samples.supplementary_data.other_supplementary_data
