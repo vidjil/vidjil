@@ -138,6 +138,7 @@ class TestConfigController(unittest.TestCase):
                 "config_name": db_manipulation_utils.TEST_CONFIG_NAME,
                 "config_info": "plop_info",
                 "config_command": "plop_command",
+                "config_prefuse_command": "plop_prefuse_command",
                 "config_fuse_command": "plop_fuse_command",
                 "config_program": "plop.cpp",
                 "config_classification": -1,
@@ -156,6 +157,7 @@ class TestConfigController(unittest.TestCase):
         assert config["name"] == db_manipulation_utils.TEST_CONFIG_NAME
         assert config["info"] == "plop_info"
         assert config["command"] == "plop_command"
+        assert config["prefuse_command"] == "plop_prefuse_command"
         assert config["fuse_command"] == "plop_fuse_command"
         assert config["program"] == "plop.cpp"
         assert config["classification"] is None
