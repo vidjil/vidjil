@@ -64,8 +64,8 @@ Cypress.Commands.add(
     config_name,
     config_class,
     config_soft,
-    config_prefuse,
     config_cmd,
+    config_prefuse,
     config_fuse,
     config_info
   ) => {
@@ -83,7 +83,9 @@ Cypress.Commands.add(
     }
 
     cy.get("#config_command").type(config_cmd);
-    cy.get("#config_prefuse_command").type(config_prefuse);
+    cy.get("#config_prefuse_command")
+        .then(e => { if (config_prefuse !== '') cy.wrap(e).type(config_prefuse) });
+    
     cy.get("#config_fuse_command").type(config_fuse);
     cy.get("#config_info").type(config_info);
   }
