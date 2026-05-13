@@ -409,9 +409,11 @@ describe('Visibility of panels', function () {
       cy.get('[data-sort="name"] > .icon-sort-alt-up')
         .should("exist")
       
-    // Sort by name: 7 - 9 - 10 - 1 - 8 - 6 - 11 - 12 - 4 - 3 - 2 - 5
+    // Sort by name: 9 - 7 - 10 - 1 - 8 - 6 - 11 - 12 - 4 - 3 - 2 - 5
+    // localcompare is case unsensitive; so "c" < "Ca..." < "cb..."
     cy.getRowIdListFromTable("#db_table_container").then((ids) => {
-      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('9')); // C vs c
+      expect(ids.indexOf('9')).to.be.lessThan(ids.indexOf('7')); // c vs Clonality
+      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('10')); // Clonality vs compress_output
       expect(ids.indexOf('9')).to.be.lessThan(ids.indexOf('8'));
       expect(ids.indexOf('8')).to.be.lessThan(ids.indexOf('6'));
     })
