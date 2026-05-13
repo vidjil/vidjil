@@ -25,6 +25,7 @@ before_script:
 
 
 stages:
+  - dependencies_audit
   - test_tools
   - test_quality
   - build_test_server_docker
@@ -219,6 +220,26 @@ test_browser_unit:
   extends:
     - .need_for_quick_test
 
+# Code security
+audit_dependencies:
+  image: python:3.11-slim
+  stage: dependencies_audit
+  before_script:
+    - apt-get update && apt-get install -y jq curl python3-virtualenv
+    - pip install --upgrade pip --no-cache-dir pip-audit
+  script:
+    - pip-audit -r requirements.txt -r requirements_dev.txt --format json -o vulnerability-report.json
+  artifacts:
+    when: always
+    paths:
+      - vulnerability-report.json
+    expire_in: 2 week
+  tags:
+    - cidocker
+  extends:
+    - .need_for_quick_test
+  rules:
+    - !reference [.rules_client_and_server]
 
 
 # Code quality
