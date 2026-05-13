@@ -944,3 +944,8 @@ Cypress.Commands.add("dbPageFilter", (value) => {
     .type("{enter}");
   cy.wait(["@postAllSampleSets", "@getActivities"]);
 });
+
+Cypress.Commands.add("getRowIdFromTable", (table, row_pos, expected) => {
+  cy.get(`${table} table tbody tr`)
+      .eq(row_pos).find('td').eq(0).should("contain", expected)
+});
