@@ -240,6 +240,37 @@ describe("Manipulate configs", function () {
         );
         cy.launchProcess("" + config_id, sample_id);
         cy.waitAnalysisCompleted(config_id, sample_id);
+
+        cy.get(`#status_${sample_id}_${config_id}`)
+          .click()
+
+        cy.get('#db_table_container > .active > .accordion-header')
+          .should('have.length', 2);
+
+        cy.get(':nth-child(2) > .accordion-header')
+          .click() // should hide first results log
+
+        cy.get('#db_table_container > .active > .accordion-header')
+          .should('have.length', 1);
+
+
+        cy.get(':nth-child(2) > .accordion-header')
+          .click() // show again
+
+        cy.get(':nth-child(2) > .accordion-header > .actions-wrapper > .icon-down')
+          .click()
+        cy.wait(500)
+
+        // Check that pre content have been scrolled to bottom
+        cy.get(':nth-child(2) > .accordion-content > .inner > pre')
+          .should(($pre) => {
+            const el = $pre[0];
+            const scrollBottom = el.scrollHeight - el.clientHeight;
+            
+            // On utilise be.closeTo car selon les navigateurs et le zoom, 
+            // il peut y avoir 1px d'écart
+            expect(el.scrollTop).to.be.closeTo(scrollBottom, 2);
+          });
       });
     });
   });
