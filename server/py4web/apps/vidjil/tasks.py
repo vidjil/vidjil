@@ -285,15 +285,14 @@ def run_vidjil(
             update_task(task_id, STATUS_FAILED)
             raise
 
-        if prefuse_cmd != "":
+        if prefuse_cmd != None and prefuse_cmd != "":
             log.info("=== Launching Prefuse Step ===")
-            log.info(prefuse_cmd)
+            print(f"{prefuse_cmd=}")
             log.info("========================")
             sys.stdout.flush()
 
             previous_prefuse_output = out_results
 
-            print(f"{prefuse_cmd.split(";")=}")
             for index, prefuse_command in enumerate(prefuse_cmd.split(";")):
                 try:
                     prefuse_command = prefuse_command.strip()
