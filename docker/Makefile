@@ -34,11 +34,11 @@ build-cypress:
 deploy-local-ci-env:
 	docker compose down
 	sudo rm -r volumes/ci || true
-	docker compose  --env-file .env-local-ci  -f docker-compose.yml -f docker-compose.override.yml  up -d mysql uwsgi
-	sleep 30
+	docker compose  --env-file .env-local-ci  -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-local.yml up -d mysql uwsgi
+	sleep 10
 	sudo chmod 777 -R ./volumes/ci
-	docker compose  --env-file .env-local-ci -f docker-compose.yml -f docker-compose.override.yml  up -d
-	sleep 30
+	docker compose  --env-file .env-local-ci -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-ci-local.yml up -d
+	sleep 10
 	# Make a call to truncate db and refill with example/testing data
 	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/scripts/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 load-sql.py -i /usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/ci_erase.sql"
 	docker compose exec -w "/usr/share/vidjil/server/py4web/apps/vidjil/tests/functional/" uwsgi bash -c "source /usr/share/vidjil/venv/bin/activate && python3 init_test_db.py"
