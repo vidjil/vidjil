@@ -1052,6 +1052,27 @@ function getNFirstSequences(data, n) {
     }
 }
 
+
+/**
+ * This function is used to scroll vidjil log in database page
+ */
+function scrollAccordionTo(buttonElement, scrollTo) {
+    // Get accordion parent div
+    const accordion = buttonElement.closest('.accordion');
+    
+    if (accordion) {
+        const container = accordion.querySelector('.accordion-content');
+        var top_value = (scrollTo == "bottom") ? container.scrollHeight : 0
+
+        if (container) {
+            container.scrollTo({
+                top: top_value,
+                behavior: 'smooth'
+            });
+        }
+    }
+}
+
 /**
  * @return a proxy URL if one can be obtained in the config (ending with /) or
  * throws an exception and logs the error.
