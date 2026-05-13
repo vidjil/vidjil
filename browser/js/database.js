@@ -1312,7 +1312,7 @@ Database.prototype = {
             if (isNumeric) {
                 comparison = numA - numB;
             } else {
-                comparison = cellA.localeCompare(cellB);
+                comparison = cellA.localeCompare(cellB, { caseFirst: 'upper' });
             }
 
             return self.currentSortAsc ? comparison : -comparison;
