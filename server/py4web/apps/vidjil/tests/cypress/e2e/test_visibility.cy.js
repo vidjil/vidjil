@@ -286,9 +286,11 @@ describe('Visibility of panels', function () {
      * User 3 => testing; logged at previous cypress test script
      */
     
-    cy.getRowIdFromTable("#db_table_container", 0, "1")
-    cy.getRowIdFromTable("#db_table_container", 1, "2")
-    cy.getRowIdFromTable("#db_table_container", 2, "3")
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 1 - 2 - 3 
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('3'));
+    })
 
     cy.get('[data-sort="lastName"] > .icon-arrow-combo').should("exist")
     cy.get('[data-sort="last_login"] > .icon-arrow-combo').should("exist")
@@ -299,9 +301,12 @@ describe('Visibility of panels', function () {
       .should("exist")
     cy.get('[data-sort="lastName"] > .icon-arrow-combo').should("exist")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "1")
-    cy.getRowIdFromTable("#db_table_container", 1, "3")
-    cy.getRowIdFromTable("#db_table_container", 2, "2")
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 1 - 3 - 2
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('3'));
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('2'));
+    })
 
     cy.get('[data-sort="firstName"]')
       .click()
@@ -310,22 +315,27 @@ describe('Visibility of panels', function () {
     cy.get('[data-sort="last_login"] > .icon-arrow-combo')
       .should("exist", "previous sort have unsorted icon again")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "1")
-    cy.getRowIdFromTable("#db_table_container", 1, "6")
-    cy.getRowIdFromTable("#db_table_container", 2, "2")
-    cy.getRowIdFromTable("#db_table_container", 3, "4")
-    cy.getRowIdFromTable("#db_table_container", 4, "3")
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 1 - 6 - 2 - 4 - 3 
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('6'));
+      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('4'));
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('3'));
+    })
 
     cy.get('[data-sort="firstName"]')
       .click()
     cy.get('[data-sort="firstName"] > .icon-sort-alt-down')
       .should("exist")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "3")
-    cy.getRowIdFromTable("#db_table_container", 1, "5")
-    cy.getRowIdFromTable("#db_table_container", 2, "2")
-    cy.getRowIdFromTable("#db_table_container", 3, "4")
-    cy.getRowIdFromTable("#db_table_container", 4, "6")
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 3 - 5 - 2 - 4 - 6
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('5'));
+      expect(ids.indexOf('5')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('4'));
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('6'));
+    })
 
 
     cy.get('[data-sort="groups"]')
@@ -333,9 +343,11 @@ describe('Visibility of panels', function () {
     cy.get('[data-sort="groups"] > .icon-sort-alt-up')
       .should("exist")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "1")
-    cy.getRowIdFromTable("#db_table_container", 1, "2")
-    cy.getRowIdFromTable("#db_table_container", 2, "3")
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('3'));
+    })
 
   })
 
@@ -363,10 +375,10 @@ describe('Visibility of panels', function () {
     // => Start sorted as classification is (and not text value)
     // Sorted by classification id: Human V(D)J recombinations < Other recombinations < Analysis with/for other software
     // Init state: [7 - 1 - 3 - 2] - [6 - 4 - 5] - [8 - 9 - 10 - 11 - 12]
-    cy.getRowIdFromTable("#db_table_container", 0, "7")
-    cy.getRowIdFromTable("#db_table_container", 4, "6")
-    cy.getRowIdFromTable("#db_table_container", 7, "8")
-    cy.getRowIdFromTable("#db_table_container", 8, "9")
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('6'));
+      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('8'));
+    })
 
     cy.get('[data-sort="classification"] > .icon-arrow-combo').should("exist")
     cy.get('[data-sort="name"] > .icon-arrow-combo').should("exist")
@@ -377,46 +389,42 @@ describe('Visibility of panels', function () {
       .should("exist")
 
       // Sort by classification value: [8 - 9 - 10 - 11 - 12] - [7 - 1 - 3 - 2] - [6 - 4 - 5]
-      cy.getRowIdFromTable("#db_table_container", 0, "8")
-      cy.getRowIdFromTable("#db_table_container", 1, "9")
-      cy.getRowIdFromTable("#db_table_container", 5, "7")
-      cy.getRowIdFromTable("#db_table_container", 9, "6")
-      
+      cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+        expect(ids.indexOf('8')).to.be.lessThan(ids.indexOf('7'));
+        expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('6'));
+      })
+
       cy.get('[data-sort="classification"]')
-      .click()
+        .click()
       cy.get('[data-sort="classification"] > .icon-sort-alt-down')
-      .should("exist")
+        .should("exist")
       
-      cy.getRowIdFromTable("#db_table_container", 0, "6")
-      cy.getRowIdFromTable("#db_table_container", 1, "4")
-      cy.getRowIdFromTable("#db_table_container", 3, "7")
-      cy.getRowIdFromTable("#db_table_container", 7, "8")
+      cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+        expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('7'));
+        expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('8'));
+      }
       
       cy.get('[data-sort="name"]')
-      .click()
+        .click()
       cy.get('[data-sort="name"] > .icon-sort-alt-up')
-      .should("exist")
+        .should("exist")
       
     // Sort by name: 7 - 9 - 10 - 1 - 8 - 6 - 11 - 12 - 4 - 3 - 2 - 5
-    cy.getRowIdFromTable("#db_table_container", 0, "7")
-    cy.getRowIdFromTable("#db_table_container", 1, "9")
-    cy.getRowIdFromTable("#db_table_container", 4, "8")
-    cy.getRowIdFromTable("#db_table_container", 5, "6")
-    cy.getRowIdFromTable("#db_table_container", 8, "4")
-    cy.getRowIdFromTable("#db_table_container", 11, "5")
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('9')); // C vs c
+      expect(ids.indexOf('9')).to.be.lessThan(ids.indexOf('8'));
+      expect(ids.indexOf('8')).to.be.lessThan(ids.indexOf('6'));
+    })
 
     cy.get('[data-sort="num"]')
       .click()
     cy.get('[data-sort="num"] > .icon-sort-alt-up')
       .should("exist")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "1")
-    cy.getRowIdFromTable("#db_table_container", 1, "2")
-    cy.getRowIdFromTable("#db_table_container", 2, "3")
-    cy.getRowIdFromTable("#db_table_container", 3, "4")
-    cy.getRowIdFromTable("#db_table_container", 4, "5")
-    cy.getRowIdFromTable("#db_table_container", 11, "12")
-
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('7'));
+      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('8'));
+    })
   })
 
   it('07-sort collumns - preprocess', function () {
@@ -432,11 +440,12 @@ describe('Visibility of panels', function () {
      */
     
     // => Start sorted on name
-    cy.getRowIdFromTable("#db_table_container", 0, "4")
-    cy.getRowIdFromTable("#db_table_container", 1, "3")
-    cy.getRowIdFromTable("#db_table_container", 2, "2")
-    cy.getRowIdFromTable("#db_table_container", 3, "1")
-    cy.getRowIdFromTable("#db_table_container", 4, "5")
+    // 4 - 3 - 2 - 1 - 5 
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('3'));
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('1'));
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('5'));
+    })
 
     cy.get('[data-sort="num"] > .icon-arrow-combo').should("exist")
     cy.get('[data-sort="name"] > .icon-arrow-combo').should("exist")
@@ -447,22 +456,25 @@ describe('Visibility of panels', function () {
     cy.get('[data-sort="name"] > .icon-sort-alt-up')
       .should("exist")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "5")
-    cy.getRowIdFromTable("#db_table_container", 1, "1")
-    cy.getRowIdFromTable("#db_table_container", 2, "2")
-    cy.getRowIdFromTable("#db_table_container", 3, "3")
-    cy.getRowIdFromTable("#db_table_container", 4, "4")
+    // 5 - 1 - 2 - 3 - 4 
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('5')).to.be.lessThan(ids.indexOf('1'));
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('4'));
+    })
+    
 
     cy.get('[data-sort="num"]')
       .click()
     cy.get('[data-sort="num"] > .icon-sort-alt-up')
       .should("exist")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "1")
-    cy.getRowIdFromTable("#db_table_container", 1, "2")
-    cy.getRowIdFromTable("#db_table_container", 2, "3")
-    cy.getRowIdFromTable("#db_table_container", 3, "4")
-    cy.getRowIdFromTable("#db_table_container", 4, "5")
+    // 1 - 2 - 3 - 4 - 5 
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('4'));
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('5'));
+    })
 
   })
 })
