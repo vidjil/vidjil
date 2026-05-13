@@ -353,13 +353,20 @@ describe('Visibility of panels', function () {
      * 4	Other recombinations	multi
      * 5	Other recombinations	TRG
      * 8	Analysis with/for other software	Export all clones (AIRR)
+     * ~~ Created during CI pipeline ~~
+     * 9	Analysis with/for other software	c
+     * 10	Analysis with/for other software	compress_output
+     * 11	Analysis with/for other software	import_vijdil_1
+     * 12	Analysis with/for other software	import_vidjil_2
      */
     
     // => Start sorted as classification is (and not text value)
-    // Human V(D)J recombinations < Other recombinations < Analysis with/for other software
+    // Sorted by classification id: Human V(D)J recombinations < Other recombinations < Analysis with/for other software
+    // Init state: [7 - 1 - 3 - 2] - [6 - 4 - 5] - [8 - 9 - 10 - 11 - 12]
     cy.getRowIdFromTable("#db_table_container", 0, "7")
     cy.getRowIdFromTable("#db_table_container", 4, "6")
     cy.getRowIdFromTable("#db_table_container", 7, "8")
+    cy.getRowIdFromTable("#db_table_container", 8, "9")
 
     cy.get('[data-sort="classification"] > .icon-arrow-combo').should("exist")
     cy.get('[data-sort="name"] > .icon-arrow-combo').should("exist")
@@ -369,30 +376,34 @@ describe('Visibility of panels', function () {
     cy.get('[data-sort="classification"] > .icon-sort-alt-up')
       .should("exist")
 
-    cy.getRowIdFromTable("#db_table_container", 0, "8")
-    cy.getRowIdFromTable("#db_table_container", 1, "7")
-    cy.getRowIdFromTable("#db_table_container", 5, "6")
-
-    cy.get('[data-sort="classification"]')
+      // Sort by classification value: [8 - 9 - 10 - 11 - 12] - [7 - 1 - 3 - 2] - [6 - 4 - 5]
+      cy.getRowIdFromTable("#db_table_container", 0, "8")
+      cy.getRowIdFromTable("#db_table_container", 1, "9")
+      cy.getRowIdFromTable("#db_table_container", 5, "7")
+      cy.getRowIdFromTable("#db_table_container", 9, "6")
+      
+      cy.get('[data-sort="classification"]')
       .click()
-    cy.get('[data-sort="classification"] > .icon-sort-alt-down')
+      cy.get('[data-sort="classification"] > .icon-sort-alt-down')
       .should("exist")
-
-    cy.getRowIdFromTable("#db_table_container", 0, "6")
-    cy.getRowIdFromTable("#db_table_container", 1, "4")
-    cy.getRowIdFromTable("#db_table_container", 3, "7")
-    cy.getRowIdFromTable("#db_table_container", 7, "8")
-
-    cy.get('[data-sort="name"]')
+      
+      cy.getRowIdFromTable("#db_table_container", 0, "6")
+      cy.getRowIdFromTable("#db_table_container", 1, "4")
+      cy.getRowIdFromTable("#db_table_container", 3, "7")
+      cy.getRowIdFromTable("#db_table_container", 7, "8")
+      
+      cy.get('[data-sort="name"]')
       .click()
-    cy.get('[data-sort="name"] > .icon-sort-alt-up')
+      cy.get('[data-sort="name"] > .icon-sort-alt-up')
       .should("exist")
-
+      
+    // Sort by name: 7 - 9 - 10 - 1 - 8 - 6 - 11 - 12 - 4 - 3 - 2 - 5
     cy.getRowIdFromTable("#db_table_container", 0, "7")
-    cy.getRowIdFromTable("#db_table_container", 1, "1")
-    cy.getRowIdFromTable("#db_table_container", 2, "8")
-    cy.getRowIdFromTable("#db_table_container", 3, "6")
-    cy.getRowIdFromTable("#db_table_container", 4, "4")
+    cy.getRowIdFromTable("#db_table_container", 1, "9")
+    cy.getRowIdFromTable("#db_table_container", 4, "8")
+    cy.getRowIdFromTable("#db_table_container", 5, "6")
+    cy.getRowIdFromTable("#db_table_container", 8, "4")
+    cy.getRowIdFromTable("#db_table_container", 11, "5")
 
     cy.get('[data-sort="num"]')
       .click()
@@ -404,6 +415,7 @@ describe('Visibility of panels', function () {
     cy.getRowIdFromTable("#db_table_container", 2, "3")
     cy.getRowIdFromTable("#db_table_container", 3, "4")
     cy.getRowIdFromTable("#db_table_container", 4, "5")
+    cy.getRowIdFromTable("#db_table_container", 11, "12")
 
   })
 
