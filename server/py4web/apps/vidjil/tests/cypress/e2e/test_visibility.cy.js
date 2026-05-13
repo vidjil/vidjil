@@ -402,7 +402,7 @@ describe('Visibility of panels', function () {
       cy.getRowIdListFromTable("#db_table_container").then((ids) => {
         expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('7'));
         expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('8'));
-      }
+      })
       
       cy.get('[data-sort="name"]')
         .click()
