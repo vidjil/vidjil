@@ -22,43 +22,50 @@
 
 #define EXTEND_D_ZONE 5
 
-#define RATIO_STRAND 2          /* The ratio between the affectations in one
-                                   strand and the other, to safely attribute a
-                                   segment to a given strand */
+// The ratio between the affectations in one strand and the other, to safely attribute a segment to
+// a given strand
+#define RATIO_STRAND 2
 
-#define DETECT_THRESHOLD_STRAND 5   /* If the number of total affectations
-                                       is above this threshold, then a sequence with no clearly attributed
-                                       strand will be marked as STRAND_NOT_CONSISTENT */
+// If the number of total affectations is above this threshold, then a sequence with no clearly
+// attributed strand will be marked as STRAND_NOT_CONSISTENT
+#define DETECT_THRESHOLD_STRAND 5
 
-#define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
+// The number of V/D/J predictions to keep
+#define JSON_REMEMBER_BEST  4
 
 #define BAD_EVALUE  1e10
 
-#define THRESHOLD_NB_EXPECTED 1.0 /* Threshold of the accepted expected value for number of found k-mers */
-#define THRESHOLD_NB_EXPECTED_D  .05 /* e-value threshold, D-REGION */
+// Threshold of the accepted expected value for number of found k-mers
+#define THRESHOLD_NB_EXPECTED 1.0
 
-#define BOTTOM_TRIANGLE_SHIFT  20   /* Should equal to (max allowed 'k-band') + (max allowed number of V/J deletions) - (min size to recognize facing J/V)
-                                       As we need ~10 bp to recognize the facing V/J, this value should be large enough to handle V/J deletions until ~30 bp,
-                                       (and even larger V/J deletions if there is a large facing J or V in the read). */
+// e-value threshold, D-REGION
+#define THRESHOLD_NB_EXPECTED_D  .05
 
-#define DEFAULT_WINDOW_SHIFT 5  /* Number of nucleotide to try shifting or
-                                   reducing the window when it doesn't fit at
-                                   its place */
-#define MINIMAL_WINDOW_LENGTH 30 /* As we now dynamically adapt the window
-                                    length we need to specify a minimum
-                                    otherwise we could go as low as
-                                    2*DEFAULT_WINDOW_SHIFT. Of course this can
-                                    be overriden by the command line by
-                                    providing a shorter -w*/
+// Should equal to (max allowed 'k-band') + (max allowed number of V/J deletions) - (min size to
+// recognize facing J/V). As we need ~10 bp to recognize the facing V/J, this value should be large
+// enough to handle V/J deletions until ~30 bp (and even larger V/J deletions if there is a large
+// facing J or V in the read)
+#define BOTTOM_TRIANGLE_SHIFT  20
 
-#define DEFAULT_MINIMIZE_WIDTH       12   /* Number of nucleotides on which the minimization integer is computed */
+// Number of nucleotide to try shifting or reducing the window when it doesn't fit at its place
+#define DEFAULT_WINDOW_SHIFT 5
 
-#define DEFAULT_MINIMIZE_ONE_MARGIN  20   /* Number of nucleotides on ends of the reads excluded from the minimization in SEG_METHOD_ONE.
-                                             - A read smaller than (DEFAULT_MINIMIZE_ONE_MARGIN*2 + max(k, DEFAULT_MINIMIZE_WIDTH)), that is 52,
-                                               will trigger UNSEG_TOO_SHORT_FOR_WINDOW.
-                                             - Margins above the half of the window length may produce shortened or shifted windows
-                                          */
-#define FRACTION_ALIGNED_AT_WORST .5 /* Fraction of the sequence that should be aligned before deactivating the heuristics */
+// As we now dynamically adapt the window length we need to specify a minimum otherwise we could go
+// as low as 2*DEFAULT_WINDOW_SHIFT. Of course this can be overriden by the command line by
+// providing a shorter -w
+#define MINIMAL_WINDOW_LENGTH 30
+
+// Number of nucleotides on which the minimization integer is computed
+#define DEFAULT_MINIMIZE_WIDTH       12
+
+// Number of nucleotides on ends of the reads excluded from the minimization in SEG_METHOD_ONE.
+// - A read smaller than (DEFAULT_MINIMIZE_ONE_MARGIN*2 + max(k, DEFAULT_MINIMIZE_WIDTH)), that is
+//   52, will trigger UNSEG_TOO_SHORT_FOR_WINDOW.
+// - Margins above the half of the window length may produce shortened or shifted windows
+#define DEFAULT_MINIMIZE_ONE_MARGIN  20
+
+// Fraction of the sequence that should be aligned before deactivating the heuristics
+#define FRACTION_ALIGNED_AT_WORST .5
 
 #define SHOW_NAME_WIDTH 15
 #define SHOW_MAX_GENE_ALIGNMENT 20
@@ -69,28 +76,24 @@
 using namespace std;
 using json = nlohmann::json;
 
-enum SEGMENTED { NOT_PROCESSED,
-		 TOTAL_SEG_AND_WINDOW,
-                 SEG_PLUS, SEG_MINUS,
-                 SEG_CHANGED_WINDOW,
-                 UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT,
-		 UNSEG_TOO_FEW_ZERO,  UNSEG_ONLY_V, UNSEG_ONLY_J,
-                 UNSEG_BAD_DELTA_MIN, UNSEG_AMBIGUOUS,
-		 UNSEG_TOO_SHORT_FOR_WINDOW,
+enum SEGMENTED
+{
+  NOT_PROCESSED,
+	TOTAL_SEG_AND_WINDOW,
+  SEG_PLUS, SEG_MINUS,
+  SEG_CHANGED_WINDOW,
+  UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT,
+	UNSEG_TOO_FEW_ZERO,  UNSEG_ONLY_V, UNSEG_ONLY_J,
+  UNSEG_BAD_DELTA_MIN, UNSEG_AMBIGUOUS,
+	UNSEG_TOO_SHORT_FOR_WINDOW,
+	STATS_SIZE,
 
-		 STATS_SIZE } ;
+  SEGMENTED_COUNT
+};
+
+extern const char* const segmented_mesg[SEGMENTED_COUNT];
 
 #define STATS_FIRST_UNSEG UNSEG_TOO_SHORT
-
-const char* const segmented_mesg[] = { "?",
-                                       "SEG",
-                                       "SEG_+", "SEG_-",
-                                       "SEG changed w",
-                                       "UNSEG too short", "UNSEG strand",
-				       "UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
-				       "UNSEG < delta_min", "UNSEG ambiguous",
-                                       "UNSEG too short w",
-                                      } ;
 
 #define ALL_LOCI             "all"
 
@@ -209,16 +212,25 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  bool reverse_J = false);
 
 
-#define INVALID_BOUND_POS ((unsigned int)INVALID_POS)
+// Inclusive bounded interval [start; end]
 struct Bounds
 {
   unsigned int start;
   unsigned int end;
 
+  /**
+   * Get the count of position covered by these bounds.
+   *
+   * @returns end - start + 1
+   */
   unsigned int length() const;
 };
+#define INVALID_BOUND_POS ((unsigned int)INVALID_POS)
 
 
+/**
+ * Individual segments FineSegmenter can currently handle.
+ */
 enum Segment
 {
   FR1_SEGMENT,
@@ -263,24 +275,72 @@ protected:
   bool finishSegmentation();
   bool finishSegmentationD();
 
+  /**
+   * Retrieve framework region bounds from the box's aligned locations positions.
+   *
+   * @param fr_first_aa_mid_nuc_loc: the location marking the middle nucleotide of the first amino
+   * acid of the FR.
+   * @param fr_first_aa_mid_nuc_loc: the location marking the middle nucleotide of the last amino
+   * acid of the FR.
+   * @param fr_segment: the FR segment these locations surround.
+   * @param box: the alignment box from which to retrieve aligned locations positions.
+   * @param read_length: the size of the aligned read.
+   *
+   * @returns The bounds of FR in segments_nuc_pos[fr_segment]. If a bound couldn't be found or is
+   * beyond the aligned read's range, that bound remains INVALID_BOUND_POS
+   */
   void segmentFR(LocationToMark          fr_first_aa_mid_nuc_loc,
                  LocationToMark          fr_last_aa_mid_nuc_loc,
                  Segment                 fr_segment,
                  const AlignBox<Affect>* box,
                  size_t                  read_last_idx);
-  void segmentCDR(Segment            prev_fr,
-                  Segment            cdr_segment,
-                  Segment            next_fr,
-                  size_t             read_last_idx);
+
+  /**
+   * Retrieve complimentary-determining regions bounds from framework region bounds.
+   * Should be called after segmentFR() has been called for prev_fr and next_fr.
+   *
+   * @param prev_fr: the framework region preceeding the target CDR.
+   * @param cdr_segment: the CDR to segment.
+   * @param next_fr: the framework region succeeding the target CDR.
+   * @param read: the aligned read associated with this CDR and FRs.
+   *
+   * @returns The bounds of CDR in segments_nuc_pos[cdr_segment]. If a bound couldn't be found or is
+   * beyond the aligned read's range, that bound remains INVALID_BOUND_POS
+   */
+  void segmentCDR(Segment prev_fr,
+                  Segment cdr_segment,
+                  Segment next_fr,
+                  size_t  read_last_idx);
   void segmentJUNCTION(const std::string& read);
 
-
-  void checkBoundsLength(Segment segment);
+  /**
+   * Arrange the CDR3 amino acid sequence if it is out of frame by changing its reading frame where
+   * the J gene starts. Should be called after segmentCDR() has been called on CDR3_SEGMENT.
+   *
+   * @param read: the aligned read associated with this CDR.
+   *
+   * @returns The modified CDR3 amino acid sequence is stored in CDR3aa.
+   */
   void arrangeOutOfFrameCDR3(const std::string& read);
-  bool alignedReadHasInFrameStopCodon(const std::string& read) const;
-  bool IGHWPGxGPatternIsMissing(const std::string& read) const;
 
-  void setJUNCTIONUnproductive(const std::string& reason);
+  /**
+   * Report the presence of an in-frame stop codon (if any) in the read.
+   *
+   * @param read: the aligned read to check for in-frame stop codons.
+   *
+   * @returns true if an in-frame stop codon, false otherwise 
+   */
+  bool alignedReadHasInFrameStopCodon(const std::string& read) const;
+
+  /**
+   * Report the absence of the (W|P)GxG pattern at the start of the FR4 on IGH recombinations. This
+   * should be called after segmentFR() has been called on FR4_SEGMENT.
+   *
+   * @param read: the read the associated with the segmented FR4.
+   *
+   * @returns true if the FR4 doesn't start with a (W|P)GxG pattern, false otherwise
+   */
+  bool IGHWPGxGPatternIsMissing(const std::string& read) const;
 
  public:
   Germline<Affect> *segmented_germline;

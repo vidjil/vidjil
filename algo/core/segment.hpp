@@ -1533,9 +1533,9 @@ void Segmenter<Affect>::segmentCDR(Segment            prev_fr,
 template <typename Affect>
 void Segmenter<Affect>::segmentJUNCTION(const std::string& read)
 {
-  // Use the end of the FR3 and the start of the FR4 to determine JUNCTION bounds: the CDR3 bounds
-  // might be invalid because it doesn't exist while the end of the FR3 and the start of the FR4
-  // are both valid
+  // The end of the FR3 and the start of the FR4 are used to determine JUNCTION bounds: the CDR3
+  // bounds might be invalid because it doesn't exist, while the end of the FR3 and the start of the
+  // FR4 do exist
   unsigned int fr3_bounds_end     = segments_nuc_pos[FR3_SEGMENT].end;
   unsigned int fr4_bounds_start   = segments_nuc_pos[FR4_SEGMENT].start;
   unsigned int candidate_junc_end = fr4_bounds_start + 2;
@@ -1567,19 +1567,20 @@ void Segmenter<Affect>::arrangeOutOfFrameCDR3(const std::string& read)
   // germinal nucleotides (N) between the V/D and J gene went that far during recombination, or
   // possibly because hypermutations modified the region of the J genes that overlaps the end of
   // the CDR3, or even because of a spontenous mutation on the anchor amino acid at the start of
-  // the FR4.
+  // the FR4, for instance.
   //
   // bugs/bug2249.should shows an example with box_J->start > fr4_bounds.start
+  //
   // In such a case, the codon reading frame cannot be modified in the middle of the CDR3 to
   // insert an incomplete amino acid '#'. Additionally, if the first aligned position of the J
-  // gene is in the codon of the last amino acid of the CDR3, the incomplete amino acid '#' is
-  // going to be inserted exactly where it already is, so there is nothing to do
+  // gene is at the 2nd or 3rd nucleotide of the last amino acid of the CDR3, the incomplete amino
+  // acid '#' is going to be inserted exactly where it already is, so there is nothing to do
   int j_start_to_cdr3_end_distance = cdr3_bounds.end - box_J->start;
   if (j_start_to_cdr3_end_distance >= 2)
   {
     size_t CDR3startJfull = cdr3_bounds.end - ((j_start_to_cdr3_end_distance + 1) / 3) * 3 + 1;
     CDR3aa = nuc_to_aa(subsequence(read, cdr3_bounds.start, CDR3startJfull - 1)) +
-              nuc_to_aa(subsequence(read, CDR3startJfull, cdr3_bounds.end));
+             nuc_to_aa(subsequence(read, CDR3startJfull, cdr3_bounds.end));
   }
 }
 
@@ -1632,14 +1633,6 @@ bool Segmenter<Affect>::IGHWPGxGPatternIsMissing(const std::string& read) const
   }
 
   return false;
-}
-
-template <typename Affect>
-void Segmenter<Affect>::setJUNCTIONUnproductive(const std::string& reason)
-{
-  JUNCTIONunproductive = reason;
-  this->segments_nuc_pos[JUNCTION_SEGMENT].start = INVALID_BOUND_POS;
-  this->segments_nuc_pos[JUNCTION_SEGMENT].end   = INVALID_BOUND_POS;
 }
 
 
@@ -1744,8 +1737,8 @@ void FineSegmenter<Affect>::findRegions()
 }
 
 
-// segment_min_max_lengths[n].start is minimum
-// segment_min_max_lengths[n].end   is maximum
+// segment_min_max_lengths[seg].start is the minimum length of segment seg (inclusive)
+// segment_min_max_lengths[seg].end   is the maximum length of segment seg (inclusive)
 static const Bounds segment_min_max_lengths[SEGMENT_COUNT] =
 {
   {FR1_MIN_LENGTH_IN_NUCLEOTIDES,      FR1_MAX_LENGTH_IN_NUCLEOTIDES},
@@ -1756,6 +1749,18 @@ static const Bounds segment_min_max_lengths[SEGMENT_COUNT] =
   {CDR2_MIN_LENGTH_IN_NUCLEOTIDES,     CDR2_MAX_LENGTH_IN_NUCLEOTIDES},
   {CDR3_MIN_LENGTH_IN_NUCLEOTIDES,     CDR3_MAX_LENGTH_IN_NUCLEOTIDES},
   {JUNCTION_MIN_LENGTH_IN_NUCLEOTIDES, JUNCTION_MAX_LENGTH_IN_NUCLEOTIDES}
+};
+
+const char* const segmented_mesg[SEGMENTED_COUNT] =
+{
+  "?",
+  "SEG",
+  "SEG_+", "SEG_-",
+  "SEG changed w",
+  "UNSEG too short", "UNSEG strand",
+	"UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
+	"UNSEG < delta_min", "UNSEG ambiguous",
+  "UNSEG too short w",
 };
 
 enum

@@ -43,8 +43,10 @@ public:
   std::set<std::string> getLocus() const;
   std::string getFilename() const;
   FilterWithACAutomaton *getFilter() const;
+
   /**
-   * @return the marked position used for CDR3 computation (returns 0 when !isRegular()
+   * @return A collection of locations to mark on a gene (currently V or J) ordered by increasing
+   * position. The returned OrderedGeneLocationsToMark has count set to 0 if isRegular() == false
    */
   OrderedGeneLocationsToMark getLocationsToMark() const;
   std::shared_ptr<BioReader> getReader() const;

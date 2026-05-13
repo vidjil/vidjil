@@ -2,6 +2,8 @@
 
 // References:
 // - https://www.imgt.org/IMGTScientificChart/Nomenclature/IMGT-FRCDRdefinition.html
+// - CDR3 max length: https://www.imgt.org/IMGTScientificChart/Numbering/IMGTIGVLsuperfamily.html
+// - Variable domain regions coverage of V(D)J genes: https://mixcr.com/mixcr/reference/ref-gene-features/
 
 #define INVALID_POS ~0
 
@@ -15,14 +17,14 @@ enum LocationToMark
 
   // Anchor points are amino acids found directly before and after CDRs, on the extremities of FRs.
   // Since CDRs are highly variable due to somatic hypermutations, CDRs are detected and segmented
-  // indirectly on reads by first aligning the nucleotides of these anchors amin acids. However,
-  // in practice, the codon encoding one of these anchor amino acid may vary between recombined
-  // V(D)J genes on reads and germlines genes. Sometimes (open question: how often?), the matching
-  // codon found on the read encodes the same amino acid by only differing by its last nucleotide
-  // (as is the case for most amino acids). In such cases, read alignment on germline genes would
-  // stop at the 2nd nucleotide of the anchor amino acid, since the next nucleotide wouldn't match
-  // and hypermutated regions follow directly after. This is why the 2nd nucleotide of anchor points
-  // is marked and aligned, rather than the first or last one
+  // indirectly on reads by first aligning the nucleotides of these anchor amino acids. However, in
+  // practice, the codon encoding one of these anchor amino acid may vary between recombined V(D)J
+  // genes on reads and germline genes. Sometimes (open question: how often?), the matching codon
+  // found on the read encodes the same amino acid but differs in its last nucleotide (as is the
+  // case for most amino acids). In such cases, read alignment on germline genes would stop at the
+  // 2nd nucleotide of the anchor amino acid, since the next nucleotide wouldn't match and
+  // hypermutated regions follow directly after. This is why the 2nd nucleotide of anchor points is
+  // and aligned, rather than the first or last one
   FR1_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
   FR1_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
   FR2_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
@@ -57,12 +59,13 @@ enum JGeneLocationPosition
   FR4_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE_POS = 37 - 1
   
   // Despite IMGT providing a fixed position for the end of the FR4 (129), in practice the end of
-  // the FR4 wouldn't always be marked when using that position. The FR4 has a length of 10 to 12
-  // amino acids, meaning it might in fact end before amino acid 129. Germline J genes FASTA files
-  // modified to include extra nucleotides toward the 3' end that are not part of the FR4 would
-  // further complicate marking the middle nucleotde of the FR4.
+  // the FR4 wouldn't always be marked when using that position (adjusted to be relative to the J
+  // gene). The FR4 has a length of 10 to 12 amino acids, meaning it might end before amino acid
+  // 129. Modified germline IMGT FASTA files modified to include extra nucleotides toward the 3' end
+  // of the J genes, that not part of the FR4, would further complicate marking the middle nucleotde
+  // of the FR4.
   //
-  // Instead, its middle nucleotide is marked based on each gene length as it appears in IMGT FASTA
+  // Instead, the middle nucleotide is marked based on each gene length as it appears in IMGT FASTA
   // files, and based on the expected mininum and maximum length of the FR4 (see below)
   // FR4_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE_POS = x
 };
@@ -134,22 +137,22 @@ enum VJGeneType
   VJ_GENE_COUNT
 };
 
-// Description of a set of locations a specific gene overlaps at specific positions
+// Description of a set of locations a specific gene overlaps, ordered by increasing positions.
 struct OrderedGeneLocationsToMark
 {
-  // Locations held by "locations" are expected to belong to a same "group" that is more or less
-  // englobing (from the framework region, complementary-determining region, variable domain,
+  // Locations held by "locations" are expected to belong to a single "group" that is more or less
+  // encompassing (from the framework region, complementary-determining region, variable domain,
   // constant domain, etc.). In practice, its intended use reflects this expectation: "locations"
   // should store values coming from the same enum, whose values are no bigger than unsigned char's
-  // maximum value (255). Although the actual underlying type of the enum is erased, the context in
-  // which OrderedGeneLocationsToMark is used, stored or named should indicate which enum type the
-  // stored locations come from
+  // maximum value (255) and all different. Although the actual underlying type of the enum is
+  // erased, the context in which OrderedGeneLocationsToMark is used, stored or named should
+  // indicate which enum type the stored locations come from
   //
   // locations[i] = location associated to position positions[i]
   const unsigned char* locations;
 
   // Positions associated to locations.
-  // positions[i] = position of the location locations[i]
+  // positions[i] = position of the location locations[i], such that positions[i] < positions[i+1]
   const unsigned short* positions;
 
   // The count of locations/positions the two previous fields point to
