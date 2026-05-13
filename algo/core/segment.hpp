@@ -1470,6 +1470,18 @@ unsigned int Bounds::length() const
   return end - start + 1;
 }
 
+const char* const segmented_mesg[SEGMENTED_COUNT] =
+{
+  "?",
+  "SEG",
+  "SEG_+", "SEG_-",
+  "SEG changed w",
+  "UNSEG too short", "UNSEG strand",
+	"UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
+	"UNSEG < delta_min", "UNSEG ambiguous",
+  "UNSEG too short w",
+};
+
 const char* const segment_names[SEGMENT_COUNT] =
 {
   "fr1",
@@ -1749,18 +1761,6 @@ static const Bounds segment_min_max_lengths[SEGMENT_COUNT] =
   {CDR2_MIN_LENGTH_IN_NUCLEOTIDES,     CDR2_MAX_LENGTH_IN_NUCLEOTIDES},
   {CDR3_MIN_LENGTH_IN_NUCLEOTIDES,     CDR3_MAX_LENGTH_IN_NUCLEOTIDES},
   {JUNCTION_MIN_LENGTH_IN_NUCLEOTIDES, JUNCTION_MAX_LENGTH_IN_NUCLEOTIDES}
-};
-
-const char* const segmented_mesg[SEGMENTED_COUNT] =
-{
-  "?",
-  "SEG",
-  "SEG_+", "SEG_-",
-  "SEG changed w",
-  "UNSEG too short", "UNSEG strand",
-	"UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
-	"UNSEG < delta_min", "UNSEG ambiguous",
-  "UNSEG too short w",
 };
 
 enum
