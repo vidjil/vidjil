@@ -5,9 +5,9 @@ describe("Manipulate configs", function () {
     cy.createConfig(
       "conf name",
       ["3", "Analysis with/for other software"],
-      "vijdil",
+      undefined,
       "x",
-      "prefuse",
+      "",
       "fuse",
       "info"
     ).then((config_id) => {
@@ -49,6 +49,7 @@ describe("Manipulate configs", function () {
       });
     });
   });
+
 
   it("02-preprocess_config", function () {
     // Create a preprocess
@@ -155,10 +156,74 @@ describe("Manipulate configs", function () {
       ["3", "Analysis with/for other software"],
       "vidjil",
       "-c clones -z 10 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y 1000 --no-airr -uu --gz",
+      "",
       "-t 10",
       "information of process with compressed output (--gz)"
     ).then((config_id) => {
       cy.createPatient("", "compressed_output", "test", "", "Cy", "public");
+      cy.addSample(
+        undefined,
+        "nfs",
+        "Demo-X5.fa",
+        undefined,
+        "2000-01-01",
+        "Demo-X5.fa sample"
+      ).then((sample_id) => {
+        cy.log(
+          "added sample " +
+            sample_id +
+            " and start process for config " +
+            config_id
+        );
+        cy.launchProcess("" + config_id, sample_id);
+        cy.waitAnalysisCompleted(config_id, sample_id);
+      });
+    });
+  });
+
+
+  it("Use a prefuse config (old style)", function () {
+    cy.createConfig(
+      "conf with prefuse old style",
+      ["3", "Analysis with/for other software"],
+      "vidjil",
+      "-c clones -z 10 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y 1000 --no-airr",
+      "",
+      "-t 10  --post 'igh-to-trg.sh -l IGK && script_a.py'",
+      "information of process with compressed output (--gz)"
+    ).then((config_id) => {
+      cy.createPatient("", "prefuse config (old style)", "test", "", "Cy", "public");
+      cy.addSample(
+        undefined,
+        "nfs",
+        "Demo-X5.fa",
+        undefined,
+        "2000-01-01",
+        "Demo-X5.fa sample"
+      ).then((sample_id) => {
+        cy.log(
+          "added sample " +
+            sample_id +
+            " and start process for config " +
+            config_id
+        );
+        cy.launchProcess("" + config_id, sample_id);
+        cy.waitAnalysisCompleted(config_id, sample_id);
+      });
+    });
+  });
+
+  it("Use a prefuse config (new style)", function () {
+    cy.createConfig(
+      "conf with prefuse new style",
+      ["3", "Analysis with/for other software"],
+      "vidjil",
+      "-c clones -z 10 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y 1000 --no-airr",
+      "script_a.py",
+      "-t 10",
+      "information of process with compressed output (--gz)"
+    ).then((config_id) => {
+      cy.createPatient("", "prefuse config (new style)", "test", "", "Cy", "public");
       cy.addSample(
         undefined,
         "nfs",
