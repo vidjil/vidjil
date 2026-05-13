@@ -8,7 +8,7 @@ describe("Manipulate configs", function () {
       undefined,
       "x",
       "",
-      "fuse",
+      "-t 100",
       "info"
     ).then((config_id) => {
       cy.screenshot("starting_configuration")
@@ -189,7 +189,7 @@ describe("Manipulate configs", function () {
       "vidjil",
       "-c clones -z 10 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y 1000 --no-airr",
       "",
-      "-t 10  --post 'igh-to-trg.sh -l IGK && script_a.py'",
+      "-t 10  --pre 'igh-to-trg.sh -l IGK && script_a.py'",
       "information of process with compressed output (--gz)"
     ).then((config_id) => {
       cy.createPatient("", "prefuse config (old style)", "test", "", "Cy", "public");
