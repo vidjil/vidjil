@@ -94,6 +94,12 @@ const char* const segmented_mesg[] = { "?",
 
 #define ALL_LOCI             "all"
 
+// Unproductivity causes
+#define UNPROD_TOO_SHORT     "too-short"
+#define UNPROD_OUT_OF_FRAME  "out-of-frame"
+#define UNPROD_STOP_CODON    "stop-codon"
+#define UNPROD_NO_WPGxG      "no-WPGxG-pattern"
+
 /**
  * An alignment box (AlignBox) gather all parameters for a recombined gene segment (V, D, J, other D...)
  **/
@@ -229,52 +235,6 @@ enum Segment
 
 extern const char* const segment_names[SEGMENT_COUNT];
 
-// Segment issues are problems encountered during segmentation, or defects causing unproductivity.
-// The issues of a segment are stored in the bits of a byte, as a bit mask/set. The meaning of each
-// bit is described by its matching index below.
-//
-// They are used as helpers to avoid jumps and overly-nested ifs, as well as with CDR and JUNCTION
-// segmentation. Their purpose isn't to assist in checking for all possible issues, only to simplify
-// code.
-//
-// Individual issues are macro defines instead of enum values because GCC emits pedantic warnings
-// related to C integer promotion rules when using enums with | and & operators.
-//
-// >>> IF A NEW ISSUE IS ADDED, PLEASE UDPATE SEGMENT_ISSUE_COUNT AND issues_str <<<
-#define SEGMENT_ISSUE_INDEX_START_NOT_FOUND  0
-#define SEGMENT_ISSUE_INDEX_END_NOT_FOUND    1
-#define SEGMENT_ISSUE_INDEX_TOO_SHORT        2
-#define SEGMENT_ISSUE_INDEX_TOO_LONG         3
-#define SEGMENT_ISSUE_INDEX_OUT_OF_FRAME     4
-#define SEGMENT_ISSUE_INDEX_NO_WPGXG_PATTERN 5
-#define SEGMENT_ISSUE_INDEX_STOP_CODON       6
-#define SEGMENT_ISSUE_COUNT                  7
-
-#define SEGMENT_ISSUE_NONE                  0
-#define SEGMENT_ISSUE_MASK_START_NOT_FOUND  (1 << SEGMENT_ISSUE_INDEX_START_NOT_FOUND)
-#define SEGMENT_ISSUE_MASK_END_NOT_FOUND    (1 << SEGMENT_ISSUE_INDEX_END_NOT_FOUND)
-#define SEGMENT_ISSUE_MASK_TOO_SHORT        (1 << SEGMENT_ISSUE_INDEX_TOO_SHORT)
-#define SEGMENT_ISSUE_MASK_TOO_LONG         (1 << SEGMENT_ISSUE_INDEX_TOO_LONG)
-#define SEGMENT_ISSUE_MASK_OUT_OF_FRAME     (1 << SEGMENT_ISSUE_INDEX_OUT_OF_FRAME)
-#define SEGMENT_ISSUE_MASK_NO_WPGXG_PATTERN (1 << SEGMENT_ISSUE_INDEX_NO_WPGXG_PATTERN)
-#define SEGMENT_ISSUE_MASK_STOP_CODON       (1 << SEGMENT_ISSUE_INDEX_STOP_CODON)
-
-#define SEGMENT_ISSUE_MASK_BOUNDS_NOT_FOUND  (SEGMENT_ISSUE_MASK_END_NOT_FOUND | SEGMENT_ISSUE_MASK_START_NOT_FOUND)
-
-typedef unsigned char SegmentIssueMask;
-
-extern const char* const issues_str[SEGMENT_ISSUE_COUNT];
-const char* getFirstIssueString(SegmentIssueMask issues);
-
-
-// Helpers that perform a variety of checks and return a mask with the bits of identified issues
-// set, if any
-SegmentIssueMask checkBoundsPositions(Bounds bounds);
-SegmentIssueMask checkBoundsOrder(Bounds bounds);
-SegmentIssueMask checkBoundsLength(unsigned int bounds_length, Segment segment);
-SegmentIssueMask checkStopCodon(const std::string& sequence, size_t frame);
-SegmentIssueMask checkWPGxGPattern(const std::string& sequence);
-
 template <typename Affect>
 class Segmenter {
 protected:
@@ -282,10 +242,12 @@ protected:
   string sequence_or_rc;
   string quality;
 
-  Bounds segments_nuc_pos[SEGMENT_COUNT];
-  std::string segments_nuc[SEGMENT_COUNT];
-  std::string segments_aa[SEGMENT_COUNT];
-  SegmentIssueMask segments_issues[SEGMENT_COUNT];
+  Bounds      segments_nuc_pos[SEGMENT_COUNT];
+  std::string CDR3nuc;
+  std::string CDR3aa;
+  std::string JUNCTIONnuc;
+  std::string JUNCTIONaa;
+  std::string JUNCTIONunproductive;
 
   bool reversed, segmented, dSegmented;
   bool junctionChanged;
@@ -301,19 +263,24 @@ protected:
   bool finishSegmentation();
   bool finishSegmentationD();
 
-  void retrieveFRNucleotideBounds(LocationToMark          fr_first_aa_mid_nuc_loc,
-                                  LocationToMark          fr_last_aa_mid_nuc_loc,
-                                  Segment                 fr_segment,
-                                  const AlignBox<Affect>* box,
-                                  size_t                  read_length);
-
-  void segmentFR(Segment fr_segment, const std::string& read);
-  void segmentCDR(Segment prev_fr, Segment cdr_segment, Segment next_fr, const std::string& read);
+  void segmentFR(LocationToMark          fr_first_aa_mid_nuc_loc,
+                 LocationToMark          fr_last_aa_mid_nuc_loc,
+                 Segment                 fr_segment,
+                 const AlignBox<Affect>* box,
+                 size_t                  read_last_idx);
+  void segmentCDR(Segment            prev_fr,
+                  Segment            cdr_segment,
+                  Segment            next_fr,
+                  size_t             read_last_idx);
   void segmentJUNCTION(const std::string& read);
 
-  void arrangeCDR3IfOutOfFrame(const std::string& read);
-  void reportStopCodonIfAny(const std::string& read);
-  void lookForMissingWPGxGPatternIfIGH(const std::string& read);
+
+  void checkBoundsLength(Segment segment);
+  void arrangeOutOfFrameCDR3(const std::string& read);
+  bool alignedReadHasInFrameStopCodon(const std::string& read) const;
+  bool IGHWPGxGPatternIsMissing(const std::string& read) const;
+
+  void setJUNCTIONUnproductive(const std::string& reason);
 
  public:
   Germline<Affect> *segmented_germline;

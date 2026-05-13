@@ -203,11 +203,11 @@ map <string, string> CloneOutputAIRR::fields()
   bool productive = (fields["productive"] == AIRR_TRUE); // thsus false for both AIRR_FALSE and NULL_VAL
   string unproductive = get(KEY_SEG, "junction", "unproductive");
   fields["vj_in_frame"] = productive ? AIRR_TRUE
-                        : unproductive == issues_str[SEGMENT_ISSUE_INDEX_STOP_CODON] ? AIRR_TRUE
-                        : unproductive == issues_str[SEGMENT_ISSUE_INDEX_OUT_OF_FRAME] ? AIRR_FALSE
+                        : unproductive == UNPROD_STOP_CODON ? AIRR_TRUE
+                        : unproductive == UNPROD_OUT_OF_FRAME ? AIRR_FALSE
                         : NULL_VAL;
   fields["stop_codon"] = productive ? AIRR_FALSE
-                       : unproductive == issues_str[SEGMENT_ISSUE_INDEX_STOP_CODON] ? AIRR_TRUE
+                       : unproductive == UNPROD_STOP_CODON ? AIRR_TRUE
                        : NULL_VAL;
 
   fields["rev_comp"] = NULL_VAL;

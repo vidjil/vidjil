@@ -15,5 +15,5 @@ $ Correct stop position of TRGJP*01
 1: "stop": 91
 
 $ The sequence is productive
-3: "productive": true
+1: "productive": true
 

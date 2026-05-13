@@ -1,0 +1,22 @@
+!OUTPUT_FILE: out/region_length_warnings.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/region_length_warnings.fa
+
+$ FR3 & CDR1 are too short
+j:clones[0].warn[1].code: W62
+j:clones[0].warn[1].msg: The length the following regions is below their expected range: fr3, cdr1
+
+$ FR4 & CDR2 are too long
+j:clones[0].warn[2].code: W63
+j:clones[0].warn[2].msg: The length the following regions is above their expected range: fr4, cdr2
+
+$ The FR4 is missing a nucleotide
+j:clones[0].warn[3]code: W64
+j:clones[0].warn[3].msg: The count of nucleotide of the following regions is not a multiple of 3: fr4"
+
+$ The read remains productive
+j:clones[0].seg.junction.productive: true
+
+$ There is no W62, W63 and W64 for the 2nd read, only for the 1st read
+1:"W62"
+1:"W63"
+1:"W64"

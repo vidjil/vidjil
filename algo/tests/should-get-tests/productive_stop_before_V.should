@@ -31,7 +31,5 @@ $ Correct start position of IGHV3-74*01
 $ Correct number of stop positions (21-1, no stop positions for J on the second sequence)
 20: "stop"
 
-# 1st clone should have productive CDR1, CDR2, CDR3, FR1, FR2, FR3, FR4 and JUNCTION
-# 2nd clone should have productive CDR1, CDR2, CDR3, FR1, FR2, FR3 and JUNCTION
 $ The two sequences are productive
-15: "productive": true
+2: "productive": true
