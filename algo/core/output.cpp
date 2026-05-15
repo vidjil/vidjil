@@ -137,7 +137,7 @@ CloneOutput* SampleOutput::getClone(junction junction, string default_germline)
 
 void SampleOutputVidjil::out(ostream &s, bool with_clones)
 {
-   json j_clones;
+   json j_clones(nlohmann::detail::value_t::array);
 
    if (with_clones)
       for (auto it: clones)
