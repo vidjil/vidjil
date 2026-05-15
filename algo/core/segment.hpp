@@ -1482,18 +1482,6 @@ const char* const segmented_mesg[SEGMENTED_COUNT] =
   "UNSEG too short w",
 };
 
-const char* const segmented_mesg[SEGMENTED_COUNT] =
-{
-  "?",
-  "SEG",
-  "SEG_+", "SEG_-",
-  "SEG changed w",
-  "UNSEG too short", "UNSEG strand",
-	"UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
-	"UNSEG < delta_min", "UNSEG ambiguous",
-  "UNSEG too short w",
-};
-
 const char* const segment_names[SEGMENT_COUNT] =
 {
   "fr1",
