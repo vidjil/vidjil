@@ -1,4 +1,5 @@
-# Biological and immunological background of Vidjil
+# Immunobiological background of Vidjil
+This is a starting point for anyone unfamiliar with the immunobiological context of Vidjil is built on.
 
 ## Overview
 - Humans, and many other animals, have some specialized cells that are part of the immune system, found in our blood or some of our organs
@@ -8,16 +9,13 @@
 - An important function of these specialized cells is to detect and react to abnormal bodies they may encounter, referred to as antigens (bacterias, viruses, fungies, etc.), by binding with them
 
 - This function is enabled by a biological process maturing lymphoblasts undergo, called V(D)J recombinations
-- V(D)J recombinations modify the lymphoblast's DNA in specific regions (loci) where 3 types of genes are located and recombined: V genes, optionally D genes, and J genes
+- V(D)J recombinations alter a lymphoblast's DNA in specific regions (loci) where 3 (+ 1) types of genes are located and recombined: V genes, optionally D genes, and J genes (+ constant genes)
 - These recombinations are carried down to mature B-cells and T-cells, and influence the structure and diversity of antigen binding agents, called immunoglobulin (for B-cells) and T-cell receptors (for T-cells), also referred to as antibodies (for both B-cells and T-cells)
 - In healthy individuals, these recombinations are so diverse any given recombination represents only a very small fraction of all recombinations found in that individual's general lymphoblast and lymphocyte population
 
 - In an individual suffering from Acute Lymphoblastic Leukemia (ALL) and Chronic Lymphocytic Leukemia (CLL) however, one or more lymphoblasts and/or lymphocytes have become cancerous and have multiplied out of control, meaning the V(D)J recombination(s) of these cancerous cells are over-represented in that individual's general lymphoblast and lymphocyte population
 
-- Although diagnosing ALL and CLL does not require quantifying or qualifying these over-represented V(D)J recombinations from cancerous lymphoblasts and/or lymphocytes, quantifying or qualifying them does help with:
-  - medical work and research
-  - devising better treatments
-  - tracking whether leukemia is receding or spreading across time
+- Quantifying or qualifying these over-represented V(D)J recombinations from cancerous lymphoblasts and/or lymphocytes helps medical research devising better treatments and tracking whether leukemia is receding or spreading across time
 
 This is what Vidjil does: analyze samples containing the DNA of many lymphocytes to count and identify V(D)J recombinations, using them as unique identifiers of specific populations of lymphoblasts/lymphocytes, providing insights into cases of ALL and CLL
 
