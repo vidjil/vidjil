@@ -1,5 +1,5 @@
 # Immunobiological background of Vidjil
-This is a starting point for anyone unfamiliar with the immunobiological context of Vidjil is built on.
+This is a starting point for anyone unfamiliar with the immunobiological context behind Vidjil.
 
 ## Overview
 - Humans, and many other animals, have some specialized cells that are part of the immune system, found in our blood or some of our organs
