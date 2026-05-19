@@ -10,7 +10,7 @@ j:clones[0].warn[2].code: W63
 j:clones[0].warn[2].msg: The length the following regions is above their expected range: fr4, cdr2
 
 $ The FR4 is missing a nucleotide
-j:clones[0].warn[3]code: W64
+j:clones[0].warn[3].code: W64
 j:clones[0].warn[3].msg: The count of nucleotide of the following regions is not a multiple of 3: fr4"
 
 $ The read remains productive
