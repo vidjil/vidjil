@@ -1857,7 +1857,7 @@ void FineSegmenter<Affect>::checkWarnings(CloneOutput *clone, bool phony)
         const std::string& warning_number  = segment_warnings_str[i][SEGMENT_WARNING_NUMBER];
         std::string        warning_details = segment_warnings_str[i][SEGMENT_WARNING_MESSAGE] +
                                              warning_regions;
-        clone->add_warning(warning_number, warning_details, LEVEL_ERROR, phony);
+        clone->add_warning(warning_number, warning_details, LEVEL_WARN, phony);
       }
     }
   }
