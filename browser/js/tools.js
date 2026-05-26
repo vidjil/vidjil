@@ -740,6 +740,7 @@ function sendErrorToDb(err, db) {
     }
 }
 
+
 /*
  * Removes all children from the specified node.
  * This function should be more efficient and faster than `innerHTML = ''`.

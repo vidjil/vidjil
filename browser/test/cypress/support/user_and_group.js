@@ -19,8 +19,8 @@ Cypress.Commands.add('createUser', (first_name, last_name, email, password) => {
     .click()
   cy.wait("@getActivities")
 
-  cy.get('#table_users')
-    .should("contain", `${first_name} ${last_name}`)
+  cy.contains('#table_users', `${first_name}`)
+  cy.contains('#table_users', `${last_name}`)
 
   return cy.getBiggestId("#table_users")
 })
@@ -39,7 +39,7 @@ Cypress.Commands.add("goToCorrespondingUserGroup", (user_id) => {
   cy.get("#table_users")
     .contains("tr td:nth-child(1)", user_id)
     .parent()
-    .contains("td:nth-child(5) > a", "user_")
+    .contains("td:nth-child(6) > a", "user_")
     .dblclick()
   cy.wait("@getActivities")
 

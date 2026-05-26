@@ -944,3 +944,22 @@ Cypress.Commands.add("dbPageFilter", (value) => {
     .type("{enter}");
   cy.wait(["@postAllSampleSets", "@getActivities"]);
 });
+
+
+/**
+ * Return list of id extracted from table row, in order of table
+ * This function allow to be more flexible in testing
+ * See exemple with test test_visibility/07-sort collumns - preprocess
+ */
+Cypress.Commands.add("getRowIdListFromTable", (tableSelector) => {
+  const list_id = [];
+
+  return cy.get(`${tableSelector} table tbody tr`)
+    .each(($row) => {
+      const cellValue = $row.find('td').first().text().trim();
+      list_id.push(cellValue);
+    })
+    .then(() => {
+      return cy.wrap(list_id);
+    });
+});

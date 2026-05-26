@@ -275,4 +275,208 @@ describe('Visibility of panels', function () {
     })
   })
 
+
+  it('05-sort collumns - users table', function () {
+
+    // User page
+    cy.goToUsersPage()
+    /**
+     * User 1 => administrator; last logged 
+     * User 2 => testing; never logged
+     * User 3 => testing; logged at previous cypress test script
+     */
+    
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 1 - 2 - 3 
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('3'));
+    })
+
+    cy.get('[data-sort="lastName"] > .icon-arrow-combo').should("exist")
+    cy.get('[data-sort="last_login"] > .icon-arrow-combo').should("exist")
+    
+    cy.get('[data-sort="last_login"]')
+      .click().click() // dbclick to invert
+    cy.get('[data-sort="last_login"] > .icon-sort-alt-down')
+      .should("exist")
+    cy.get('[data-sort="lastName"] > .icon-arrow-combo').should("exist")
+
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 1 - 3 - 2
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('3'));
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('2'));
+    })
+
+    cy.get('[data-sort="firstName"]')
+      .click()
+    cy.get('[data-sort="firstName"] > .icon-sort-alt-up')
+      .should("exist")
+    cy.get('[data-sort="last_login"] > .icon-arrow-combo')
+      .should("exist", "previous sort have unsorted icon again")
+
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 1 - 6 - 2 - 4 - 3 
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('6'));
+      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('4'));
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('3'));
+    })
+
+    cy.get('[data-sort="firstName"]')
+      .click()
+    cy.get('[data-sort="firstName"] > .icon-sort-alt-down')
+      .should("exist")
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      // 3 - 5 - 2 - 4 - 6
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('5'));
+      expect(ids.indexOf('5')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('4'));
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('6'));
+    })
+
+
+    cy.get('[data-sort="groups"]')
+      .click()
+    cy.get('[data-sort="groups"] > .icon-sort-alt-up')
+      .should("exist")
+
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('3'));
+    })
+
+  })
+
+
+  it('06-sort collumns - process', function () {
+
+    // User page
+    cy.goToConfigsPage()
+    /**
+     * 7	Human V(D)J recombinations	Clonality
+     * 1	Human V(D)J recombinations	default + extract reads
+     * 3	Human V(D)J recombinations	multi+inc
+     * 2	Human V(D)J recombinations	multi+inc+xxx
+     * 6	Other recombinations	IGH
+     * 4	Other recombinations	multi
+     * 5	Other recombinations	TRG
+     * 8	Analysis with/for other software	Export all clones (AIRR)
+     * ~~ Created during CI pipeline ~~
+     * 9	Analysis with/for other software	c
+     * 10	Analysis with/for other software	compress_output
+     * 11	Analysis with/for other software	import_vijdil_1
+     * 12	Analysis with/for other software	import_vidjil_2
+     */
+    
+    // => Start sorted as classification is (and not text value)
+    // Sorted by classification id: Human V(D)J recombinations < Other recombinations < Analysis with/for other software
+    // Init state: [7 - 1 - 3 - 2] - [6 - 4 - 5] - [8 - 9 - 10 - 11 - 12]
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('6'));
+      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('8'));
+    })
+
+    cy.get('[data-sort="classification"] > .icon-arrow-combo').should("exist")
+    cy.get('[data-sort="name"] > .icon-arrow-combo').should("exist")
+
+    cy.get('[data-sort="classification"]')
+      .click()
+    cy.get('[data-sort="classification"] > .icon-sort-alt-up')
+      .should("exist")
+
+      // Sort by classification value: [8 - 9 - 10 - 11 - 12] - [7 - 1 - 3 - 2] - [6 - 4 - 5]
+      cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+        expect(ids.indexOf('8')).to.be.lessThan(ids.indexOf('7'));
+        expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('6'));
+      })
+
+      cy.get('[data-sort="classification"]')
+        .click()
+      cy.get('[data-sort="classification"] > .icon-sort-alt-down')
+        .should("exist")
+      
+      cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+        expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('7'));
+        expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('8'));
+      })
+      
+      cy.get('[data-sort="name"]')
+        .click()
+      cy.get('[data-sort="name"] > .icon-sort-alt-up')
+        .should("exist")
+      
+    // Sort by name: 9 - 7 - 10 - 1 - 8 - 6 - 11 - 12 - 4 - 3 - 2 - 5
+    // localcompare is case unsensitive; so "c" < "Ca..." < "cb..."
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('9')).to.be.lessThan(ids.indexOf('7')); // c vs Clonality
+      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('10')); // Clonality vs compress_output
+      expect(ids.indexOf('9')).to.be.lessThan(ids.indexOf('8'));
+      expect(ids.indexOf('8')).to.be.lessThan(ids.indexOf('6'));
+    })
+
+    cy.get('[data-sort="num"]')
+      .click()
+    cy.get('[data-sort="num"] > .icon-sort-alt-up')
+      .should("exist")
+
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('7'));
+      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('8'));
+    })
+  })
+
+  it('07-sort collumns - preprocess', function () {
+
+    // User page
+    cy.goToPreprocessPage()
+    /**
+     * 4	"test pre-process 2"
+     * 3	"test pre-process 1"
+     * 2	"test pre-process 0"
+     * 1	"public pre-process"
+     * 5	"pre-process perm"
+     */
+    
+    // => Start sorted on name
+    // 4 - 3 - 2 - 1 - 5 
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('3'));
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('1'));
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('5'));
+    })
+
+    cy.get('[data-sort="num"] > .icon-arrow-combo').should("exist")
+    cy.get('[data-sort="name"] > .icon-arrow-combo').should("exist")
+
+ 
+    cy.get('[data-sort="name"]')
+      .click()
+    cy.get('[data-sort="name"] > .icon-sort-alt-up')
+      .should("exist")
+
+    // 5 - 1 - 2 - 3 - 4 
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('5')).to.be.lessThan(ids.indexOf('1'));
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('2')).to.be.lessThan(ids.indexOf('4'));
+    })
+    
+
+    cy.get('[data-sort="num"]')
+      .click()
+    cy.get('[data-sort="num"] > .icon-sort-alt-up')
+      .should("exist")
+
+    // 1 - 2 - 3 - 4 - 5 
+    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+      expect(ids.indexOf('1')).to.be.lessThan(ids.indexOf('2'));
+      expect(ids.indexOf('3')).to.be.lessThan(ids.indexOf('4'));
+      expect(ids.indexOf('4')).to.be.lessThan(ids.indexOf('5'));
+    })
+
+  })
 })
