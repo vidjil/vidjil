@@ -177,8 +177,8 @@ map <string, string> CloneOutputAIRR::fields()
   fields["d_sequence_end"]      = get(KEY_SEG, "4", "stop");
   fields["j_sequence_start"]    = get(KEY_SEG, "3", "start");
   fields["j_sequence_end"]      = get(KEY_SEG, "3", "stop");
-  fields["cdr3_sequence_start"] = get(KEY_SEG, "cdr3", "start");
-  fields["cdr3_sequence_end"]   = get(KEY_SEG, "cdr3", "stop");
+  fields["cdr3_start"] = get(KEY_SEG, "cdr3", "start");
+  fields["cdr3_end"]   = get(KEY_SEG, "cdr3", "stop");
 
   fields["v_support"] = get(KEY_SEG, "evalue_left", "val");
   fields["j_support"] = get(KEY_SEG, "evalue_right", "val");
@@ -225,7 +225,7 @@ void SampleOutputAIRR::out(ostream &s)
     "d_sequence_start", "d_sequence_end",
     "j_sequence_start", "j_sequence_end",
 
-    "cdr3_sequence_start", "cdr3_sequence_end",
+    "cdr3_start", "cdr3_end",
 
     "v_support", "j_support",
 

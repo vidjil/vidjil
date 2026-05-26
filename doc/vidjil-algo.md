@@ -820,7 +820,7 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null* |
 | junction_aa  | string  | Junction region amino acid sequence. <br />*implemented* |
 | cdr3_aa | string | Amino acid translation of the cdr3 field. <br />*implemented* |
-| cdr3_sequence_start, cdr3_sequence_end  | number | Start/end position of the CDR3 in the query sequence (1-based closed interval). <br/>*implemented* |
+| cdr3_start, cdr3_end  | number | Start/end position of the CDR3 in the query sequence (1-based closed interval). <br/>*implemented* |
 | productive | boolean | True if the V(D)J sequence is predicted to be productive.  <br /> *true, false, or null when no CDR3 has been detected* |
 | vj_in_frame | boolean | True if the V and J gene alignments are in-frame. <br /> *true, false, or null when no CDR3 has been detected* |
 | stop_codon | boolean | True if the aligned sequence contains a stop codon. <br /> *true, false, or null when vj_in_frame is false* |
