@@ -243,17 +243,13 @@ void SampleOutputAIRR::out(ostream &s)
     "d_sequence_start", "d_sequence_end",
     "j_sequence_start", "j_sequence_end",
 
-<<<<<<< HEAD
-    "cdr3_start", "cdr3_end",
-=======
     "fwr1_start", "fwr1_end",
     "cdr1_start", "cdr1_end",
     "fwr2_start", "fwr2_end",
     "cdr2_start", "cdr2_end",
     "fwr3_start", "fwr3_end",
-    "cdr3_sequence_start", "cdr3_sequence_end",
+    "cdr3_start", "cdr3_end",
     "fwr4_start", "fwr4_end",
->>>>>>> 5ae5e9110 (Added AIRR output fields for additional FRs and CDRs nucleotide bounds and amino acid sequences)
 
     "v_support", "j_support",
 
