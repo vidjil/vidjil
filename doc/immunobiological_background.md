@@ -37,7 +37,7 @@ This is what Vidjil does: analyze samples containing the DNA of many lymphocytes
   - As with Ts
   - Cs and Gs
 - A gene is a sequence of nucleotides on a chromosome that can be translated by our cell's biological machinery
-- Genes offer differ between individuals
+- Genes often differ between individuals
 - A locus (latin for "place", plural: loci) is the position of a significant sequence of DNA on a chromosome
 - DNA has a reading direction: from the 5' (or upstream) end toward the 3' (or downstream) end, named after nucleic acid ring structures found in DNA
 - Parts of our DNA can be read and expressed into more complex organic molecules called amino acids by our cells
@@ -65,7 +65,7 @@ ____  ____           ____  ____
 ```
 - Antibodies are composed of 2 identical pairs of amino acid chains, forming a Y-like shape
 - Each pair is composed of 1 "light" amino acid chain and 1 "heavy" amino acid chain
-- Both light and heavy amino acid chains are composed of a variable region (V region) and a constant region (C region)
+- Both light and heavy amino acid chains are composed of 1 variable region (V region) and 1 or more constant regions (C region)
 - A light chain is composed of 1 variable region, expressed by recombined V & J genes, and 1 constant region
 - A heavy chain is composed of 1 variable region, expressed by recombined V, D & J genes, and 3 to 4 constant regions
 - The set of nucleotides encoding a variable region's amino acids is called the variable domain, where V(D)J recombinations occur
@@ -93,7 +93,7 @@ ____  ____           ____  ____
 
 
 ### V(D)J recombinations effect on DNA
-- V(D)J recombinations are named after variable V, diverse D and joining J genes found in groups at the 7 loci previously listed
+- V(D)J recombinations are named after variable V, diverse D and joining J genes found in groups in the 7 loci previously listed
 - In each locus, there can be several successive groups of V, D or J genes, followed by constant C genes, all specific to their locus
 - During recombinations:
   - Either 1 V gene + 1 J gene or 1 V gene + 1 D gene + 1 J gene are combined together, followed by one or more C genes
@@ -110,15 +110,15 @@ FRs & CDRs overlap with recombined V, D and J genes
  __________________________________________________________________________ ___ ____________________
 |                             V                                          //|/D/|//     J            |
  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-                                                                   Nucleotide deletions & insertions
+                                                              Nucleotide deletions & insertions
 ```
 - On non-recombined V, D and J genes (in "germinal" DNA), FRs and CDRs are bounded by specific amino acids, located at predicatable positions provided by the international ImMunoGeneTics information system (IMGT)
   - For instance, the CDR3 is always preceeded by a cysteine (C) amino acid and followed by either a phenylalanine (F) or tryptophan (W) amino acid
 
 - Both in total and on each loci, there are more V genes than J or D genes, although their count vary. For instance:
-  - The IGH loci holds 51 V genes, 27 D genes, 6 J genes
-  - The TRA loci holds ~100 V genes, ~50 J genes
-  - The TRB loci holds 50 to 100 V genes, 1 D gene, 7 J genes, followed by another 1 D gene and 7 J genes
+  - The IGH locus holds 51 V genes, 27 D genes and 6 J genes
+  - The TRA locus holds ~100 V genes and ~50 J genes
+  - The TRB locus holds 50 to 100 V genes, 1 D gene, 7 J genes, followed by another 1 D gene and 7 J genes
 - V genes are longer than J genes, and J genes are longer than D genes
 - The sets of V, D and J genes found in individuals differ
 - There is however a low-enough finite number of genes and alleles so that they can be described within a few megabytes
