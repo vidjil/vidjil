@@ -49,3 +49,40 @@ Tests must be declared in the [tests.h](https://gitlab.inria.fr/vidjil/vidjil/-/
     second is the test name (using the macro defined in `tests.h`) and the
     third one (which can be an empty string) is something which is displayed
     when the test fails.
+
+## Purpose of central classes / source files
+
+[vidjil.cpp](../algo/core/vidjil.cpp): entry point into the program (`main()`)
+
+### File parsers (load germlines and parse patient's lymphocytes DNA samples)
+- [bioreader.hpp](../algo/core/bioreader.hpp): reads and stores sequences from an input string or file
+- [onlinebioreader.h](../algo/core/onlinebioreader.h): abstract file streaming of input reads, one by one
+- [fasta.h](../algo/core/fasta.h): specialized OnlineBioReader for (optionally gzipped) FASTA/FASTQ files
+- [bam.h](../algo/core/bam.h): specialized OnlineBioReader for BAM files
+
+### Germlines (organize reads, recombination systems, shortcuts and other data associated with IMGT germlines)
+- [germline_element.hpp](../algo/core/germline_element.hpp): represents one FASTA file (e.g. containing the V or D or J genes of a locus)
+- [germline_element_repository.hpp](../algo/core/germline_element_repository.hpp): associative finder of shortcut by affect and of FASTA files by (filename + seeds) pairs or by shortcut
+- [germline.hpp](../algo/core/germline.hpp): represents a .g file, gathering all FASTA files relevant to that germline (e.g. a species)
+- [multi_germline.hpp](../algo/core/multi_germline.hpp): points to recombination systems inside one or more .g files
+
+### Detection (analyze reads and find V(D)J recombinations)
+- [kmerstore.h](../algo/core/kmerstore.h): stores k-mer affects derived from a specific seed and their associated FASTA file(s)
+- [automaton.h](../algo/core/automaton.h): builds and queries an Aho-Corasick graph to match parts of reads against known genes, which is a specialized k-mer storage
+- [kmeraffect.h](../algo/core/kmeraffect.h): assigns a matching gene to a sub-sequence (an affect)
+- [affectanalyser.h](../algo/core/affectanalyser.h): analyzes gene parts that were recognized on a read, based on affect count, positions and probabilities
+
+### Clusterization (grouping and counting reads sharing similar V(D)J recombinations)
+- [read_storage.h](../algo/core/read_storage.h): stores reads in bins, in limited amounts, following scoring heuristic
+- [read_score.h](../algo/core/read_score.h): scoring heuristics
+- [windows.h](../algo/core/windows.h): organizes windows (sub-sequences from the end of a V gene to the start of a J gene) by sequences, germlines, status
+- [windowExtractor.h](../algo/core/windowExtractor.h): extracts windows, performs statistics and formats data for outputs
+- [cluster-junctions.h](..algo/core/cluster-junctions.h): clusters similar windows and their associated reads together, based on windows alignment by pairs (see dynprog.h)
+- [representative.h](../algo/core/representative.h): computes a representative sequence from a list of sequences sharing a common sub-sequence (window)
+
+### Designation and segmentation
+- [dynprog.h](../algo/core/dynprog.h): aligns a read with a reference gene based on the Smith-Waterman-Gotoh algorithm
+- [segment.h](../algo/core/segment.h): designates the precise genes a recombination is made of, positions them, and detects any anomaly (out of frame, stop codon, too short, etc.)
+
+### Output
+- [output.h](../algo/core/output.h): formats and outputs data following specific file formats
