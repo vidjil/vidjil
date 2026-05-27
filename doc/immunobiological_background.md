@@ -17,7 +17,7 @@ This is a starting point for anyone unfamiliar with the immunobiological context
 
 - Quantifying or qualifying these over-represented V(D)J recombinations from cancerous lymphoblasts and/or lymphocytes helps medical research devising better treatments and tracking whether leukemia is receding or spreading across time
 
-This is what Vidjil does: analyze samples containing the DNA of many lymphocytes to count and identify V(D)J recombinations, using them as unique identifiers of specific populations of lymphoblasts/lymphocytes, providing insights into cases of ALL and CLL
+This is what Vidjil does: analyze samples containing the DNA of many lymphocytes to count and identify V(D)J recombinations, using them as unique identifiers of specific populations of lymphoblasts/lymphocytes, providing insights into cases of ALL and CLL.
 
 > [!note]
 > Vidjil is for research use only and comes with no warranty.
@@ -36,7 +36,7 @@ This is what Vidjil does: analyze samples containing the DNA of many lymphocytes
 - Additionally, nucleotides on the two strands of DNA on a chromosome are tethered together in pairs:
   - As with Ts
   - Cs and Gs
-- A gene is a sequence of nucleotides on a chromosome that can be translated by our cell's biological machinery
+- A gene is a sequence of nucleotides on a chromosome, which can be translated by our cell's biological machinery
 - Genes often differ between individuals
 - A locus (latin for "place", plural: loci) is the position of a significant sequence of DNA on a chromosome
 - DNA has a reading direction: from the 5' (or upstream) end toward the 3' (or downstream) end, named after nucleic acid ring structures found in DNA
@@ -52,13 +52,13 @@ A possible antibody structure (simplified, not to scale)
 ____  ____           ____  ____
 \   \ \   \         /   / /   /  <--  Variable regions
  \___\ \___\       /___/ /___/
-  \   \ \   \     /   / /   /    <--\
+  \   \ \   \     /   / /   /    <--|
    \___\-\___\   /___/-/___/        |
     ^      _\_---_/_                |
-    |     |   | |   |             <-| Constant regions
+    |     |   | |   |            <--| Constant regions
   Light   |___| |___|               |
   chain   |   | |   |               |
-          |___| |___|             <-/
+          |___| |___|            <--|
             ^
             |
        Heavy chain
@@ -90,6 +90,7 @@ ____  ____           ____  ____
 
 - It is possible for a B-cell to exhibit V(D)J recombination(s) on T-cell-specific loci, in addition to its B-cell-specific V(D)J recombinations
 - Likewise for T-cells
+- It is also possible to find incomplete recombinations, for instance containing two D genes, in both B-cells and T-cells
 
 
 ### V(D)J recombinations effect on DNA
@@ -104,11 +105,11 @@ ____  ____           ____  ____
 - These regions are expressed by recombined V, D and J genes on the variable domain:
 ```
 FRs & CDRs overlap with recombined V, D and J genes
-   _______________ __________ ______________ __________ _______________ ___________ _______________ 
-  |      FR1      |   CDR1   |     FR2      |   CDR2   |      FR3      |    CDR3   |      FR4      |
-   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+   _______________ __________ _______________ __________ _______________ __________ _______________ 
+  |      FR1      |   CDR1   |      FR2      |   CDR2   |      FR3      |   CDR3   |      FR4      |
+   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
  __________________________________________________________________________ ___ ____________________
-|                             V                                          //|/D/|//     J            |
+|                                   V                                    //|/D/|//       J          |
  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
                                                               Nucleotide deletions & insertions
 ```
@@ -120,7 +121,7 @@ FRs & CDRs overlap with recombined V, D and J genes
   - The TRA locus holds ~100 V genes and ~50 J genes
   - The TRB locus holds 50 to 100 V genes, 1 D gene, 7 J genes, followed by another 1 D gene and 7 J genes
 - V genes are longer than J genes, and J genes are longer than D genes
-- The sets of V, D and J genes found in individuals differ
+- The sets V, D and J genes differ between individuals
 - There is however a low-enough finite number of genes and alleles so that they can be described within a few megabytes
 - Not all non-recombined V, D or J genes are functional, neither are all of their recombinations
 
