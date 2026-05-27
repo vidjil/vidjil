@@ -1,21 +1,20 @@
 
-!!! note
-    Here are aggregated notes forming a part of the developer documentation on the vidjil-algo.  
-    These notes are a work-in-progress, they are not as polished as the user documentation.  
-    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md),
-    at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
+> [!note]
+> Here are aggregated notes forming a part of the developer documentation on the vidjil-algo.  
+> These notes are a work-in-progress, they are not as polished as the user documentation.  
+> Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
 
 # Development notes -- Vidjil-algo
 
 ## Code organization
 
-The algorithm follows roughly those steps, supposing the matching command line options have been supplied:
+The canonical path through code follows roughly those steps:
 
 0. Vidjil is launched, `main()` is called (vidjil.cpp) which parses and validates the command line on the go
-1. Species germline genes are loaded from the input .g files (e.g. `homo-sapiens.g`) which reference FASTA files describing genes of specific loci (e.g. IGHV.fa, TRAJ.fa, TRAJ+down.fa, etc.) as provided by IMGT, going through `MultiGermline` (multi_germline.hpp), `Germline` (germline.h) and `GermlineElement` (germline_element.hpp) and finally `PointerACAutomaton` (automaton.hpp) to build an Aho-Corasick graph of all genes based on specific seeds, and to mark regions of interest on raw germline genes
-2. The input sequence file (FASTA, FASTQ, BAM, optionally gzipped) is read either by `OnlineFasta` (`core/fasta.h`) or `OnlineBAM` (`core/bam.h`) and the k-mers recognized as part of a germline gene (affects) are counted in its reads as an overview
-3. Each read's affects are analyzed individually to probabilistically find V(D)J recombinations with `KmerAffectAnalyser` or `MultiKmerAffectAnalyser` (affectanalyser.hpp), and `KmerSegmenter` (segment.hpp)
-4. For reads in which V(D)J recombinations have been detected, a sub-sequence between the likely V gene end and the likely J gene start serves as a key to count reads with the same sub-sequence (called a window), and to store them together (up to a certain amount, with some heuristic) in `BinReadStorage` (read_storage.h), used by `WindowsStorage` (windows.h) through `WindowsExtractor` (windowExtractor.h)
+1. Species germline genes are loaded from the input .g files (e.g. `homo-sapiens.g`) which reference FASTA files describing genes of specific recombination systems (IGHV.fa, TRAJ+down.fa, IGK-INTRON.fa, etc.) as provided by IMGT, going through `MultiGermline` (multi_germline.hpp), `Germline` (germline.h) and `GermlineElement` (germline_element.hpp) and finally `PointerACAutomaton` (automaton.hpp) to build an Aho-Corasick graph of all genes based on specific seeds, and to mark regions of interest on raw germline genes
+2. The input sequence file (FASTA, FASTQ, BAM, optionally gzipped) is read either by `OnlineFasta` (`core/fasta.h`) or `OnlineBAM` (`core/bam.h`) and the k-mers recognized as part of a germline gene (affectations) are counted in its reads as an overview
+3. On each read, the set of affectations is analyzed to probabilistically find V(D)J recombinations with `KmerAffectAnalyser` or `MultiKmerAffectAnalyser` (affectanalyser.hpp), and `KmerSegmenter` (segment.hpp)
+4. For reads in which V(D)J recombinations have been detected, a sub-sequence between the likely V gene's end and the likely J gene's start serves as a key to count reads with the same sub-sequence (called a window), and to store them together (up to a certain amount, with some heuristic) in `BinReadStorage` (read_storage.h), used by `WindowsStorage` (windows.h) through `WindowsExtractor` (windowExtractor.h)
 5. Windows that are identical-enough have their reads further clustered together using `comp_matrix` (cluster-junctions.h), using the distance between pairs of windows, as determined through sequence alignment with `DynProg` (dynprog.h)
 6. For each remaining cluster of reads around a window, a sequence that is as representative as possible of stored reads and as long as possible is generated, using those same stored reads, as output by KmerRepresentativeComputer (representative.h). The resulting sequence is an approximate consensus
 7. The representative sequence of each window is then aligned with possibly matching V (, D) and J genes by `DynProg` (dynprog.h). The V(D)J recombination the window represents is actually designated: the actual V (, D) and J genes is it made of are determined and finely segmented by `FineSegmenter` (segment.h), which positions the start and end of its sub-regions, especially its CDR3 and JUNCTION
@@ -61,7 +60,7 @@ Tests must be declared in the [tests.h](https://gitlab.inria.fr/vidjil/vidjil/-/
 - [bam.h](../algo/core/bam.h): specialized OnlineBioReader for BAM files
 
 ### Germlines (organize reads, recombination systems, shortcuts and other data associated with IMGT germlines)
-- [germline_element.hpp](../algo/core/germline_element.hpp): represents one FASTA file (e.g. containing the V or D or J genes of a locus)
+- [germline_element.hpp](../algo/core/germline_element.hpp): represents one FASTA file (e.g. containing the V or D or J genes of a recombination system)
 - [germline_element_repository.hpp](../algo/core/germline_element_repository.hpp): associative finder of shortcut by affect and of FASTA files by (filename + seeds) pairs or by shortcut
 - [germline.hpp](../algo/core/germline.hpp): represents a .g file, gathering all FASTA files relevant to that germline (e.g. a species)
 - [multi_germline.hpp](../algo/core/multi_germline.hpp): points to recombination systems inside one or more .g files
