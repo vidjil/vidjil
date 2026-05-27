@@ -7,7 +7,7 @@ The definitions of the following words apply in the context of Vidjil; they may 
 - Affectation: the recombination system and strand (sometimes written as by `-` or `+`) that a series of nucleotides is guessed to come from
 - Affect: an affectation associated with the length of the k-mer it qualifies
 - Aho-Corasick algorithm/automata/graph/trie: a trie in which each node represents a nucleotide that is part of a sequence. The depth of each node represents the order in which a nucleotide was seen in a sequence. The trie is complemented by a "failure function" which indicates a fallback node to transition to, in the event no transition exists from the current nucleotide at depth `n` to the desired target nucleotide at a depth `n + 1`
-- Clone / clonotype: a 
+- Clone / clonotype: a population of lymphocytes carrying the same V(D)J recombination
 - DNA: deoxyribonucleic acid, two strands of nucleotides that coil around each other in a double helix
 - K-mer: a series of k nucleotides extracted from bigger sequence (e.g. "TTAC" is a 4-mer of "GATTACA")
 - Gene: a sequence of nucleotides on a chromosome, which can be translated by our cell's biological machinery
