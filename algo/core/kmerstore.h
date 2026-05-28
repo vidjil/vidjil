@@ -417,7 +417,7 @@ void IKmerStore<T>::setNonFinal(const seqtype& full_sequence, string spaced_seed
   const size_t sequence_len    = full_sequence.length();
   const size_t spaced_seed_len = spaced_seed.length();
 
-  const bool   remove_revcomp             = revcomp_indexed && T::hasRevcompSymetry();
+  const bool   remove_revcomp             = revcomp_indexed && !T::hasRevcompSymetry();
   const size_t last_subsequence_start_idx = sequence_len - spaced_seed_len;
   for (size_t i = 0; i <= last_subsequence_start_idx; i++)
   {
