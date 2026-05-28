@@ -196,6 +196,14 @@ public:
               int keep_only=0, string seed="");
 
   /**
+   * Make the state this sequence is associated with (if it exists at all) non-final/non-accepting.
+   * This makes sure getResults(), getAllResults() and getMultiResults() will not associate this
+   * sequence with any Info.
+   * @param sequence: the sequence of nucleotide whose state must be made non-final.
+   */
+  void setNonFinal(const seqtype& sequence);
+
+  /**
    * @return true iff states points to a final state
    */
   bool isFinalState(void *state);

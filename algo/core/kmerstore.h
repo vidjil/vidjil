@@ -146,6 +146,9 @@ public:
                       bool ignore_extended_nucleotides=true, int keep_only = 0,
                       string seed="");
 
+  virtual void setNonFinal(const seqtype& sequence);
+  void setNonFinal(const seqtype& sequence, string seed);
+
   /**
    * Perform extra steps to finish the building of the index. After using
    * that function, we are not supposed to insert any other sequence.
@@ -393,12 +396,41 @@ void IKmerStore<T>::insert(const seqtype &sequence,
     }
     this_kmer += T(label, strand, seed.size());
     if (revcomp_indexed && ! T::hasRevcompSymetry()) {
-      seqtype rc_kmer = spaced(revcomp(substr), seed);
+      seqtype rc_kmer = spaced(revcomp(substr), seed); // TODO(Sami): shouldn't the seed be reversed?
       T &this_rc_kmer = this->get(rc_kmer);
       if (this_rc_kmer.isNull())
         nb_kmers_inserted++;
       this_rc_kmer += T(label, -1, seed.size());
     }
+  }
+}
+
+template <class T>
+void IKmerStore<T>::setNonFinal(const seqtype& sequence) { (void)sequence; }
+
+template <class T>
+void IKmerStore<T>::setNonFinal(const seqtype& full_sequence, string spaced_seed)
+{
+  std::string          subsequence;
+  std::vector<seqtype> projections;
+
+  const size_t sequence_len    = full_sequence.length();
+  const size_t spaced_seed_len = spaced_seed.length();
+
+  const bool   remove_revcomp             = revcomp_indexed && T::hasRevcompSymetry();
+  const size_t last_subsequence_start_idx = sequence_len - spaced_seed_len;
+  for (size_t i = 0; i <= last_subsequence_start_idx; i++)
+  {
+    subsequence = full_sequence.substr(i, spaced_seed_len);
+    projections = generate_all_seeds(subsequence, spaced_seed);
+
+    const size_t projection_count = projections.size(); 
+    for (size_t i = 0; i < projection_count; i++)
+      setNonFinal(projections[i]);
+    
+    if (remove_revcomp)
+      for (size_t i = 0; i < projection_count; i++)
+        setNonFinal(revcomp(projections[i]));
   }
 }
 
