@@ -60,10 +60,10 @@ Tests must be declared in the [tests.h](https://gitlab.inria.fr/vidjil/vidjil/-/
 - [bam.h](../algo/core/bam.h): specialized OnlineBioReader for BAM files
 
 ### Germlines (organize reads, recombination systems, shortcuts and other data associated with IMGT germlines)
-- [germline_element.hpp](../algo/core/germline_element.hpp): represents one FASTA file (e.g. containing the V or D or J genes of a recombination system)
+- [germline_element.hpp](../algo/core/germline_element.hpp): represents one FASTA file (e.g. containing the V, D, J, C genes of a recombination system for instance)
 - [germline_element_repository.hpp](../algo/core/germline_element_repository.hpp): associative finder of shortcut by affect and of FASTA files by (filename + seeds) pairs or by shortcut
-- [germline.hpp](../algo/core/germline.hpp): represents a .g file, gathering all FASTA files relevant to that germline (e.g. a species)
-- [multi_germline.hpp](../algo/core/multi_germline.hpp): points to recombination systems inside one or more .g files
+- [germline.hpp](../algo/core/germline.hpp): represents a recombination system, as described in .g files, associating gene types (V/"5", D/"4", J/"3" etc.) that are part of the system to the FASTA files holding the collection of matching genes
+- [multi_germline.hpp](../algo/core/multi_germline.hpp): holds all recombination systems passed through input .g files
 
 ### Detection (analyze reads and find V(D)J recombinations)
 - [kmerstore.h](../algo/core/kmerstore.h): stores k-mer affects derived from a specific seed and their associated FASTA file(s)
