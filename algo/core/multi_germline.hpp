@@ -2,6 +2,7 @@
 #define MULTIGERMLINE_HPP
 
 #include "germline.hpp"
+#include "fasta.h"
 
 enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,
@@ -305,9 +306,65 @@ void MultiGermline<Affect>::buildFromJson(json germlines, int filter,
 
 template <typename Affect>
 void MultiGermline<Affect>::addToIndex(IKmerStore<Affect> *index) {
+  std::set<const GermlineElement<Affect>*> d_gene_germlines;
+  std::set<std::string>                    search_spaced_seeds;
+  
+  // Neither will be invalidated by insertions
+  const auto d_gene_germlines_end    = d_gene_germlines.end();
+  const auto search_spaced_seeds_end = search_spaced_seeds.end();
+
   for (const auto& germline : germlines) {
     germline->addToIndex(index);
+
+    // Were any D genes in that recombination system meant to be included in the index?
+    // That is: was "4" part of the "search_recombinations" field of this recombination system, in
+    // the matching .g file?
+    std::list<std::string> search_recombinations = germline->getSegments();
+    bool recombination_system_inserted_d_genes_in_index = false;
+    for (const std::string& segment : search_recombinations)
+    {
+      bool recombination_d_gene_searched = (segment[0] == '4');
+      recombination_system_inserted_d_genes_in_index |= recombination_d_gene_searched;
+
+      // TODO (Sami): why is one spaced seed registered per searched segment in a recombination
+      // system? Why isn't there one spaced seed per recombination system instead?
+      search_spaced_seeds.emplace_hint(search_spaced_seeds_end, germline->getSeed(segment));
+    }
+
+    if (recombination_system_inserted_d_genes_in_index == false)
+    {
+      // There were no D genes inserted in the index related to this recombination system.
+      // If it has D genes at all, keep a reference to their FASTA file which will be used to remove
+      // projections of spaced seeds on V & J genes that coincide with this system's D genes
+      std::set<GermlineElement<Affect>*> germline_elements = germline->getGermlineElements("4");
+      for (const GermlineElement<Affect>* element : germline_elements)
+        d_gene_germlines.insert(d_gene_germlines_end, element);
+    }
   }
+
+  // Remove any gene projections that were added to the index that coincides with D genes
+  // projections that should not be searched for, using the same seeds that were used for
+  // projections added to the index
+  for (const GermlineElement<Affect>* d_gene_germline : d_gene_germlines)
+  {
+    OnlineFasta d_gene_reader(d_gene_germline->getFilename());
+    while (d_gene_reader.hasNext())
+    {
+      d_gene_reader.next();
+      Sequence d_gene = d_gene_reader.getSequence();
+      for (const std::string& spaced_seed : search_spaced_seeds)
+      {
+        // Some D genes are smaller than the spaced seeds used by searched genes to insert them in
+        // the index, meaning these small D genes cannot coincide with these searched genes
+        // projections. They are ignored
+        const size_t spaced_seed_size = spaced_seed.size();
+        const size_t sequence_size    = d_gene.sequence.size();
+        if (spaced_seed_size <= sequence_size)
+          index->setNonFinal(d_gene.sequence, spaced_seed);
+      }
+    }
+  }
+
   index->finish_building();
   this->index = index;
 }
