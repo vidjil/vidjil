@@ -1861,7 +1861,7 @@ int main(int argc, char **argv) {
                                 if (segmented_germline->hasSegment(
                                         "4",
                                         std::set<Tshortcut>({left_shortcut, right_shortcut})) &&
-                                    segmented_germline->getGermlineElements("4").size() > 0)
+                                    segmented_germline->getSegmentGermlineElements("4").size() > 0)
                                     seg.FineSegmentD(segmented_germline, several_D,
                                                      expected_value_D, fine_evalue_multiplier);
                             }
@@ -1898,7 +1898,7 @@ int main(int argc, char **argv) {
                                      SEG_METHOD_MAX12))
                                     *out_clone << ">" << seg.box_V->ref_label << endl
                                                << seg.box_V->ref << endl;
-                                if (segmented_germline->getGermlineElements("4").size() > 0)
+                                if (segmented_germline->getSegmentGermlineElements("4").size() > 0)
                                     *out_clone << ">" << seg.box_D->ref_label << endl
                                                << seg.box_D->ref << endl;
                                 if ((segmented_germline->getSegmentationMethod() ==
@@ -2105,7 +2105,7 @@ int main(int argc, char **argv) {
                                   germline->getRepository()->getShortcut(seg->box_J->affect);
                     if (germline->hasSegment(
                             "4", std::set<Tshortcut>({left_shortcut, right_shortcut})) &&
-                        germline->getGermlineElements("4").size() > 0)
+                        germline->getSegmentGermlineElements("4").size() > 0)
                         s.FineSegmentD(germline, several_D, expected_value_D,
                                        fine_evalue_multiplier);
                 }
@@ -2160,7 +2160,7 @@ int main(int argc, char **argv) {
     if (verbose && (kmer_threshold != NO_LIMIT_VALUE)) {
         cout << "Statistics on filtered genes for clone analysis (--analysis-filter):" << endl;
         for (auto &germline : multigermline->getGermlines()) {
-            for (auto &elem : germline->getGermlineElements("5")) {
+            for (auto &elem : germline->getSegmentGermlineElements("5")) {
                 FilterWithACAutomaton *f = elem->getFilter();
                 if (f)
                     if (f->filtered_sequences_nb) {
