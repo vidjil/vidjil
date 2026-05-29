@@ -146,8 +146,23 @@ public:
                       bool ignore_extended_nucleotides=true, int keep_only = 0,
                       string seed="");
 
-  virtual void setNonFinal(const seqtype& sequence);
-  void setNonFinal(const seqtype& sequence, string seed);
+  /**
+   * Remove the passed sequence from the index, such that getResults() and getAllResults() cannot
+   * return any result for any such sequence that is currently in the index.
+   *
+   * @param sequence: the sequence to remove.
+   */
+  virtual void remove(const seqtype& sequence);
+
+  /**
+   * Remove all projections of the passed seed on the passed sequence from the index, such that
+   * getResults() and getAllResults() cannot return any result for any such sequence that is
+   * currently in the index.
+   *
+   * @param sequence: the sequence to remove.
+   * @param seed: the seed to project on the sequence.
+   */
+  void remove(const seqtype& sequence, string seed);
 
   /**
    * Perform extra steps to finish the building of the index. After using
@@ -406,10 +421,10 @@ void IKmerStore<T>::insert(const seqtype &sequence,
 }
 
 template <class T>
-void IKmerStore<T>::setNonFinal(const seqtype& sequence) { (void)sequence; }
+void IKmerStore<T>::remove(const seqtype& sequence) { (void)sequence; }
 
 template <class T>
-void IKmerStore<T>::setNonFinal(const seqtype& full_sequence, string spaced_seed)
+void IKmerStore<T>::remove(const seqtype& full_sequence, string spaced_seed)
 {
   std::string          subsequence;
   std::vector<seqtype> projections;
@@ -426,11 +441,11 @@ void IKmerStore<T>::setNonFinal(const seqtype& full_sequence, string spaced_seed
 
     const size_t projection_count = projections.size(); 
     for (size_t i = 0; i < projection_count; i++)
-      setNonFinal(projections[i]);
+      remove(projections[i]);
     
     if (remove_revcomp)
       for (size_t i = 0; i < projection_count; i++)
-        setNonFinal(revcomp(projections[i]));
+        remove(revcomp(projections[i]));
   }
 }
 

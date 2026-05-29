@@ -271,7 +271,7 @@ void PointerACAutomaton<Info>::insert(const seqtype &sequence, const string &lab
 }
 
 template <class Info>
-void PointerACAutomaton<Info>::setNonFinal(const seqtype& sequence)
+void PointerACAutomaton<Info>::remove(const seqtype& sequence)
 {
   pointer_state<Info>* state = getInitialState();
 
@@ -280,9 +280,12 @@ void PointerACAutomaton<Info>::setNonFinal(const seqtype& sequence)
   {
     state = state->transition(sequence[i]);
     if (state == nullptr)
-      return; // sequence not found
+      return; // the sequence has not associated state in the automaton
   }
 
+  // Empty pointer_state associated to this sequence
+  state->informations.clear();
+  state->informations.shrink_to_fit();
   state->is_final = false;
 }
 

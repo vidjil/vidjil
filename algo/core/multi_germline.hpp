@@ -360,7 +360,7 @@ void MultiGermline<Affect>::addToIndex(IKmerStore<Affect> *index) {
         const size_t spaced_seed_size = spaced_seed.size();
         const size_t sequence_size    = d_gene.sequence.size();
         if (spaced_seed_size <= sequence_size)
-          index->setNonFinal(d_gene.sequence, spaced_seed);
+          index->remove(d_gene.sequence, spaced_seed);
       }
     }
   }
