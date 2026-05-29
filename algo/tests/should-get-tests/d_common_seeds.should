@@ -1,4 +1,4 @@
-!LAUNCH: $VIDJIL_DIR/$EXEC -c clones -z 1 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/d_common_seeds.fa > /dev/null ; cat out/d_common_seeds.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -all -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/d_common_seeds.fa > /dev/null ; cat out/d_common_seeds.vidjil
 
 $ The two subsequences in the middle of the D gene that are common with the V gene of this read are not assigned a C (IGHV) affect
 # With wrong C affects:       "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC C         CC                           AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA            ",
