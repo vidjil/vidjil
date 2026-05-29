@@ -289,6 +289,7 @@ void PointerACAutomaton<Info>::remove(const seqtype& sequence)
     state->informations.clear();
     state->informations.shrink_to_fit();
     state->is_final = false;
+    this->nb_kmers_inserted -= 1;
   }
 }
 
