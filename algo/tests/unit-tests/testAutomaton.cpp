@@ -154,36 +154,80 @@ void testRCInsertAcAutomaton() {
 }
 
 void testGetAllResults() {
-  PointerACAutomaton<KmerAffect> aho(false, true);
+  const bool revcomp       = false;
+  const bool multiple_info = true;
 
   KmerAffect V = KmerAffect("V", 1, 4);
   KmerAffect J = KmerAffect("J", 1, 4);
-  aho.insert("ACAGTC", "V", true, 0, "####");
-  // Will insert ACAG, CAGT, AGTC
-  aho.insert("AGTCTT", "J", true, 0, "####");
-  // Will insert AGTC, GTCT, TCTT
-  aho.build_failure_functions();
 
-  //                                                       0123456789
-  //                                                         VV   
-  //                                                          JJJ
-  map<KmerAffect, BitSet> all_results = aho.getAllResults("AGCAGTCTTA");
-  TAP_TEST_EQUAL(all_results.size(), 2, TEST_AC_ALL_RESULTS, "");
-  TAP_TEST_EQUAL(all_results.count(V), 1, TEST_AC_ALL_RESULTS, "");
-  TAP_TEST_EQUAL(all_results.count(J), 1, TEST_AC_ALL_RESULTS, "");
+  {
+    PointerACAutomaton<KmerAffect> aho(revcomp, multiple_info);
 
-  auto it = all_results.find(V);
-  BitSet &b_v = it->second;
-  TAP_TEST_EQUAL(b_v.count(), 2, TEST_AC_ALL_RESULTS, "");
-  TAP_TEST_EQUAL(b_v.size(), 10, TEST_AC_ALL_RESULTS, "");
-  for (uint i = 2; i < 4; i++)
-    TAP_TEST_EQUAL(b_v.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+    aho.insert("ACAGTC", "V", true, 0, "####");
+    // Will insert ACAG, CAGT, AGTC
+    aho.insert("AGTCTT", "J", true, 0, "####");
+    // Will insert AGTC, GTCT, TCTT
+    aho.build_failure_functions();
 
-  it = all_results.find(J);
-  BitSet &b_j = it->second;
-  TAP_TEST_EQUAL(b_j.count(), 3, TEST_AC_ALL_RESULTS, "");
-  for (uint i = 3; i < 6; i++)
-    TAP_TEST_EQUAL(b_j.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+
+    //                                                       0123456789
+    //                                                         VV   
+    //                                                          JJJ
+    map<KmerAffect, BitSet> all_results = aho.getAllResults("AGCAGTCTTA");
+
+    TAP_TEST_EQUAL(all_results.size(), 2, TEST_AC_ALL_RESULTS, "");
+    TAP_TEST_EQUAL(all_results.count(V), 1, TEST_AC_ALL_RESULTS, "");
+    TAP_TEST_EQUAL(all_results.count(J), 1, TEST_AC_ALL_RESULTS, "");
+
+    auto it = all_results.find(V);
+    BitSet &b_v = it->second;
+    TAP_TEST_EQUAL(b_v.count(), 2, TEST_AC_ALL_RESULTS, "");
+    TAP_TEST_EQUAL(b_v.size(), 10, TEST_AC_ALL_RESULTS, "");
+    for (uint i = 2; i < 4; i++)
+      TAP_TEST_EQUAL(b_v.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+
+    it = all_results.find(J);
+    BitSet &b_j = it->second;
+    TAP_TEST_EQUAL(b_j.count(), 3, TEST_AC_ALL_RESULTS, "");
+    for (uint i = 3; i < 6; i++)
+      TAP_TEST_EQUAL(b_j.get(i), 1, TEST_AC_ALL_RESULTS, " pos " << i);
+  }
+
+  { // Rebuild the automata, but this time excluding AGTC
+    PointerACAutomaton<KmerAffect> aho = PointerACAutomaton<KmerAffect>(revcomp, multiple_info);
+    aho.insert("ACAGTC", "V", true, 0, "####");
+    aho.insert("AGTCTT", "J", true, 0, "####");
+    aho.remove("AGTC");
+    aho.build_failure_functions();
+    //                               0123456789
+    //                                 V   
+    //                                   JJ
+    map<KmerAffect, BitSet> all_results = aho.getAllResults("AGCAGTCTTA");
+    TAP_TEST_EQUAL(all_results.size(),  2, TEST_AC_ALL_RESULTS, "Only 2 types of affects should be detected: V and J genes");
+
+    const auto all_results_end = all_results.end();
+    auto       v_it            = all_results.find(V);
+    auto       j_it            = all_results.find(J);
+    bool       v_found         = (v_it != all_results_end);
+    bool       j_found         = (j_it != all_results_end);
+    TAP_TEST(v_found, TEST_AC_ALL_RESULTS, "V affect(s) should be detected");
+    TAP_TEST(j_found, TEST_AC_ALL_RESULTS, "J affect(s) should be detected");
+
+    if (v_found)
+    {
+      const BitSet& v_bitset = v_it->second;
+      TAP_TEST_EQUAL(v_bitset.count(), 1, TEST_AC_ALL_RESULTS, "1 V affect should be detected");
+      TAP_TEST_EQUAL(v_bitset.get(2), 1, TEST_AC_ALL_RESULTS, "Only the detection of the V affect at position 2 must remain");
+    }
+
+    if (j_found)
+    {
+      const BitSet& j_bitset = j_it->second;
+      TAP_TEST_EQUAL(j_bitset.count(), 2, TEST_AC_ALL_RESULTS, "2 J affects should be detected");
+      TAP_TEST_EQUAL(j_bitset.get(4),  1, TEST_AC_ALL_RESULTS, "The 1st detection of the J affect should be at position 4");
+      TAP_TEST_EQUAL(j_bitset.get(5),  1, TEST_AC_ALL_RESULTS, "The 2nd detection of the J affect should be at position 5");
+    }
+  }
 }
 
 void testAutomaton() {
