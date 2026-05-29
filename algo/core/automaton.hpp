@@ -284,9 +284,12 @@ void PointerACAutomaton<Info>::remove(const seqtype& sequence)
   }
 
   // Empty pointer_state associated to this sequence
-  state->informations.clear();
-  state->informations.shrink_to_fit();
-  state->is_final = false;
+  if (state->informations.size() != 0)
+  {
+    state->informations.clear();
+    state->informations.shrink_to_fit();
+    state->is_final = false;
+  }
 }
 
 template <class Info>
