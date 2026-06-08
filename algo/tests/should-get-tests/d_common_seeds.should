@@ -11,7 +11,7 @@ $ No affect in the middle of the D gene means this clone's window is not incorre
 #  V  ATATTACTGT                                         | CTGT
 #  D            GTAGTGGTGGTAGCTGCTACTCCAGGATA            |     GTAGTGGTGGTAGCTGCTACTCCAGGATA
 #  J                                         TTTTGATGTCT |                                  TTTTGATGTCTGGGGCC
-#       10                  29                  11         4               29                      17
+#       10                  29                   11         4               29                      17
 j:clones[0].id: "ATATTACTGTGTAGTGGTGGTAGCTGCTACTCCAGGATATTTTGATGTCT"
 
 $ The e-value differs whether C affects are assigned in the middle of the D gene
