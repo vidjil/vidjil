@@ -3,6 +3,17 @@
     The generic way to update a vidjil server is described in [update vidjil server part](server.md#updating-a-docker-installation). All steps between previously installed version and target version should be followed to adapt configuration correctly.
     In this file, the specific migration parts are described.
 
+## 2026.06 release
+
+No change is present in docker environment to launch vidjil. 
+
+A new develppoment rule have been created to replicate gitlab-CI behavior of server cypress testing.
+This rule is `deploy-local-ci-env`.
+
+### vidjil/server 2026.6
+### vidjil/client 2026.6
+
+
 ## 2025.06 release
 
 ### vidjil/server 2025.06

@@ -4,6 +4,41 @@
 This changelog concerns the Vidjil web application, client and server.
 We are using continuous integration and deployment, some features may be pushed on our servers between these releases.
 
+## Web 2026-6
+
+??? note "Milestone 2026-6"
+Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/2XXX).
+
+**Improve analysis**
+
+- MRD script have been greatly improved and deployed, with improvment in script himself, and in interface to show these new results
+- Prefuse step have been move at `in-process` step, allow to launch and pakcaged it with main analysis step, just after vidjil call. This fix 2 misleading behaviors of our server: 
+    - In run with large number of sample, each prefuse step was launch dès qu'un nouveau resultats était disponible.
+    - Custom analysis opening was only consider the results at the end of in-process (mainly vidjil) and not prefused augmented analysis.
+- Log of an analysis, avaible by clincking on `COMPLETED/FAILED` button, have been rethincked. Now you will have a list of log separated for each in-process part of the analysis. 
+- 
+
+
+**Bug fixes**
+
+- Primers reset between each analysis loading have been fixed
+- IMGT calling have been fixed to use new form value
+
+**Security**
+
+- Some security fix have been made.
+- An automatic dependance audit have been add to docker image build of python dependancies
+- Cookies rights have been limited to improve security
+
+**Technical**
+
+- Prefuse step have been move at `in-process` step. See more details in `improve analysis` above.
+- API script allow now to launch a `get reads` process directly from command line. This grep reads is based on `grep` tools and return each reads with vidjil window given in parameter
+- Administrator table have now a js sort collumns capabilityon table of preprocess, process, groups and users.
+- Vidjil fromat have evolved to `2026-6` to allow the add of new external or complementary analysis
+- Fuse script have been improve to works with 2026-6 vidjil formatn, without breaking previous compatibilities
+- A dedicated vidjil file prettyfier have been add as `tools/format_vidjil.py`. It allow to give a compated, organized and human readable vision on a vidjil results file.
+
 ## Web 2025-10
 
 ??? note "Milestone 2025-10"
