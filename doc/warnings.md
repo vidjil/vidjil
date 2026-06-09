@@ -46,6 +46,9 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 
 - [ ]     Potential co-linear genome match (pos xxxxxx) #1664 #1629
 - [ ] W61 Non-recombined D7-27/J1 sequence  #2232
+- [x] W62 Region(s) length below expected range
+- [x] W63 Region(s) length above expected range
+- [x] W64 Region(s) nucleotide count not a multiple of 3
 - [ ]     Potential di-mer #2820
 - [ ]     Very large deletion (xxx bp) #2909
 - [ ]     Unexpected recombination

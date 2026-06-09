@@ -461,9 +461,16 @@ string Segmenter<Affect>::getInfoLine() const
   if (evalue_right > NO_LIMIT_VALUE)
     s += "/" + scientific_string_of_double(evalue_right);
 
-  if (CDR3start != INVALID_POS)
-    s += " {" + string_of_int(JUNCTIONstart + 1) + "(" + string_of_int(JUNCTIONend-JUNCTIONstart+1) + ")" + string_of_int(JUNCTIONend + 1) + " "
-      + "up"[JUNCTIONproductive] + " " + JUNCTIONaa + "}";
+  Bounds junc_bounds = segments_nuc_pos[JUNCTION_SEGMENT];
+  if (junc_bounds.start    != INVALID_BOUND_POS &&
+      junc_bounds.end      != INVALID_BOUND_POS &&
+      junc_bounds.length() >= JUNCTION_MIN_LENGTH_IN_NUCLEOTIDES)
+  {
+    unsigned int junc_length     = junc_bounds.length();
+    size_t       junc_productive = (JUNCTIONunproductive.length() == 0);
+    s += " {" + string_of_int(junc_bounds.start) + '(' + string_of_int(junc_length) +
+         ')' + string_of_int(junc_bounds.end) + ' ' + "up"[junc_productive] + " " + JUNCTIONaa + '}';
+  }
 
   return s ;
 }
@@ -558,13 +565,6 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
   this->box_V = new AlignBox<Affect>("5", V_COLOR);
   this->box_D = new AlignBox<Affect>();
   this->box_J = new AlignBox<Affect>("3", J_COLOR);
-
-  this->CDR3start = INVALID_POS;
-  this->CDR3end = INVALID_POS;
-
-  this->JUNCTIONstart = INVALID_POS;
-  this->JUNCTIONend = INVALID_POS;
-
   this->label = seq.label ;
   this->sequence = seq.sequence ;
   this->quality = seq.quality;
@@ -578,6 +578,9 @@ KmerSegmenter<Affect>::KmerSegmenter(Sequence seq, IKmerStore<Affect> *index, in
   this->evalue = NO_LIMIT_VALUE;
   this->evalue_left = NO_LIMIT_VALUE;
   this->evalue_right = NO_LIMIT_VALUE;
+
+  for (size_t i = 0; i < SEGMENT_COUNT; i++)
+    this->segments_nuc_pos[i] = (Bounds){.start = INVALID_BOUND_POS, .end = INVALID_BOUND_POS};
 
   int s = (size_t)index->getS() ;
   int length = this->sequence.length() ;
@@ -1135,8 +1138,6 @@ void align_against_collection(string &read, std::shared_ptr<BioReader> rep, int 
   cout << "reverse_both " << reverse_both << "   reverse_left " << reverse_ref << "   local " << local << endl;
   cout << "best:   " << *box <<  "   read length: " << read.length() << "   ref length: " <<   box->ref.size()  << endl;
 #endif
-
-
 }
 
 string format_del(int deletions)
@@ -1166,11 +1167,8 @@ FineSegmenter<Affect>::FineSegmenter(Sequence seq, Germline<Affect> *germline, C
   this->evalue_left = NO_LIMIT_VALUE;
   this->evalue_right = NO_LIMIT_VALUE;
 
-  this->CDR3start = INVALID_POS;
-  this->CDR3end = INVALID_POS;
-
-  this->JUNCTIONstart = INVALID_POS;
-  this->JUNCTIONend = INVALID_POS;
+  for (size_t i = 0; i < SEGMENT_COUNT; i++)
+    this->segments_nuc_pos[i] = (Bounds){.start = INVALID_BOUND_POS, .end = INVALID_BOUND_POS};
 
   if (germline == Germline<Affect>::getUnseg())
     return;
@@ -1466,93 +1464,321 @@ void FineSegmenter<Affect>::FineSegmentD(Germline<Affect> *germline, bool severa
   }
 }
 
+
+unsigned int Bounds::length() const
+{
+  return end - start + 1;
+}
+
+const char* const segment_names[SEGMENT_COUNT] =
+{
+  "fr1",
+  "fr2",
+  "fr3",
+  "fr4",
+  "cdr1",
+  "cdr2",
+  "cdr3",
+  "junction"
+};
+
 template <typename Affect>
-void FineSegmenter<Affect>::findCDR3(){
+void Segmenter<Affect>::segmentFR(LocationToMark          fr_first_aa_mid_nuc_loc,
+                                  LocationToMark          fr_last_aa_mid_nuc_loc,
+                                  Segment                 fr_segment,
+                                  const AlignBox<Affect>* box,
+                                  size_t                  read_last_idx)
+{
+  // Retrieve its start and end positions
+  const auto end_it = box->aligned_locations_pos.end();
+
+  auto fr_first_aa_mid_nuc_it = box->aligned_locations_pos.find(fr_first_aa_mid_nuc_loc);
+  if (fr_first_aa_mid_nuc_it != end_it)
+  {
+    size_t fr_first_aa_mid_nuc_pos = fr_first_aa_mid_nuc_it->second;
+    if (0 < fr_first_aa_mid_nuc_pos)
+      segments_nuc_pos[fr_segment].start = fr_first_aa_mid_nuc_pos - 1;
+  }
+
+  auto fr_last_aa_mid_nuc_it  = box->aligned_locations_pos.find(fr_last_aa_mid_nuc_loc);
+  if (fr_last_aa_mid_nuc_it != end_it)
+  {
+    size_t fr_last_aa_mid_nuc_pos = fr_last_aa_mid_nuc_it->second;
+    if (fr_last_aa_mid_nuc_pos < read_last_idx)
+      segments_nuc_pos[fr_segment].end = fr_last_aa_mid_nuc_pos + 1;
+  }
+}
+
+
+template <typename Affect>
+void Segmenter<Affect>::segmentCDR(Segment            prev_fr,
+                                   Segment            cdr_segment,
+                                   Segment            next_fr,
+                                   size_t             read_last_idx)
+{
+  unsigned int prev_fr_bounds_end   = segments_nuc_pos[prev_fr].end;
+  unsigned int next_fr_bounds_start = segments_nuc_pos[next_fr].start;
+
+  // Retrieve its start and end positions.
+  //
+  // It is possible for CDRs bounds to go beyond the read range, under 0 or over
+  // read.length() - 1  
+  if ((prev_fr_bounds_end != INVALID_BOUND_POS) && (prev_fr_bounds_end < read_last_idx))
+    segments_nuc_pos[cdr_segment].start = prev_fr_bounds_end + 1;
+
+  if ((next_fr_bounds_start != INVALID_BOUND_POS) && (next_fr_bounds_start > 0))
+    segments_nuc_pos[cdr_segment].end = next_fr_bounds_start - 1;
+}
+
+template <typename Affect>
+void Segmenter<Affect>::segmentJUNCTION(const std::string& read)
+{
+  // Use the end of the FR3 and the start of the FR4 to determine JUNCTION bounds: the CDR3 bounds
+  // might be invalid because it doesn't exist while the end of the FR3 and the start of the FR4
+  // are both valid
+  unsigned int fr3_bounds_end     = segments_nuc_pos[FR3_SEGMENT].end;
+  unsigned int fr4_bounds_start   = segments_nuc_pos[FR4_SEGMENT].start;
+  unsigned int candidate_junc_end = fr4_bounds_start + 2;
+  const size_t read_length        = read.length();
+
+  if ((fr3_bounds_end != INVALID_BOUND_POS) && (fr3_bounds_end >= 2))
+    segments_nuc_pos[JUNCTION_SEGMENT].start = fr3_bounds_end - 2;
+
+  if ((fr4_bounds_start != INVALID_BOUND_POS) && (candidate_junc_end < read_length))
+    segments_nuc_pos[JUNCTION_SEGMENT].end = candidate_junc_end;
+}
+
+template <typename Affect>
+void Segmenter<Affect>::arrangeOutOfFrameCDR3(const std::string& read)
+{
+  // We want to output a '#' somewhere around the end of the N, and then restart
+  // at the start of the first codon fully included in the germline J
+  Bounds cdr3_bounds = segments_nuc_pos[CDR3_SEGMENT];
   
-  auto v_junction_it      = this->box_V->aligned_locations_pos.find(JUNCTION_POS);
-  auto j_junction_it      = this->box_J->aligned_locations_pos.find(JUNCTION_POS);
-  auto v_locations_end_it = this->box_V->aligned_locations_pos.end();
-  auto j_locations_end_it = this->box_J->aligned_locations_pos.end();
+  // box_J->start is the first aligned position of the germline J gene on the read, meaning:
+  //            ______________________ ___________________
+  //           |         CDR3         |        FR4        |
+  // _ _ ______|_____ __________ _____|___________________|
+  //         V       |    D     |            J            |
+  // ‾ ‾ ‾‾‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+  //  box_J->start could be here ^      ^ or possibly there
+  //
+  // box_J->start may be as far as the start of the FR4 because the removal and insertion of non-
+  // germinal nucleotides (N) between the V/D and J gene went that far during recombination, or
+  // possibly because hypermutations modified the region of the J genes that overlaps the end of
+  // the CDR3, or even because of a spontenous mutation on the anchor amino acid at the start of
+  // the FR4.
+  //
+  // bugs/bug2249.should shows an example with box_J->start > fr4_bounds.start
+  // In such a case, the codon reading frame cannot be modified in the middle of the CDR3 to
+  // insert an incomplete amino acid '#'. Additionally, if the first aligned position of the J
+  // gene is in the codon of the last amino acid of the CDR3, the incomplete amino acid '#' is
+  // going to be inserted exactly where it already is, so there is nothing to do
+  int j_start_to_cdr3_end_distance = cdr3_bounds.end - box_J->start;
+  if (j_start_to_cdr3_end_distance >= 2)
+  {
+    size_t CDR3startJfull = cdr3_bounds.end - ((j_start_to_cdr3_end_distance + 1) / 3) * 3 + 1;
+    CDR3aa = nuc_to_aa(subsequence(read, cdr3_bounds.start, CDR3startJfull - 1)) +
+              nuc_to_aa(subsequence(read, CDR3startJfull, cdr3_bounds.end));
+  }
+}
+
+template <typename Affect>
+bool Segmenter<Affect>::alignedReadHasInFrameStopCodon(const std::string& read) const
+{
+  // The codon reading frame is determined based on the first available FR start/end position.
+  // It is relative to the first aligned position on the read (box_V->start)
+  size_t codon_reading_frame = 0;
+  for (size_t seg_idx = 0; seg_idx <= FR4_SEGMENT; seg_idx++)
+  {
+    Bounds fr_bounds = segments_nuc_pos[seg_idx];
+    if (fr_bounds.start != INVALID_BOUND_POS)
+    {
+      codon_reading_frame = (fr_bounds.start - box_V->start) % 3;
+      break;
+    }
+
+    if (fr_bounds.end != INVALID_BOUND_POS)
+    {
+      codon_reading_frame = (fr_bounds.end + 1 - box_V->start) % 3;
+      break;
+    }
+  }
+
+  std::string read_startV_stopJ = subsequence(read, box_V->start, box_J->end);
+  bool        stop_codon_found  = hasInFrameStopCodon(read_startV_stopJ, codon_reading_frame);
+
+  return stop_codon_found;
+}
+
+template <typename Affect>
+bool Segmenter<Affect>::IGHWPGxGPatternIsMissing(const std::string& read) const
+{
+  if (segmented_germline->getCode().find("IGH") != string::npos)
+  {
+    unsigned int fr4_1st_nuc_pos = segments_nuc_pos[FR4_SEGMENT].start;
+    if (fr4_1st_nuc_pos != INVALID_BOUND_POS)
+    {
+      // At least 4 codons from the start of the FR4 to look for the (W|P)GxG pattern
+      size_t fr4_12th_nuc_pos    = fr4_1st_nuc_pos + (4 * 3) - 1;
+      bool   first_4_aa_in_range = (fr4_12th_nuc_pos < read.length());
+      if (first_4_aa_in_range)
+      {
+        std::string first_4_aa = nuc_to_aa(subsequence(read, fr4_1st_nuc_pos, fr4_12th_nuc_pos));
+        bool wpgxg_pattern_found = WPGxG(first_4_aa);
+        return !wpgxg_pattern_found;
+      }
+    }
+  }
+
+  return false;
+}
+
+template <typename Affect>
+void Segmenter<Affect>::setJUNCTIONUnproductive(const std::string& reason)
+{
+  JUNCTIONunproductive = reason;
+  this->segments_nuc_pos[JUNCTION_SEGMENT].start = INVALID_BOUND_POS;
+  this->segments_nuc_pos[JUNCTION_SEGMENT].end   = INVALID_BOUND_POS;
+}
+
+
+template <typename Affect>
+void FineSegmenter<Affect>::findRegions()
+{
+  const Sequence     seq_info      = this->getSequence();
+  const std::string& read          = seq_info.sequence;
+  const size_t       read_last_idx = seq_info.sequence.length() - 1;
+
+  size_t v_gene_aligned_location_count = this->box_V->aligned_locations_pos.size();
+  size_t j_gene_aligned_location_count = this->box_J->aligned_locations_pos.size();
+
+  if ((v_gene_aligned_location_count | j_gene_aligned_location_count) == 0)
+      return;
+
+  // Retrieve FR1, FR2, FR3 and FR4 nucleotide bounds
+  this->segmentFR(FR1_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR1_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR1_SEGMENT,
+                  this->box_V,
+                  read_last_idx);
+  this->segmentFR(FR2_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR2_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR2_SEGMENT,
+                  this->box_V,
+                  read_last_idx);
+  this->segmentFR(FR3_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR3_SEGMENT,
+                  this->box_V,
+                  read_last_idx);
+  this->segmentFR(FR4_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR4_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                  FR4_SEGMENT,
+                  this->box_J,
+                  read_last_idx);
+
+  this->segmentCDR(FR1_SEGMENT, CDR1_SEGMENT, FR2_SEGMENT, read_last_idx);
+  this->segmentCDR(FR2_SEGMENT, CDR2_SEGMENT, FR3_SEGMENT, read_last_idx);
+  this->segmentCDR(FR3_SEGMENT, CDR3_SEGMENT, FR4_SEGMENT, read_last_idx);
+
+  this->segmentJUNCTION(read);
   
-  // There are two cases when we can not detect a JUNCTION/CDR3:
-  // - Germline V or J gene has no aligned locations position
-  // - Sequence may be too short on either side, and thus the backtrack did not find any suitable
-  //   aligned locations position
-  if (v_junction_it == v_locations_end_it ||
-      j_junction_it == j_locations_end_it)
+  // CDR3, JUNCTION
+  Bounds cdr3_bounds = this->segments_nuc_pos[CDR3_SEGMENT];
+  if (cdr3_bounds.start == INVALID_BOUND_POS ||
+      cdr3_bounds.end   == INVALID_BOUND_POS)
     return;
 
-  this->JUNCTIONstart = v_junction_it->second;
-  this->JUNCTIONend   = j_junction_it->second;
-
-  // We require at least two codons
-  if (this->JUNCTIONend - this->JUNCTIONstart + 1 < 6) {
-    this->JUNCTIONstart = INVALID_POS;
-    this->JUNCTIONend = INVALID_POS;
-    return ;
-  }
-
-  // Now a junction is detected. Is it productive?
-  this->JUNCTIONproductive = false ;
-
-  // We require at least one more nucleotide to export a CDR3
-  if (this->JUNCTIONend - this->JUNCTIONstart + 1 < 7) {
-    this->JUNCTIONunproductive = UNPROD_TOO_SHORT;
-    return ;
-  }
-
-  // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
-  this->CDR3start = this->JUNCTIONstart + 3;
-  this->CDR3end = this->JUNCTIONend - 3;
-
-  this->CDR3nuc = subsequence(this->getSequence().sequence, this->CDR3start, this->CDR3end);
-
-  if (this->CDR3nuc.length() % 3 == 0)
+  bool         cdr3_has_no_length = (cdr3_bounds.start > cdr3_bounds.end);
+  unsigned int cdr3_length        = cdr3_bounds.length();
+  if (cdr3_has_no_length || cdr3_length < CDR3_MIN_LENGTH_IN_NUCLEOTIDES)
   {
-    this->CDR3aa = nuc_to_aa(this->CDR3nuc);
-    string sequence_startV_stopJ = subsequence(this->getSequence().sequence, this->box_V->start, this->box_J->end);
-    int frame = (this->JUNCTIONstart - this->box_V->start) % 3;
+    this->JUNCTIONunproductive = UNPROD_TOO_SHORT;
+    return;
+  }
 
-    if (hasInFrameStopCodon(sequence_startV_stopJ, frame))
-    {
-      // Non-productive CDR3
-      this->JUNCTIONunproductive = UNPROD_STOP_CODON;
-    }
-    else
-    {
-      // Productive CDR3
-      this->JUNCTIONproductive = true;
-    }
+  this->CDR3nuc = subsequence(read, cdr3_bounds.start, cdr3_bounds.end);
+  this->CDR3aa  = nuc_to_aa(this->CDR3nuc);
+
+  if (cdr3_length % 3 != 0)
+  {
+    this->JUNCTIONunproductive = UNPROD_OUT_OF_FRAME;
+    this->arrangeOutOfFrameCDR3(read);
+  }
+
+  Bounds junc_bounds = this->segments_nuc_pos[JUNCTION_SEGMENT];
+  if (junc_bounds.start == INVALID_BOUND_POS ||
+      junc_bounds.end   == INVALID_BOUND_POS)
+    return;
+
+  // This is called after arrangeOutOfFrameCDR3() so the junction's amino acids sequence can be
+  // generated based on the CDR3's amino acid sequence, which may have been adjusted
+  this->JUNCTIONnuc = subsequence(read, junc_bounds.start, junc_bounds.end);
+  if (this->CDR3aa.empty())
+  {
+    this->JUNCTIONaa = nuc_to_aa(this->JUNCTIONnuc);
   }
   else
   {
-    // Non-productive CDR3
-    this->JUNCTIONunproductive = UNPROD_OUT_OF_FRAME;
-
-    // We want to output a '#' somewhere around the end of the N, and then restart
-    // at the start of the first codon fully included in the germline J
-    int CDR3startJfull = this->JUNCTIONend - ((this->JUNCTIONend - this->box_J->start + 1) / 3) * 3 + 1;
-
-    this->CDR3aa =
-      nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3start, CDR3startJfull-1)) +
-      nuc_to_aa(subsequence(this->getSequence().sequence, CDR3startJfull, this->CDR3end));
+    this->JUNCTIONaa = nuc_to_aa(subsequence(read, junc_bounds.start, cdr3_bounds.start - 1)) +
+                                 this->CDR3aa +
+                                 nuc_to_aa(subsequence(read, cdr3_bounds.end + 1, junc_bounds.end));
   }
 
-  this->JUNCTIONaa = nuc_to_aa(subsequence(this->getSequence().sequence, this->JUNCTIONstart, this->CDR3start-1))
-    + this->CDR3aa + nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3end+1, this->JUNCTIONend));
-
-  // IGH without a {WP}GxG pattern
-  if (this->JUNCTIONproductive && (this->segmented_germline->getCode().find("IGH") != string::npos))
+  if (this->JUNCTIONunproductive.length() == 0)
   {
-    string FR4aastart = nuc_to_aa(subsequence(this->getSequence().sequence, this->CDR3end+1, this->CDR3end+1+12));
-
-    if (!WPGxG(FR4aastart))
+    bool stop_codon_found = this->alignedReadHasInFrameStopCodon(read);
+    if (stop_codon_found)
     {
-      this->JUNCTIONproductive = false;
+      this->JUNCTIONunproductive = UNPROD_STOP_CODON;
+    }
+
+    // See https://gitlab.inria.fr/vidjil/vidjil/-/issues/4006
+    bool wpgxg_pattern_is_missing = this->IGHWPGxGPatternIsMissing(read);
+    if (wpgxg_pattern_is_missing)
+    {
       this->JUNCTIONunproductive = UNPROD_NO_WPGxG;
     }
   }
 }
+
+
+// segment_min_max_lengths[n].start is minimum
+// segment_min_max_lengths[n].end   is maximum
+static const Bounds segment_min_max_lengths[SEGMENT_COUNT] =
+{
+  {FR1_MIN_LENGTH_IN_NUCLEOTIDES,      FR1_MAX_LENGTH_IN_NUCLEOTIDES},
+  {FR2_MIN_LENGTH_IN_NUCLEOTIDES,      FR2_MAX_LENGTH_IN_NUCLEOTIDES},
+  {FR3_MIN_LENGTH_IN_NUCLEOTIDES,      FR3_MAX_LENGTH_IN_NUCLEOTIDES},
+  {FR4_MIN_LENGTH_IN_NUCLEOTIDES,      FR4_MAX_LENGTH_IN_NUCLEOTIDES},
+  {CDR1_MIN_LENGTH_IN_NUCLEOTIDES,     CDR1_MAX_LENGTH_IN_NUCLEOTIDES},
+  {CDR2_MIN_LENGTH_IN_NUCLEOTIDES,     CDR2_MAX_LENGTH_IN_NUCLEOTIDES},
+  {CDR3_MIN_LENGTH_IN_NUCLEOTIDES,     CDR3_MAX_LENGTH_IN_NUCLEOTIDES},
+  {JUNCTION_MIN_LENGTH_IN_NUCLEOTIDES, JUNCTION_MAX_LENGTH_IN_NUCLEOTIDES}
+};
+
+enum
+{
+  SEGMENT_LENGTH_BELOW_EXPECTED_RANGE = 0,
+  SEGMENT_LENGTH_ABOVE_EXPECTED_RANGE,
+  SEGMENT_NUC_COUNT_NOT_MULTIPLE_OF_3,
+
+  SEGMENT_WARNING_COUNT
+};
+
+enum
+{
+  SEGMENT_WARNING_NUMBER  = 0,
+  SEGMENT_WARNING_MESSAGE = 1
+};
+
+static const char* const segment_warnings_str[3][2] =
+{
+  {W62_REGION_LENGTH_BELOW_EXPECTED_RANGE, "The length the following regions is below their expected range: "},
+  {W63_REGION_LENGTH_ABOVE_EXPECTED_RANGE, "The length the following regions is above their expected range: "},
+  {W64_REGION_NUC_COUNT_NOT_MULTIPLE_OF_3, "The count of nucleotide of the following regions is not a multiple of 3: "}
+};
 
 template <typename Affect>
 void FineSegmenter<Affect>::checkWarnings(CloneOutput *clone, bool phony)
@@ -1577,6 +1803,61 @@ void FineSegmenter<Affect>::checkWarnings(CloneOutput *clone, bool phony)
           genes += " " + box->rep->label(it.second);
         }
         clone->add_warning("W69", "Several genes with equal probability:" + genes, LEVEL_WARN, phony);
+      }
+    }
+
+    // Segmented regions length warnings (too short, too long, not a multiple of 3)
+    std::string warnings_regions[SEGMENT_WARNING_COUNT];
+    for (size_t seg_idx = FR1_SEGMENT; seg_idx <= CDR3_SEGMENT; seg_idx++)
+    {
+      Bounds bounds = this->segments_nuc_pos[seg_idx];
+
+      if (bounds.start != INVALID_BOUND_POS &&
+          bounds.end   != INVALID_BOUND_POS &&
+          bounds.start <= bounds.end)
+      {
+        json content;
+
+        // 0-based to 1-based
+        content["start"] = bounds.start + 1;
+        content["stop"]  = bounds.end   + 1;
+
+        const char* segment_name = segment_names[seg_idx];
+        clone->setSeg(segment_name, content);
+
+        unsigned int bounds_length = bounds.length();
+        if (bounds_length < segment_min_max_lengths[seg_idx].start)
+        {
+          warnings_regions[SEGMENT_LENGTH_BELOW_EXPECTED_RANGE].append(segment_name);
+          warnings_regions[SEGMENT_LENGTH_BELOW_EXPECTED_RANGE].append(", ");
+        }
+        else if (bounds_length > segment_min_max_lengths[seg_idx].end)
+        {
+          warnings_regions[SEGMENT_LENGTH_ABOVE_EXPECTED_RANGE].append(segment_name);
+          warnings_regions[SEGMENT_LENGTH_ABOVE_EXPECTED_RANGE].append(", ");
+        }
+
+        if (bounds_length % 3 != 0)
+        {
+          warnings_regions[SEGMENT_NUC_COUNT_NOT_MULTIPLE_OF_3].append(segment_name);
+          warnings_regions[SEGMENT_NUC_COUNT_NOT_MULTIPLE_OF_3].append(", ");
+        }
+      }
+    }
+
+    for (size_t i = 0; i < SEGMENT_WARNING_COUNT; i++)
+    {
+      std::string& warning_regions = warnings_regions[i];
+      if (warning_regions.size() != 0)
+      {
+        // Remove the trailing ", "
+        size_t trimmed_size = warning_regions.size() - 2;
+        warning_regions.resize(trimmed_size);
+
+        const std::string& warning_number  = segment_warnings_str[i][SEGMENT_WARNING_NUMBER];
+        std::string        warning_details = segment_warnings_str[i][SEGMENT_WARNING_MESSAGE] +
+                                             warning_regions;
+        clone->add_warning(warning_number, warning_details, LEVEL_INFO, phony);
       }
     }
   }
@@ -1607,27 +1888,64 @@ void FineSegmenter<Affect>::toOutput(CloneOutput *clone, bool details){
     else {
       clone->setSeg("N", this->seg_N.size());
     }
+    
+    // FR, FR2, FR3, FR4, CDR1, CDR2
+    for (size_t seg_idx = FR1_SEGMENT; seg_idx <= CDR2_SEGMENT; seg_idx++)
+    {
+      Bounds bounds = this->segments_nuc_pos[seg_idx];
 
-    if (this->CDR3start != INVALID_POS) {
-      clone->setSeg("cdr3", {
-        {"start", this->CDR3start + 1},
-        {"stop", this->CDR3end + 1},
-        {"seq", this->CDR3nuc},
-        {"aa", this->CDR3aa}
-      });
+      if (bounds.start != INVALID_BOUND_POS &&
+          bounds.end   != INVALID_BOUND_POS &&
+          bounds.start <= bounds.end)
+      {
+        json content;
+
+        // 0-based to 1-based
+        content["start"] = bounds.start + 1;
+        content["stop"]  = bounds.end   + 1;
+
+        const char* segment_name = segment_names[seg_idx];
+        clone->setSeg(segment_name, content);
+      }
     }
 
-    if (this->JUNCTIONstart != INVALID_POS) {
-      clone->setSeg("junction", {
-        {"start", this->JUNCTIONstart + 1},
-        {"stop", this->JUNCTIONend + 1},
-        {"aa", this->JUNCTIONaa},
-        {"productive", this->JUNCTIONproductive}
-      });
-      if (this->JUNCTIONunproductive.length())
-      {
-        clone->set(KEY_SEG, "junction", "unproductive", this->JUNCTIONunproductive);
-      }
+    // CDR3, JUNCTION
+    Bounds cdr3_bounds = this->segments_nuc_pos[CDR3_SEGMENT];
+    if (cdr3_bounds.start != INVALID_BOUND_POS &&
+        cdr3_bounds.end   != INVALID_BOUND_POS)
+    {
+      json content;
+
+      // 0-based to 1-based
+      content["start"] = cdr3_bounds.start + 1;
+      content["stop"]  = cdr3_bounds.end + 1;
+      content["seq"]   = this->CDR3nuc;
+      content["aa"]    = this->CDR3aa;
+
+      const char* segment_name = segment_names[CDR3_SEGMENT];
+      clone->setSeg(segment_name, content);
+    }
+
+    Bounds junc_bounds = this->segments_nuc_pos[JUNCTION_SEGMENT];
+    if (junc_bounds.start != INVALID_BOUND_POS &&
+        junc_bounds.end   != INVALID_BOUND_POS)
+    {
+      json content;
+
+      bool is_productive = this->JUNCTIONunproductive.length() == 0;
+
+      // 0-based to 1-based
+      content["start"]      = junc_bounds.start + 1;
+      content["stop"]       = junc_bounds.end + 1;
+      content["seq"]        = this->JUNCTIONnuc;
+      content["aa"]         = this->JUNCTIONaa;
+      content["productive"] = is_productive;
+
+      if (is_productive == false)
+        content["unproductive"] = this->JUNCTIONunproductive;
+
+      const char* segment_name = segment_names[JUNCTION_SEGMENT];
+      clone->setSeg(segment_name, content);
     }
   }
 }
