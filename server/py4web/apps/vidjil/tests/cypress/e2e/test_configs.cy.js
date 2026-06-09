@@ -29,7 +29,19 @@ describe("Manipulate configs", function () {
         );
         cy.launchProcess("" + config_id, sample_id);
         cy.waitAnalysisCompleted(config_id, sample_id);
-      });
+      })
+    })
+
+    cy.createConfig(
+      "conf name 2",
+      ["3", "Analysis with/for other software"],
+      undefined,
+      "x",
+      "",
+      "-t 100",
+      "info"
+    ).then((config_id) => {
+      cy.createPatient("", "compressed_vidjil", "t", "", "Cy", "public");
       cy.addSample(
         undefined,
         "nfs",
@@ -218,10 +230,10 @@ describe("Manipulate configs", function () {
       "conf with prefuse new style",
       ["3", "Analysis with/for other software"],
       "vidjil",
-      "-c clones -z 10 -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y 1000 --no-airr",
+      "-c clones -r 1 -g germline/homo-sapiens.g -e 1 -2 -d -w 50 -y 1000 --no-airr",
       "script_a.py",
       "-t 10",
-      "information of process with compressed output (--gz)"
+      "information of process"
     ).then((config_id) => {
       cy.createPatient("", "prefuse config (new style)", "test", "", "Cy", "public");
       cy.addSample(
