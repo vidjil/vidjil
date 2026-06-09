@@ -32,6 +32,7 @@
       - docker/.env*
       - docker/*.yml
       - docker/vidjil-*
+      - docker/volumes
       - browser/js/conf.js
       - browser/test/cypress
       - time.log
