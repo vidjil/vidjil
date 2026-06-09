@@ -9,5 +9,7 @@ $ The windows found by the KmerSegmenter has a fairly good position
 
 !LAUNCH: cat out/common-V-D.vidjil
 $ Find the good affects for the D segment, including an AMBIGUOUS k-mer '?', common with V
-r1: \"\+{27} {2}\+{124} {21}\+ {4}\+{31} {10}\"
-r1: \"C{27} {2}C{124} {21}C {4}A{26}\?A{4} {10}\"
+j:clones[0].seg.affectSigns.seq: "\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+  \+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+                     \+    \+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+          "
+j:clones[0].seg.affectValues.seq: "CCCCCCCCCCCCCCCCCCCCCCCCCCC  CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC                     C    AAAAAAAAAAAAAAAAAAAAAAAAAA?AAAA          "
+#r1: \"\+{27} {2}\+{124} {21}\+ {4}\+{31} {10}\"
+#r1: \"C{27} {2}C{124} {21}C {4}A{26}\?A{4} {10}\"
