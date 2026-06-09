@@ -323,11 +323,17 @@ def run_vidjil(
                     vidjil_log_file.write("")
                     vidjil_log_file.close()
 
+                    if p.returncode != 0:
+                        log.error(
+                            subprocess.CalledProcessError(p.returncode, prefuse_script)
+                        )
+                        raise
+
                     log.info(f"Prefuse {prefuse_script} done, output logs in {out_log}")
 
                     # Replace new result file, remove previous step vidjil result file
                     results_filepath = new_prefuse_output
-                    os.remove(previous_prefuse_output)
+                    os.remove(previous_prefuse_output)  # delete useless previous file
                     previous_prefuse_output = new_prefuse_output
 
                 except:
@@ -739,6 +745,7 @@ def run_fuse(
                 query.append(row)
                 sequence_file_id = row.sequence_file.id
 
+        fuse_error = ""
         for row in query:
             if row.results_file.data_file is not None:
                 res_file = settings.DIR_RESULTS + row.results_file.data_file
@@ -748,12 +755,33 @@ def run_fuse(
                         row.sequence_file.pre_process_file,
                     )
                     files += "%s,%s" % (res_file, pre_file)
+                    if not os.path.exists(res_file):
+                        fuse_error += (
+                            "; " if fuse_error != "" else ""
+                        ) + f"unfoundable fuse input result file ({res_file})"
+                    elif not os.path.exists(pre_file):
+                        fuse_error += (
+                            "; " if fuse_error != "" else ""
+                        ) + f"unfoundable fuse input preprocess file ({res_file})"
+
                 else:
                     files += res_file
+                    if not os.path.exists(res_file):
+                        fuse_error += (
+                            "; " if fuse_error != "" else ""
+                        ) + f"unfoundable fuse input result file ({res_file})"
                 files += " "
                 sequence_file_list += str(row.results_file.sequence_file_id) + "_"
 
-        if files == "":
+        if fuse_error != "":
+            log.error("!!! Fuse failed: unfounfdable fuse input files")
+            res = {
+                "message": "[%s] c%s: 'fuse' FAILED - missing input files (%s)"
+                % (id_data, id_config, fuse_error)
+            }
+            log.error(res)
+            return STATUS_FAILED
+        elif files == "":
             log.error("!!! Fuse failed: no files to fuse")
             res = {
                 "message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse"
