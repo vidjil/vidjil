@@ -6,6 +6,7 @@ import os
 import pathlib
 import random
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -287,7 +288,7 @@ def run_vidjil(
 
         if prefuse_cmd != None and prefuse_cmd != "":
             log.info("=== Launching Prefuse Step ===")
-            print(f"{prefuse_cmd=}")
+            log.info(f"{prefuse_cmd=}")
             log.info("========================")
             sys.stdout.flush()
 
@@ -300,8 +301,27 @@ def run_vidjil(
                     new_prefuse_output = (
                         f"{out_folder}/prefuse_{index}_{prefuse_script}.vidjil"
                     )
-                    prefuse_command = f"{settings.DIR_PREFUSE}/{prefuse_command}  -i {previous_prefuse_output} -o {new_prefuse_output}"
-                    print(f"{prefuse_command=}")
+                    prefuse_command = (
+                        f"{settings.DIR_PREFUSE}/{prefuse_command} "
+                        f"-i {previous_prefuse_output} -o {new_prefuse_output}"
+                    )
+                    prefuse_args = shlex.split(prefuse_command)
+                    executable = prefuse_args[0]
+                    prefuse_script = os.path.basename(executable)
+
+                    if not os.path.exists(previous_prefuse_output):
+                        log.error(
+                            f"unfoundable previous prefuse output: {previous_prefuse_output}"
+                        )
+                        raise
+                    elif not os.path.exists(executable):
+                        log.error(f"unfoundable executable file: {executable}")
+                        raise
+                    if not os.access(executable, os.X_OK):
+                        log.error(
+                            f"executable file have no execusion right: {executable}"
+                        )
+                        raise
 
                     vidjil_log_file = open(out_log, "a", encoding="utf-8")
                     vidjil_log_file.write(
@@ -311,8 +331,7 @@ def run_vidjil(
 
                     vidjil_log_file = open(out_log, "a", encoding="utf-8")
                     p = Popen(
-                        prefuse_command,
-                        shell=True,
+                        prefuse_args,
                         stdin=PIPE,
                         stdout=vidjil_log_file,
                         stderr=STDOUT,
