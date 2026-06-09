@@ -26,7 +26,8 @@ This is what Vidjil does: analyze samples containing the DNA of many lymphocytes
 
 ### DNA structure
 - Most of our cells contain a set of chromosomes that is unique between individuals
-- Chromosomes are organized in pairs: one from each parent
+- In humans, chromosomes are organized in pairs, inherited from each parent: humans are "diploid"
+- In other species, chromosomes may be grouped differently (haploid, tretraploid, etc.)
 - Chromosomes are made of two long strands of molecules called nucleotides, which make up DNA
 - DNA contains 4 different nucleotides:
   - Adenine, abbreviated A
@@ -36,12 +37,12 @@ This is what Vidjil does: analyze samples containing the DNA of many lymphocytes
 - Additionally, nucleotides on the two strands of DNA on a chromosome are tethered together in pairs:
   - As with Ts
   - Cs and Gs
-- A gene is a sequence of nucleotides on a chromosome, which can be translated by our cell's biological machinery
+- A gene is a sequence of nucleotides on a chromosome, which can be transribed by our cell's biological machinery
 - Genes often differ between individuals
 - A locus (latin for "place", plural: loci) is the position of a significant sequence of DNA on a chromosome
 - DNA has a reading direction: from the 5' (or upstream) end toward the 3' (or downstream) end, named after nucleic acid ring structures found in DNA
 - Parts of our DNA can be read and expressed into more complex organic molecules called amino acids by our cells
-- Consecutive sets of 3 nucleotides, also called a codon, encode 1 amino acid
+- In protein-coding genes, consecutive sets of 3 nucleotides, also called a codon, encode 1 amino acid
 - These amino acids can be chained together to form even more complex structures, such as antibodies
 
 
