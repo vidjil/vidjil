@@ -18,6 +18,7 @@ services:
             # Test
             - ./ci/test_controller/test_controller.py:/usr/share/vidjil/server/py4web/apps/vidjil/controllers/test_controller.py
             - ./ci/test_controller/__init__.py:/usr/share/vidjil/server/py4web/apps/vidjil/__init__.py
+            - ./ci/tools_script/pre-fuse:/usr/share/vidjil/tools/scripts/pre-fuse 
 
     nginx:
         image: vidjil/client:test
