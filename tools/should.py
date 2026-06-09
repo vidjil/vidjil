@@ -760,7 +760,7 @@ class TestCase(TestCaseAbstract):
         if self.mods.blanks and not self.mods.json:
             while '  ' in self.expression:
                 self.expression = self.expression.replace('  ', ' ')
-            self.expression = self.expression.replace(' ', '(\s+)')
+            self.expression = self.expression.replace(' ', '\s+')
             self.mods.regex = True
 
         self.regex = None
