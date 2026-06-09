@@ -793,7 +793,7 @@ def run_fuse(
                 sequence_file_list += str(row.results_file.sequence_file_id) + "_"
 
         if fuse_error != "":
-            log.error("!!! Fuse failed: unfounfdable fuse input files")
+            log.error("!!! Fuse failed: unfoundable fuse input files")
             res = {
                 "message": "[%s] c%s: 'fuse' FAILED - missing input files (%s)"
                 % (id_data, id_config, fuse_error)
