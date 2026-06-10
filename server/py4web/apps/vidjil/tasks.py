@@ -327,9 +327,8 @@ def run_vidjil(
                     vidjil_log_file.write(
                         f"\n~~NEW LOG~~PREFUSE {prefuse_script}\n{prefuse_command}\n"
                     )
-                    vidjil_log_file.close()  # close to effectivly write content before next stdout
+                    vidjil_log_file.flush()
 
-                    vidjil_log_file = open(out_log, "a", encoding="utf-8")
                     p = Popen(
                         prefuse_args,
                         stdin=PIPE,
