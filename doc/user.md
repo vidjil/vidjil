@@ -702,6 +702,19 @@ The only thing you should not do is to close completely your web browser (or the
 Once a task is completed, a click on the `See results` link (bottom right) will open the main window to browse the clonotypes.
 A click on the `out` link at the right of every sample give access to the raw output file of the RepSeq software.
 
+
+By clicking on "COMPLETED/FAILED" button, an in-process log window will open. 
+
+<figure markdown>
+  ![Raw logs view on in-process results](./pictures/view_logs_in_process.png)
+  <figcaption>
+    Each step process (vidjil, prefuse) are listed here, in a separate panel. 
+  </figcaption>
+</figure>
+
+This window allow to see some log information on process for each step of main analysis and each pre-fuse steps.
+You can browse, show or hide them to see some metadata of your analysis, check parameters and arguments given to an analysis.
+
 ### Displaying statistics, quality control
 
 ![New with release 2024.05](https://img.shields.io/badge/Release-2024.05-blue)
