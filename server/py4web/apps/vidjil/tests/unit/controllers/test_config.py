@@ -61,7 +61,7 @@ class TestConfigController(unittest.TestCase):
 
         assert (
             result["query"][0]["clipboard"]
-            == "%7B%22name%22%3A%20%22Clonality%22%2C%20%22program%22%3A%20%22vidjil%22%2C%20%22classification%22%3A%20%221%22%2C%20%22command%22%3A%20%22-c%20clones%20-z%20100%20-r%201%20-g%20germline/homo-sapiens.g%20-e%201%20-2%20-w%2090%20-y%20all%20--no-airr%22%2C%20%22fuse_command%22%3A%20%22-t%20100%20-d%20lenSeqAverage%20--overlaps%22%2C%20%22info%22%3A%20%22incomplete%20germlines%20%2B%20larger%20window%20%2890bp%29%2C%20thus%2020bp%20more%20on%20each%20side.%20This%20configuration%20is%20advised%20for%20studies%20on%20IGH%20clonality%22%7D"
+            == "%7B%22name%22%3A%20%22Clonality%22%2C%20%22program%22%3A%20%22vidjil%22%2C%20%22classification%22%3A%20%221%22%2C%20%22command%22%3A%20%22-c%20clones%20-z%20100%20-r%201%20-g%20germline/homo-sapiens.g%20-e%201%20-2%20-w%2090%20-y%20all%20--no-airr%22%2C%20%22prefuse_command%22%3A%20%22None%22%2C%20%22fuse_command%22%3A%20%22-t%20100%20-d%20lenSeqAverage%20--overlaps%22%2C%20%22info%22%3A%20%22incomplete%20germlines%20%2B%20larger%20window%20%2890bp%29%2C%20thus%2020bp%20more%20on%20each%20side.%20This%20configuration%20is%20advised%20for%20studies%20on%20IGH%20clonality%22%7D"
         )
 
     ##################################
@@ -138,6 +138,7 @@ class TestConfigController(unittest.TestCase):
                 "config_name": db_manipulation_utils.TEST_CONFIG_NAME,
                 "config_info": "plop_info",
                 "config_command": "plop_command",
+                "config_prefuse_command": "plop_prefuse_command",
                 "config_fuse_command": "plop_fuse_command",
                 "config_program": "plop.cpp",
                 "config_classification": -1,
@@ -156,6 +157,7 @@ class TestConfigController(unittest.TestCase):
         assert config["name"] == db_manipulation_utils.TEST_CONFIG_NAME
         assert config["info"] == "plop_info"
         assert config["command"] == "plop_command"
+        assert config["prefuse_command"] == "plop_prefuse_command"
         assert config["fuse_command"] == "plop_fuse_command"
         assert config["program"] == "plop.cpp"
         assert config["classification"] is None
@@ -176,6 +178,7 @@ class TestConfigController(unittest.TestCase):
                 "config_name": db_manipulation_utils.TEST_CONFIG_NAME,
                 "config_info": "plop_info",
                 "config_command": "plop_command",
+                "config_prefuse_command": "plop_prefuse_command",
                 "config_fuse_command": "plop_fuse_command",
                 "config_program": "plop.cpp",
                 "config_classification": classification_id,
@@ -194,6 +197,7 @@ class TestConfigController(unittest.TestCase):
         assert config["name"] == db_manipulation_utils.TEST_CONFIG_NAME
         assert config["info"] == "plop_info"
         assert config["command"] == "plop_command"
+        assert config["prefuse_command"] == "plop_prefuse_command"
         assert config["fuse_command"] == "plop_fuse_command"
         assert config["program"] == "plop.cpp"
         assert config["classification"] == classification_id
@@ -214,6 +218,7 @@ class TestConfigController(unittest.TestCase):
                 "config_name": db_manipulation_utils.TEST_CONFIG_NAME,
                 "config_info": "plop_info",
                 "config_command": "plop_command",
+                "config_prefuse_command": "plop_prefuse_command",
                 "config_fuse_command": "plop_fuse_command",
                 "config_program": "plop.cpp",
                 "config_classification": classification_id + 1,
@@ -308,6 +313,7 @@ class TestConfigController(unittest.TestCase):
                 "config_name": f"{db_manipulation_utils.TEST_CONFIG_NAME}_mod",
                 "config_info": "plop_info_mod",
                 "config_command": "plop_command_mod",
+                "config_prefuse_command": "plop_prefuse_command_mod",
                 "config_fuse_command": "plop_fuse_command_mod",
                 "config_program": "plop_mod.cpp",
                 "config_classification": classification_id,
@@ -326,6 +332,7 @@ class TestConfigController(unittest.TestCase):
         assert config["name"] == f"{db_manipulation_utils.TEST_CONFIG_NAME}_mod"
         assert config["info"] == "plop_info_mod"
         assert config["command"] == "plop_command_mod"
+        assert config["prefuse_command"] == "plop_prefuse_command_mod"
         assert config["fuse_command"] == "plop_fuse_command_mod"
         assert config["program"] == "plop_mod.cpp"
         assert config["classification"] == classification_id

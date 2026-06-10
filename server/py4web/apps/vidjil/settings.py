@@ -62,6 +62,9 @@ DIR_VIDJIL_NEXT = os.getenv("DIR_VIDJIL_NEXT", default="/usr/share/vidjil/")
 DIR_MIXCR = os.getenv("DIR_MIXCR", default="/usr/share/mixcr/")
 DIR_IGREC = os.getenv("DIR_IGREC", default="/usr/local/bin/")
 DIR_FUSE = os.getenv("DIR_FUSE", default="/usr/share/vidjil/tools/")
+DIR_PREFUSE = os.getenv(
+    "DIR_PREFUSE", default="/usr/share/vidjil/tools/scripts/pre-fuse/"
+)
 DIR_PREPROCESS = os.getenv(
     "DIR_PREPROCESS", default="/usr/share/vidjil/tools/scripts/preprocess/"
 )

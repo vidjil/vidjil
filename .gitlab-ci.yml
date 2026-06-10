@@ -335,6 +335,9 @@ test_server_unit:
     - cd docker
     - cp ../server/py4web/apps/vidjil/__init__.py ./ci/test_controller/__init__.py && echo $'\nfrom .controllers import test_controller\n' >> ./ci/test_controller/__init__.py && cat ./ci/test_controller/__init__.py
     - ln -sf docker-compose-ci-tests.yml docker-compose.override.yml
+    # Put some prefuse scripts for testing
+    - mkdir -p ./ci/tools_script/pre-fuse/ && cp ../tools/tests/data/pre_process/* ./ci/tools_script/pre-fuse/
+
     - chmod a-w ./ci/mysql-logs/my.cnf
     - rm -Rf volumes && mkdir -p volumes
     # Up docker compose

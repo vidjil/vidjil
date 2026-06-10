@@ -91,8 +91,9 @@ describe('Visibility of panels', function () {
       ["3", "Analysis with/for other software"],
       undefined,
       "x",
-      "f",
-      "i"
+      "", // Prefuse, keep empty to finish analysis
+      "-t 100",
+      "info"
     ).then((configId) => {
       cy.log(`Create config "${conf_import_vidjil} with id ${configId}`)
       configId = configId.toString()
@@ -207,7 +208,8 @@ describe('Visibility of panels', function () {
       ["3", "Analysis with/for other software"],
       undefined,
       "x",
-      "f",
+      "", // prefuse, keep empty to finish analysis
+      "-t 100",
       "i"
     ).then((configId) => {
       cy.log(`Create config "${conf_import_vidjil} with id ${configId}`)

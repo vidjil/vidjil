@@ -8,6 +8,7 @@ Cypress.Commands.add(
     config_class,
     config_soft,
     config_cmd,
+    config_prefuse,
     config_fuse,
     config_info
   ) => {
@@ -21,6 +22,7 @@ Cypress.Commands.add(
       config_class[0],
       config_soft,
       config_cmd,
+      config_prefuse,
       config_fuse,
       config_info
     );
@@ -41,6 +43,10 @@ Cypress.Commands.add(
         config_soft == undefined ? "none" : config_soft
       );
       cy.get("#config_command_" + config_id).should("contain", config_cmd);
+      cy.get("#config_prefuse_command_" + config_id).should(
+        "contain",
+        config_prefuse
+      );
       cy.get("#config_fuse_command_" + config_id).should(
         "contain",
         config_fuse
@@ -59,6 +65,7 @@ Cypress.Commands.add(
     config_class,
     config_soft,
     config_cmd,
+    config_prefuse,
     config_fuse,
     config_info
   ) => {
@@ -76,6 +83,9 @@ Cypress.Commands.add(
     }
 
     cy.get("#config_command").type(config_cmd);
+    cy.get("#config_prefuse_command")
+        .then(e => { if (config_prefuse !== '') cy.wrap(e).type(config_prefuse) });
+    
     cy.get("#config_fuse_command").type(config_fuse);
     cy.get("#config_info").type(config_info);
   }

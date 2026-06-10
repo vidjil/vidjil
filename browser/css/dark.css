@@ -2808,3 +2808,47 @@ div.tooltip {
 .afterAjaxScript {
   display: none;
 }
+.accordion {
+  border: 1px solid #eaecef;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.accordion-header {
+  background-color: #f6f8fa;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  border: none;
+  width: calc(100% - 20px);
+  text-align: left;
+  font-size: 1rem;
+}
+.accordion-header:hover {
+  background-color: #f3f4f6;
+}
+.accordion-content {
+  padding: 0 16px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background-color: white;
+}
+/* Quand l'accordéon est actif, on définit une hauteur maximale et on active le défilement */
+.accordion.active .accordion-content {
+  max-height: 500px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+.accordion-content.inner {
+  padding: 16px 0;
+}
+.accordion-icon {
+  transition: transform 0.3s ease;
+}
+.accordion.active .accordion-icon {
+  transform: rotate(180deg);
+}

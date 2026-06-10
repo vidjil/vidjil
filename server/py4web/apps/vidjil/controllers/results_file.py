@@ -37,6 +37,7 @@ def info():
             f"{out_folder}/{output_filename}.vidjil.log", "r", encoding="utf-8"
         ) as f:
             content = f.read()
+            content = vidjil_utils.split_log(content)
     else:
         content = None
 

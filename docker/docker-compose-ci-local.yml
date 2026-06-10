@@ -1,0 +1,9 @@
+volumes:
+  mysql-data:
+
+services:
+   
+    uwsgi:
+        volumes:
+            # Test
+            - ../tools/scripts:/usr/share/vidjil/tools/scripts

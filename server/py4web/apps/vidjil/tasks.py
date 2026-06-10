@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime
+import errno
 import json
 import os
 import pathlib
 import random
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -202,6 +204,7 @@ def run_vidjil(
 
         # Vidjil config
         vidjil_cmd = db.config[id_config].command
+        prefuse_cmd = db.config[id_config].prefuse_command
         if "next" in vidjil_cmd:
             vidjil_cmd = vidjil_cmd.replace("next", "")
             vidjil_cmd = vidjil_cmd.replace(" germline", settings.DIR_GERMLINE_NEXT)
@@ -273,8 +276,7 @@ def run_vidjil(
                 # TODO: Update when vidjil-algo fix that;
             log.info(f"===> {out_results}")
             results_filepath = os.path.abspath(out_results)
-            if not os.path.exists(results_filepath):
-                raise IOError(filename=results_filepath)
+
         except:
             error_message = f"!!! Vidjil failed : {traceback.format_exc()}\n\nSetting status to Failed."
             res = {
@@ -283,6 +285,87 @@ def run_vidjil(
             log.error(res)
             update_task(task_id, STATUS_FAILED)
             raise
+
+        if prefuse_cmd != None and prefuse_cmd != "":
+            log.info("=== Launching Prefuse Step ===")
+            log.info(f"{prefuse_cmd=}")
+            log.info("========================")
+            sys.stdout.flush()
+
+            previous_prefuse_output = out_results
+
+            for index, prefuse_command in enumerate(prefuse_cmd.split(";")):
+                try:
+                    prefuse_command = prefuse_command.strip()
+                    prefuse_script = prefuse_command.split(" ")[0]
+                    new_prefuse_output = (
+                        f"{out_folder}/prefuse_{index}_{prefuse_script}.vidjil"
+                    )
+                    prefuse_command = (
+                        f"{settings.DIR_PREFUSE}/{prefuse_command} "
+                        f"-i {previous_prefuse_output} -o {new_prefuse_output}"
+                    )
+                    prefuse_args = shlex.split(prefuse_command)
+                    executable = prefuse_args[0]
+                    prefuse_script = os.path.basename(executable)
+
+                    if not os.path.exists(previous_prefuse_output):
+                        log.error(
+                            f"unfoundable previous prefuse output: {previous_prefuse_output}"
+                        )
+                        raise
+                    elif not os.path.exists(executable):
+                        log.error(f"unfoundable executable file: {executable}")
+                        raise
+                    if not os.access(executable, os.X_OK):
+                        log.error(
+                            f"executable file have no execusion right: {executable}"
+                        )
+                        raise
+
+                    vidjil_log_file = open(out_log, "a", encoding="utf-8")
+                    vidjil_log_file.write(
+                        f"\n~~NEW LOG~~PREFUSE {prefuse_script}\n{prefuse_command}\n"
+                    )
+                    vidjil_log_file.close()  # close to effectivly write content before next stdout
+
+                    vidjil_log_file = open(out_log, "a", encoding="utf-8")
+                    p = Popen(
+                        prefuse_args,
+                        stdin=PIPE,
+                        stdout=vidjil_log_file,
+                        stderr=STDOUT,
+                        close_fds=True,
+                    )
+                    p.communicate()
+                    sys.stdout.flush()
+                    vidjil_log_file.write("")
+                    vidjil_log_file.close()
+
+                    if p.returncode != 0:
+                        log.error(
+                            subprocess.CalledProcessError(p.returncode, prefuse_script)
+                        )
+                        raise
+
+                    log.info(f"Prefuse {prefuse_script} done, output logs in {out_log}")
+
+                    # Replace new result file, remove previous step vidjil result file
+                    results_filepath = new_prefuse_output
+                    os.remove(previous_prefuse_output)  # delete useless previous file
+                    previous_prefuse_output = new_prefuse_output
+
+                except:
+                    error_message = f"!!! Prefuse {prefuse_script} failed : {traceback.format_exc()}\n\nSetting status to Failed."
+                    res = {
+                        "message": f"[{id_data}] c{id_config}: {error_message}; log at {out_folder}/{output_filename}.vidjil.log"
+                    }
+                    log.error(res)
+                    update_task(task_id, STATUS_FAILED)
+                    raise
+
+        if not os.path.exists(results_filepath):
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
 
         # Parse some info in .log
         info = ""
@@ -384,7 +467,7 @@ def run_igrec(id_file, id_config, id_data, clean_before=False, clean_after=False
         log.info(f"===> {out_results}")
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
-            raise IOError(filename=results_filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
     except:
         log.error("!!! IgReC failed, no result file")
         res = {
@@ -523,7 +606,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
         log.info(f"===> {out_results}")
         results_filepath = os.path.abspath(out_results)
         if not os.path.exists(results_filepath):
-            raise IOError(filename=results_filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
     except:
         log.error("!!! MiXCR failed, no result file")
         res = {
@@ -601,7 +684,7 @@ def run_copy(
             res = {"message": f"[{id_data}] c{id_config}: 'copy' FAILED - {out_folder}"}
             log.error(res)
             update_task(task_id, STATUS_FAILED)
-            raise IOError(results_filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", results_filepath)
 
         # insertion dans la base de donnée
         with open(results_filepath, "rb") as stream:
@@ -681,6 +764,7 @@ def run_fuse(
                 query.append(row)
                 sequence_file_id = row.sequence_file.id
 
+        fuse_error = ""
         for row in query:
             if row.results_file.data_file is not None:
                 res_file = settings.DIR_RESULTS + row.results_file.data_file
@@ -690,12 +774,33 @@ def run_fuse(
                         row.sequence_file.pre_process_file,
                     )
                     files += "%s,%s" % (res_file, pre_file)
+                    if not os.path.exists(res_file):
+                        fuse_error += (
+                            "; " if fuse_error != "" else ""
+                        ) + f"unfoundable fuse input result file ({res_file})"
+                    elif not os.path.exists(pre_file):
+                        fuse_error += (
+                            "; " if fuse_error != "" else ""
+                        ) + f"unfoundable fuse input preprocess file ({res_file})"
+
                 else:
                     files += res_file
+                    if not os.path.exists(res_file):
+                        fuse_error += (
+                            "; " if fuse_error != "" else ""
+                        ) + f"unfoundable fuse input result file ({res_file})"
                 files += " "
                 sequence_file_list += str(row.results_file.sequence_file_id) + "_"
 
-        if files == "":
+        if fuse_error != "":
+            log.error("!!! Fuse failed: unfoundable fuse input files")
+            res = {
+                "message": "[%s] c%s: 'fuse' FAILED - missing input files (%s)"
+                % (id_data, id_config, fuse_error)
+            }
+            log.error(res)
+            return STATUS_FAILED
+        elif files == "":
             log.error("!!! Fuse failed: no files to fuse")
             res = {
                 "message": "[%s] c%s: 'fuse' FAILED - %s no files to fuse"
@@ -737,7 +842,7 @@ def run_fuse(
 
             fuse_filepath = os.path.abspath(output_file)
             if not os.path.exists(fuse_filepath):
-                raise IOError(filename=fuse_filepath)
+                raise IOError(errno.ENOENT, "unfoundable file", fuse_filepath)
         except:
             error_message = f"!!! Fuse failed : {traceback.format_exc()}."
             res = {
@@ -974,7 +1079,7 @@ def run_pre_process(
 
         filepath = os.path.abspath(output_file)
         if not os.path.exists(filepath):
-            raise IOError(filename=filepath)
+            raise IOError(errno.ENOENT, "unfoundable file", filepath)
 
         # Now we update the sequence file with the result of the pre-process
         # We forget the initial data_file (and possibly data_file2)

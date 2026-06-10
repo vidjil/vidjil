@@ -927,6 +927,20 @@ function fixDuplicateNames(names){
     return names
 }
 
+/**
+ * Toggle a log pre content div
+ */
+function toggleAccordion(header) {
+    const accordion = header.parentElement;
+    const isActive = accordion.classList.contains('active');
+
+
+    if (!isActive) {
+        accordion.classList.add('active');
+    } else {
+        accordion.classList.remove('active');
+    }
+}
 
 /**
  * Open a new tab and put content in it.
@@ -964,6 +978,7 @@ async function fillConfigFormFromClipboard() {
         document.getElementById("config_classification").value = values.classification;
         document.getElementById("config_program").value = values.program;
         document.getElementById("config_command").value = values.command;
+        document.getElementById("config_prefuse_command").value = values.prefuse_command;
         document.getElementById("config_fuse_command").value = values.fuse_command;
         document.getElementById("config_info").value = values.info;
     } catch (err) {
@@ -1035,6 +1050,27 @@ function getNFirstSequences(data, n) {
         return data.substr(0, pos);
     } else {
         return data;
+    }
+}
+
+
+/**
+ * This function is used to scroll vidjil log in database page
+ */
+function scrollAccordionTo(buttonElement, scrollTo) {
+    // Get accordion parent div
+    const accordion = buttonElement.closest('.accordion');
+    
+    if (accordion) {
+        const container = accordion.querySelector('.accordion-content');
+        var top_value = (scrollTo == "bottom") ? container.scrollHeight : 0
+
+        if (container) {
+            container.scrollTo({
+                top: top_value,
+                behavior: 'smooth'
+            });
+        }
     }
 }
 

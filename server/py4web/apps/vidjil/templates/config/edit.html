@@ -41,6 +41,11 @@ info = db.config[request.query["id"] ]
                 <td> </td>
             </tr>
             <tr>
+                <td> <label for="config_prefuse_command" id="config_prefuse_command__label">Prefuse command: </label> </td>
+                <td> <textarea class="text" cols="60" id="config_prefuse_command" name="config_prefuse_command" rows="2">[[=info.prefuse_command]]</textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
                 <td> <label for="config_fuse_command" id="config_fuse_command__label">Fuse command: </label> </td>
                 <td> <textarea class="text" cols="60" id="config_fuse_command" name="config_fuse_command" rows="2">[[=info.fuse_command]]</textarea> </td> 
                 <td> </td>
