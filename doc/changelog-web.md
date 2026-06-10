@@ -7,7 +7,7 @@ We are using continuous integration and deployment, some features may be pushed 
 ## Web 2025-10
 
 ??? note "Milestone 2025-10"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/23).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/23).
 
 **Improve analysis**
 
@@ -40,7 +40,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 ## Web 2025-06
 
 ??? note "Milestone 2025-06"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
 
 **Improve analysis**
 
@@ -95,7 +95,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 ## Web 2024-12
 
 ??? note "Milestone 2024-12"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/15).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/15).
 
 **Metrics**
 
@@ -142,7 +142,7 @@ These metrics are pseudonymized.
 ## Web 2024-04
 
 ??? note "Milestone 2024-04"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
 
 **QC stats**
 
