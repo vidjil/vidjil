@@ -1406,10 +1406,16 @@ span.logo {
 #info_warnings td {
   width: 100%;
 }
+#info_mrd,
+#info_mrd td {
+    width: 100%;
+}
 #info_timepoint,
 #info_timepoint td,
 #info_warnings,
 #info_warnings td,
+#info_mrd,
+#info_mrd td,
 .info_overlaps td {
   min-width: 150px;
   max-width: 100%;
@@ -1423,6 +1429,7 @@ span.logo {
 #info_window table,
 #info_timepoint table,
 #info_warnings table,
+#info_mrd table,
 .info_overlaps {
   border-style: solid;
   border-color: #ddd;
@@ -1431,6 +1438,7 @@ span.logo {
 #info_window table .header,
 #info_timepoint table .header,
 #info_warnings table .header,
+#info_mrd table .header,
 .info_overlaps table .header {
   border-width: 2px;
   background-color: #ddd;

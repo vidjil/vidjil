@@ -90,7 +90,10 @@ AXIS_SCATTERPLOT = ["V/5' gene",
                     "Similarity (CDR3, nucleotide)", // previously "TSNEX_LOCUS_NT",
                     "TSNEY_LOCUS_NT",
                     "Similarity (CDR3, amino acid)", // previously "TSNEX_LOCUS_AA",
-                    "TSNEY_LOCUS_AA"
+                    "TSNEY_LOCUS_AA",
+                    "Spike factors",
+                    "Normalized reads",
+                    "Normalized cells",
                 ]
 
 // list of Axis available for aligner
@@ -566,6 +569,53 @@ AXIS_DEFAULT = {
                         return l
                     }
         
+    },
+    "Spike factors" : {
+        doc:        "spike normalization factor in MRD analysis",
+        labels:     {   
+                        "?":   {text:"?",   side: "right"}
+                    },
+        fct:        function(clone, t) {
+                        var factor = clone.getSpikeNormalizationFactor(t)
+                        // Only return value for spike clones (those with spike normalization factor)
+                        if (factor == "undefined" || factor == 0) return undefined
+                        return parseFloat(factor).toFixed(2)
+                    },
+        autofill:   true,
+        min_step:   0.01,
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
+    },
+    "Normalized reads" : {
+        doc:        "Normalized number of reads in MRD analysis, using locus normalization factor",
+        labels:     {
+                        "?":   {text:"?",   side: "right"}
+                    },
+        fct:        function(clone, t) {
+                        var factor = clone.getNormalizedReads(t)
+                        if (factor == "undefined") return undefined
+                        return parseFloat(factor)
+                    },
+        scale:     {mode: "log"},
+        sort:       true,
+        autofill:   true,
+        min_step:   0.01,
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
+    },
+    "Normalized cells" : {
+        doc:        "Normalized number of cells in MRD analysis, using locus normalization factor",
+        labels:     {
+                        "?":   {text:"?",   side: "right"}
+                    },
+        fct:        function(clone, t) {
+                        var factor = clone.getNormalizedCells(t)
+                        if (factor == "undefined") return undefined
+                        return parseFloat(factor)
+                    },
+        scale:     {mode: "log"},
+        sort:       true,
+        autofill:   true,
+        min_step:   0.01,
+        color:      function(t,c){ return d3.piecewise(d3.interpolateRgb.gamma(2.2), ["#00AAFF", "#00EE00", "red"])(t) },
     }
 }
 

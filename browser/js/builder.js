@@ -247,6 +247,34 @@ Builder.prototype = {
             normalize_list.appendChild(form_div_elem);
         }
 
+        // MRD normalization submenu
+        if (this.m.have_mrd_normalization == true) {
+
+            // MRD - normalized_reads option
+            input_elem = document.createElement("input");
+            label_elem = document.createElement("label")
+            label_elem.setAttribute("for","reset_norm_mrd_reads");
+            input_elem.type = "radio";
+            input_elem.name = "normalize_list";
+            input_elem.id   = "reset_norm_mrd_reads";
+
+            form_div_elem = document.createElement("div");
+            form_div_elem.className = "buttonSelector";
+            form_div_elem.id        = "normalize_mrd_reads";
+
+            form_div_elem.appendChild(input_elem);
+            form_div_elem.appendChild(label_elem);
+            form_div_elem.appendChild(document.createTextNode("MRD"))
+            form_div_elem.onclick = function () {
+                this.firstChild.checked=true;
+                self.m.set_normalization(self.m.NORM_MRD_READS)
+                self.m.update();
+            };
+
+            if (this.m.normalization_mode == this.m.NORM_MRD_READS) { form_div_elem.firstChild.checked=true; }
+            normalize_list.appendChild(form_div_elem);
+        }
+
     },
 
     div_radio_normalize_expected: function () {

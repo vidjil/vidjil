@@ -2,7 +2,21 @@
 require(['js/lib/d3.v5.min'], function(d3) {window.d3 = d3;});
 
 requirejs.config({
-    waitSeconds: 0
+    waitSeconds: 0,
+    shim: {
+        'js/lib/select2.min': {
+            deps: ['js/lib/jquery-3.3.1.min']
+        },
+        'js/lib/jquery.form': {
+            deps: ['js/lib/jquery-3.3.1.min']
+        },
+        'js/lib/jquery-ui': {
+            deps: ['js/lib/jquery-3.3.1.min']
+        },
+        'js/lib/jquery.zclip': {
+            deps: ['js/lib/jquery-3.3.1.min']
+        }
+    }
 });
 
 CLONOTYPE_TOP_LIMIT = 100
@@ -77,6 +91,7 @@ var test_files = [
     "testFiles/list_test",
     "testFiles/model_loader_test",
     "testFiles/model_test",
+    "testFiles/mrd_test",
     "testFiles/report_test",
     "testFiles/scatterPlot_test",
     "testFiles/segmenter_test",

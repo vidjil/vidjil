@@ -1213,15 +1213,16 @@ var row_1  = function(item, content, title, time_length, class_line, class_cell_
     class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
     class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title != undefined) ? clean_title(title) : ( (item == undefined) ? "": clean_title(item) )
+    var displayContent = (content === undefined || content === 'undefined') ? '-' : content
     var copy = ""
     if (allow_copy == true) {
         copy = "<i class='icon-docs' style='cursor: copy' "+
                    `id='modal_line_title_${title}_clipboard' `+
-                   `onclick='copyTextToClipboard("${content}", "${item}", this)' `+
+                   `onclick='copyTextToClipboard("${displayContent}", "${item}", this)' `+
                    "title='Copy to clipboard'>"+
                "</i>"
     }
-    return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}${copy}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${content}</td></tr>`;
+    return `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}${copy}</td><td ${class_cell_other} colspan='${time_length}' id='modal_line_value_${title}'>${displayContent}</td></tr>`;
 }
 
 /**
@@ -1236,10 +1237,30 @@ var row_from_list  = function(item, content, title, time_length, class_line, cla
     class_cell_first = class_cell_first != undefined ? `class='${class_cell_first}'` : ""
     class_cell_other = class_cell_other != undefined ? `class='${class_cell_other}'` : ""
     title = (title == undefined) ?clean_title(item) : clean_title(title)
-    var div = `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}</td>`
+    // Skip row if all values are undefined or null
+    var allUndefined = true
     for (var i = 0; i < content.length; i++) {
-        col  = content[i]
-        div += `<td ${class_cell_other} id='modal_line_value_${title}_${i}'>${col}</td>`
+        if (content[i] !== undefined && content[i] !== 'undefined' && content[i] !== null) {
+            allUndefined = false
+            break
+        }
+    }
+    if (allUndefined) {
+        return ""
+    }
+    var div = `<tr id='modal_line_${title}' ${class_line}><td ${class_cell_first} id='modal_line_title_${title}'>${item}</td>`
+    for (var j = 0; j < content.length; j++) {
+        if (content[j] === undefined || content[j] === 'undefined' || content[j] === null) {
+            col = '-'
+        } else if (typeof content[j] === 'number' || !isNaN(parseFloat(content[j]))) {
+            // It's a number, format it with 4 significant digits using nice_number_digits and nice_display
+            var num = parseFloat(content[j])
+            var decimals = nice_number_digits(num, 4)
+            col = nice_display(num, decimals)
+        } else {
+            col = content[j]
+        }
+        div += `<td ${class_cell_other} id='modal_line_value_${title}_${j}'>${col}</td>`
     }
     div += "</tr>" ;
     return div;

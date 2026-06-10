@@ -288,9 +288,9 @@ describe('Load', function () {
 
     // Test text values
     cy.get("#modal_line_value_mrd_family_0").should("have.text", "UNI") //modal line mrd_family content is correct
-    cy.get("#modal_line_value_mrd_pearson_0").should("have.text", "0.96") //modal line mrd_pearson content is correct
+    cy.get("#modal_line_value_mrd_pearson_0").should("have.text", "0.9600") //modal line mrd_pearson content is correct
     cy.get("#modal_line_value_mrd_prevalent_0").should("have.text", "KIGK") //modal line mrd_prevalent content is correct (K locus + IGK)
-    cy.get("#modal_line_value_mrd_prevalent_on_spike_0").should("have.text", "64.89233726998077") //modal line mrd_prevalent_on_spike content is correct
+    cy.get("#modal_line_value_mrd_prevalent_on_spike_0").should("have.text", "64.89") //modal line mrd_prevalent_on_spike content is correct
     cy.get('.info-container > .closeButton > .icon-cancel').click()
 
     cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info').click()

@@ -904,8 +904,9 @@ QUnit.test("getWarningsClonotypeInfo", function(assert) {
 
     var warns_time3 = m.getWarningsClonotypeInfo(2)
     assert.notEqual( warns_time3["W69"], undefined, "warns_time3, error W69 exist")
-    assert.equal( warns_time3["W82"],    undefined, "warns_time3, error W82 exist")
+    assert.notEqual( warns_time3["W82"], undefined, "warns_time3, error W82 exist")
     assert.equal( warns_time3["W69"].reads, 15, "warns_time3")
+    assert.equal( warns_time3["W82"].reads, 0, "warns_time3")
 
 });
 
