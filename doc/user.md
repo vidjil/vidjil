@@ -498,7 +498,7 @@ you can process your data and save the results of your analysis.
 
 !!! warning
     The public <https://app.vidjil.org/> server is for Research Use Only
-    and is not compliant for clinical use.
+    and is not compliant for clinical use.  
     Clinical data have to be uploaded on a [certified healthcare server](healthcare.md).
 
 Once you are authenticated, this page shows the patient list. Here you
