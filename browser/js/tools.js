@@ -1309,24 +1309,25 @@ var row_from_list  = function(item, content, title, time_length, class_line, cla
  *  @param {} content - Content that will be automatically casted
  *  @param {integer} time_length - Length of time point to fill (and so on number of informations cells of the line)
  *  @param {} clone
+ *  @param {} dom_id - Id of dom element created
  */
-var row_cast_content = function(title, content, time_length, clone) {
+var row_cast_content = function(title, content, time_length, clone, dom_id) {
     if (content == undefined) {
         return ""
     } else if (typeof(content) != "object") {
-        return row_1(title, content.toString(), undefined, time_length)
+        return row_1(title, content.toString(), dom_id, time_length)
     } else if (Object.keys(content).indexOf("info") != -1) {
         // Textual field
-        return row_1(title, content.info, undefined, time_length)
+        return row_1(title, content.info, dom_id, time_length)
     } else if (Object.keys(content).indexOf("name") != -1) {
         // Textual field
-        return row_1(title, content.name, undefined, time_length)
+        return row_1(title, content.name, dom_id, time_length)
     } else if (Object.keys(content).indexOf("val") != -1) {
         // Numerical field
-        return row_1(title, content.val, undefined, time_length)
+        return row_1(title, content.val, dom_id, time_length)
     } else if (Object.keys(content).indexOf("seq") != -1) {
         // Sequence field with pos
-        return row_1(title, content.seq, undefined, time_length)
+        return row_1(title, content.seq, dom_id, time_length)
     } else {
         // Sequence field
         var nt_seq = clone.getSegNtSequence(title);
