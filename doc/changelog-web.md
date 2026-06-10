@@ -16,7 +16,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
     - In run with large number of sample, each prefuse step was launch dès qu'un nouveau resultats était disponible.
     - Custom analysis opening was only consider the results at the end of in-process (mainly vidjil) and not prefused augmented analysis.
 - Log of an analysis, avaible by clincking on `COMPLETED/FAILED` button, have been rethincked. Now you will have a list of log separated for each in-process part of the analysis. 
-- 
+- A new vidjil format version (2026.6) have been released. It include a new field `supplementary_data` that allow to store some external data computed by prefuse/postfuse script. These data will now be printed in clonotype information panel. 
 
 
 **Bug fixes**
