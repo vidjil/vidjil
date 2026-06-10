@@ -274,14 +274,14 @@ void testFastaAddThrows() {
 }
 
 void testFastaLabelAndMark() {
-  const unsigned char  locations[] = {JUNCTION_POS};
+  const unsigned char  locations[] = {FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE};
   const unsigned short positions[] = {8};
   OrderedGeneLocationsToMark locations_to_mark = {locations, positions, 1};
   BioReader fa("data/testMarks.fa", 1, "=", locations_to_mark);
 
   TAP_TEST_EQUAL(fa.read(0).label, "tic", TEST_FASTA_LABEL, "");
 
-  auto junction_0_it    = fa.read(0).marked_locations_pos.find(JUNCTION_POS);
+  auto junction_0_it    = fa.read(0).marked_locations_pos.find(FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE);
   bool junction_0_found = junction_0_it != fa.read(0).marked_locations_pos.end();
   TAP_TEST(junction_0_found, TEST_FASTA_MARK, "");
   if (junction_0_found)
@@ -289,7 +289,7 @@ void testFastaLabelAndMark() {
     TAP_TEST_EQUAL(junction_0_it->second, 8, TEST_FASTA_MARK, "");
   }
 
-  auto junction_1_it    = fa.read(1).marked_locations_pos.find(JUNCTION_POS);
+  auto junction_1_it    = fa.read(1).marked_locations_pos.find(FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE);
   bool junction_1_found = junction_1_it != fa.read(1).marked_locations_pos.end();
   TAP_TEST(junction_1_found, TEST_FASTA_MARK, "");
   if (junction_1_found)
@@ -297,7 +297,7 @@ void testFastaLabelAndMark() {
     TAP_TEST_EQUAL(junction_1_it->second, 6, TEST_FASTA_MARK, "");
   }
 
-  auto junction_2_it = fa.read(2).marked_locations_pos.find(JUNCTION_POS);
+  auto junction_2_it = fa.read(2).marked_locations_pos.find(FR3_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE);
   TAP_TEST(junction_2_it == fa.read(2).marked_locations_pos.end(), TEST_FASTA_MARK, "");
 }
 

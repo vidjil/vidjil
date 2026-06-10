@@ -137,7 +137,7 @@ CloneOutput* SampleOutput::getClone(junction junction, string default_germline)
 
 void SampleOutputVidjil::out(ostream &s, bool with_clones)
 {
-   json j_clones;
+   json j_clones(nlohmann::detail::value_t::array);
 
    if (with_clones)
       for (auto it: clones)
@@ -171,19 +171,31 @@ map <string, string> CloneOutputAIRR::fields()
   fields["d_call"] = get(KEY_SEG, "4", "name");
   fields["j_call"] = get(KEY_SEG, "3", "name");
   
-  fields["v_sequence_start"]    = get(KEY_SEG, "5", "start");
-  fields["v_sequence_end"]      = get(KEY_SEG, "5", "stop");
-  fields["d_sequence_start"]    = get(KEY_SEG, "4", "start");
-  fields["d_sequence_end"]      = get(KEY_SEG, "4", "stop");
-  fields["j_sequence_start"]    = get(KEY_SEG, "3", "start");
-  fields["j_sequence_end"]      = get(KEY_SEG, "3", "stop");
-  fields["cdr3_sequence_start"] = get(KEY_SEG, "cdr3", "start");
-  fields["cdr3_sequence_end"]   = get(KEY_SEG, "cdr3", "stop");
+  fields["v_sequence_start"] = get(KEY_SEG, "5", "start");
+  fields["v_sequence_end"]   = get(KEY_SEG, "5", "stop");
+  fields["d_sequence_start"] = get(KEY_SEG, "4", "start");
+  fields["d_sequence_end"]   = get(KEY_SEG, "4", "stop");
+  fields["j_sequence_start"] = get(KEY_SEG, "3", "start");
+  fields["j_sequence_end"]   = get(KEY_SEG, "3", "stop");
+  fields["cdr1_start"]       = get(KEY_SEG, segment_names[CDR1_SEGMENT], "start");
+  fields["cdr1_end"]         = get(KEY_SEG, segment_names[CDR1_SEGMENT], "stop");
+  fields["cdr2_start"]       = get(KEY_SEG, segment_names[CDR2_SEGMENT], "start");
+  fields["cdr2_end"]         = get(KEY_SEG, segment_names[CDR2_SEGMENT], "stop");
+  fields["cdr3_start"]       = get(KEY_SEG, segment_names[CDR3_SEGMENT], "start");
+  fields["cdr3_end"]         = get(KEY_SEG, segment_names[CDR3_SEGMENT], "stop");
+  fields["fwr1_start"]       = get(KEY_SEG, segment_names[FR1_SEGMENT], "start");
+  fields["fwr1_end"]         = get(KEY_SEG, segment_names[FR1_SEGMENT], "stop");
+  fields["fwr2_start"]       = get(KEY_SEG, segment_names[FR2_SEGMENT], "start");
+  fields["fwr2_end"]         = get(KEY_SEG, segment_names[FR2_SEGMENT], "stop");
+  fields["fwr3_start"]       = get(KEY_SEG, segment_names[FR3_SEGMENT], "start");
+  fields["fwr3_end"]         = get(KEY_SEG, segment_names[FR3_SEGMENT], "stop");
+  fields["fwr4_start"]       = get(KEY_SEG, segment_names[FR4_SEGMENT], "start");
+  fields["fwr4_end"]         = get(KEY_SEG, segment_names[FR4_SEGMENT], "stop");
 
   fields["v_support"] = get(KEY_SEG, "evalue_left", "val");
   fields["j_support"] = get(KEY_SEG, "evalue_right", "val");
 
-  fields["cdr3_aa"] = get(KEY_SEG, "cdr3", "aa");
+  fields["cdr3_aa"] = get(KEY_SEG, segment_names[CDR3_SEGMENT], "aa");
   fields["junction"] = NULL_VAL;
   fields["junction_aa"] = get(KEY_SEG, "junction", "aa");
 
@@ -218,14 +230,26 @@ void SampleOutputAIRR::out(ostream &s)
     "vj_in_frame", "stop_codon",
     "junction_aa",
     "junction",
+    "fwr1_aa",
+    "cdr1_aa",
+    "fwr2_aa",
+    "cdr2_aa",
+    "fwr3_aa",
     "cdr3_aa",
+    "fwr4_aa",
     "warnings",
 
     "v_sequence_start", "v_sequence_end",
     "d_sequence_start", "d_sequence_end",
     "j_sequence_start", "j_sequence_end",
 
-    "cdr3_sequence_start", "cdr3_sequence_end",
+    "fwr1_start", "fwr1_end",
+    "cdr1_start", "cdr1_end",
+    "fwr2_start", "fwr2_end",
+    "cdr2_start", "cdr2_end",
+    "fwr3_start", "fwr3_end",
+    "cdr3_start", "cdr3_end",
+    "fwr4_start", "fwr4_end",
 
     "v_support", "j_support",
 

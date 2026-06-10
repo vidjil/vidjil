@@ -459,6 +459,11 @@ Database.prototype = {
             
             //
             this.fixed_header()
+            
+            // Initialize column sorting for sortable tables
+            this.init_sort()
+            // Initialize search for rows filtering
+            this.init_search()
 
             // New page displayed, attempt to display header and login notifications
             let address=DB_ADDRESS + 'notification/get_active_notifications'
@@ -1213,7 +1218,125 @@ Database.prototype = {
             });
         }
     },
-    
+
+    // Initialize click listeners on sortable column headers
+    init_sort: function () {
+        var self = this;
+
+        self.currentSortCol = null;
+        self.currentSortAsc = true;
+
+        document.querySelectorAll("thead td.sortable").forEach(function(th) {
+            th.style.cursor = "pointer";
+
+            th.addEventListener("click", function () {
+                // Find the parent table's id to pass it to sort_table
+                var tableId = th.closest("table").id;
+                self.sort_table(th.dataset.sort, tableId);
+            });
+        });
+    },
+
+    // Initialize search bar for filterable tables
+    init_search: function () {
+        var self = this;
+
+        // Find all search inputs whose id starts with "search_"
+        document.querySelectorAll("input[id^='search_']").forEach(function(input) {
+
+            // Derive the table id from the input id (e.g. "search_table_users" → "table_users")
+            var tableId = input.id.replace("search_", "");
+
+            // Trigger search on Enter key press
+            input.addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    self.filter_table(input.value, tableId);
+                }
+            });
+        });
+    },
+
+    // Filter table rows based on search query
+    filter_table: function (query, tableId) {
+        var normalizedQuery = query.trim().toLowerCase();
+        var rows = document.querySelectorAll("#" + tableId + " tbody tr");
+
+        rows.forEach(function(row) {
+            // Concatenate all cell texts in the row into one string
+            var rowText = Array.from(row.querySelectorAll("td"))
+                .map(function(td) { return td.innerText.toLowerCase(); })
+                .join(" ");
+
+            // Show or hide the row depending on whether it matches the query
+            if (normalizedQuery === "" || rowText.includes(normalizedQuery)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    },
+
+    // Sort table columns
+    sort_table: function (col, tableId) {
+        var self = this;
+
+        if (self.currentSortCol === col) {
+            self.currentSortAsc = !self.currentSortAsc;
+        } else {
+            self.currentSortCol = col;
+            self.currentSortAsc = true;
+        }
+
+        // Replace the hardcoded #table_users with the dynamic tableId
+        var headers = document.querySelectorAll("#" + tableId + " thead td");
+        var colIndex = -1;
+        headers.forEach(function (th, index) {
+            if (th.dataset.sort === col) colIndex = index;
+        });
+
+        if (colIndex === -1) return;
+
+        var tbody = document.querySelector("#" + tableId + " tbody");
+        var rows = Array.from(tbody.querySelectorAll("tr"));
+
+        rows.sort(function (rowA, rowB) {
+            var cellA = rowA.querySelectorAll("td")[colIndex].innerText.trim();
+            var cellB = rowB.querySelectorAll("td")[colIndex].innerText.trim();
+
+            var numA = parseFloat(cellA);
+            var numB = parseFloat(cellB);
+            var isNumeric = !isNaN(numA) && !isNaN(numB);
+
+
+
+            var comparison;
+            if (isNumeric) {
+                comparison = numA - numB;
+            } else {
+                comparison = cellA.localeCompare(cellB, { caseFirst: 'upper' });
+            }
+
+            return self.currentSortAsc ? comparison : -comparison;
+        });
+
+        rows.forEach(function (row) { tbody.appendChild(row); });
+
+        // Update sort icons only within the active table
+        document.querySelectorAll("#" + tableId + " thead td[data-sort]").forEach(function (th) {
+            var icon = th.querySelector("span");
+            if (!icon) return;
+            if (th.dataset.sort === col) {
+                if (self.currentSortAsc) {
+                    icon.className = "icon-sort-alt-up"
+                } else {
+                    icon.className = "icon-sort-alt-down"
+                }
+            } else {
+                icon.className = "icon-arrow-combo"
+            }
+        });
+    },
+
     group_rights: function (value, name, right, id) {
         
         var arg = {}

@@ -1,6 +1,35 @@
 /// <reference types="cypress" />
 
 describe("Creation of users and groups", function () {
+
+   it("01-create a user and log him", function () {
+    cy.goToUsersPage();
+
+    // Create users
+    const first_name = "uf";
+    const last_name = "ul";
+    const email = "user@logged.org";
+    const password = "4P99n!vP3c_/kA]3Yv"; // complex password
+    var user1_return = cy.createUser(
+      first_name + "1",
+      last_name + "1",
+      email + "A",
+      password + "1"
+    );
+    var user2_return = cy.createUser(
+      first_name + "2",
+      last_name + "2",
+      email + "B",
+      password + "2"
+    );
+
+    cy.logout()
+    cy.visit('http://localhost')
+    cy.wait("@getActivities");
+    cy.fillLogin(email + "B", password + "2")
+
+  });
+
   it("01-Users and impersonate", function () {
     cy.goToUsersPage();
     var initial_number_users_return = cy.getTableLength("#table_users");

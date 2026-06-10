@@ -1,0 +1,62 @@
+!OUTPUT_FILE: out/productive_stop_before_V.vidjil
+!LAUNCH: $VIDJIL_DIR/$EXEC -c designations -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/productive_stop_before_V.fa
+
+# FRs & CDRs amino acids were verified with the help of the IMGT database
+# - 1st clone:
+#   - V: https://www.imgt.org/IMGTrepertoire/2D-3Dstruct/Colliers_dyn.php?latin=Homo%20sapiens&gene=IGHV1-69&domain=VH
+#   - J: https://imgt.org/IMGTrepertoire/Proteins/alleles/index.php?species=Homo%20sapiens&group=IGHJ&gene=IGHJ6
+# - 2nd clone:
+#   - V: https://www.imgt.org/IMGTrepertoire/2D-3Dstruct/Colliers_dyn.php?latin=Homo%20sapiens&gene=IGHV3-74&domain=VH
+#   - J: https://imgt.org/IMGTrepertoire/Proteins/alleles/index.php?species=Homo%20sapiens&group=IGHJ&gene=IGHJ4
+$ The first clone's FR1 is between positions 133 and 207 (inclusive)
+j:clones[0].seg.fr1.start: 133
+j:clones[0].seg.fr1.stop: 207
+
+$ The first clone's CDR1 is between positions 502 and 534 (inclusive)
+j:clones[0].seg.cdr1.start: 208
+j:clones[0].seg.cdr1.stop: 231
+
+$ The first clone's FR2 is between positions 232 and 282 (inclusive)
+j:clones[0].seg.fr2.start: 232
+j:clones[0].seg.fr2.stop: 282
+
+$ The first clone's CDR2 is between positions 283 and 306 (inclusive)
+j:clones[0].seg.cdr2.start: 283
+j:clones[0].seg.cdr2.stop: 306
+
+$ The first clone's FR3 is between positions 307 and 420 (inclusive)
+j:clones[0].seg.fr3.start: 307
+j:clones[0].seg.fr3.stop: 420
+
+$ The first clone's CDR3 is between positions 421 and 501 (inclusive)
+j:clones[0].seg.cdr3.start: 421
+j:clones[0].seg.cdr3.stop: 501
+
+$ The first clone's FR4 is between positions 502 and 534 (inclusive)
+j:clones[0].seg.fr4.start: 502
+j:clones[0].seg.fr4.stop: 534
+
+
+$ The second clone's FR1 is between positions 146 and 220 (inclusive)
+j:clones[1].seg.fr1.start: 146
+j:clones[1].seg.fr1.stop: 220
+
+$ The second clone's CDR1 is between positions  221 and 244 (inclusive)
+j:clones[1].seg.cdr1.start: 221
+j:clones[1].seg.cdr1.stop: 244
+
+$ The second clone's FR2 is between positions 245 and 295 (inclusive)
+j:clones[1].seg.fr2.start: 245
+j:clones[1].seg.fr2.stop: 295
+
+$ The second clone's CDR2 is between positions  296 and 319 (inclusive)
+j:clones[1].seg.cdr2.start: 296
+j:clones[1].seg.cdr2.stop: 319
+
+$ The second clone's FR3 is between positions 320 and 433 (inclusive)
+j:clones[1].seg.fr3.start: 320
+j:clones[1].seg.fr3.stop: 433
+
+$ The second clone's CDR3 is between positions  434 and 463 (inclusive)
+j:clones[1].seg.cdr3.start: 434
+j:clones[1].seg.cdr3.stop: 463

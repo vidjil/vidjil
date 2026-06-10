@@ -101,6 +101,7 @@ def index():
         query = sorted(query, key=lambda row: row.created, reverse=reverse)
     elif request.query["sort"] == "login":
         query = sorted(query, key=lambda row: row.last_login, reverse=reverse)
+
     else:
         query = sorted(query, key=lambda row: row.id, reverse=False)
 

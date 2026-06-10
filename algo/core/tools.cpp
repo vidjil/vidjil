@@ -404,6 +404,11 @@ int remove_trailing_whitespaces(string &str) {
 }
 
 string subsequence(const string &seq, int start, int end) {
+  // std::string::substr() will otherwise silently truncate the string when end >= seq.length(),
+  // which might lead to unintended results
+  assert((size_t)start < seq.length());
+  assert((size_t)end   < seq.length());
+  assert(start < end);
   return seq.substr(start, end - start + 1);
 }
 
@@ -644,4 +649,22 @@ std::ostream* new_ofgzstream(string &f, bool gz, string message)
   {
     return new ofstream(f.c_str());
   }
+}
+
+
+#if !defined(__clang__) && !defined(__GNUC__)
+#  include <immintrin.h>
+#endif
+
+unsigned int tzcnt_u32(unsigned int a)
+{
+#if !defined(__clang__) && !defined(__GNUC__)
+  // The TZCNT instruction is available in all AMD and Intel CPUs since 2013. It is safe to assume
+  // that is will be available
+  return _tzcnt_u32(a);
+#else
+  // Compiles to a BSF instruction prefixed with REP, which will make it evaluate to either BSF or
+  // TZCNT on newer processors
+  return __builtin_ctz(a);
+#endif
 }

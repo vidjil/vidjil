@@ -167,6 +167,41 @@ void OnlineFasta::next() {
 
     current.marked_locations_pos[START_GENE] = start_gene_sequence;
     current.marked_locations_pos[END_GENE]   = end_gene_sequence;
+
+    // J gene FR4 end
+    const auto marked_loc_pos_end = current.marked_locations_pos.end();
+    auto fr4_first_aa_mid_nuc_it = current.marked_locations_pos.find(FR4_FIRST_AMINO_ACID_MIDDLE_NUCLEOTIDE);
+    if (fr4_first_aa_mid_nuc_it != marked_loc_pos_end)
+    {
+      // The start anchor point of the FR4 was positioned. Try to position the FR4's end (gaps can
+      // be safely ignored: J genes from IMGT germlines only have gaps before the start of the FR4,
+      // never after)
+      //
+      // According to IMGT, the FR4 contains full amino acids/codons and no trailing nucleotides.
+      // Germline J-REGIONs seem to either extend beyond the end of the FR4, or not include all FR4
+      // nucleotides: the count of nucleotide from the start of the FR4 to the end of J genes in
+      // IMGT germlines is not always a multiple of 3. The definitions of the FR4 and J-REGIONS are
+      // not clear about how they overlap, but resources seem to show the actual J-REGION does
+      // extend beyond the end of the FR4 (which ends with "V S S" here):
+      // https://imgt.org/IMGTrepertoire/Proteins/alleles/index.php?species=Homo%20sapiens&group=IGHJ&gene=IGHJ6
+      //
+      // For these reasons, the end of the FR4 is positioned so its length is a multiple of 3
+      size_t fr4_start_nuc_pos         = fr4_first_aa_mid_nuc_it->second - 1;
+      size_t fr4_start_to_gene_end_len = end_gene_sequence - fr4_start_nuc_pos + 1;
+      size_t candidate_fr4_aa_len      = fr4_start_to_gene_end_len / 3;
+      if (candidate_fr4_aa_len >= FR4_MIN_LENGTH_IN_AMINO_ACIDS)
+      {
+        // This is just to avoid a GCC warning
+        const size_t fr4_max_length_in_amino_acids = FR4_MAX_LENGTH_IN_AMINO_ACIDS;
+
+        size_t clamped_fr4_aa_len      = (candidate_fr4_aa_len < fr4_max_length_in_amino_acids) ?
+                                          candidate_fr4_aa_len : fr4_max_length_in_amino_acids;
+        size_t fr4_last_aa_mid_nuc_pos = fr4_start_nuc_pos + (clamped_fr4_aa_len * 3) - 2;
+        current.marked_locations_pos.emplace_hint(marked_loc_pos_end,
+                                                  FR4_LAST_AMINO_ACID_MIDDLE_NUCLEOTIDE,
+                                                  fr4_last_aa_mid_nuc_pos);
+      }
+    }
   } else
     unexpectedEOF();
 

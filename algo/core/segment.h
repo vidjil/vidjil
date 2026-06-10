@@ -15,6 +15,7 @@
 #include "affectanalyser.h"
 #include "../lib/json_fwd.hpp"
 #include "filter.hpp"
+#include "locations_to_mark.h"
 #include <memory>
 
 // #define DEBUG_EVALUE
@@ -58,8 +59,6 @@
                                              - Margins above the half of the window length may produce shortened or shifted windows
                                           */
 #define FRACTION_ALIGNED_AT_WORST .5 /* Fraction of the sequence that should be aligned before deactivating the heuristics */
-
-#define INVALID_POS ~0
 
 #define SHOW_NAME_WIDTH 15
 #define SHOW_MAX_GENE_ALIGNMENT 20
@@ -209,6 +208,33 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  Cost segment_cost, bool reverse_V = false,
                                  bool reverse_J = false);
 
+
+#define INVALID_BOUND_POS ((unsigned int)INVALID_POS)
+struct Bounds
+{
+  unsigned int start;
+  unsigned int end;
+
+  unsigned int length() const;
+};
+
+
+enum Segment
+{
+  FR1_SEGMENT,
+  FR2_SEGMENT,
+  FR3_SEGMENT,
+  FR4_SEGMENT,
+  CDR1_SEGMENT,
+  CDR2_SEGMENT,
+  CDR3_SEGMENT,
+  JUNCTION_SEGMENT,
+
+  SEGMENT_COUNT
+};
+
+extern const char* const segment_names[SEGMENT_COUNT];
+
 template <typename Affect>
 class Segmenter {
 protected:
@@ -216,15 +242,12 @@ protected:
   string sequence_or_rc;
   string quality;
 
-  // JUNCTIONstart/end and CDR3start/end are 1-based
-  int JUNCTIONstart, JUNCTIONend;
-  string JUNCTIONaa;
-  bool JUNCTIONproductive;
-  string JUNCTIONunproductive;
-
-  int CDR3start, CDR3end;
-  string CDR3nuc;
-  string CDR3aa;
+  Bounds      segments_nuc_pos[SEGMENT_COUNT];
+  std::string CDR3nuc;
+  std::string CDR3aa;
+  std::string JUNCTIONnuc;
+  std::string JUNCTIONaa;
+  std::string JUNCTIONunproductive;
 
   bool reversed, segmented, dSegmented;
   bool junctionChanged;
@@ -239,6 +262,25 @@ protected:
   string removeChevauchement();
   bool finishSegmentation();
   bool finishSegmentationD();
+
+  void segmentFR(LocationToMark          fr_first_aa_mid_nuc_loc,
+                 LocationToMark          fr_last_aa_mid_nuc_loc,
+                 Segment                 fr_segment,
+                 const AlignBox<Affect>* box,
+                 size_t                  read_last_idx);
+  void segmentCDR(Segment            prev_fr,
+                  Segment            cdr_segment,
+                  Segment            next_fr,
+                  size_t             read_last_idx);
+  void segmentJUNCTION(const std::string& read);
+
+
+  void checkBoundsLength(Segment segment);
+  void arrangeOutOfFrameCDR3(const std::string& read);
+  bool alignedReadHasInFrameStopCodon(const std::string& read) const;
+  bool IGHWPGxGPatternIsMissing(const std::string& read) const;
+
+  void setJUNCTIONUnproductive(const std::string& reason);
 
  public:
   Germline<Affect> *segmented_germline;
@@ -459,7 +501,7 @@ class FineSegmenter : public Segmenter<Affect>
    * find JUNCTION/CDR3, by using marked Cys104 and Phe118/Trp118 positions
    * in the germline V and J genes and the backtrack of the DP matrix
    */
-  void findCDR3();
+  void findRegions();
 
   void checkWarnings(CloneOutput *clone, bool phony=true);
 

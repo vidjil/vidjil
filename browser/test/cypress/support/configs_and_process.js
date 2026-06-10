@@ -109,8 +109,8 @@ Cypress.Commands.add(
     cy.get("#add_preprocess_submit").click();
     cy.wait("@getActivities");
 
-    cy.getBiggestId("#table").then((preprocess_id) => {
-        cy.log("Created preprocess id " + preprocess_id);
+    cy.getBiggestId("#table_preprocess").then((preprocess_id) => {
+      cy.log("Created preprocess id " + preprocess_id);
 
         cy.controlPreprocess(
           preprocess_id,
