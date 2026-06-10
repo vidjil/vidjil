@@ -11,12 +11,12 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 
 **Improve analysis**
 
-- MRD script have been greatly improved and deployed, with improvment in script himself, and in interface to show these new results
-- Prefuse step have been move at `in-process` step, allow to launch and pakcaged it with main analysis step, just after vidjil call. This fix 2 misleading behaviors of our server: 
-    - In run with large number of sample, each prefuse step was launch dès qu'un nouveau resultats était disponible.
-    - Custom analysis opening was only consider the results at the end of in-process (mainly vidjil) and not prefused augmented analysis.
-- Log of an analysis, avaible by clincking on `COMPLETED/FAILED` button, have been rethincked. Now you will have a list of log separated for each in-process part of the analysis. 
-- A new vidjil format version (2026.6) have been released. It include a new field `supplementary_data` that allow to store some external data computed by prefuse/postfuse script. These data will now be printed in clonotype information panel. 
+- MRD script have been significantly improved and deployed, with enhancements in both the script itself and the interface to display these new results
+- The prefuse step has been move to the `in-process` step. It allows it to be launched and packaged with main analysis step, just after the Vidjil call. This fixes 2 misleading behaviors of our server: 
+    - In runs with a large number of samples, each prefuse step was launched every time a new result was available.
+    - Custom analysis opening only considered the results at the end of in-process (mainly vidjil) and not prefuse augmented analysis.
+- Log of an analysis, avaible by clincking on `COMPLETED/FAILED` button, have been redesigned. Now you will have a list of logs separated for each in-process part of the analysis. 
+- A new vidjil format version (2026.6) have been released. It include new fields `supplementary_data` that allow to store some external data computed by prefuse/postfuse scripts. These data will now be displayed in clonotype and sample information panels. 
 
 
 **Bug fixes**
@@ -26,18 +26,18 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 
 **Security**
 
-- Some security fix have been made.
-- An automatic dependance audit have been add to docker image build of python dependancies
+- Some security fixes have been made.
+- An automatic dependance audit has been added to docker image build of python dependancies
 - Cookies rights have been limited to improve security
 
 **Technical**
 
-- Prefuse step have been move at `in-process` step. See more details in `improve analysis` above.
-- API script allow now to launch a `get reads` process directly from command line. This grep reads is based on `grep` tools and return each reads with vidjil window given in parameter
-- Administrator table have now a js sort collumns capabilityon table of preprocess, process, groups and users.
-- Vidjil fromat have evolved to `2026-6` to allow the add of new external or complementary analysis
-- Fuse script have been improve to works with 2026-6 vidjil formatn, without breaking previous compatibilities
-- A dedicated vidjil file prettyfier have been add as `tools/format_vidjil.py`. It allow to give a compated, organized and human readable vision on a vidjil results file.
+- Prefuse step has been moved at `in-process` step. See more details in `improve analysis` above.
+- API script now allows to launch a `get reads` process directly from command line. This grep reads is based on `grep` tools and return every read with vidjil window given in parameter
+- Administrator table now has a js sort columns capability on tables of preprocess, process, groups and users.
+- Vidjil format has evolved to `2026-6` to allow the addition of new external or complementary analysis
+- Fuse script has been improved to works with 2026-6 vidjil format, without breaking previous compatibilities
+- A dedicated vidjil file prettyfier has been added as `tools/format_vidjil.py`. It allows to give a compacted, organized and human readable vision on a vidjil results file.
 
 ## Web 2025-10
 

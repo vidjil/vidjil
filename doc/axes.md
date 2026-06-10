@@ -52,9 +52,9 @@ These values require to have some setup on some instances of the server.
 
 **MRD specific axes**
 
-* Normalized reads: Number of reads of a clonotype after MRD spike in normalization
+* Normalized reads: Number of reads of a clonotype after MRD spikein normalization
 * Normalized cells: Estimated number of cells of a clonotype after MRD spikein normalization
-* Spike factor: Ratio of spike between number of raw reads and extimated number of copies
+* Spike factor: Ratio of spike between number of raw reads and estimated number of copies
 
 
 ## Availability of axes

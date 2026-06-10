@@ -76,12 +76,12 @@ These scripts should start from a Vidjil file and return an enhanced Vidjil file
 This move of prefuse to in-process allow that downloadable results file include content of prefuse process.
 
 
-#### [Depreceated] Prefuse script call from fuse process
+#### [Deprecated] Prefuse script call from fuse process
 
 !!! warning
-  Since release 2026.6, prefuse step should be moved in it own step (see migration 2026.6 information).
-  Previous declaration as a `--pre script.py` at fuse step still work but will be depreceated with next release.
-  Post fuse still present and won't be depreceated.
+  Since release 2026.6, the prefuse step should be moved in its own step (see migration 2026.6 information).
+  Previous declaration as a `--pre script.py` at the fuse step still works but will be deprecated in the next release.
+  The post fuse step remains available and will not be deprecated.
 
 It is possible to run further pre- or post-process scripts around the "fusing" of results
 by giving `--pre` and/or `--post` options to fuse.
@@ -102,10 +102,10 @@ See [`contrib` repository](https://gitlab.inria.fr/vidjil/contrib) for examples.
   as for example in `spike-normalization.py`.
   A  `--post` script will be called on the combined `.vidjil` file after the fusing.
 
-- Multiple scripts can be called. To do that, concatenate commands to use inside fuse line to call with a ';' separator.
+- Multiple scripts can be called. To do that, concatenate commands to use inside the prefuse line to call with a ';' separator.
   `scriptA --opt optvalA; scriptB --opt optvalB`.
 
-When the users select this config, these pre-fuse will be sandwiched between main vidjil analysis and fuse step.
+When the user selects this config, these pre-fuse steps will be inserted between the main Vidjil analysis and the fuse step.
 
 #### Adding a post-fuse process
 
@@ -121,7 +121,7 @@ When the users select this config, these pre-fuse will be sandwiched between mai
 - Multiple scripts can be called. To do that, concatenate commands to use inside fuse line to call with a '&&' separator.
   `-t 100 --post 'scriptA --opt optvalA && scriptB --opt optvalB`.
 
-When the users select this config, these post-processes will also be called.
+When the user selects this config, these post-processes will also be called.
 
 ## Users, groups, and permissions
 

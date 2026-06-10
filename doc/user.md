@@ -712,7 +712,7 @@ By clicking on "COMPLETED/FAILED" button, an in-process log window will open.
   </figcaption>
 </figure>
 
-This window allow to see some log information on process for each step of main analysis and each pre-fuse steps.
+This window allows to see some log information on process for each step of main analysis and each pre-fuse step.
 You can browse, show or hide them to see some metadata of your analysis, check parameters and arguments given to an analysis.
 
 ### Displaying statistics, quality control
