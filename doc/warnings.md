@@ -30,6 +30,11 @@ Warnings which were implemented ([x]) have a fixed code that should not be chang
 
 ## Output of an analysis, warnings on some clonotypes
 
+### MRD analysis
+
+- [x] W31 This clone is identified as a spike and has a very low or very high normalization factor compared to other spikes for the given locus
+- [x] W32 This clone is identified as a spike that should have been found in the sample but was not
+
 ### Read quality
 
 - [ ] W40 Low quality  #1544

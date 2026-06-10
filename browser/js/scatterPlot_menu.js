@@ -51,6 +51,7 @@ function ScatterPlot_menu(default_preset) {
         // "Similarity AA (locus)":    { "x" : "Similarity (CDR3, amino acid)",   "y": "TSNEY_LOCUS_AA",  mode: "tsne"}, // Uncomment after change of smiliarity CGI from local to global
         "Size within each locus":   { "x": "Locus",              "y": "Size in locus",  mode: "grid"},
         "LLC gene V analysis":      { "x": "V/5' length",        "y": "V/5' ratio",     mode: "grid"},
+        "spike distribution" :      { "x": "Spike factors",                             mode: "bar"},
     };
 
     this.default_preset = (typeof default_preset == "undefined") ? 1 : default_preset 
@@ -128,8 +129,8 @@ ScatterPlot_menu.prototype = {
         this.select_y = $(this.menu).find("[name='select_y[]']")[0];
 
         var element;
-        for (var key in this.available_axis) {
-            var axisP = new Axis(this.available_axis[key])
+        for (var i = 0; i < this.available_axis.length; i++) {
+            var axisP = new Axis(this.available_axis[i])
             if (typeof axisP.hide == "undefined" || !axisP.hide){
 
                 element = document.createElement("option");
@@ -251,14 +252,16 @@ ScatterPlot_menu.prototype = {
     updateMenu: function() {
         var select_x = 0
         var select_y = 0
-        var i=0
-        
-        //
+        var i = 0
+
         for (var key in this.available_axis) {
             var axisName = this.available_axis[key]
-            if (axisName == this.splitX) select_x = i
-            if (axisName == this.splitY) select_y = i
-            i++
+            var axisP = new Axis(axisName)
+            if (typeof axisP.hide == "undefined" || !axisP.hide) {
+                if (axisName == this.splitX) select_x = i
+                if (axisName == this.splitY) select_y = i
+                i++
+            }
         }
         this.select_x.selectedIndex = select_x
         this.select_y.selectedIndex = select_y

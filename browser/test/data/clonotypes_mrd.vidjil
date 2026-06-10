@@ -1,0 +1,171 @@
+{
+    "clones":
+    [
+        {
+            "germline": "IGH",
+            "name": "test MRD",
+            "sequence": "real clonotype",
+            "top": 1,
+            "supplementary_data":{
+                "mrd": {
+                    "is_spike": [false],
+                    "normalized_reads": [2],
+                    "normalized_cells": [1],
+                    "locus_normalization_factor": [3]
+                }
+            },
+            "warn": [],
+            "reads": [634 ],
+            "id": "ACGGCTGTGTATGCCAAGGGACC"
+        },
+        {
+            "germline": "IGH",
+
+            "name": "spike clonotype",
+            "sequence": "a sequence",
+            "top": 2,
+            "supplementary_data":{
+                "mrd": {
+                    "is_spike": [true],
+                    "is_missing": [false],
+                    "is_outlier": [false],
+                    "spike_normalization_factor": [4],
+                    "locus_normalization_factor": [3]
+                }
+            },
+            "warn": [],
+            "reads": [634 ],
+            "id": "ACGGCTGTactgatcGGGACC"
+        }
+    ],
+
+    "germlines":
+    {
+        "ref": "http://www.vidjil.org/germlines/germline-59.tar.gz",
+        "species": "Homo sapiens",
+        "species_taxon_id": 9606
+    },
+    "reads":
+    {
+        "germline":
+        {
+            "IGH": [5000 ]
+        },
+        "segmented": [5000 ],
+        "total": [5000 ]
+    },
+    "samples":
+    {
+        "commandline": ["./vidjil-algo -g germline/homo-sapiens.g demo/blabla.fa "],
+        "log": ["log content string"],
+        "number": 1,
+        "original_names": ["demo/blabla.fa"],
+        "producer": ["vidjil-algo dev 40034e517 (2024-02-03)"],
+        "run_timestamp": ["2024-02-03 16:29:22"],
+        "supplementary_data":{
+            "mrd": {
+                "normalization": [
+                    true
+                ],
+                "outliers": [
+                    {
+                        "IGH": {
+                            "cIT-QC  Raji  VJ:Vh-(Dh)-Jh  V3-11=V3-21=V3-48 2/40/3 J4  CARQRNDFSDNNSYYSNFDFW  pro": {
+                                "factor": 0.04
+                            }
+                        }
+                    }
+                ],
+                "sensitivity" : [
+                    1
+                ],
+                "total_cells": [
+                    300000
+                ],
+                "total_normalized_reads": [
+                    3163
+                ],
+                "locus_normalization_factor": {
+                    "IGH": [
+                        {
+                            "lower_bound": 0.24,
+                            "upper_bound": 3.53,
+                            "value": 1.93
+                        }
+                    ],
+                    "IGH+": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "IGK": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "IGK+": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "IGL": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "TRA": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "TRB": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "TRB+": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "TRD": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "TRD+": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ],
+                    "TRG": [
+                        {
+                            "lower_bound": null,
+                            "upper_bound": null,
+                            "value": null
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "vidjil_json_version": "2016b"
+}

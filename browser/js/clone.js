@@ -148,6 +148,7 @@ Clone.prototype = {
 
         if (this.getEValue() != undefined && this.getEValue() > this.EVALUE_WARN)
             this.warn.push({'code': 'Wxx', 'level': warnLevels[WARN], 'msg': 'Bad e-value (' + this.getEValue() + ')' });
+
     },
 
     /**
@@ -201,6 +202,36 @@ Clone.prototype = {
         if (size === 0)
             return 'undefined';
         return parseFloat(size);
+    },
+
+    getSpikeNormalizationFactor: function(time) {
+        if (typeof this.supplementary_data == 'undefined')
+            return 'undefined';
+        time = this.m.getTime(time);
+        if (!this.supplementary_data.mrd || !this.supplementary_data.mrd.spike_normalization_factor || this.supplementary_data.mrd.spike_normalization_factor.length <= time)
+            return 'undefined';
+        var value = this.supplementary_data.mrd.spike_normalization_factor[time];
+        return value === null || value === undefined ? 'undefined' : parseFloat(value);
+    },
+
+    getNormalizedReads: function(time) {
+        if (typeof this.supplementary_data == 'undefined')
+            return 'undefined';
+        time = this.m.getTime(time);
+        if (!this.supplementary_data.mrd || !this.supplementary_data.mrd.normalized_reads || this.supplementary_data.mrd.normalized_reads.length <= time)
+            return 'undefined';
+        var value = this.supplementary_data.mrd.normalized_reads[time];
+        return value === null || value === undefined ? 'undefined' : parseFloat(value);
+    },
+
+    getNormalizedCells: function(time) {
+        if (typeof this.supplementary_data == 'undefined')
+            return 'undefined';
+        time = this.m.getTime(time);
+        if (!this.supplementary_data.mrd || !this.supplementary_data.mrd.normalized_cells || this.supplementary_data.mrd.normalized_cells.length <= time)
+            return 'undefined';
+        var value = this.supplementary_data.mrd.normalized_cells[time];
+        return value === null || value === undefined ? 'undefined' : parseFloat(value);
     },
 
     /**
@@ -787,9 +818,25 @@ Clone.prototype = {
         if (!this.quantifiable) return this.NOT_QUANTIFIABLE_SIZE
 
         time = this.m.getTime(time);
+
+        // Handle MRD normalization mode 
+        // (if normalized reads are available, use them; if not, use non-normalized reads)
+        if (this.m.normalization_mode == this.m.NORM_MRD_READS) {
+            var normalized_reads = this.getNormalizedReads(time);
+            if (normalized_reads !== 'undefined' && !isNaN(normalized_reads)) {
+                var total_norm_reads = this.m.getSampleMRDTotal(time)
+                if (total_norm_reads > 0) return (normalized_reads / total_norm_reads)
+            }
+            else {
+                var not_normalized_reads = this.getReads(time);
+                var total_reads_mrd_mode = this.m.getSampleReads(time, true, false)
+                return (not_normalized_reads / total_reads_mrd_mode)
+            }
+        }
+
         if (this.m.reads.segmented[time] === 0 ) return 0;
         if (this.isRemoved() && !true_size_removed) return 0;
-        
+
         // Compute size based on whether removed clones should be considered
         var reads = this.getReads(time);
         var total_reads = this.m.getSampleReads(time, true, false)
@@ -800,7 +847,7 @@ Clone.prototype = {
             // special getSize for scatterplot (ignore constant/expected normalization)
             return result
         }
-        return this.m.normalize(result, time) 
+        return this.m.normalize(result, time)
     }, //end getSize
     
     /**
@@ -1424,7 +1471,10 @@ Clone.prototype = {
     }, 
     
     getTag: function () {
-        if (this.hasSizeDistrib()) {
+        // Spike clones should always have "standard / spike" tag
+        if (this.label != undefined && this.label.includes("cIT-QC")) { //will all spikes always have cIT-QC in label ? probably not. Maybe find a way to get it from config file ?
+            return "standard";
+        } else if (this.hasSizeDistrib()) {
             return this.m.tags.getDistrib();
         } else if (this.tag) {
             return this.tag;
@@ -1744,8 +1794,8 @@ Clone.prototype = {
                 html += "<tr><td title='Current size; depending of the number of clonotypes curently not filtered'>current clonotype size<br/>(n-reads (total reads))"
             }
             if (this.normalized_reads && this.m.normalization_mode == this.m.NORM_EXTERNAL) {
-                html += "<br />[normalized]"
-            }
+               html += "<br />[normalized]"
+         }
             html += "</td>"
             for (var j = 0; j < time_length; j++) {
                 html += "<td>"
@@ -1768,7 +1818,7 @@ Clone.prototype = {
                 html += "<td>" + this.getStrSize(this.m.samples.order[k]) + "</td>"
             }
 
-            // Specific part for MRD script
+            // Specific part for old MRD script
             if ('mrd' in this && this.getHtmlInfo_prevalent != undefined){
                 values = this.getHtmlInfo_prevalent()
                 for (var mrd_val = 0; mrd_val < values.length; mrd_val++) {
@@ -1780,7 +1830,6 @@ Clone.prototype = {
         }else{
             html += header("sequence", undefined, time_length)
         }
-
         
         //sequence info (or cluster main sequence info)
         if (this.hasSequence()){
@@ -1827,6 +1876,40 @@ Clone.prototype = {
         }
         html += "</tr>"
 
+        // --- cIT-QC normalization data section ---
+        // Display this section only if the clone has normalized reads, normalized cells, or is a spike
+        // meaning it went through the cIT-QC normalization script
+        // supplementary_data.mrd has arrays with one element per timepoint
+        var has_mrd_norm_data = this.supplementary_data && this.supplementary_data.mrd && 
+                                (this.supplementary_data.mrd.normalized_cells || this.supplementary_data.mrd.normalized_reads || this.supplementary_data.mrd.spike_normalization_factor);
+
+        if (has_mrd_norm_data) {
+            html += header("MRD normalization", undefined, time_length)
+
+            // Extract MRD field arrays - they have one value per timepoint
+            var normalized_cells_array = this.supplementary_data.mrd.normalized_cells || [];
+            var normalized_reads_array = this.supplementary_data.mrd.normalized_reads || [];
+            var locus_norm_factor_array = this.supplementary_data.mrd.locus_normalization_factor || [];
+            var spike_norm_factor_array = this.supplementary_data.mrd.spike_normalization_factor || [];
+
+            if (normalized_cells_array.length > 0) {
+                html += row_from_list("normalized cells", normalized_cells_array, "mrd_norm_cells", time_length)
+            }
+
+            if (normalized_reads_array.length > 0) {
+                html += row_from_list("normalized reads", normalized_reads_array, "mrd_norm_reads", time_length)
+            }
+
+            if (locus_norm_factor_array.length > 0) {
+                html += row_from_list("locus normalization factor", locus_norm_factor_array, "mrd_locus_norm_factor", time_length)
+            }
+
+            if (spike_norm_factor_array.length > 0) {
+                html += row_from_list("spike normalization factor", spike_norm_factor_array, "mrd_spike_norm_factor", time_length)
+            }
+
+        }
+
         
         //segmentation info
         if (this.hasSizeConstant()) {
@@ -1850,6 +1933,7 @@ Clone.prototype = {
                 html += "<td>"+this.stats[p][idx] +
                     " (" + ((this.stats[p][idx]/total_stat[p]) * 100).toFixed(1) + " %)</td>"
                 }
+                html += "</tr>"
             }
         }
         
@@ -1892,7 +1976,7 @@ Clone.prototype = {
             html += row_1("junction (AA seq)", this.getSegAASequence('junction'), undefined, time_length, undefined, undefined, undefined, allow_copy=true)
         }
 
-        
+
         //other info (clntab)
         html += header("&nbsp", undefined, time_length)
         for (var t in this) {

@@ -96,4 +96,35 @@ describe('Test sandbox', function () {
   
   });
 
+  it('supplementary data - Show mrd values', function() {
+    // Even if no clone present with locus with some reads/clonotypes, a smaller clone is present 
+    cy.openAnalysis("browser/test/data/clonotypes_mrd.vidjil")
+
+    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info')
+      .click()
+
+    cy.get('#modal_header_MRD_normalization > .header')
+      .should("exist")
+
+    cy.get('#modal_line_title_mrd_norm_cells')
+      .should("exist")
+
+    cy.get('#modal_line_title_mrd_spike_norm_factor')
+      .should("not.exist")
+  
+
+
+    cy.get('#listElem_1 > #clone_infoBox_1 > .icon-info')
+      .click()
+
+    cy.get('#modal_header_MRD_normalization > .header')
+      .should("exist")
+
+    cy.get('#modal_line_title_mrd_norm_cells')
+      .should("not.exist")
+
+    cy.get('#modal_line_title_mrd_spike_norm_factor')
+      .should("exist")
+  });
+
 })

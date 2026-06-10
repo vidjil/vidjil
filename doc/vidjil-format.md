@@ -454,7 +454,33 @@ when one choose to report only the 'top' clones (`-t` option for fuse).
   "producer": [],
   "timestamp": [],
   "log": []
-}
+
+  // Supplementary data [optional]
+  "supplementary_data": {
+            "mrd": {
+                "normalization": [], // list of boolean wether the sample had mrd normalization data or not
+                "outliers": [ // list of outliers spikes
+                    {
+                        "IGH": { // locus with outliers spikes
+                            "outlier spike name": { // name of outlier spikes
+                                "factor": float // value ouf the outlier spike factor
+                            }
+                        }
+                    }
+                ],
+                "sensitivity" : [], // sensitivity computed for this sample
+                "total_cells": [], // total number of cells used for normalization
+                "total_normalized_reads": [], // total number of normalized reads WITHOUT spike reads
+                "locus_normalization_factor": { // list of normalization factor for each locus
+                    "IGH": [
+                        {
+                            "lower_bound": float, 
+                            "upper_bound": float,
+                            "value": float
+                        }
+                    ]
+                }
+            }
 ```
 
 ### `clones` list, with read count, tags, V(D)J designation and other sequence features
@@ -534,6 +560,20 @@ In the `.analysis` file, this section is intended to describe some specific clon
 
    "top": 0,         // (not documented now) [required] threshold to display/hide the clone
    "stats": []       // (not documented now) [.vidjil only] (with sample.number elements)
+
+    "warn": []       // Warnings related to this clone [optional]
+
+   "supplementary_data": {                  // supplementary data [optional]
+        "mrd" : {                           // Supplementary data about MRD
+            "is_spike": [true or false]     // Wether the clone is a spike clone or not
+            "is_missing": [true or false]   // Wether the clone, if it is a spike, is missing or not
+            "is_outlier": [true or false]   // Wether the clone, if it is a spike, is an outlier for normalization factor or not
+            "spike_normalization_factor": [float]   // Normalization factor computed for this clone if it is a spike
+            "locus_normalization_factor": [float]   // Normalization factor computed for the locus of this clone
+            "normalized_reads": [float]             // Normalized number of reads, computed with the number of reads and the normalization factor
+            "normalized_cells": [int]               // Normalized number of cells, computed with the normalized reads and the number of expected cells
+        }
+   }
 
 
 }
@@ -629,19 +669,22 @@ file in JSON format must be created, as in the following example:
         "name": "spike-1",
         "copies": "10",
         "sequence": "GGAACTGGGCCTGGGGATACGGAAATATCGGTACACCGATAAAC",
-        "family": "TRDV1"
+        "family": "TRDV1",
+        "locus": "TRD"
       },
       {
         "name": "spike-2",
         "copies": "40",
         "sequence": "GGGAATACCTCGGTGCGGTGGGGGATCCCAAGACCCCCCTCTACACCGATAA",
-        "family": "TRDV1"
+        "family": "TRDV1",
+        "locus": "TRD"
       },
       {
         "name": "spike-3",
         "copies": "160",
         "sequence": "GCTCTTGGGGTGCATCAGTCCATGACCCACCGATAAACTCATC",
-        "family": "TRDV1"
+        "family": "TRDV1",
+        "locus": "TRD"
       }
     ]
   }
@@ -652,6 +695,9 @@ and given to `vidjil-algo` by means of the flag `--label-json
 spikes.json`. Notice that the family of each spike-in must be
 informed as well, because it [has been determined](https://doi.org/10.1111/bjh.16571) that performing the
 procedure within a family yields better results.
+
+
+The following paragraphs are part of old MRD calculation and will be deprecated.
 
 For the pre-processing step, Vidjil offers a script called
 `spike-normalization.py`, so one can add a line such as the following

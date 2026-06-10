@@ -86,6 +86,7 @@ function Model() {
     this.NORM_FALSE     = "no_norm"
     this.NORM_EXPECTED  = "expected"
     this.NORM_EXTERNAL  = "external"
+    this.NORM_MRD_READS = "mrd_normalized_reads"
     this.normalization_mode = this.NORM_FALSE
     this.available_axes = Axis.prototype.available()
 
@@ -332,6 +333,7 @@ Model.prototype = {
         };
         this.normalization_list=[]
         this.normalization_mode = this.NORM_FALSE
+        this.have_mrd_normalization = false
         /*Variables pour DBSCAN*/
         this.eps = 0;
         this.nbr = 0;
@@ -426,6 +428,7 @@ Model.prototype = {
     initClones: function () {
         console.log("initClones()");
         this.have_external_normalization = false
+        this.have_mrd_normalization = false
         $("#external_normalization").hide();
         $("#expected_normalization").hide();
 
@@ -450,12 +453,22 @@ Model.prototype = {
             }
         }
         this.n_max = n_max
-        
-        for (var j = 0; j < this.clones.length; j++) 
+
+        for (var j = 0; j < this.clones.length; j++)
             this.clone(j).tag = this.tags.getDefault();
-        
+
         this.applyAnalysis(this.analysis);
         this.initData();
+
+        // Check for MRD normalization availability
+        if (this.samples.supplementary_data && 
+            this.samples.supplementary_data.mrd && 
+            this.samples.supplementary_data.mrd.normalization && 
+            Array.isArray(this.samples.supplementary_data.mrd.normalization) && 
+            this.samples.supplementary_data.mrd.normalization.some(n => n === true)) {
+            this.have_mrd_normalization = true
+        }
+
         if (this.have_external_normalization){
             this.set_normalization(this.NORM_EXTERNAL)
             // change radio button selection
@@ -693,6 +706,16 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             }
         }
     },
+
+    getSampleMRDTotal: function (time) {
+        if (this.samples.supplementary_data && 
+            this.samples.supplementary_data.mrd && 
+            this.samples.supplementary_data.mrd.total_normalized_reads) {
+            return this.samples.supplementary_data.mrd.total_normalized_reads[time]
+        }
+        return undefined
+    },
+
 
     
     /**
@@ -948,7 +971,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
      * @return {[type]}      [description]
      */
     set_normalization: function(mode){
-        if (mode !== this.NORM_FALSE && mode !== this.NORM_EXPECTED && mode !== this.NORM_EXTERNAL ){
+        if (mode !== this.NORM_FALSE && mode !== this.NORM_EXPECTED && mode !== this.NORM_EXTERNAL && mode !== this.NORM_MRD_READS ){
             console.error("Try to change to an undetermined mode of normalization")
             this.normalization_mode = this.NORM_FALSE
             return
@@ -992,6 +1015,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
     normalize_reads: function(clone, time, raw) {
       if (this.normalization_mode == this.NORM_EXTERNAL &&
           clone.normalized_reads != undefined &&
+          typeof clone.normalized_reads === 'object' &&
           clone.normalized_reads[time] != null &&
           raw == undefined) {
               return clone.normalized_reads[time] ;
@@ -1708,7 +1732,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
                         continue
                     }
 
-                    if (timeID != -1 && clone.reads[timeID] != 0){
+                    if (timeID != -1){
                         if (warned[warn.code] == undefined){
                             warned[warn.code] = {"clones": [], "reads": 0, "msg": getCleanedWarningName(warn.msg), "level": warn.level}
                         }
@@ -1916,6 +1940,15 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             data = data.concat( convertContent(values[j]))
         }
 
+        /// Table MRD
+        if (typeof this.samples.supplementary_data !== 'undefined' &&
+            typeof this.samples.supplementary_data.mrd !== 'undefined') {
+            values = this.getPointHtmlInfoDataMRD(timeID)
+            for (var k = 0; k < values.length; k++) {
+                data = data.concat(convertContent(values[k]))
+            }
+        }
+
         var filename = `sample_${this.samples.names[timeID] != "" ? this.samples.names[timeID] : this.samples.original_names[timeID].split('\\').pop().split('/').pop()}.csv`
         download_csv(data.join("\n"), filename)
         return data
@@ -1944,7 +1977,6 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
         html += "</table></div>"
 
-
         /// Table warnings
         html += "<br/><div id='info_warnings'><table>"
         values = this.getPointHtmlInfoDataWarnings(timeID)
@@ -1953,6 +1985,18 @@ changeAlleleNotation: function(alleleNotation, update, save) {
             html += value[0].apply(this, value.slice(1))
         }
         html += "</table></div>"
+
+        /// Table MRD
+        if (typeof this.samples.supplementary_data !== 'undefined' &&
+            typeof this.samples.supplementary_data.mrd !== 'undefined') {
+            html += "<br/><div id='info_mrd'><table>"
+            values = this.getPointHtmlInfoDataMRD(timeID)
+            for (var m = 0; m < values.length; m++) {
+                value = values[m]
+                html += value[0].apply(this, value.slice(1))
+            }
+            html += "</table></div>"
+        }
 
 
         /// Table overlaps
@@ -2031,7 +2075,7 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         return overlaps
     },
 
-    /**
+     /**
      * Get data for generic information panel
      * @param {integer} timeID - time/sample index
      * @return {string} array 
@@ -2122,6 +2166,99 @@ changeAlleleNotation: function(alleleNotation, update, save) {
         }
         return data
 
+    },
+
+
+    /**
+     * Get data for MRD table
+     * @param {integer} timeID - time/sample index
+     * @return {Array}
+     */
+    getPointHtmlInfoDataMRD: function (timeID) {
+        var data = []
+        var mrd = this.samples.supplementary_data.mrd
+
+        // MRD header
+        if (typeof mrd !== 'undefined') {
+            data.push([header, "MRD", "mrd_normalization_sample", 4])
+        }
+
+        // MRD sensitivity
+        if (typeof mrd.sensitivity !== 'undefined' &&
+            Array.isArray(mrd.sensitivity) &&
+            mrd.sensitivity.length > timeID &&
+            mrd.sensitivity[timeID] !== null) {
+            data.push([row_from_list, "Sensitivity", [mrd.sensitivity[timeID]], "mrd_sensitivity", 4])
+        }
+
+        // Sample cell count (= 1 / sensitivity)
+        if (typeof mrd.sample_cell_count !== 'undefined' &&
+            Array.isArray(mrd.sample_cell_count) &&
+            mrd.sample_cell_count.length > timeID &&
+            mrd.sample_cell_count[timeID] !== null) {
+            data.push([row_from_list, "Sample cell count", [mrd.sample_cell_count[timeID]], "mrd_sample_cell_count", 4])
+        }
+
+        // MRD normalization factors
+        var locus_factors_obj = mrd.locus_normalization_factor
+        if (typeof locus_factors_obj !== 'undefined') {
+            var hasNonNullDataForTimeID = false
+            var mrd_table_rows = []
+
+            // Define a function to format spike normalization factors with nice display and a fixed number of significant digits
+            var formatSpikeFactor = function(v) { return nice_display(v, nice_number_digits(v, 4));};
+
+            for (var locus_name in locus_factors_obj) {
+                if (Array.isArray(locus_factors_obj[locus_name]) &&
+                    locus_factors_obj[locus_name].length > timeID) {
+                    var factor_data = locus_factors_obj[locus_name][timeID]
+
+                    if (factor_data !== null &&
+                        (factor_data.value !== null ||
+                        factor_data.lower_bound !== null ||
+                        factor_data.upper_bound !== null)) {
+                        hasNonNullDataForTimeID = true
+                    }
+
+                    // Collect spike normalization factors for this locus
+                    var spike_factors = []
+                    for (var c = 0; c < this.clones.length; c++) {
+                        var clone = this.clones[c]
+                        if (clone.germline === locus_name &&
+                            clone.supplementary_data &&
+                            clone.supplementary_data.mrd &&
+                            clone.supplementary_data.mrd.is_spike &&
+                            clone.supplementary_data.mrd.is_spike[timeID] === true &&
+                            clone.supplementary_data.mrd.spike_normalization_factor) {
+                            var spike_array = clone.supplementary_data.mrd.spike_normalization_factor
+                            if (Array.isArray(spike_array) && spike_array[timeID] != null) {
+                                spike_factors.push(spike_array[timeID])
+                            }
+                        }
+                    }
+
+                    var spike_val = null;
+                    if (spike_factors.length > 0) {
+                        var formattedSpikes = spike_factors.map(formatSpikeFactor);
+                        spike_val = "<span>" + formattedSpikes.join(", ") + "</span>";
+                    }
+
+                    mrd_table_rows.push([row_from_list, locus_name,
+                        [factor_data.value, factor_data.lower_bound, spike_val, factor_data.upper_bound],
+                        `mrd_locus_norm_factor_${locus_name}`, 4])
+                }
+            }
+
+            if (hasNonNullDataForTimeID) {
+                data.push([header, "MRD normalization factors", "mrd_normalization_sample", 4])
+                data.push([row_from_list, "", ["value", "lower bound", "individual spike normalization factors", "upper bound"], "", 4])
+                for (var j = 0; j < mrd_table_rows.length; j++) {
+                    data.push(mrd_table_rows[j])
+                }
+            }
+        }
+
+        return data
     },
 
     /**

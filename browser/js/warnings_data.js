@@ -82,6 +82,21 @@ var warnings_data = {
     },
     "Warnings on some clones":
     {},
+    "Warnings about MRD data":
+    {
+        "W31":
+        {
+            "title": "Outlier spike: normalization factor anomaly detected",
+            "level": 1,
+            "visibility": 1
+        },
+        "W32":
+        {
+            "title": "Spike not detected in sample (generated with 0 reads)",
+            "level": 1,
+            "visibility": 1
+        }
+    },
     "Read quality":
     {
         "W40":
