@@ -2823,7 +2823,7 @@ div.tooltip {
   align-items: center;
   font-weight: 600;
   border: none;
-  width: 100%;
+  width: calc(100% - 20px);
   text-align: left;
   font-size: 1rem;
 }
