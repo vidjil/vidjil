@@ -65,7 +65,23 @@ You can now set permissions to grant users access to this process configuration.
 - To give access to all users on the server, simply assign permission to the public group.
 - You can also grant access to specific users from the list.
 
-### Pre and post-processes (around fuse)
+### Pre and post-processes (before or after fusing)
+
+#### Prefuse with dedicated step
+
+An intermediate prefuse on a Vidjil file can be set as a particular point between main Vidjil analysis and fusing of Vidjil files from a set.
+It is optional but can provide an increased analysis.
+Since release 2026.6, a dedicated prefuse field allows setting a list of prefuse analyses done on a configuration.
+These scripts should start from a Vidjil file and return an enhanced Vidjil file.
+This move of prefuse to in-process allow that downloadable results file include content of prefuse process.
+
+
+#### [Depreceated] Prefuse script call from fuse process
+
+!!! warning
+  Since release 2026.6, prefuse step should be moved in it own step (see migration 2026.6 information).
+  Previous declaration as a `--pre script.py` at fuse step still work but will be depreceated with next release.
+  Post fuse still present and won't be depreceated.
 
 It is possible to run further pre- or post-process scripts around the "fusing" of results
 by giving `--pre` and/or `--post` options to fuse.
@@ -75,22 +91,37 @@ as in a MRD setup developed by Joao Medianis (Boldrini center, Brasil).
 
 See [`contrib` repository](https://gitlab.inria.fr/vidjil/contrib) for examples.
 
-#### Adding such a pre-/post-process
+#### Adding a prefuse process
+
+- Your script needs to take as an input a `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
+  such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples-output.vidjil`
+
+- The script should be available in the path referenced as `DIR_PREPROCESS` in .env files (`/usr/share/vidjil/tools/scripts/pre-fuse/` by default).
+
+- The script should be referenced in the `Prefuse command` field of one "config" in the `processes config` page,
+  as for example in `spike-normalization.py`.
+  A  `--post` script will be called on the combined `.vidjil` file after the fusing.
+
+- Multiple scripts can be called. To do that, concatenate commands to use inside fuse line to call with a ';' separator.
+  `scriptA --opt optvalA; scriptB --opt optvalB`.
+
+When the users select this config, these pre-fuse will be sandwiched between main vidjil analysis and fuse step.
+
+#### Adding a post-fuse process
 
 - Your script needs to take as an input a `.vidjil` file with `-i` argument, and export another `.vidjil` file with `-o`,
   such as in the call `spike-normalization.py -i res-samples.vidjil -o res-samples.vidjil`
 
-- The script should be available in the path referenced as `DIR_PREPROCESS` in .env files (`/usr/share/vidjil/tools/scripts/preprocess/` by default).
+- The script should be available in the path referenced as `DIR_PREPROCESS` in .env files (`/usr/share/vidjil/tools/scripts/post-fuse/` by default).
 
 - The script should be referenced in the `Fuse command` field of one "config" in the `processes config` page,
-  as for example in `-t 100 --pre spike-normalization.py`.
-  A `--pre` script will be called on each `.vidjil` file, before the actual fusing,
-  whereas a `--post` script will be called on the combined `.vidjil` file after the fusing.
+  as for example in `-t 100 --post spike-normalization.py`.
+  A  `--post` script will be called on the combined `.vidjil` file after the fusing.
 
 - Multiple scripts can be called. To do that, concatenate commands to use inside fuse line to call with a '&&' separator.
-  `-t 100 --pre 'scriptA --opt optvalA && scriptB --opt optvalB`. This can be done for prefuse and postfuse step.
+  `-t 100 --post 'scriptA --opt optvalA && scriptB --opt optvalB`.
 
-When the users select this config, these pre- and post-processes will also be called.
+When the users select this config, these post-processes will also be called.
 
 ## Users, groups, and permissions
 
