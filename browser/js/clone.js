@@ -1993,6 +1993,42 @@ Clone.prototype = {
             }
         }
         
+        ///////////////////////////
+        // Supplementary_data table
+        // except MRD, showed above.
+        if (this.supplementary_data){
+            var already_used = ["mrd"];
+            supplementary_keys = Object.keys(this.supplementary_data).filter(
+                key => !already_used.includes(key)
+            );
+
+            supplementary_keys.forEach((supplementary_key) => {
+                supplementary_data = this.supplementary_data[supplementary_key]
+
+                // Name use from table_name if present, else from key value
+                var header_content = "table_name" in supplementary_data ?  supplementary_data.table_name : supplementary_key
+                html += header(header_content, supplementary_key, time_length)
+                
+                var ordered_key;
+                if ("table_order" in supplementary_data){
+                    ordered_key = supplementary_data.table_order
+                } else {
+                    ordered_key = Object.keys(supplementary_data).filter(
+                        key => !["table_name", "table_order"].includes(key)
+                    );
+                }
+
+                ordered_key.forEach((current_key) => {
+                    var data = supplementary_data[current_key]
+                    if (Array.isArray(data)) {
+                        html += row_from_list(current_key, data, `${supplementary_key}_${current_key}`, time_length)
+                    } else {
+                        html += row_cast_content(current_key, data, time_length, self, `${supplementary_key}_${current_key}`)
+                    }
+                });
+            });
+        }
+
         // Result of external tools (inside seg and already defined)
         // Can't be bypass as already used
         var other_infos = {"imgt": "<a target='_blank' href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a>",

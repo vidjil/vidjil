@@ -1,0 +1,280 @@
+{
+  "germlines": {
+    "species_taxon_id": 9606,
+    "ref": "http://www.vidjil.org/germlines/germline-2021-01-21.tar.gz",
+    "species": "Homo sapiens",
+    "custom": {
+      "3": [],
+      "5": [],
+      "4": [],
+      "shortcut": "X"
+    }
+  },
+  "diversity": {
+    "index_H_entropy": [
+      5.688690639121887
+    ],
+    "index_E_equitability": [
+      0.39255398511886597
+    ],
+    "index_Ds_diversity": [
+      0.9644120931625366
+    ]
+  },
+  "vidjil_json_version": "2016b",
+  "reads": {
+    "germline": {
+      "unexpected": [
+        707
+      ],
+      "TRD+": [
+        0
+      ],
+      "TRA": [
+        0
+      ],
+      "TRB": [
+        0
+      ],
+      "IGH": [
+        562048
+      ],
+      "TRD": [
+        0
+      ],
+      "TRG": [
+        1402539
+      ],
+      "IGK+": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "IGL": [
+        0
+      ],
+      "IGK": [
+        0
+      ],
+      "IGH+": [
+        655
+      ],
+      "TRA+D": [
+        0
+      ]
+    },
+    "distribution": {
+      "unexpected": [
+        0
+      ],
+      "TRD+": [
+        0
+      ],
+      "0.000001": [
+        153609
+      ],
+      "TRA": [
+        0
+      ],
+      "0.01": [
+        1148834
+      ],
+      "TRB": [
+        0
+      ],
+      "0.00001": [
+        225324
+      ],
+      "TRD": [
+        0
+      ],
+      "TRG": [
+        7
+      ],
+      "0.1": [
+        0
+      ],
+      "IGK+": [
+        0
+      ],
+      "0.0000001": [
+        71374
+      ],
+      "TRA+D": [
+        0
+      ],
+      "TRB+": [
+        0
+      ],
+      "0.0001": [
+        175200
+      ],
+      "IGL": [
+        0
+      ],
+      "IGK": [
+        0
+      ],
+      "IGH+": [
+        0
+      ],
+      "0.001": [
+        191608
+      ],
+      "IGH": [
+        2
+      ]
+    },
+    "total": [
+      2390273
+    ],
+    "segmented": [
+      1965949
+    ]
+  },
+  "samples": {
+    "log": [
+      "  ==> junction detected in 1965949 reads (82.2%)\n  ==> found 105324 windows in 1965949 reads (82.2% of 2390273 reads)\n                          reads av. len     clones clo/rds\n  IGH               ->   562048   314.5      31487   0.056\n  IGH+              ->      655   110.4        408   0.623\n  IGK               ->        0       -          0       -\n  IGK+              ->        0       -          0       -\n  IGL               ->        0       -          0       -\n  TRA               ->        0       -          0       -\n  TRA+D             ->        0       -          0       -\n  TRB               ->        0       -          0       -\n  TRB+              ->        0       -          0       -\n  TRD               ->        0       -          0       -\n  TRD+              ->        0       -          0       -\n  TRG               ->  1402539   197.6      72896   0.052\n  unexpected        ->      707   191.7        533   0.757\n\n  SEG               ->  1965949   231.0\n  SEG_+             ->  1015609   218.5\n  SEG_-             ->   950340   244.4\n  SEG changed w     ->    16733   213.6\n\n  UNSEG too short   ->     5203    10.0\n  UNSEG strand      ->      534    78.1\n  UNSEG too few V/J ->    30302    85.3\n  UNSEG only V/5'   ->   334169   191.2\n  UNSEG only J/3'   ->    54012    55.4\n  UNSEG < delta_min ->        0       -\n  UNSEG ambiguous   ->      104   376.6\n  UNSEG too short w ->        0       -\n"
+    ],
+    "producer": [
+      "vidjil-algo 2021.04"
+    ],
+    "timestamp": [
+      "2022-01-12 16:06:16"
+    ],
+    "commandline": [
+      "../..//vidjil-algo -o /mnt/result/tmp/out-000006/ -b 000006 -c clones -z 100 -r 1 -g../../germline//homo-sapiens.g -e 1 -2 -d -w 50 sequence_file.data_file "
+    ],
+    "number": 1,
+    "original_names": [
+      "demo_lil_l3.fastq"
+    ],
+    "run_timestamp": [
+      "2021-12-13 13:50:28"
+    ]
+  },
+  "clones": [
+    {
+      "germline": "TRG",
+      "_average_read_length": [
+        "246.47"
+      ],
+      "name": "TRGV2*01 0/TCCCCCTG/3 TRGJP1*01",
+      "_coverage_info": [
+        "248 bp (100% of 246.5 bp)"
+      ],
+      "sequence": "GGAAGGCCCCACAGCGTCTTCAGTACTATGACTCCTACAACTCCAAGGTTGTGTTGGAATCAGGAGTCAGTCCAGGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCAAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGTCCCCCTGCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTGGTAA",
+      "_coverage": [
+        1.0062072277069092
+      ],
+      "top": 30,
+      "seg": {
+        "evalue": {
+          "val": "2.45e-157"
+        },
+        "N": 8,
+        "3": {
+          "start": 188,
+          "name": "TRGJP1*01",
+          "delLeft": 3
+        },
+      
+        "5": {
+          "stop": 179,
+          "name": "TRGV2*01",
+          "delRight": 0
+        }
+      },
+      "reads": [
+        4263
+      ],
+      "id": "TTACTGTGCCACCTGGGACGGGTCCCCCTGCCACTGGTTGGTTCAAGATA",
+      "supplementary_data": {
+        "various_content": {
+          "constant_value_string": "a string value",
+          "constant_a_float": 1.234,
+          "constant_an_integer": 5,
+          "array_value_string": [
+            "a string value"
+          ],
+          "array_a_float": [
+            1.234
+          ],
+          "array_an_integer": [
+            5
+          ]
+
+        },
+        "content_with_name": {
+          "table_name": "Content with a declared name",
+          "unordered_abc": "unorder ABC",
+          "unordered_def": "unorder DEF",
+          "unordered_ghi": "unorder GHI"
+        },
+        "content_with_name_and_order": {
+          "table_name": "Content with a declared name and ordered",
+          "table_order": ["ordered_def", "ordered_abc", "ordered_ghi"],
+          "ordered_abc": "ordered ABC",
+          "ordered_def": "ordered DEF",
+          "ordered_ghi": "ordered GHI"
+         
+        },
+        "mrd": {
+          "is_spike": [
+            false
+          ],
+          "normalized_reads": [
+            2
+          ],
+          "normalized_cells": [
+            1
+          ],
+          "locus_normalization_factor": [
+            3
+          ]
+        }
+      }
+    }
+  ],
+  "config": {
+    "all": false,
+    "out-detected": false,
+    "verbose": false,
+    "no-airr": false,
+    "min-ratio": "0",
+    "analysis-e-value-D": "0.05",
+    "out-reads": false,
+    "e-value-kmer": "-1",
+    "not-analyzed-as-clones": false,
+    "alternative-genes": "0",
+    "show-junction": false,
+    "clean-memory": false,
+    "cluster-save-matrix": false,
+    "window": "50",
+    "e-value": "1",
+    "max-consensus": "100",
+    "germline": "../../germline//homo-sapiens.g",
+    "filter-reads": false,
+    "several-D": true,
+    "label-filter": false,
+    "cluster-N": "10",
+    "gz": false,
+    "plain-index": false,
+    "no-vidjil": false,
+    "base": "000006",
+    "cluster-epsilon": "0",
+    "cluster-load-matrix": false,
+    "out-clone-files": false,
+    "out-affects": false,
+    "out-undetected": false,
+    "min-reads": "1",
+    "out-details": false,
+    "consensus-on-longest-sequences": false,
+    "analysis-filter": "1",
+    "max-designations": "100",
+    "help-advanced": false,
+    "dir": "/mnt/result/tmp/out-000006/",
+    "out-vdjfa": false
+  }
+}

@@ -127,4 +127,81 @@ describe('Test sandbox', function () {
       .should("exist")
   });
 
+
+  it('5xxx - supplementary_data table', function () {
+    cy.openAnalysis("browser/test/data/supplementary_data.vidjil")
+
+    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info')
+      .click()
+
+    cy.get('.info-container')
+      .should("be.visible")
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Test with some various data values, from "raw data" or array with a single value
+    ////////////////////////////////////////////////////////////////////////////////////
+    cy.get('#modal_header_various_content')
+      .should("have.text", "various_content")
+
+    cy.get('#modal_line_various_content_constant_value_string')
+      .should("contain", "constant_value_string")
+      .should("contain", "a string value")
+
+    cy.get('#modal_line_various_content_constant_a_float')
+      .should('contain', "constant_a_float")
+      .should('contain', 1.234)
+
+    cy.get('#modal_line_various_content_constant_an_integer')
+      .should('contain', "constant_an_integer")
+      .should('contain', 5)
+
+    cy.get('#modal_line_various_content_array_value_string')
+      .should('contain', "array_value_string")
+      .should('contain', "a string value")
+
+    cy.get('#modal_line_various_content_array_a_float')
+      .should('contain', "array_a_float")
+      .should('contain', 1.234)
+
+    cy.get('#modal_line_various_content_array_an_integer')
+      .should('contain', "array_an_integer")
+      .should('contain', 5)
+
+    /////////////////////////////////////////
+    // Test of data with specific table name
+    /////////////////////////////////////////
+    cy.get('#modal_header_content_with_name')
+      .should("have.text", "Content with a declared name")
+
+    cy.get('#modal_line_content_with_name_unordered_abc')
+      .should('contain', "unordered_abc")
+      .should('contain', "unorder ABC")
+
+    //////////////
+    // test order
+    cy.get('#clone_info_table_0')
+      .invoke('text')
+      .should('match', /unorder ABC.*unorder GHI/);
+
+    cy.get('#clone_info_table_0')
+      .invoke('text')
+      .should('match', /ordered_def.*ordered_abc/);
+
+
+    ///////////////////////////////
+    // Test with multiple sample
+    cy.openAnalysis("browser/test/data/supplementary_data_multiple.vidjil")
+
+    cy.get('#listElem_0 > #clone_infoBox_0 > .icon-info')
+      .click()
+
+    cy.get('.info-container')
+      .should("be.visible")
+
+    cy.get('#modal_line_various_content_array_value_string')
+      .invoke('text')
+      .should('match', /array_value_string.*keyA.*keyB/);
+
+  });
+
 })

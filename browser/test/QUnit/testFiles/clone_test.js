@@ -435,7 +435,8 @@ QUnit.test("warnText and getHTMLwarning", function(assert) {
 
 
 QUnit.test("getHtmlInfo; feature from script", function(assert) {
-
+    // Old stuff, probably dead code not used
+    // Link that to a specific vidjil format version and create a reformater
     assert.equal(json_clone1.seg.junction.start, 10, "Start junction is 10 in JSON for clone 1");
     var m = new Model();
     m.parseJsonData(json_data)
@@ -475,6 +476,65 @@ QUnit.test("getHtmlInfo; feature from script", function(assert) {
     var part_script_bbb_content_seq = "<tr id='modal_line_feature_seq' ><td  id='modal_line_title_feature_seq'>feature_seq</td><td  colspan='4' id='modal_line_value_feature_seq'>CARLY</td></tr>"
     assert.includes(html_script, part_script_bbb_content_seq, "Correct row for feature script: bbb/seq")
 
+});
+
+
+QUnit.test("getHtmlInfo; feature from supplementary_data", function(assert) {
+    // For vidjil format 2026.6 and higher
+
+    var json_clone_supplementary = {
+        "sequence" : "AACGTACCAGG",
+        "id" : "id2",
+        "name" : some_name,
+        "reads" : [10,10,30,0] ,
+        "top" : 2,
+        "germline" : "IGH",
+        "seg" : {
+            "5" : {'start': 2, 'stop': 6, 'delRight': 18}, // 1-based (current format)
+        }, 
+        "supplementary_data": {
+            "supdata_simple": {
+                "keyA": "Key A",
+                "keyB": "Key B",
+            }, 
+            "supdata_name_and_order": {
+                "keyA": "Key A",
+                "keyB": "Key B",
+                "table_name": "Data with Name and Order",
+                "table_order": ["keyB", "keyA"]
+            }, 
+            
+        }
+    }
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone_supplementary, m, 0, c_attributes)
+    m.initClones()
+
+    html_script = c1.getHtmlInfo();
+    console.log( html_script)
+
+    // supdata_simple
+    var part_supdata_simple_header  = "<tr id='modal_header_supdata_simple' ><td class='header' colspan='5'>supdata_simple</td></tr>"
+    assert.includes(html_script, part_supdata_simple_header, "Correct row for feature script: header_aaa")
+    var part_supdata_simple_keyA = "<tr id='modal_line_supdata_simple_keyA' ><td  id='modal_line_title_supdata_simple_keyA'>keyA</td><td  colspan='4' id='modal_line_value_supdata_simple_keyA'>Key A</td></tr>"
+    assert.includes(html_script, part_supdata_simple_keyA, "Correct row for feature script: aaa/name")
+    var part_supdata_simple_keyB = "<tr id='modal_line_supdata_simple_keyB' ><td  id='modal_line_title_supdata_simple_keyB'>keyB</td><td  colspan='4' id='modal_line_value_supdata_simple_keyB'>Key B</td></tr>"
+    assert.includes(html_script, part_supdata_simple_keyB, "Correct row for feature script: aaa/val")
+    var keyA_before_keyB = html_script.indexOf(part_supdata_simple_keyA) < html_script.indexOf(part_supdata_simple_keyB) 
+    assert.ok(keyA_before_keyB, "keyA before keyB")
+
+    // supdata_name_and_order
+    var part_supdata_name_and_order_header  = "<tr id='modal_header_supdata_name_and_order' ><td class='header' colspan='5'>Data with Name and Order</td></tr>"
+    assert.includes(html_script, part_supdata_name_and_order_header, "Correct row for feature script: header bbb")
+    var part_supdata_name_and_order_keyB = "<tr id='modal_line_supdata_name_and_order_keyB' ><td  id='modal_line_title_supdata_name_and_order_keyB'>keyB</td><td  colspan='4' id='modal_line_value_supdata_name_and_order_keyB'>Key B</td></tr>"
+    assert.includes(html_script, part_supdata_name_and_order_keyB, "Correct row for feature script: bbb/info")
+    var part_supdata_name_and_order_keyA = "<tr id='modal_line_supdata_name_and_order_keyA' ><td  id='modal_line_title_supdata_name_and_order_keyA'>keyA</td><td  colspan='4' id='modal_line_value_supdata_name_and_order_keyA'>Key A</td></tr>"
+    assert.includes(html_script, part_supdata_name_and_order_keyA, "Correct row for feature script: bbb/val")
+    html_script.indexOf(part_supdata_simple_keyA) > html_script.indexOf(part_supdata_simple_keyB) 
+    var ordered_keyB_before_keyA = html_script.indexOf(part_supdata_simple_keyA) < html_script.indexOf(part_supdata_simple_keyB) 
+    assert.ok(ordered_keyB_before_keyA, "keb before keyA in ordered supplementary data")
+    
 });
 
 QUnit.test('clone: get info from seg', function(assert) {
