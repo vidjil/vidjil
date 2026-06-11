@@ -38,9 +38,9 @@ This is what Vidjil does: analyze samples containing the DNA of many lymphocytes
   - As with Ts
   - Cs with Gs
 - A gene is a sequence of nucleotides on a chromosome, which can be transribed by our cell's biological machinery
-- Genes often differ between individuals
+- The content of genes often differ between individuals
 - A locus (latin for "place", plural: loci) is the position of a significant sequence of DNA on a chromosome
-- DNA has a reading direction: from the 5' (or upstream) end toward the 3' (or downstream) end, named after nucleic acid ring structures found in DNA
+- DNA has a reading direction: from the 5' (or upstream) end of a strand toward its 3' (or downstream) end, named after nucleic acid ring structures found in DNA
 - Parts of our DNA can be read and expressed into more complex organic molecules called amino acids by our cells
 - In protein-coding genes, consecutive sets of 3 nucleotides, also called a codon, encode 1 amino acid
 - These amino acids can be chained together to form even more complex structures, such as antibodies
