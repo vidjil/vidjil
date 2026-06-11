@@ -619,7 +619,8 @@ int main(int argc, char **argv) {
         ->level();
     app.add_option("--min-coverage-consensus", ratio_representative, "minimal percent of the maximal coverage that is admissible to build the consensus sequence")
         ->group(group)
-        ->capture_default_str();    
+        ->capture_default_str()
+        ->level();
 
     // ----------------------------------------------------------------------------------------------------------------------
     group = "Clone analysis (second pass), V/D/J designation, CDR3/JUNCTION analysis with "
