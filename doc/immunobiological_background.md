@@ -6,7 +6,7 @@ This is a starting point for anyone unfamiliar with the immunobiological context
 - Among them are lymphoblasts, which may mature into:
   - B lymphocytes, also called B-cells
   - T lymphocytes, also called T-cells
-- An important function of these specialized cells is to detect and react to abnormal bodies they may encounter, referred to as antigens (bacterias, viruses, fungies, etc.), by binding with them
+- An important function of these specialized cells is to detect and react to specific molecules they may encounter called antigens, which may be carried by bacteria, viruses, fungies, etc., by binding with them
 
 - This function is enabled by a biological process maturing lymphoblasts undergo, called V(D)J recombinations
 - V(D)J recombinations alter a lymphoblast's DNA in specific regions (loci) where 3 (+ 1) types of genes are located and recombined: V genes, optionally D genes, and J genes (+ constant genes)
