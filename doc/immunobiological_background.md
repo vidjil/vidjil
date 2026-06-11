@@ -28,13 +28,13 @@ This is what Vidjil does: analyze samples containing the DNA of many lymphocytes
 - Most of our cells contain a set of chromosomes that is unique between individuals
 - In humans, chromosomes are organized in pairs, inherited from each parent: humans are "diploid"
 - In other species, chromosomes may be grouped differently (haploid, tretraploid, etc.)
-- Chromosomes are made of two long strands of molecules called nucleotides, which make up DNA
+- Chromosomes are made of two long strands. Each strand is composed of many smaller molecules called nucleotides, which make up DNA
 - DNA contains 4 different nucleotides:
   - Adenine, abbreviated A
   - Cytosine, abbreviated C
   - Guanine, abbreviated G
   - Thymine, abbreviated T
-- Additionally, nucleotides on the two strands of DNA on a chromosome are tethered together in pairs:
+- Additionally, nucleotides on two strands of DNA on a chromosome are tethered together in pairs:
   - As with Ts
   - Cs and Gs
 - A gene is a sequence of nucleotides on a chromosome, which can be transribed by our cell's biological machinery
