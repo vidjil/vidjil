@@ -2,3 +2,10 @@
 
 $ Consensus sequence should span on the whole sequence
 1: clone.*99% of 243
+
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 5 --min-coverage-consensus 0.9 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/representative-few-reads.fa
+
+$ Consensus sequence should span on the whole sequence
+1: clone.*111 bp
+# Start of the consensus
+1:^CCGAGGACACGGCTGTGTATTACTGT

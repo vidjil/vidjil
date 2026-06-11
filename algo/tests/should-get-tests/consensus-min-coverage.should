@@ -1,0 +1,14 @@
+# We use only the first 5 reads. 4 of them are 49bp long, one is 52bp long
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -x 5 -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-default.log
+!LAUNCH: $VIDJIL_DIR/$EXEC -r 1 -x 5 -w 20 -g $VIDJIL_DIR/germline/homo-sapiens.g:TRG --min-coverage-consensus 0.01 $VIDJIL_DATA/test-random-consensus.fa.gz > consensus-min.log
+!NO_LAUNCHER:
+!EXIT_CODE: 1
+!LAUNCH: diff consensus-default.log consensus-min.log
+
+$ Output should differ
+# By default we have 49bp, which is the majority case (coverage at .5 by default)
+2:^< .* 49 bp
+
+$ By lowering the min coverage, we meet the criteria to get the 52nt sequence
+2:^> .* 52 bp
+1:^> CTTTT
