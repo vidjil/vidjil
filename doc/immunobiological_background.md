@@ -36,7 +36,7 @@ This is what Vidjil does: analyze samples containing the DNA of many lymphocytes
   - Thymine, abbreviated T
 - Additionally, nucleotides on two strands of DNA on a chromosome are tethered together in pairs:
   - As with Ts
-  - Cs and Gs
+  - Cs with Gs
 - A gene is a sequence of nucleotides on a chromosome, which can be transribed by our cell's biological machinery
 - Genes often differ between individuals
 - A locus (latin for "place", plural: loci) is the position of a significant sequence of DNA on a chromosome
