@@ -144,7 +144,7 @@ public:
    * and starting from position i.
    * The cover is updated accordingly if the representative is extended.
    */
-  bool tryToExtendRepresentative(const vector<Kmer> counts[],
+  bool tryToExtendRepresentative(const vector<vector<Kmer> > &counts,
                                  string seeds[],
                                  size_t nb_seeds,
                                  size_t i,
