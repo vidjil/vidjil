@@ -126,7 +126,7 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
   Sequence sequence_longest_run;
   bool *cover_longest_run = NULL;
   int sequence_used_for_quality = 0;
-  int window_quality_sum [required.length()];
+  int window_quality_sum [this->required.length()];
   memset(window_quality_sum, 0, required.length()*sizeof(int));
   
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
