@@ -932,8 +932,8 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
         string seq_left = seq.substr(seq_begin, box_left->end - seq_begin + 1);
         string seq_right = seq.substr(box_right->start, seq_end - box_right->start + 1);
 
-        int score_r[overlap+1];
-        int score_l[overlap+1];
+        int *score_r = new int[overlap+1];
+        int *score_l = new int[overlap+1];
 
         //LEFT
         DynProg dp_l = DynProg(seq_left, revcomp(box_left->ref, reverse_V),
@@ -954,8 +954,8 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
 
 
 
-        int trim_l[overlap+1];
-        int trim_r[overlap+1];
+        int * trim_l = new int[overlap+1];
+        int * trim_r = new int[overlap+1];
 
         for(size_t i=0; i<=(size_t)overlap; i++) {
             score_l[i] = i < seq_left.size()  ? dp_l.best_score_on_i(seq_left.size()  - i, trim_l + i) : MINUS_INF ;
@@ -1009,6 +1009,10 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
              << endl;
         cout << "boxes: " << *box_left << " / " << *box_right << endl ;
 #endif
+        delete [] score_l;
+        delete [] score_r;
+        delete [] trim_l;
+        delete [] trim_r;        
     } // end if (overlap > 0)
 
     // From box_left->end + 1 to box_right->start - 1
