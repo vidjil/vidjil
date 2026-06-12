@@ -925,7 +925,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  Cost segment_cost, bool reverse_V, bool reverse_J)
 {
   // Overlap size
-  int overlap = box_left->end - box_right->start + 1;
+  const int overlap = box_left->end - box_right->start + 1;
 
   if (overlap > 0)
   {
