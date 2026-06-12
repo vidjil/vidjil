@@ -963,3 +963,26 @@ Cypress.Commands.add("getRowIdListFromTable", (tableSelector) => {
       return cy.wrap(list_id);
     });
 });
+
+
+/**
+ * Return id of a specific configuration selected by name
+ * Warning, if multiple configuration with same value, return only first
+ */
+Cypress.Commands.add("getRowIdFromConfigName", (tableSelector, confname_pos, confname) => {
+  return cy.get(`${tableSelector} table tbody tr`)
+    .then(($rows) => {
+      let foundId = null;
+
+      $rows.each((index, row) => {
+        const $row = Cypress.$(row);
+        if ($row.find('td').eq(confname_pos).text().trim() === confname) {
+          if (foundId === null) { // garde uniquement le premier
+            foundId = $row.find('td').first().text().trim();
+          }
+        }
+      });
+
+      return String(foundId);
+    });
+});

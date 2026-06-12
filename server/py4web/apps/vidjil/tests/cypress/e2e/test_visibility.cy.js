@@ -359,76 +359,96 @@ describe('Visibility of panels', function () {
     // User page
     cy.goToConfigsPage()
     /**
-     * 7	Human V(D)J recombinations	Clonality
-     * 1	Human V(D)J recombinations	default + extract reads
-     * 3	Human V(D)J recombinations	multi+inc
-     * 2	Human V(D)J recombinations	multi+inc+xxx
-     * 6	Other recombinations	IGH
-     * 4	Other recombinations	multi
-     * 5	Other recombinations	TRG
-     * 8	Analysis with/for other software	Export all clones (AIRR)
+     * before /after /name
+     * 7/ 	Human V(D)J recombinations	Clonality
+     * 1/ 	Human V(D)J recombinations	default + extract reads
+     * 3/ 	Human V(D)J recombinations	multi+inc
+     * 2/ 	Human V(D)J recombinations	multi+inc+xxx
+     * 6/ 	Other recombinations	IGH
+     * 4/ 	Other recombinations	multi
+     * 5/ 	Other recombinations	TRG
+     * 8/ 	Analysis with/for other software	Export all clones (AIRR)
      * ~~ Created during CI pipeline ~~
-     * 9	Analysis with/for other software	c
-     * 10	Analysis with/for other software	compress_output
-     * 11	Analysis with/for other software	import_vijdil_1
-     * 12	Analysis with/for other software	import_vidjil_2
+     * 9/ 	Analysis with/for other software	c
+     * 10/ 	Analysis with/for other software	compress_output
+     * 11/ 	Analysis with/for other software	import_vijdil_1
+     * 12/ 	Analysis with/for other software	import_vidjil_2
+     * 13/  Analysis with/for other software  confname
+     * 14/  Analysis with/for other software  confname2
+     * 15/  Analysis with/for other software  conf with prefuse new
+     * 16/  Analysis with/for other software  conf with prefuse old
      */
     
-    // => Start sorted as classification is (and not text value)
-    // Sorted by classification id: Human V(D)J recombinations < Other recombinations < Analysis with/for other software
-    // Init state: [7 - 1 - 3 - 2] - [6 - 4 - 5] - [8 - 9 - 10 - 11 - 12]
-    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
-      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('6'));
-      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('8'));
-    })
+   
+    cy.getRowIdFromConfigName("#db_table_container", 2, "Clonality").then((pos_Clonality) => {
+      cy.getRowIdFromConfigName("#db_table_container", 2, "IGH").then((pos_IGH) => {
+        cy.getRowIdFromConfigName("#db_table_container", 2, "Export all clones (AIRR)").then((pos_AIRR) => {
+          cy.getRowIdFromConfigName("#db_table_container", 2, "c").then((pos_c) => {
+            cy.getRowIdFromConfigName("#db_table_container", 2, "compress_output").then((pos_compress_output) => {
+                
+                // => Start sorted as classification is (and not text value)
+                // Sorted by classification id: Human V(D)J recombinations < Other recombinations < Analysis with/for other software
+                // Init state: [7 - 1 - 3 - 2] - [6 - 4 - 5] - [8 - 9 - 10 - 11 - 12]
+                cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+                  expect(ids.indexOf(pos_Clonality)).to.be.lessThan(ids.indexOf(pos_IGH));
+                  expect(ids.indexOf(pos_IGH)).to.be.lessThan(ids.indexOf(pos_AIRR));
+                })
 
-    cy.get('[data-sort="classification"] > .icon-arrow-combo').should("exist")
-    cy.get('[data-sort="name"] > .icon-arrow-combo').should("exist")
+                cy.get('[data-sort="classification"] > .icon-arrow-combo').should("exist")
+                cy.get('[data-sort="name"] > .icon-arrow-combo').should("exist")
 
-    cy.get('[data-sort="classification"]')
-      .click()
-    cy.get('[data-sort="classification"] > .icon-sort-alt-up')
-      .should("exist")
+                cy.get('[data-sort="classification"]')
+                  .click()
+                cy.get('[data-sort="classification"] > .icon-sort-alt-up')
+                  .should("exist")
 
-      // Sort by classification value: [8 - 9 - 10 - 11 - 12] - [7 - 1 - 3 - 2] - [6 - 4 - 5]
-      cy.getRowIdListFromTable("#db_table_container").then((ids) => {
-        expect(ids.indexOf('8')).to.be.lessThan(ids.indexOf('7'));
-        expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('6'));
-      })
+                  // Sort by classification value: [8 - 9 - 10 - 11 - 12] - [7 - 1 - 3 - 2] - [6 - 4 - 5]
+                  cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+                    expect(ids.indexOf(pos_AIRR)).to.be.lessThan(ids.indexOf(pos_Clonality));
+                    expect(ids.indexOf(pos_Clonality)).to.be.lessThan(ids.indexOf(pos_IGH));
+                  })
 
-      cy.get('[data-sort="classification"]')
-        .click()
-      cy.get('[data-sort="classification"] > .icon-sort-alt-down')
-        .should("exist")
-      
-      cy.getRowIdListFromTable("#db_table_container").then((ids) => {
-        expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('7'));
-        expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('8'));
-      })
-      
-      cy.get('[data-sort="name"]')
-        .click()
-      cy.get('[data-sort="name"] > .icon-sort-alt-up')
-        .should("exist")
-      
-    // Sort by name: 9 - 7 - 10 - 1 - 8 - 6 - 11 - 12 - 4 - 3 - 2 - 5
-    // localcompare is case unsensitive; so "c" < "Ca..." < "cb..."
-    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
-      expect(ids.indexOf('9')).to.be.lessThan(ids.indexOf('7')); // c vs Clonality
-      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('10')); // Clonality vs compress_output
-      expect(ids.indexOf('9')).to.be.lessThan(ids.indexOf('8'));
-      expect(ids.indexOf('8')).to.be.lessThan(ids.indexOf('6'));
-    })
+                  cy.get('[data-sort="classification"]')
+                    .click()
+                  cy.get('[data-sort="classification"] > .icon-sort-alt-down')
+                    .should("exist")
+                  
+                  cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+                    expect(ids.indexOf(pos_IGH)).to.be.lessThan(ids.indexOf(pos_Clonality));
+                    expect(ids.indexOf(pos_Clonality)).to.be.lessThan(ids.indexOf(pos_AIRR));
+                  })
+                  
+                  cy.get('[data-sort="name"]')
+                    .click()
+                  cy.get('[data-sort="name"] > .icon-sort-alt-up')
+                    .should("exist")
+                  
+                // Sort by name: 9 - 7 - 10 - 1 - 8 - 6 - 11 - 12 - 4 - 3 - 2 - 5
+                // localcompare is case unsensitive; so "c" < "Ca..." < "cb..."
+                cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+                  expect(ids.indexOf(pos_c)).to.be.lessThan(ids.indexOf(pos_Clonality)); // c vs Clonality
+                  expect(ids.indexOf(pos_Clonality)).to.be.lessThan(ids.indexOf(pos_compress_output)); // Clonality vs compress_output
+                  expect(ids.indexOf(pos_c)).to.be.lessThan(ids.indexOf(pos_AIRR));
+                  expect(ids.indexOf(pos_AIRR)).to.be.lessThan(ids.indexOf(pos_IGH));
+                })
 
-    cy.get('[data-sort="num"]')
-      .click()
-    cy.get('[data-sort="num"] > .icon-sort-alt-up')
-      .should("exist")
+                cy.get('[data-sort="num"]')
+                  .click()
+                cy.get('[data-sort="num"] > .icon-sort-alt-up')
+                  .should("exist")
 
-    cy.getRowIdListFromTable("#db_table_container").then((ids) => {
-      expect(ids.indexOf('6')).to.be.lessThan(ids.indexOf('7'));
-      expect(ids.indexOf('7')).to.be.lessThan(ids.indexOf('8'));
-    })
+                cy.getRowIdListFromTable("#db_table_container").then((ids) => {
+                  expect(ids.indexOf(pos_IGH)).to.be.lessThan(ids.indexOf(pos_Clonality));
+                  expect(ids.indexOf(pos_Clonality)).to.be.lessThan(ids.indexOf(pos_AIRR));
+                })
+
+
+            });
+          });
+        });
+      });
+    });
+
   })
 
   it('07-sort collumns - preprocess', function () {
