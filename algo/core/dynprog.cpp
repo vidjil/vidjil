@@ -572,7 +572,6 @@ void DynProg::backtrack()
   string str1, str2, str3;
   str1 = back_x.str();
   str1 =string (str1.rbegin(), str1.rend());
-  str1 = str1;
   str2=back_tr.str();
   str2 = string (str2.rbegin(), str2.rend());
   str3 = back_y.str();

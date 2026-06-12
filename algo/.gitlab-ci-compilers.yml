@@ -1,8 +1,8 @@
 .install-algo-dependencies:
   before_script:
     - apt-get update || (sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list; sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list; echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-date; apt-get update)
-    - apt-get install -y time valgrind python2.7 python3 wget tar make zlib1g-dev
-    - ln -sf /usr/bin/python2.7 /usr/bin/python
+    - apt-get install -y time valgrind python3 wget tar make zlib1g-dev
+    - ln -sf /usr/bin/python3 /usr/bin/python
 
 .testing-compilers:
   extends: .install-algo-dependencies
@@ -28,8 +28,8 @@
 .installing-compiler:
   before_script:
     - apt-get update
-    - apt-get install -y time valgrind python3 $COMPILER_PKG-$VERSION zlib1g-dev make wget tar python2.7
-    - ln -sf /usr/bin/python2.7 /usr/bin/python
+    - apt-get install -y time valgrind python3 $COMPILER_PKG-$VERSION zlib1g-dev make wget tar 
+    - ln -sf /usr/bin/python3 /usr/bin/python
     - export CXX=${COMPILER_CPP}-$VERSION
     - export CC=${COMPILER_C}-$VERSION
 
@@ -52,11 +52,11 @@ gcc:
     - .testing-gcc
   parallel:
     matrix:
-      - GCC_VERSION: ["7.5", "10", "11"]
+      - GCC_VERSION: ["7.5", "10", "13", "16"]
 
 clang:
   extends:
     - .testing-clang
   parallel:
     matrix:
-      - CLANG_VERSION: ["6", "10", "12"]
+      - CLANG_VERSION: ["6", "10", "16", "21"]

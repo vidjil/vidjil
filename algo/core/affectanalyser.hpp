@@ -632,7 +632,7 @@ std::tuple <set<KmerAffect>, set<KmerAffect>, double, double> MultipleAffectAnal
   uint64_t best_bitset_count = best_bitset.count();
   for (auto it = best_affect.begin(); it != best_affect.end(); ) {
     uint64_t count = (best_bitset & affectations.find(*it)->second).count();
-    if (llabs(count - best_bitset_count) > .1 * best_bitset_count)
+    if (best_bitset_count - count > .1 * best_bitset_count)
       it = best_affect.erase(it);
     else
       it++;

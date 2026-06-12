@@ -47,7 +47,6 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
   string j1, j2;
   m = alloc_matrix(sort_clones.size());
   
-  int c=0;
   int c1=0;
   int c2=0;
 
@@ -70,7 +69,6 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
             m[c2][c1]=distance;
             m[c1][c2]=distance;
             c1++;
-            c++;
         }//fin it1
       c2++;
       c1=c2;
@@ -131,7 +129,6 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
   string j1, j2;
   n_j=0;
   n_j2=0;
-  int c=0;
   int c1=0;
   int c2=0;
 
@@ -168,7 +165,6 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
             neighbor[j1].push_back(j2);
 	  }
 	  c1++;
-	  c++;
         }//fin it1
       c2++;
       c1=0;
@@ -225,8 +221,6 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
    map <string, bool> clust ;
    int nVoisins;
    
-   int noise = 0;
-   int nb_comp = 0 ;
    i = 0;
    for (list <pair<junction,size_t> >::const_iterator it0 = sort_clones.begin();
     (it0 != sort_clones.end()) & (i<matrix_size); ++it0) 
@@ -246,12 +240,8 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
 	for (list<string>::iterator it1 = voisins1.begin();
 	     it1 != voisins1.end(); ++it1 ) nVoisins+=count[*it1];
 	
-	if (nVoisins<minPts){
-	  //noise
-	  noise++;
-	}else{
+	if (nVoisins>=minPts){
 	  
-	  nb_comp++;
 	  list< pair<int,string> > c;
 	  c.push_back(make_pair(count[j1], j1));
 	  clust[j1]=true;

@@ -927,95 +927,99 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                                  AlignBox<Affect> *box_left, AlignBox<Affect> *box_right,
                                  Cost segment_cost, bool reverse_V, bool reverse_J)
 {
-  // Overlap size
-  int overlap = box_left->end - box_right->start + 1;
+    // Overlap size
+    const int overlap = box_left->end - box_right->start + 1;
 
-  if (overlap > 0)
-  {
-    string seq_left = seq.substr(seq_begin, box_left->end - seq_begin + 1);
-    string seq_right = seq.substr(box_right->start, seq_end - box_right->start + 1);
+    if (overlap > 0)
+    {
+        string seq_left = seq.substr(seq_begin, box_left->end - seq_begin + 1);
+        string seq_right = seq.substr(box_right->start, seq_end - box_right->start + 1);
 
-    int score_r[overlap+1];
-     int score_l[overlap+1];
+        int *score_r = new int[overlap+1];
+        int *score_l = new int[overlap+1];
 
-     //LEFT
-     DynProg dp_l = DynProg(seq_left, revcomp(box_left->ref, reverse_V),
-                            DynProg::Local, segment_cost);
-     score_l[0] = dp_l.compute();
-
-
-     //RIGHT
-     // reverse right sequence
-     string ref_right=string(box_right->ref.rbegin(), box_right->ref.rend());
-     ref_right = revcomp(ref_right, reverse_J);
-     seq_right=string(seq_right.rbegin(), seq_right.rend());
+        //LEFT
+        DynProg dp_l = DynProg(seq_left, revcomp(box_left->ref, reverse_V),
+                               DynProg::Local, segment_cost);
+        score_l[0] = dp_l.compute();
 
 
-     DynProg dp_r = DynProg(seq_right, ref_right,
-                            DynProg::Local, segment_cost);
-     score_r[0] = dp_r.compute();
+        //RIGHT
+        // reverse right sequence
+        string ref_right=string(box_right->ref.rbegin(), box_right->ref.rend());
+        ref_right = revcomp(ref_right, reverse_J);
+        seq_right=string(seq_right.rbegin(), seq_right.rend());
+
+
+        DynProg dp_r = DynProg(seq_right, ref_right,
+                               DynProg::Local, segment_cost);
+        score_r[0] = dp_r.compute();
 
 
 
-     int trim_l[overlap+1];
-     int trim_r[overlap+1];
+        int * trim_l = new int[overlap+1];
+        int * trim_r = new int[overlap+1];
 
-     for(size_t i=0; i<=(size_t)overlap; i++) {
-       score_l[i] = i < seq_left.size()  ? dp_l.best_score_on_i(seq_left.size()  - i, trim_l + i) : MINUS_INF ;
-       score_r[i] = i < seq_right.size() ? dp_r.best_score_on_i(seq_right.size() - i, trim_r + i) : MINUS_INF ;
-     }
+        for(size_t i=0; i<=(size_t)overlap; i++) {
+            score_l[i] = i < seq_left.size()  ? dp_l.best_score_on_i(seq_left.size()  - i, trim_l + i) : MINUS_INF ;
+            score_r[i] = i < seq_right.size() ? dp_r.best_score_on_i(seq_right.size() - i, trim_r + i) : MINUS_INF ;
+        }
 
 
 // #define DEBUG_OVERLAP
 #ifdef DEBUG_OVERLAP
-     cout << "=== check_and_resolve_overlap" << endl;
-     cout << seq << endl;
-     cout << "boxes: " << *box_left << "/" << *box_right << endl ;
+        cout << "=== check_and_resolve_overlap" << endl;
+        cout << seq << endl;
+        cout << "boxes: " << *box_left << "/" << *box_right << endl ;
 
-     // cout << dp_l ;
-     // cout << dp_r ;
+        // cout << dp_l ;
+        // cout << dp_r ;
 
-     cout << "seq:" << seq_left << "\t\t" << seq_right << endl;
-     cout << "ref:" << box_left->ref << "\t\t" << ref_right << endl;
-     for(int i=0; i<=overlap; i++)
-       cout << i << "  left: " << score_l[i] << "/" << trim_l[i] << "     right: " << score_r[i] << "/" << trim_r[i] << endl;
+        cout << "seq:" << seq_left << "\t\t" << seq_right << endl;
+        cout << "ref:" << box_left->ref << "\t\t" << ref_right << endl;
+        for(int i=0; i<=overlap; i++)
+            cout << i << "  left: " << score_l[i] << "/" << trim_l[i] << "     right: " << score_r[i] << "/" << trim_r[i] << endl;
 #endif
 
-     int score = MINUS_INF;
-     int best_i = 0 ;
-     int best_j = 0 ;
+        int score = MINUS_INF;
+        int best_i = 0 ;
+        int best_j = 0 ;
 
 
-     // Find (i, j), with i+j >= overlap,
-     // maximizing score_l[j] + score_r[i]
-     for (int i=0; i<=overlap; i++){
-       for (int j=overlap-i; j<=overlap; j++){
-         int score_ij = score_l[i] + score_r[j];
+        // Find (i, j), with i+j >= overlap,
+        // maximizing score_l[j] + score_r[i]
+        for (int i=0; i<=overlap; i++){
+            for (int j=overlap-i; j<=overlap; j++){
+                int score_ij = score_l[i] + score_r[j];
 
-         if (score_ij > score) {
-     best_i = i ;
-     best_j = j ;
-     box_left->del_right = box_left->ref.size() - trim_l[i];
-     box_right->del_left = box_right->ref.size() - trim_r[j];
-     score = score_ij;
-   }
-       }
-     }
+                if (score_ij > score) {
+                    best_i = i ;
+                    best_j = j ;
+                    box_left->del_right = box_left->ref.size() - trim_l[i];
+                    box_right->del_left = box_right->ref.size() - trim_r[j];
+                    score = score_ij;
+                }
+            }
+        }
 
-     box_left->end -= best_i ;
-     box_right->start += best_j ;
+        box_left->end -= best_i ;
+        box_right->start += best_j ;
 
 #ifdef DEBUG_OVERLAP
-     cout << "overlap: " << overlap << ", " << "best_overlap_split: " << score
-          << "    left: " << best_i << "-" << box_left->del_right << " @" << box_left->end
-          << "    right:" << best_j << "-" << box_right->del_left << " @" << box_right->start
-          << endl;
-     cout << "boxes: " << *box_left << " / " << *box_right << endl ;
+        cout << "overlap: " << overlap << ", " << "best_overlap_split: " << score
+             << "    left: " << best_i << "-" << box_left->del_right << " @" << box_left->end
+             << "    right:" << best_j << "-" << box_right->del_left << " @" << box_right->start
+             << endl;
+        cout << "boxes: " << *box_left << " / " << *box_right << endl ;
 #endif
-  } // end if (overlap > 0)
+        delete [] score_l;
+        delete [] score_r;
+        delete [] trim_l;
+        delete [] trim_r;        
+    } // end if (overlap > 0)
 
-  // From box_left->end + 1 to box_right->start - 1
-  return seq.substr(box_left->end + 1, box_right->start - box_left->end - 1);
+    // From box_left->end + 1 to box_right->start - 1
+    return seq.substr(box_left->end + 1, box_right->start - box_left->end - 1);
 }
 
 bool comp_pair (pair<int,int> i,pair<int,int> j)

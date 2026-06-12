@@ -103,7 +103,8 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
     nb_seeds = 1;
 
   // First create an index on the set of reads
-  IKmerStore<Kmer> *index[nb_seeds];
+  std::vector<IKmerStore<Kmer> *> index(nb_seeds);
+
   for (size_t i = 0; i < nb_seeds; i++) {
     index[i] = new MapKmerStore<Kmer>(seeds[i], revcomp);
   }
@@ -126,9 +127,8 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
   Sequence sequence_longest_run;
   bool *cover_longest_run = NULL;
   int sequence_used_for_quality = 0;
-  int window_quality_sum [required.length()];
-  memset(window_quality_sum, 0, required.length()*sizeof(int));
-  
+  std::vector<int> window_quality_sum(this->required.length(), 0);
+
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
     size_t length_cover = 0;
@@ -148,7 +148,7 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
     
     //sum quality
     if (sequence.quality.length() > 0) {
-      for (size_t i = 0; i<required.length(); i++) {
+      for (size_t i = 0; i < required.length(); i++) {
         window_quality_sum[i] += static_cast<int>(sequence.quality[i+pos_required]);
       }
       sequence_used_for_quality++;
@@ -159,18 +159,17 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
     if (sequence.sequence.size() <= length_longest_cover) {
       continue;
     }
-
-    bool cover[sequence.sequence.size()];
+    bool *cover = new bool[sequence.sequence.size()];
     memset(cover, false, sequence.sequence.size()*sizeof(bool));
 
     size_t pos_end_required = pos_required + required.length();
-
     memset(&cover[pos_required], true, required.length()*sizeof(bool));
-    length_cover = required.length();
 
-    vector<Kmer> *counts = new vector<Kmer>[nb_seeds];
-    for (size_t i = 0; i < nb_seeds; i++)
+    length_cover = required.length();
+    std::vector<std::vector<Kmer> > counts(nb_seeds);
+    for (size_t i = 0; i < nb_seeds; i++) {
       counts[i] = index[i]->getResults(sequence.sequence, false, seeds[i]);
+    }
 
     size_t length_run = 0;
     size_t i = pos_required;
@@ -206,22 +205,22 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
       seq_index_longest_run = seq;
       pos_required_longest = pos_required;
       if (cover_longest_run)
-        delete [] cover_longest_run;
+        delete[] cover_longest_run;
       cover_longest_run = new bool[sequence.sequence.size()];
       memcpy(cover_longest_run, cover, sizeof(bool) * sequence.sequence.size());
     }
     // We have a requirement (ie. a non empty string). We reached it, exit.
     length_run = 0;
-    delete [] counts;
+
+    delete [] cover;
   }
 
   coverage = (float) length_longest_run / coverage_reference_length;
 
 
+  for(size_t i=0; i<index.size(); ++i) delete index[i]; 
   if (coverage < THRESHOLD_BAD_COVERAGE && ! try_hard) {
     compute(readScorer, true);
-    delete index[0];
-
     if (cover_longest_run)
       delete [] cover_longest_run;
 
@@ -275,11 +274,9 @@ void KmerRepresentativeComputer::compute(VirtualReadScore &readScorer, bool try_
 
     representative.label += " - " + coverage_info;
   }
-  for (size_t i = 0; i < nb_seeds; i++)
-    delete index[i];
 }
 
-bool KmerRepresentativeComputer::tryToExtendRepresentative(const vector<Kmer> counts[],
+bool KmerRepresentativeComputer::tryToExtendRepresentative(const vector<vector<Kmer> > &counts,
                                                            string seeds[],
                                                            size_t nb_seeds,
                                                            size_t i,
