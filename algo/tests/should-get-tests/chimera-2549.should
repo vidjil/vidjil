@@ -11,4 +11,11 @@ f1:Unexpected .*\+IGKV/-IGKV
 !LAUNCH: cat out/2549.vidjil
 
 $ The designation is the "name" field in the .json
-f1: "name": "IGKV1/OR-2.01 21//15 IGKV1/OR-2.01"
+fj1:clones[0].seq.name:IGKV1/OR-2.01 21//15 IGKV1/OR-2.01
+
+$ No IGH
+j:reads.clones.IGH[0]:0
+
+$ One unexpected
+j:reads.clones.unexpected[0]:1
+j:reads.germline.unexpected[0]:1

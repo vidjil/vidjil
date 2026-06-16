@@ -1508,6 +1508,16 @@ int main(int argc, char **argv) {
                 clones_germline[germline->getCode()] = {
                     we.getNbClonesGermline(germline->getCode())};
             }
+            // Unexpected germline size
+            if (multi_germline_unexpected_recombinations_12) {
+                size_t nb = we.getNbReadsGermline("unexpected");
+                if (nb) {
+                    nb_segmented_by_germline["unexpected"] = nb;
+                    reads_germline["unexpected"] = {nb};
+                    clones_germline["unexpected"] = {
+                    we.getNbClonesGermline("unexpected")};
+                }
+            }
 
             nb_segmented_by_germline[ALL_LOCI] = nb_segmented;
             json jsonDiversity = windowsStorage->computeDiversity(nb_segmented_by_germline);
