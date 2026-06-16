@@ -522,24 +522,28 @@ with all germline sequences that is much slower.
 
 ## CDR3 analysis
 
-The full analysis of clones beyond the `--max-designations` threshold also includes
-a CDR3/JUNCTION detection and productivity estimation based on the position
-of Cys104 and Phe118/Trp118 amino acids. The detection relies on alignment
-with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences,
-as provided by `make germline`.
-The CDR3/JUNCTION detection won't work with custom non-gapped V/J repertoires.
+The full analysis of clones beyond the `--max-designations` threshold also includes FRs, CDRs and
+JUNCTION detection. The detection relies on alignment with gapped V and J sequences, as for
+instance, for V genes, IMGT/GENE-DB sequences, as provided by `make germline`. The detection of
+these regions won't work with custom non-gapped V/J repertoires.
 
-CDR3 are reported as *productive* when they come from an in-frame recombination,
-the sequence does not contain any in-frame stop codons,
-and, for IGH recombinations, when the FR4 begins with the `{WP}-GxG` pattern.
+All of their regions have their start and end position output.
+
+The JUNCTION's productivity is estimated based on the position of anchor amino acids Cys104 and
+Phe118/Trp118. JUNCTION are reported as *productive* when they come from an in-frame recombination,
+the sequence does not contain any in-frame stop codons, and, for IGH recombinations, when the FR4
+begins with the `{WP}-GxG` pattern.
+
 This follows the ERIC guidelines ([Rosenquist et al., 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5508071/)).
-When a clone is reported as non-productive, the cause is detailed in the `seg.junction.unproductive` field
-of the `.vidjil` output and also in some fields of the AIRR output.
-Note that some other software only consider stop codons in the CDR3,
-and may thus under-estimate non-productivity.
-When the sequence is long enough to start before the start of the V gene
-or to end after the end of the J gene, vidjil-algo do not consider these intronic sequences
-in the productivity estimation.
+When a clone is reported as non-productive, the cause is detailed in the `seg.junction.unproductive`
+field of the `.vidjil` output and also in some fields of the AIRR output. Note that some other
+software only consider stop codons in the CDR3, and may thus under-estimate non-productivity. When
+the sequence is long enough to start before the start of the V gene or to end after the end of the J
+gene, vidjil-algo do not consider these intronic sequences in the productivity estimation.
+
+FRs & CDRs have their start and end position reported, if they were found. When a recombination
+contains a FR or CDR that is too short, too long or has a count of nucleotide that isn't a multiple
+of 3, a warning is attached to the associated recombination.
 
 ## Sequences of interest
 
@@ -821,6 +825,10 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | junction_aa  | string  | Junction region amino acid sequence. <br />*implemented* |
 | cdr3_aa | string | Amino acid translation of the cdr3 field. <br />*implemented* |
 | cdr3_start, cdr3_end  | number | Start/end position of the CDR3 in the query sequence (1-based closed interval). <br/>*implemented* |
+| fwr1_start, fwr1_end  | number | Start/end position of the FR1 in the query sequence (1-based closed interval). <br/>*implemented* |
+| fwr2_start, fwr2_end  | number | Start/end position of the FR2 in the query sequence (1-based closed interval). <br/>*implemented* |
+| fwr3_start, fwr3_end  | number | Start/end position of the FR3 in the query sequence (1-based closed interval). <br/>*implemented* |
+| fwr4_start, fwr4_end  | number | Start/end position of the FR4 in the query sequence (1-based closed interval). <br/>*implemented* |
 | productive | boolean | True if the V(D)J sequence is predicted to be productive.  <br /> *true, false, or null when no CDR3 has been detected* |
 | vj_in_frame | boolean | True if the V and J gene alignments are in-frame. <br /> *true, false, or null when no CDR3 has been detected* |
 | stop_codon | boolean | True if the aligned sequence contains a stop codon. <br /> *true, false, or null when vj_in_frame is false* |
