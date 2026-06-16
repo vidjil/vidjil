@@ -4,10 +4,45 @@
 This changelog concerns the Vidjil web application, client and server.
 We are using continuous integration and deployment, some features may be pushed on our servers between these releases.
 
+## Web 2026-6
+
+??? note "Milestone 2026-6"
+Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/2XXX).
+
+**Improve analysis**
+
+- MRD script have been significantly improved and deployed, with enhancements in both the script itself and the interface to display these new results
+- The prefuse step has been move to the `in-process` step. It allows it to be launched and packaged with main analysis step, just after the Vidjil call. This fixes 2 misleading behaviors of our server: 
+    - In runs with a large number of samples, each prefuse step was launched every time a new result was available.
+    - Custom analysis opening only considered the results at the end of in-process (mainly vidjil) and not prefuse augmented analysis.
+- Log of an analysis, avaible by clincking on `COMPLETED/FAILED` button, have been redesigned. Now you will have a list of logs separated for each in-process part of the analysis. 
+- A new vidjil format version (2026.6) have been released. It include new fields `supplementary_data` that allow to store some external data computed by prefuse/postfuse scripts. These data will now be displayed in clonotype and sample information panels. 
+
+
+**Bug fixes**
+
+- Primers reset between each analysis loading have been fixed
+- IMGT calling have been fixed to use new form value
+
+**Security**
+
+- Some security fixes have been made.
+- An automatic dependance audit has been added to docker image build of python dependancies
+- Cookies rights have been limited to improve security
+
+**Technical**
+
+- Prefuse step has been moved at `in-process` step. See more details in `improve analysis` above.
+- API script now allows to launch a `get reads` process directly from command line. This grep reads is based on `grep` tools and return every read with vidjil window given in parameter
+- Administrator table now has a js sort columns capability on tables of preprocess, process, groups and users.
+- Vidjil format has evolved to `2026-6` to allow the addition of new external or complementary analysis
+- Fuse script has been improved to works with 2026-6 vidjil format, without breaking previous compatibilities
+- A dedicated vidjil file prettyfier has been added as `tools/format_vidjil.py`. It allows to give a compacted, organized and human readable vision on a vidjil results file.
+
 ## Web 2025-10
 
 ??? note "Milestone 2025-10"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/23).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/23).
 
 **Improve analysis**
 
@@ -40,7 +75,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 ## Web 2025-06
 
 ??? note "Milestone 2025-06"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/21).
 
 **Improve analysis**
 
@@ -95,7 +130,7 @@ Complete list of issues and changes for this release can be found [in GitLab's m
 ## Web 2024-12
 
 ??? note "Milestone 2024-12"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/15).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/15).
 
 **Metrics**
 
@@ -142,7 +177,7 @@ These metrics are pseudonymized.
 ## Web 2024-04
 
 ??? note "Milestone 2024-04"
-Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
+    Complete list of issues and changes for this release can be found [in GitLab's milestone](https://gitlab.inria.fr/groups/vidjil/-/milestones/11).
 
 **QC stats**
 

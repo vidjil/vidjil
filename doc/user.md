@@ -498,7 +498,7 @@ you can process your data and save the results of your analysis.
 
 !!! warning
     The public <https://app.vidjil.org/> server is for Research Use Only
-    and is not compliant for clinical use.
+    and is not compliant for clinical use.  
     Clinical data have to be uploaded on a [certified healthcare server](healthcare.md).
 
 Once you are authenticated, this page shows the patient list. Here you
@@ -701,6 +701,19 @@ The only thing you should not do is to close completely your web browser (or the
 
 Once a task is completed, a click on the `See results` link (bottom right) will open the main window to browse the clonotypes.
 A click on the `out` link at the right of every sample give access to the raw output file of the RepSeq software.
+
+
+By clicking on "COMPLETED/FAILED" button, an in-process log window will open. 
+
+<figure markdown>
+  ![Raw logs view on in-process results](./pictures/view_logs_in_process.png)
+  <figcaption>
+    Each step process (vidjil, prefuse) are listed here, in a separate panel. 
+  </figcaption>
+</figure>
+
+This window allows to see some log information on process for each step of main analysis and each pre-fuse step.
+You can browse, show or hide them to see some metadata of your analysis, check parameters and arguments given to an analysis.
 
 ### Displaying statistics, quality control
 

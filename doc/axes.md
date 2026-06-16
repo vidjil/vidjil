@@ -50,10 +50,17 @@ These values require to have some setup on some instances of the server.
 * **cloneDB occurrences**: number of occurrences in cloneDB
 * **cloneDB patients/runs/sets occurrences**:  "number of patients/runs/sets sharing clones in cloneDB
 
+**MRD specific axes**
+
+* Normalized reads: Number of reads of a clonotype after MRD spikein normalization
+* Normalized cells: Estimated number of cells of a clonotype after MRD spikein normalization
+* Spike factor: Ratio of spike between number of raw reads and estimated number of copies
+
+
 ## Availability of axes
 
 | name                     | axes (grid view)  | aligner | color_by |
-| :----------------------- | :---------: | :--------: | :------: |
+| :----------------------- | :----------: | :--------: | :------: |
 | V/5' gene                |     x        |            |    x     |
 | V/5 allele               |     x        |            |          |
 | D gene                   |     x        |            |          |
@@ -83,3 +90,7 @@ These values require to have some setup on some instances of the server.
 | V/5' ratio               |    x         |            |          |
 | cloneDB occurrences      |    x         |            |          |
 | cloneDB patients/runs/sets occurrences| |            |          |
+| ----------------------   | ----------   | ---------- | -------- |
+| Normalized reads         |    x         |            |          |
+| Normalized cells         |    x         |            |          |
+| Spike factor             |    x         |            |          |
