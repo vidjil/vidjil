@@ -1,27 +1,24 @@
 
-!!! note
-    Here are aggregated notes forming a part of the developer documentation on the vidjil-algo.  
-    These notes are a work-in-progress, they are not as polished as the user documentation.  
-    Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md),
-    at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
+> [!note]
+> Here are aggregated notes forming a part of the developer documentation on the vidjil-algo.  
+> These notes are a work-in-progress, they are not as polished as the user documentation.  
+> Developers should also have a look at the documentation for [bioinformaticians](vidjil-algo.md) and [server administrators](admin.md), at the [issues](https://gitlab.inria.fr/vidjil/vidjil), at the commit messages, and at the source code.
 
 # Development notes -- Vidjil-algo
 
 ## Code organization
 
-The algorithm follows roughly those steps:
+The canonical path through code follows roughly those steps:
 
-1. The germlines are read. Germlines are in the fasta format and are read by the Fasta class (`core/fasta.h`). Germlines are built using the Germline (or MultiGermline) class (`core/germline.h`)
-1. The input sequence file (.fasta, .fastq, .gz) is read by an OnlineFasta (`core/fasta.h`). The difference with the Fasta class being that all the data is not stored in memory but the file is read online, storing only the current entry.
-1. Windows must be extracted from the read, which is done by the WindowExtractor class (`core/windowExtractor.h`). This class has an `extract` method which returns a WindowsStorage object (`core/windows.h`) in which windows are stored.
-1. To save space consumption, all the reads linked to a given window are not stored. Only the longer ones are kept. The BinReadStorage class is used for that purpose (`core/read_storage.h`).
-1. In the WindowStorage, we now have the information on the clusters and on the abundance of each cluster. However we lack a sequence representative of the cluster. For that purpose the class provides a `getRepresentativeComputer` method that provides a KmerRepresentativeComputer (`core/representative.h`). This class can compute a representative sequence using the (long) reads that were stored for a given window.
-1. The representative can then be segmented to determine what V, D and J genes are at play. This is done by the FineSegmenter (`core/segment.h`).
-
-## The xxx germline
-
-- All germlines are inserted in one index using `build_with_one_index()` and the segmentation method is set to `SEG_METHOD_MAX12` to tell that the segmentation must somehow differ.
-- So that the FineSegmenter correctly segments the sequence, the `rep_5` and `rep_3` members (class `Fasta`) of the xxx germline are modified by the FineSegmenter. The `override_rep5_rep3_from_labels()` method from the Germline is the one that overwrites those members with the Fasta corresponding to the affectation found by the KmerSegmenter.
+0. Vidjil is launched, `main()` is called (vidjil.cpp) which parses and validates the command line on the go
+1. Species germline genes are loaded from the input .g files (e.g. `homo-sapiens.g`) which reference FASTA files describing genes of specific recombination systems (IGHV.fa, TRAJ+down.fa, IGK-INTRON.fa, etc.) as provided by IMGT, going through `MultiGermline` (multi_germline.hpp), `Germline` (germline.h) and `GermlineElement` (germline_element.hpp) and finally `PointerACAutomaton` (automaton.hpp) to build an Aho-Corasick graph of all genes based on specific seeds. The germline gene sequences are streamed through `OnlineFasta` (fasta.h) and some regions of interest are marked on them
+2. The input sequence file (FASTA, FASTQ, BAM, optionally gzipped) is read either by `OnlineFasta` (fasta.h) or `OnlineBAM` (bam.h) and the k-mers recognized as part of a germline gene (affectations) are counted on its reads as an overview
+3. On each read, the set of affectations found is analyzed to probabilistically find V(D)J recombinations with `KmerAffectAnalyser` or `MultiKmerAffectAnalyser` (affectanalyser.hpp), and `KmerSegmenter` (segment.hpp)
+4. For reads in which V(D)J recombinations have been detected, a sub-sequence between the likely V gene's end and the likely J gene's start serves as a key to count reads with the same sub-sequence (called a window), and to store them together (up to a certain amount, with some heuristic) in `BinReadStorage` (read_storage.h), used by `WindowsStorage` (windows.h) through `WindowsExtractor` (windowExtractor.h)
+5. If `--cluster-epsilon n` with a non-zero `n` is passed through the command line, windows that are identical-enough have their reads further clustered together using `comp_matrix` (cluster-junctions.h), using the distance between pairs of windows, as determined through sequence alignment with `DynProg` (dynprog.h). Otherwise, this extra clustering phase is skipped
+6. For each remaining cluster of reads around a window, a sequence that is as representative as possible of stored reads and as long as possible is generated, using those same stored reads, as output by `KmerRepresentativeComputer` (representative.h). The resulting sequence is an approximate consensus
+7. The representative sequence of each window is then aligned with possibly matching V (, D) and J genes by `DynProg` (dynprog.h). The V(D)J recombination the window represents is actually designated: the actual V (, D) and J genes a window is made of are determined and finely segmented by `FineSegmenter` (segment.h), which locates the start and end of its sub-regions, especially that of the CDR3 and JUNCTION
+8. Since reads associated with a window have been counted, V(D)J recombinations are now both quantified and qualified. They are output to a JSON-like .vidjil file by `SampleOutputVidjil` and to an AIRR's .tsv file by `CloneOutputAIRR` (output.h)
 
 ## Tests
 
@@ -51,3 +48,40 @@ Tests must be declared in the [tests.h](https://gitlab.inria.fr/vidjil/vidjil/-/
     second is the test name (using the macro defined in `tests.h`) and the
     third one (which can be an empty string) is something which is displayed
     when the test fails.
+
+## Purpose of central classes / source files
+
+[vidjil.cpp](../algo/core/vidjil.cpp): entry point into the program (`main()`)
+
+### File parsers (load germlines and parse patient's lymphocytes DNA samples)
+- [bioreader.hpp](../algo/core/bioreader.hpp): reads and stores sequences from an input string or file
+- [onlinebioreader.h](../algo/core/onlinebioreader.h): abstract file streaming of input reads, one by one
+- [fasta.h](../algo/core/fasta.h): specialized OnlineBioReader for (optionally gzipped) FASTA/FASTQ files
+- [bam.h](../algo/core/bam.h): specialized OnlineBioReader for BAM files
+
+### Germlines (organize reads, recombination systems, shortcuts and other data associated with IMGT germlines)
+- [germline_element.hpp](../algo/core/germline_element.hpp): represents one FASTA file (e.g. containing the V, D, J, C genes of a recombination system for instance)
+- [germline_element_repository.hpp](../algo/core/germline_element_repository.hpp): associative finder of shortcut by affect and of FASTA files by (filename + seeds) pairs or by shortcut
+- [germline.hpp](../algo/core/germline.hpp): represents a recombination system, as described in .g files, associating gene types (V/"5", D/"4", J/"3" etc.) that are part of the system to the FASTA files holding the collection of matching genes
+- [multi_germline.hpp](../algo/core/multi_germline.hpp): holds all recombination systems passed through input .g files
+
+### Detection (analyze reads and find V(D)J recombinations)
+- [kmerstore.h](../algo/core/kmerstore.h): stores k-mer affects derived from a specific seed and their associated FASTA file(s)
+- [automaton.h](../algo/core/automaton.h): builds and queries an Aho-Corasick graph to match parts of reads against known genes, which is a specialized k-mer storage
+- [kmeraffect.h](../algo/core/kmeraffect.h): assigns a matching gene to a sub-sequence (an affect)
+- [affectanalyser.h](../algo/core/affectanalyser.h): analyzes gene parts that were recognized on a read, based on affect count, positions and probabilities
+
+### Clusterization (grouping and counting reads sharing similar V(D)J recombinations)
+- [read_storage.h](../algo/core/read_storage.h): stores reads in bins, in limited amounts, following scoring heuristic
+- [read_score.h](../algo/core/read_score.h): scoring heuristics
+- [windows.h](../algo/core/windows.h): organizes windows (sub-sequences from the end of a V gene to the start of a J gene) by sequences, germlines, status
+- [windowExtractor.h](../algo/core/windowExtractor.h): extracts windows, performs statistics and formats data for outputs
+- [cluster-junctions.h](..algo/core/cluster-junctions.h): clusters similar windows and their associated reads together, based on windows alignment by pairs (see dynprog.h)
+- [representative.h](../algo/core/representative.h): computes a representative sequence from a list of sequences sharing a common sub-sequence (window)
+
+### Designation and segmentation
+- [dynprog.h](../algo/core/dynprog.h): aligns a read with a reference gene based on the Smith-Waterman-Gotoh algorithm
+- [segment.h](../algo/core/segment.h): designates the precise genes a recombination is made of, positions them, and detects any anomaly (out of frame, stop codon, too short, etc.)
+
+### Output
+- [output.h](../algo/core/output.h): formats and outputs data following specific file formats
