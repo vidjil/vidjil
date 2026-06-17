@@ -1,6 +1,16 @@
+> [!note]
+> This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
 
-!!! note
-    This changelog concerns vijil-algo, the algorithmic part (C++) of the Vidjil platform.
+## Algo 2026-06
+
+* Added support for WASM !1708
+* Improved read count approximation in input FASTA files !1715
+* The start and end positions of framework and complimentary-determining regions (FRs & CDRs) located on clonotypes are now output in .vidjil and .tsv files, along with possible warnings if their length is abnormal #1841, !1730
+* Fixed AIRR's .tsv CDR3 start and end field names !1733
+* When no clone was found during analysis or `--no-vidjil` was passed through the command line, an empty array (`[]`) is now output instead of `null` #1773, !1740
+* More recent g++ & clang++ compiler versions are now tested with vidjil-algo !1757
+* Fixed missing key for unexpected germline #5459, !1758
+* K-mers extracted from genes to search for that are common with those from genes not to search for on reads are now systematically removed from the index, yielding more accurate results #5436, !1748
 
 ## Algo 2025-12
 
