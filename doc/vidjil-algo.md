@@ -462,6 +462,11 @@ Limits to report and to analyze clones (second pass)
   --all                       reports and analyzes all clones
                               (--min-reads 1 --min-ratio 0 --max-clones all --max-consensus all --max-designations all),
                               to be used only on small datasets (for example --all -X 1000)
+  --consensus-on-longest-sequences
+                              for large clones, use a sample of the longest and highest quality reads to compute the consensus
+                              sequence (instead of a random sample)
+  --min-coverage-consensus FLOAT=0.5
+                              minimal percent of the maximal coverage that is admissible to build the consensus sequence
 ```
 
 The `-r/--ratio` options are strong thresholds: if a clone does not have

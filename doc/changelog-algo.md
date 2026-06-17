@@ -10,7 +10,7 @@
 * When no clone was found during analysis or `--no-vidjil` was passed through the command line, an empty array (`[]`) is now output instead of `null` #1773, !1740
 * More recent g++ & clang++ compiler versions are now tested with vidjil-algo !1757
 * Fixed missing key for unexpected germline #5459, !1758
-* The minimum required coverage to compute the consensus sequence can now be configured through the command line #5419, !1756
+* The minimum required coverage to compute the consensus sequence can now be configured through the command line with `--min-coverage-consensus` #5419, !1756
 * K-mers extracted from genes to search for that are common with those from genes not to search for on reads are now systematically removed from the index, yielding more accurate results #5436, !1748
 
 ## Algo 2025-12
