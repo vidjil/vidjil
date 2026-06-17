@@ -824,6 +824,8 @@ Using `-c designations` trigger a separate analysis for each read, but this is u
 | junction  | string  |      Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons. <br />*null* |
 | junction_aa  | string  | Junction region amino acid sequence. <br />*implemented* |
 | cdr3_aa | string | Amino acid translation of the cdr3 field. <br />*implemented* |
+| cdr1_start, cdr1_end  | number | Start/end position of the CDR1 in the query sequence (1-based closed interval). <br/>*implemented* |
+| cdr2_start, cdr2_end  | number | Start/end position of the CDR2 in the query sequence (1-based closed interval). <br/>*implemented* |
 | cdr3_start, cdr3_end  | number | Start/end position of the CDR3 in the query sequence (1-based closed interval). <br/>*implemented* |
 | fwr1_start, fwr1_end  | number | Start/end position of the FR1 in the query sequence (1-based closed interval). <br/>*implemented* |
 | fwr2_start, fwr2_end  | number | Start/end position of the FR2 in the query sequence (1-based closed interval). <br/>*implemented* |
