@@ -79,14 +79,14 @@ using json = nlohmann::json;
 enum SEGMENTED
 {
   NOT_PROCESSED,
-	TOTAL_SEG_AND_WINDOW,
+  TOTAL_SEG_AND_WINDOW,
   SEG_PLUS, SEG_MINUS,
   SEG_CHANGED_WINDOW,
   UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT,
-	UNSEG_TOO_FEW_ZERO,  UNSEG_ONLY_V, UNSEG_ONLY_J,
+  UNSEG_TOO_FEW_ZERO,  UNSEG_ONLY_V, UNSEG_ONLY_J,
   UNSEG_BAD_DELTA_MIN, UNSEG_AMBIGUOUS,
-	UNSEG_TOO_SHORT_FOR_WINDOW,
-	STATS_SIZE,
+  UNSEG_TOO_SHORT_FOR_WINDOW,
+  STATS_SIZE,
 
   SEGMENTED_COUNT
 };
@@ -284,7 +284,7 @@ protected:
    * acid of the FR.
    * @param fr_segment: the FR segment these locations surround.
    * @param box: the alignment box from which to retrieve aligned locations positions.
-   * @param read_length: the size of the aligned read.
+   * @param read_last_idx: the last valid index to the last nucleotide of the aligned read.
    *
    * @returns The bounds of FR in segments_nuc_pos[fr_segment]. If a bound couldn't be found or is
    * beyond the aligned read's range, that bound remains INVALID_BOUND_POS
@@ -302,7 +302,7 @@ protected:
    * @param prev_fr: the framework region preceeding the target CDR.
    * @param cdr_segment: the CDR to segment.
    * @param next_fr: the framework region succeeding the target CDR.
-   * @param read: the aligned read associated with this CDR and FRs.
+   * @param read_last_idx: the last valid index to the last nucleotide of the aligned read.
    *
    * @returns The bounds of CDR in segments_nuc_pos[cdr_segment]. If a bound couldn't be found or is
    * beyond the aligned read's range, that bound remains INVALID_BOUND_POS
@@ -311,7 +311,17 @@ protected:
                   Segment cdr_segment,
                   Segment next_fr,
                   size_t  read_last_idx);
-  void segmentJUNCTION(const std::string& read);
+
+  /**
+   * Retrieve the JUNCTION's bounds from the FR3's end and FR4's start positions.
+   * Should be called after segmentFR() has been called with FR3_SEGMENT and FR4_SEGMENT.
+   *
+   * @param read_last_idx: the last valid index to the last nucleotide of the aligned read.
+   *
+   * @returns The bounds of JUNCTION in segments_nuc_pos[cdr_segment]. If a bound couldn't be found
+   * or is beyond the aligned read's range, that bound remains INVALID_BOUND_POS
+   */
+  void segmentJUNCTION(size_t read_length);
 
   /**
    * Arrange the CDR3 amino acid sequence if it is out of frame by changing its reading frame where

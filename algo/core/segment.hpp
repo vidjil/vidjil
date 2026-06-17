@@ -1523,10 +1523,10 @@ void Segmenter<Affect>::segmentFR(LocationToMark          fr_first_aa_mid_nuc_lo
 
 
 template <typename Affect>
-void Segmenter<Affect>::segmentCDR(Segment            prev_fr,
-                                   Segment            cdr_segment,
-                                   Segment            next_fr,
-                                   size_t             read_last_idx)
+void Segmenter<Affect>::segmentCDR(Segment prev_fr,
+                                   Segment cdr_segment,
+                                   Segment next_fr,
+                                   size_t  read_last_idx)
 {
   unsigned int prev_fr_bounds_end   = segments_nuc_pos[prev_fr].end;
   unsigned int next_fr_bounds_start = segments_nuc_pos[next_fr].start;
@@ -1543,7 +1543,7 @@ void Segmenter<Affect>::segmentCDR(Segment            prev_fr,
 }
 
 template <typename Affect>
-void Segmenter<Affect>::segmentJUNCTION(const std::string& read)
+void Segmenter<Affect>::segmentJUNCTION(size_t read_last_idx)
 {
   // The end of the FR3 and the start of the FR4 are used to determine JUNCTION bounds: the CDR3
   // bounds might be invalid because it doesn't exist, while the end of the FR3 and the start of the
@@ -1551,12 +1551,11 @@ void Segmenter<Affect>::segmentJUNCTION(const std::string& read)
   unsigned int fr3_bounds_end     = segments_nuc_pos[FR3_SEGMENT].end;
   unsigned int fr4_bounds_start   = segments_nuc_pos[FR4_SEGMENT].start;
   unsigned int candidate_junc_end = fr4_bounds_start + 2;
-  const size_t read_length        = read.length();
 
   if ((fr3_bounds_end != INVALID_BOUND_POS) && (fr3_bounds_end >= 2))
     segments_nuc_pos[JUNCTION_SEGMENT].start = fr3_bounds_end - 2;
 
-  if ((fr4_bounds_start != INVALID_BOUND_POS) && (candidate_junc_end < read_length))
+  if ((fr4_bounds_start != INVALID_BOUND_POS) && (candidate_junc_end <= read_last_idx))
     segments_nuc_pos[JUNCTION_SEGMENT].end = candidate_junc_end;
 }
 
@@ -1687,7 +1686,7 @@ void FineSegmenter<Affect>::findRegions()
   this->segmentCDR(FR2_SEGMENT, CDR2_SEGMENT, FR3_SEGMENT, read_last_idx);
   this->segmentCDR(FR3_SEGMENT, CDR3_SEGMENT, FR4_SEGMENT, read_last_idx);
 
-  this->segmentJUNCTION(read);
+  this->segmentJUNCTION(read_last_idx);
   
   // CDR3, JUNCTION
   Bounds cdr3_bounds = this->segments_nuc_pos[CDR3_SEGMENT];
