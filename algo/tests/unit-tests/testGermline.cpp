@@ -28,7 +28,7 @@ void testIndexLoad(Germline<KmerAffect> *g1, IndexTypes index, float expected_in
   size_t seed_5_span = g1->getSeed("5").size();
   g1->addToIndex(KmerStoreFactory<KmerAffect>::createIndex(index, g1->getSeed("5"), true));
   g1->finish();
-  GermlineElement<KmerAffect> *elem = *(g1->getGermlineElements("5").begin());
+  GermlineElement<KmerAffect> *elem = *(g1->getSegmentGermlineElements("5").begin());
   float index_load_5 = g1->getIndex()->getIndexLoad(KmerAffect(elem->getAffect(), 1, seed_5_span));
 
   // 15046 k-mers espacés ####-#### d'après kmc → 60184. In practice 78k…

@@ -104,7 +104,12 @@ public:
   /**
    * @return the germline elements associated to the segment (code as given in the .g file, eg. "5" or "3")
    */
-  std::set<GermlineElement<Affect>*> getGermlineElements(const std::string &segment) const;
+  std::set<GermlineElement<Affect>*> getSegmentGermlineElements(const std::string &segment) const;
+
+  /**
+   * @return germline_elements
+   */
+  const std::map<std::string, std::set<GermlineElement<Affect>*>>& getGermlineElements() const;
 
   /**
    * @return the index used on the germline
@@ -126,7 +131,7 @@ public:
   /**
    * @return the segments of the recombination which are indexed. They are returned in the order they should be recombined.
    */
-  std::list<std::string> getSegments() const;
+  const std::list<std::string>& getSegments() const;
 
   GermlineElementRepository<Affect> *getRepository() const;
 

@@ -19,7 +19,7 @@ $ Number of detected reads
 :reads.segmented: [13153]
 
 $ Number of detected clonotypes
-:reads.clones.IGH: [10943]
+:reads.clones.IGH: [10941]
 
 $ Most abundant window
 :clones[0].id: CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC

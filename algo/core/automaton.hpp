@@ -271,6 +271,29 @@ void PointerACAutomaton<Info>::insert(const seqtype &sequence, const string &lab
 }
 
 template <class Info>
+void PointerACAutomaton<Info>::remove(const seqtype& sequence)
+{
+  pointer_state<Info>* state = getInitialState();
+
+  const size_t sequence_length = sequence.length();
+  for (size_t i = 0; i < sequence_length; i++)
+  {
+    state = state->transition(sequence[i]);
+    if (state == nullptr)
+      return; // the sequence has not associated state in the automaton
+  }
+
+  // Empty pointer_state associated to this sequence
+  if (state->informations.size() != 0)
+  {
+    state->informations.clear();
+    state->informations.shrink_to_fit();
+    state->is_final = false;
+    this->nb_kmers_inserted -= 1;
+  }
+}
+
+template <class Info>
 bool PointerACAutomaton<Info>::isFinalState(void *state) {
   return ((pointer_state<Info> *)state)->is_final;
 }

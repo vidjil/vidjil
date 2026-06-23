@@ -196,6 +196,19 @@ public:
               int keep_only=0, string seed="");
 
   /**
+   * If a state is associated with the passed sequence, make it non-final/non-accepting and remove
+   * any information the state is holding. The state itself remains, as it may point and be pointed
+   * by other states.
+   *
+   * This makes sure getResults(), getAllResults() and getMultiResults() will not associate this
+   * sequence with any Info. This must be called before finish_building() or
+   * build_failure_functions().
+   *
+   * @param sequence: the sequence of nucleotide whose state must be made non-final.
+   */
+  void remove(const seqtype& sequence) final;
+
+  /**
    * @return true iff states points to a final state
    */
   bool isFinalState(void *state);

@@ -121,12 +121,18 @@ GermlineElement<Affect>* Germline<Affect>::getGermlineElement(const Tshortcut &s
 }
 
 template <typename Affect>
-std::set<GermlineElement<Affect>*> Germline<Affect>::getGermlineElements(const std::string &code) const {
+std::set<GermlineElement<Affect>*> Germline<Affect>::getSegmentGermlineElements(const std::string &code) const {
   try {
     return germline_elements.at(code);
   } catch (std::out_of_range &e) {
     return {};
   }
+}
+
+template <typename Affect>
+const std::map<std::string, std::set<GermlineElement<Affect>*>>& Germline<Affect>::getGermlineElements() const
+{
+  return germline_elements;
 }
 
 template <typename Affect>
@@ -141,7 +147,7 @@ MultiGermline<Affect> *Germline<Affect>::getMultiGermline() const {
 
 template <typename Affect>
 std::shared_ptr<BioReader> Germline<Affect>::getReader(const std::string &segment) const {
-  std::set<GermlineElement<Affect>*> elements = getGermlineElements(segment);
+  std::set<GermlineElement<Affect>*> elements = getSegmentGermlineElements(segment);
   std::shared_ptr<BioReader> reader = std::make_shared<BioReader>(2,
                                                                   "|",
                                                                   (*(elements.begin()))->getLocationsToMark(),
@@ -168,7 +174,7 @@ int Germline<Affect>::getSegmentationMethod() const {
 }
 
 template <typename Affect>
-std::list<std::string> Germline<Affect>::getSegments() const {
+const std::list<std::string>& Germline<Affect>::getSegments() const {
   return segments;
 }
 

@@ -1,0 +1,19 @@
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/common-V-D-2.fa > /dev/null ; cat out/common-V-D-2.vidjil
+
+$ The two subsequences in the middle of the D gene that are common with the V gene of this read are not assigned a C (IGHV) affect
+# With wrong C affects:       "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC C         CC                           AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA            ",
+j:clones[0].seg.affectValues: "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC  CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC C                                      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA            ",
+
+$ No affect in the middle of the D gene means this clone's window is not incorrectly centered
+#               Without a C affect in D gene                     With an incorrect C affect in D gene
+#     ---------------------------------------------------|----------------------------------------------------
+# id  ATATTACTGTGTAGTGGTGGTAGCTGCTACTCCAGGATATTTTGATGTCT | CTGTGTAGTGGTGGTAGCTGCTACTCCAGGATATTTTGATGTCTGGGGCC
+#  V  ATATTACTGT                                         | CTGT
+#  D            GTAGTGGTGGTAGCTGCTACTCCAGGATA            |     GTAGTGGTGGTAGCTGCTACTCCAGGATA
+#  J                                         TTTTGATGTCT |                                  TTTTGATGTCTGGGGCC
+#       10                  29                   11         4               29                      17
+j:clones[0].id: "ATATTACTGTGTAGTGGTGGTAGCTGCTACTCCAGGATATTTTGATGTCT"
+
+$ The e-value differs whether C affects are assigned in the middle of the D gene
+# With wrong C affects:     "1.91e-119"
+j:clones[0].seg.evalue.val: "4.87e-117"

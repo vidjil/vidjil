@@ -2,6 +2,7 @@
 #define MULTIGERMLINE_HPP
 
 #include "germline.hpp"
+#include "fasta.h"
 
 enum GERMLINES_FILTER { GERMLINES_ALL,
                         GERMLINES_REGULAR,
@@ -305,9 +306,91 @@ void MultiGermline<Affect>::buildFromJson(json germlines, int filter,
 
 template <typename Affect>
 void MultiGermline<Affect>::addToIndex(IKmerStore<Affect> *index) {
+  
+  // .g files defines several recombination systems (class Germline). Each recombination system
+  // defines:
+  // - The set(s) of genes the system may recombine together (class GermlineElement), associated 
+  //   with an ordered segment ("5", "4", "3") in field "recombinations". These sets are the values
+  //   in system_segments below
+  // - Which of the system's segments should be used in the designation phase to recognize
+  //   recombinations belonging to that system (field "parameters.search_recombinations"). These
+  //   segments are the values in segments_to_search below
+  // - The (spaced) seed used to identify whether the portion of a sample's read may belong to one
+  //   of the recombination system's genes
+  //
+  // Since V, D and J genes may share some common k-mers, it is possible for a k-mer on a read to be
+  // marked as belonging to a specific recombination system's gene (affectation) during the
+  // designation phase, despite being actually located on a different (recombined) gene.
+  //
+  // These affectations are assigned based on the k-mers derived from the set of genes to search for
+  // for each recombination system, on which the recombination system's seeds are projected and the
+  // resulting projections inserted in the index.
+  //
+  // By removing projections that are common between genes to search for and genes not to search
+  // for, using the seeds provided by recombination systems, these problematic affectations can be
+  // avoided.
+  //
+  // This is done by:
+  // 1. Inserting all genes to search for in the index, indiscriminately
+  // 2. Deduce which gene sets are never searched for, by comparing gene sets that compose
+  //    recombination systems and the gene sets to search for for all of them
+  // 3. Keeping track of seeds recombination systems use
+  // 4. Removing gene sets that are never searched for, using recombination systems' seeds
+  std::set<const GermlineElement<Affect>*> gene_sets_not_to_search;
+  std::set<const GermlineElement<Affect>*> gene_sets_to_search;
+  std::set<std::string>                    system_seeds;
+
   for (const auto& germline : germlines) {
     germline->addToIndex(index);
+
+    const std::map<std::string, std::set<GermlineElement<Affect>*>>& system_segments    = germline->getGermlineElements();
+    const std::list<std::string>&                                    segments_to_search = germline->getSegments();
+
+    for (const std::pair<const std::string, std::set<GermlineElement<Affect>*>>& segment : system_segments)
+    {
+      const std::set<GermlineElement<Affect>*>& segment_gene_sets = segment.second;
+      for (const GermlineElement<Affect>* gene_set : segment_gene_sets)
+        gene_sets_not_to_search.insert(gene_set);
+    }
+
+    for (const std::string& segment_id : segments_to_search)
+    {
+      const std::set<GermlineElement<Affect>*>& segment_gene_sets = system_segments.at(segment_id);
+      for (const GermlineElement<Affect>* gene_set : segment_gene_sets)
+        gene_sets_to_search.insert(gene_set);
+    }
+
+    // The seeds are the same for all possible recombinations of a system
+    const std::string& any_segment = segments_to_search.front();
+    system_seeds.insert(germline->getSeed(any_segment));
   }
+
+  for (const GermlineElement<Affect>* gene_set : gene_sets_to_search)
+    gene_sets_not_to_search.erase(gene_set);
+
+  // Remove any gene projections that were added to the index that coincides with gene projections
+  // that aren't searched for, using the same seeds that were used for projections inserted in the
+  // index
+  for (const GermlineElement<Affect>* gene_set : gene_sets_not_to_search)
+  {
+    OnlineFasta genes_to_exclude(gene_set->getFilename());
+    while (genes_to_exclude.hasNext())
+    {
+      genes_to_exclude.next();
+      Sequence d_gene = genes_to_exclude.getSequence();
+      for (const std::string& seed : system_seeds)
+      {
+        // Some genes (such as D genes) are smaller than the seeds used by searched genes to insert
+        // them in the index, meaning these small genes cannot coincide with these searched genes
+        // projections. They are skipped
+        const size_t seed_size     = seed.size();
+        const size_t sequence_size = d_gene.sequence.size();
+        if (seed_size <= sequence_size)
+          index->remove(d_gene.sequence, seed);
+      }
+    }
+  }
+
   index->finish_building();
   this->index = index;
 }
