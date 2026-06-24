@@ -5,7 +5,7 @@ $ Consensus sequence should span on the whole sequence
 
 !LAUNCH: $VIDJIL_DIR/$EXEC -r 5 --min-coverage-consensus 0.9 -g $VIDJIL_DIR/germline/homo-sapiens.g:IGH $VIDJIL_DATA/representative-few-reads.fa
 
-$ Consensus sequence should span on the whole sequence
+$ Consensus sequence should be restricted to the common parts among all the reads when raising --min-coverage-consensus
 1: clone.*111 bp
 # Start of the consensus
 1:^CCGAGGACACGGCTGTGTATTACTGT

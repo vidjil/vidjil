@@ -617,7 +617,7 @@ int main(int argc, char **argv) {
            "consensus sequence (instead of a random sample)")
         ->group(group)
         ->level();
-    app.add_option("--min-coverage-consensus", ratio_representative, "minimal percent of the maximal coverage that is admissible to build the consensus sequence")
+    app.add_option("--min-coverage-consensus", ratio_representative, "minimal ratio of agreement among reads that is admissible to build the consensus sequence")
         ->group(group)
         ->capture_default_str()
         ->level();
