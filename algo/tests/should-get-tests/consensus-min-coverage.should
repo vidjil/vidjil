@@ -12,3 +12,10 @@ $ Output should differ
 $ By lowering the min coverage, we meet the criteria to get the 52nt sequence
 2:^> .* 52 bp
 1:^> CTTTT
+
+$ Diff should be limited to those modifications
+# In total the diff should contain 14 lines
+# 4 for the command line
+# 6 for the two different clonotypes, in terms of sequences
+# 4 for the similarity matrix in the end
+14:.
