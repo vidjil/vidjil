@@ -321,11 +321,6 @@ double nChoosek(unsigned n, unsigned k);
 void trimSequence(string &sequence, size_t &start_pos, size_t &length,
                   size_t required_start=string::npos, size_t required_length=0);
 
-/**
- * Count the number of trailing zeros in a (same as getting the index of the lowest 1 bit).
- */
-unsigned int tzcnt_u32(unsigned int a);
-
 const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
 
 bool operator==(const Sequence &s1, const Sequence &s2);

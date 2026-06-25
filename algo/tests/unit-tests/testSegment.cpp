@@ -567,7 +567,7 @@ void testAlignmentBounds()
   bool onlyBottomTriangle      = false;
   int  onlyBottomTriangleShift = BOTTOM_TRIANGLE_SHIFT;
 
-  // Verify the JUNTION, whose aligned position is just past the length of the read, isn't aligned,
+  // Verify the JUNCTION, whose aligned position is just past the length of the read, isn't aligned,
   // while the end of the read (once reversed) is aligned to the start of the gene
   bool reverse_both = true;
   DynProg dp(read, ighj1_01, dpMode, cost, reverse_both, reverse_both, marked_pos);
