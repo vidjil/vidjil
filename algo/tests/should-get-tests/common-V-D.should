@@ -1,15 +1,16 @@
-# Example 1
-!LAUNCH: $VIDJIL_DIR/$EXEC -K --all -z 0 -s 10s -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa   $VIDJIL_DATA/common-V-D.fa;  cat out/common-V-D.affects
+!LAUNCH: $VIDJIL_DIR/$EXEC --all -z 0 -s 10s -V $VIDJIL_DIR/germline/homo-sapiens/IGHV.fa -J $VIDJIL_DIR/germline/homo-sapiens/IGHJ.fa -D $VIDJIL_DIR/germline/homo-sapiens/IGHD.fa $VIDJIL_DATA/common-V-D.fa > /dev/null && cat out/common-V-D.vidjil
 
 $ Segments the sequence
 1: SEG  .* -> .* 1 
 
 $ The windows found by the KmerSegmenter has a fairly good position
-2: 1 163 180 220
+j:clones[0].seg.5.stop:  162
+j:clones[0].seg.4.start: 163
+j:clones[0].seg.4.stop:  179
+j:clones[0].seg.3.start: 180
+j:clones[0].seg.affectSigns.start: 1
+j:clones[0].seg.affectSigns.stop:  220
 
-!LAUNCH: cat out/common-V-D.vidjil
 $ Find the good affects for the D segment, including an AMBIGUOUS k-mer '?', common with V
 j:clones[0].seg.affectSigns.seq: "\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+  \+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+                     \+    \+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+          "
 j:clones[0].seg.affectValues.seq: "CCCCCCCCCCCCCCCCCCCCCCCCCCC  CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC                     C    AAAAAAAAAAAAAAAAAAAAAAAAAA?AAAA          "
-#r1: \"\+{27} {2}\+{124} {21}\+ {4}\+{31} {10}\"
-#r1: \"C{27} {2}C{124} {21}C {4}A{26}\?A{4} {10}\"
