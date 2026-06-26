@@ -466,7 +466,7 @@ Limits to report and to analyze clones (second pass)
                               for large clones, use a sample of the longest and highest quality reads to compute the consensus
                               sequence (instead of a random sample)
   --min-coverage-consensus FLOAT=0.5
-                              minimal percent of the maximal coverage that is admissible to build the consensus sequence
+                              minimal ratio of agreement among reads that is admissible to build the consensus sequence
 ```
 
 The `-r/--ratio` options are strong thresholds: if a clone does not have
